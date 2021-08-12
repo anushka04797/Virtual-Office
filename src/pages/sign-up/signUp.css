@@ -1,5 +1,5 @@
 
-.form-header{
+.page-header{
     font-family: Poppins;
 font-style: normal;
 font-weight: 600;
@@ -71,11 +71,12 @@ margin-top: 30px;
     height: 18px;
   }
   /*form codes*/
-  .form-holder{
-      margin-top: 220px;
+  .custom-form-holder{
+      margin-top: 300px;
   }
   .form-control{
     background-color: transparent !important;
+    height: 60px;
 }
 .custom-label{
     font-style: normal;
@@ -88,11 +89,11 @@ color: #BD9EFB;
  border: 1px solid #444444;
  border-radius: 10px;   
 }
-.submit-holder{
+.sign-holder{
     margin-top: 30px;
     text-align: center;
 }
-.submit-button{
+.submit-button-s{
    
     background: #BD9EFB;
 border-radius: 10px;
@@ -105,7 +106,7 @@ border-color:#BD9EFB ;
 width: 555px;
 height: 60px;
 }
-.submit-button:hover{
+.submit-button-s:hover{
     background: rgb(92,79,207);
 }
 .dum-text{

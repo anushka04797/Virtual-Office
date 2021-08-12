@@ -74,7 +74,7 @@ const SignIn = () => {
                       </div>
                       <div className="submit-holder">
                         <CButton type="submit" className="submit-button">
-                          Submit
+                          Sign in
                         </CButton>
                       </div>
                     </CForm>
