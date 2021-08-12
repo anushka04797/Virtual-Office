@@ -17,7 +17,7 @@ const Register = () => {
     <>
       <div className="register-page">
         <div className="container">
-          <h3 className="form-header">Register</h3>
+          <h3 className="page-header">Register</h3>
           {/**img uplaod div */}
 
           <div className="seller-pro-pic-holder">
@@ -35,10 +35,10 @@ const Register = () => {
           </div>
 
           {/**submit form */}
-          <div className="form-holder">
+          <div className="custom-form-holder">
             <div className="row">
               <div className="col-md-10 offset-md-1 col-sm-12 offset-sm-0">
-                <CForm className="custom-form">
+                <CForm className="custom-form-sign">
                   <div className="row">
                     {/**first name */}
                     <div className="col-md-6 col-sm-12 col-12 mb-3">
@@ -117,9 +117,9 @@ const Register = () => {
                       />
                     </div>
                     {/*submit button */}
-                    <div className="submit-holder">
-                      <CButton type="submit" className="submit-button">
-                        Submit
+                    <div className="sign-holder">
+                      <CButton type="submit" className="submit-button-s">
+                        Sign up
                       </CButton>
                     </div>
                     {/**Go to sign in */}

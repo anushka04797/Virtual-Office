@@ -37,6 +37,7 @@ color: #444444;
 }
 .form-control{
     background-color: transparent !important;
+    height: 60px;
 }
 .custom-label{
     font-style: normal;
