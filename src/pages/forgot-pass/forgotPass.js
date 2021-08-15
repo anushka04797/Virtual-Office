@@ -2,13 +2,9 @@
 import React, { useState } from "react";
 import {
     CForm,
-    CInputGroup,
     CFormLabel,
-    CFormControl,
-    CFormText,
-    CFormCheck,
+    CFormInput,
     CButton,
-    CContainer,
 } from "@coreui/react";
 import './forgotPass.css';
 import { Link, useHistory } from "react-router-dom";
@@ -32,7 +28,7 @@ const ForgotPass = () => {
                                         >
                                             Email
                                         </CFormLabel>
-                                        <CFormControl
+                                        <CFormInput
                                             type="email"
                                             id="exampleInputEmail1"
                                             aria-describedby="emailHelp"

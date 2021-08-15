@@ -4,19 +4,23 @@ import {
   CForm,
   CInputGroup,
   CFormLabel,
-  CFormControl,
+  CFormInput,
   CFormText,
   CFormCheck,
   CButton,
 } from "@coreui/react";
-import { Link,useHistory } from "react-router-dom";
+import { Link,Redirect,useHistory } from "react-router-dom";
+import { TOKEN } from "../../Config";
 
 const SignIn = () => {
   let history = useHistory();
-  
+  function login(){
+    localStorage.setItem(TOKEN,'1234')
+    history.push('/dashboard')
+  }
   return (
     <>
-      <div className="signin-content">
+      {localStorage.getItem(TOKEN)?<Redirect to="/dashboard"/>:<div className="signin-content">
         <div className="container">
           <div className="row">
             {/**Form section */}
@@ -33,7 +37,7 @@ const SignIn = () => {
                         >
                           Email
                         </CFormLabel>
-                        <CFormControl
+                        <CFormInput
                           type="email"
                           id="exampleInputEmail1"
                           aria-describedby="emailHelp"
@@ -50,7 +54,7 @@ const SignIn = () => {
                         >
                           Password
                         </CFormLabel>
-                        <CFormControl
+                        <CFormInput
                           type="password"
                           id="exampleInputPassword1"
                           className="custom-formgroup"
@@ -73,15 +77,15 @@ const SignIn = () => {
                         </div>
                       </div>
                       <div className="submit-holder">
-                        <CButton type="submit" className="submit-button">
+                        <CButton type="button" onClick={()=>{login()}} className="submit-button">
                           Sign in
                         </CButton>
                       </div>
                     </CForm>
-{/**Go to register */}
-<div class="mb-4 mt-3">
-  <h5 className="final-footer"><span className="dum-text">Don't have an account?</span><Link className="registration-link" to="/register">Register</Link></h5>
-</div>
+                    {/**Go to register */}
+                    <div className="mb-4 mt-3">
+                      <h5 className="final-footer"><span className="dum-text">Don't have an account?</span><Link className="registration-link" to="/register">Register</Link></h5>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -96,7 +100,7 @@ const SignIn = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div>}
     </>
   );
 };
