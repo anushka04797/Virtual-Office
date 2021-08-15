@@ -6,9 +6,13 @@ import './App.css';
 import ProtectedRoute from './components/protected-route/ProtectedRoute'
 import { ThemeProvider,createTheme } from '@material-ui/core/styles';
 import { orange } from '@material-ui/core/colors';
+import { PALETTE_MODE } from './Config';
 const theme = createTheme({
-  status: {
-    danger: orange[500],
+  palette: {
+    mode: PALETTE_MODE,
+    // primary:{
+    //   main:"#BD9EFB"
+    // }
   },
 });
 const loading = (
@@ -24,6 +28,7 @@ const Dashboard = React.lazy(() => import('./pages/dashboard/Dashboard'));
 const App = () => {
   return (
     <>
+    <ThemeProvider theme={theme}>
     <HashRouter>
         <React.Suspense fallback={loading}>
           <Switch>
@@ -34,6 +39,7 @@ const App = () => {
           </Switch>
         </React.Suspense>
       </HashRouter>
+    </ThemeProvider>
     </>
   )
 }
