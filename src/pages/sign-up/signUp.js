@@ -2,13 +2,9 @@ import React, { useState } from "react";
 import "./signUp.css";
 import {
   CForm,
-  CInputGroup,
   CFormLabel,
-  CFormControl,
-  CFormText,
-  CFormCheck,
   CButton,
-  CContainer,
+  CFormInput,
 } from "@coreui/react";
 import { Link, useHistory } from "react-router-dom";
 
@@ -45,7 +41,7 @@ const Register = () => {
                       <CFormLabel htmlFor="firstName" className="custom-label">
                         First Name
                       </CFormLabel>
-                      <CFormControl
+                      <CFormInput
                         type="text"
                         id="firstName"
                         aria-describedby="fnHelp"
@@ -57,7 +53,7 @@ const Register = () => {
                       <CFormLabel htmlFor="lastName" className="custom-label">
                         Last Name
                       </CFormLabel>
-                      <CFormControl
+                      <CFormInput
                         type="text"
                         id="lastName"
                         aria-describedby="lnHelp"
@@ -69,7 +65,7 @@ const Register = () => {
                       <CFormLabel htmlFor="email" className="custom-label">
                         Email
                       </CFormLabel>
-                      <CFormControl
+                      <CFormInput
                         type="email"
                         id="email"
                         aria-describedby="emailHelp"
@@ -81,7 +77,7 @@ const Register = () => {
                       <CFormLabel htmlFor="phone" className="custom-label">
                         Phone
                       </CFormLabel>
-                      <CFormControl
+                      <CFormInput
                         type="tel"
                         id="phone"
                         aria-describedby="phoneHelp"
@@ -96,7 +92,7 @@ const Register = () => {
                       >
                         Password
                       </CFormLabel>
-                      <CFormControl
+                      <CFormInput
                         type="password"
                         id="exampleInputPassword1"
                         className="custom-formgroup"
@@ -110,7 +106,7 @@ const Register = () => {
                       >
                         Confirm Password
                       </CFormLabel>
-                      <CFormControl
+                      <CFormInput
                         type="password"
                         id="confirmPass"
                         className="custom-formgroup"

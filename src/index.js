@@ -4,11 +4,13 @@ import './index.css';
 import App from './App';
 // import '@coreui/dist/css/coreui.min.css';
 import reportWebVitals from './reportWebVitals';
+import store from './store/Store'
+import { Provider } from 'react-redux'
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+  <Provider store={store}>
+    <App/>
+  </Provider>,
   document.getElementById('root')
 );
 
