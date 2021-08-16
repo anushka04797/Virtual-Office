@@ -10,7 +10,7 @@ import {
     Switch,
   } from 'react-router-dom';
   
-
+import './dashboard.css'
 const loading = (
     <div className="pt-3 text-center">
       <div className="sk-spinner sk-spinner-pulse"></div>
