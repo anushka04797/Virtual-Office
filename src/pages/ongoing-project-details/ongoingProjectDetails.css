@@ -1,0 +1,46 @@
+.dash-header{
+font-style: normal;
+font-weight: 300;
+font-size: 30px;
+line-height: 45px;
+}
+.card-ongoing-project{
+background: #FFFFFF;
+box-shadow: 5px 10px 20px rgba(189, 158, 251, 0.1);
+border-radius: 10px;
+border: none !important;
+}
+.ongoing-card-header{
+    font-style: normal;
+font-weight: 600;
+font-size: 24px;
+line-height: 36px;
+color: #444444;
+
+
+}
+.fav-button{
+color: #FBCA91;
+}
+hr.header-underline1{
+    height: 2px !important;
+    width: 277px;
+    background: #96DEFB;
+    opacity: 1 !important;
+    
+}
+.progress-background{
+    background: #EEE8FA;
+    border-radius: 40px 0px 0px 40px;
+height: 10px;
+box-shadow: inset 0px 4px 4px rgba(189, 158, 251, 0.2);
+}
+.custom-progress1{
+  background: #BD9EFB !important;
+ 
+box-shadow: 4px 0px 10px rgba(189, 158, 251, 0.5);
+height: inherit;
+
+}
+
+

@@ -5,15 +5,21 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import './App.css';
 import ProtectedRoute from './components/protected-route/ProtectedRoute'
 import { ThemeProvider,createTheme } from '@material-ui/core/styles';
-import { orange } from '@material-ui/core/colors';
+
 import { PALETTE_MODE } from './Config';
 const theme = createTheme({
   palette: {
     mode: PALETTE_MODE,
+    
     // primary:{
     //   main:"#BD9EFB"
     // }
   },
+  typography: {
+    "fontFamily": `"Poppins", sans-serif`,
+  
+   }
+
 });
 const loading = (
   <div className="pt-3 text-center">
@@ -22,9 +28,10 @@ const loading = (
 )
 // Pages
 const Login = React.lazy(() => import('./pages/sign-in/signIn'));
+const OngoingProjectDetails = React.lazy(() => import ('./pages/ongoing-project-details/ongoingProjectDetails'));
 const Register = React.lazy(() => import('./pages/sign-up/signUp'));
 const ForgotPass = React.lazy(() => import('./pages/forgot-pass/forgotPass'));
-const Dashboard = React.lazy(() => import('./pages/dashboard/Dashboard'));
+const Dashboard = React.lazy(() => import('./pages/dashboard/dashboard'));
 const App = () => {
   return (
     <>
@@ -32,10 +39,13 @@ const App = () => {
     <HashRouter>
         <React.Suspense fallback={loading}>
           <Switch>
+            
             <Route exact path="/" name="Sign in" render={props => <Login {...props} />} />
             <Route exact path="/register" name="Sign up" render={props => <Register {...props} />} />
             <Route exact path="/forgot-password" name="Forgot Password" render={props => <ForgotPass {...props} />} />
             <ProtectedRoute exact path="/dashboard" name="Dashboard" component={Dashboard}/>
+            <Route exact path="/ongoing-project-details-view"  name='Ongoing Project Details View' render={props => <OngoingProjectDetails{...props} />
+            }/>
           </Switch>
         </React.Suspense>
       </HashRouter>

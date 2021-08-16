@@ -12,10 +12,11 @@ import ListItemText from '@material-ui/core/ListItemText';
 import { useDispatch, useSelector } from 'react-redux';
 import { changeState } from '../../store/slices/DrawerSlice';
 import { drawerWidth } from '../../Config';
-import DashBoardIconFigma from '../../assets/icons/dashboard-icon.svg'
-import Icon from '@material-ui/core/Icon';
+// import DashBoardIconFigma from '../../../public/assets/icons/dashboard-icon.svg'
+import './MatSideBar.css'
 const openedMixin = (theme) => ({
     width: drawerWidth,
+    
     transition: theme.transitions.create('width', {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.enteringScreen,
@@ -80,29 +81,26 @@ export default function MatSideBar() {
     };
 
     return (
-        <Drawer variant="permanent" open={open}>
+        <Drawer variant="permanent"  open={open} className="custom-drawer">
             <DrawerHeader>
                 <IconButton onClick={handleDrawerClose}>
                     {/* Logo */}
+                    {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
                 </IconButton>
             </DrawerHeader>
-            <Divider />
+          
             <List>
-                <ListItem button>
+                <ListItem button className="custom-list-item">
                     <ListItemIcon>
                         {/* <DashboardRoundedIcon/> */}
                         {/* <Icon><img src={DashBoardIconFigma}/></Icon> */}
-                        <img src={DashBoardIconFigma}/>
+                        <img src={"assets/icons/dashboard-icon.svg"}/>
                     </ListItemIcon>
                     <ListItemText primary={"Dashboard"} />
                 </ListItem>
             </List>
-            <Divider />
-            <DrawerFooter>
-                <IconButton onClick={handleDrawerClose}>
-                    {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-                </IconButton>
-            </DrawerFooter>
+        
+          
         </Drawer>
     );
 }
