@@ -18,33 +18,14 @@ const loading = (
 )
 
 const Dashboard=()=> {
+    React.useEffect(()=>{
+        console.log('dashboard mounted')
+    },[])
     return (
         <>
-        <Box sx={{ display: 'flex' }}>
-            <CssBaseline />
-            <Header />
-            <MatSideBar />
-            <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-                <Suspense fallback={loading}>
-                    <Switch>
-                        {innerRoutes.map((route, idx) => {
-                            return route.component && (
-                                <Route
-                                    key={idx}
-                                    path={route.path}
-                                    exact={route.exact}
-                                    name={route.name}
-                                    render={props =>
-                                        <route.component {...props} />
-                                    } />
-                            )
-                        })}
-
-                        {/* <Redirect from="/" to="/dashboard" /> */}
-                    </Switch>
-                </Suspense>
-            </Box>
-        </Box>
+        <CContainer>
+            Dashboard
+        </CContainer>
         </>
     );
 }

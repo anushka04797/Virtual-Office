@@ -12,7 +12,9 @@ import ListItemText from '@material-ui/core/ListItemText';
 import { useDispatch, useSelector } from 'react-redux';
 import { changeState } from '../../store/slices/DrawerSlice';
 import { drawerWidth } from '../../Config';
-// import DashBoardIconFigma from '../../../public/assets/icons/dashboard-icon.svg'
+import DashBoardIconFigma from '../../assets/icons/dashboard-icon.svg'
+import Icon from '@material-ui/core/Icon';
+import { useHistory, useLocation } from 'react-router-dom';
 import './MatSideBar.css'
 const openedMixin = (theme) => ({
     width: drawerWidth,
@@ -76,10 +78,14 @@ export default function MatSideBar() {
     const theme = useTheme();
     const open = useSelector(state => state.drawer.open)
     const dispatch = useDispatch()
+    let history = useHistory()
+    let location = useLocation()
     const handleDrawerClose = () => {
         dispatch(changeState(open ? false : true))
     };
-
+    React.useEffect(()=>{
+        console.log(location.pathname)
+    },[location])
     return (
         <Drawer variant="permanent"  open={open} className="custom-drawer">
             <DrawerHeader>
@@ -90,13 +96,21 @@ export default function MatSideBar() {
             </DrawerHeader>
           
             <List>
-                <ListItem button className="custom-list-item">
+                <ListItem className="custom-list-item" button onClick={()=>{history.push('/dashboard')}} selected={location.pathName == "/dashboard"?true:false}>
                     <ListItemIcon>
                         {/* <DashboardRoundedIcon/> */}
                         {/* <Icon><img src={DashBoardIconFigma}/></Icon> */}
-                        <img src={"assets/icons/dashboard-icon.svg"}/>
+                        <img src={DashBoardIconFigma}/>
                     </ListItemIcon>
                     <ListItemText primary={"Dashboard"} />
+                </ListItem>
+                <ListItem button onClick={()=>{history.push('/dashboard/ongoing-project-details-view')}} selected={location.pathName == "/dashboard/ongoing-project-details-view"?true:false}>
+                    <ListItemIcon>
+                        {/* <DashboardRoundedIcon/> */}
+                        {/* <Icon><img src={DashBoardIconFigma}/></Icon> */}
+                        <img src={DashBoardIconFigma}/>
+                    </ListItemIcon>
+                    <ListItemText primary={"Projects"} />
                 </ListItem>
             </List>
         

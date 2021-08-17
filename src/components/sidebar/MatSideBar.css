@@ -9,3 +9,7 @@ font-size: 20px !important;
 line-height: 30px;
 color: #444444;
 }
+
+.Mui-selected{
+    background-color: rgb(201, 76, 76) !important;
+}
