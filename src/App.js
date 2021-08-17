@@ -9,7 +9,7 @@ import { PALETTE_MODE } from './Config';
 const theme = createTheme({
   palette: {
     mode: PALETTE_MODE,
-    
+   
     // primary:{
     //   main:"#BD9EFB"
     // }
@@ -17,7 +17,8 @@ const theme = createTheme({
   typography: {
     "fontFamily": `"Poppins", sans-serif`,
   
-   }
+   },
+  
 
 });
 const loading = (
