@@ -3,6 +3,9 @@ font-style: normal;
 font-weight: 300;
 font-size: 30px;
 line-height: 45px;
+margin-top: 30px;
+margin-bottom: 20px;
+text-align: left;
 }
 .card-ongoing-project{
 background: #FFFFFF;
@@ -43,4 +46,202 @@ height: inherit;
 
 }
 
+.details-project-body{
+    padding-top: 30px;
+    padding-bottom: 90px;
+    padding-left:30px;
+    padding-right: 30px;
+}
+.show-amount{
+text-align: right;
+font-style: normal;
+font-weight: 500;
+font-size: 12px;
+line-height: 18px;
+color: #444444;
 
+mix-blend-mode: normal;
+}
+.tiny-header1{
+font-weight: 500 !important;
+}
+.tasks-done{
+    font-style: normal;
+font-weight: 400;
+font-size: 20px;
+line-height: 30px;
+color: #444444;
+
+mix-blend-mode: normal;
+margin-top: 30px;
+}
+.all-da-buttons-1{
+    margin-top: 35px;
+}
+.package-button{
+font-family: Poppins;
+font-style: normal;
+font-weight: 600;
+font-size: 16px;
+line-height: 24px;
+padding: 12px 34px ;
+margin-right: 10px;
+border-color: transparent;
+margin-top: 10px;
+position: relative;
+}
+.package-button .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: white;
+    color: #444444;
+    text-align: center;
+    border: 1px solid #BD9EFB;
+border-radius: 8px;
+    padding: 5px 0;
+    font-style: normal;
+font-weight: normal;
+font-size: 12px;
+line-height: 18px;
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+    bottom: 120%;
+    left: 50%;
+    margin-left: -60px;
+  }
+  .package-button .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 10px;
+    border-style: solid;
+    border-color: #BD9EFB transparent transparent transparent;
+  }
+  
+  .package-button:hover .tooltiptext{
+      visibility: visible;
+  }
+  
+.lilac{
+    background: #EEE8FA;
+    color: #BD9EFB;
+}
+.paleBlue{
+    background: #E1F3FA;
+    color:#96DEFB;
+
+}
+.paleYellow{
+    background: #FAECDC;
+    color:#FBCA91;
+}
+.pastelGreen{
+    background:#98DDCA;
+    color:#056676;
+}
+
+.all-da-workers1{
+    margin-top: 30px;
+}
+.worker-image{
+    margin-right: 8px;
+    width: 55px;
+height: 55px;
+}
+
+
+.information-show{
+margin-top: 35px;
+}
+.project-details-points{
+    font-style: normal;
+font-weight: 300;
+font-size: 20px;
+line-height: 30px;
+color: #444444;
+
+mix-blend-mode: normal;
+margin-bottom: 20px;
+}
+.info-header-1{
+    font-weight: 500;
+}
+
+/*file view*/
+.file-show{
+    display: flex;
+    align-items: baseline;
+}
+.files-view{
+    font-style: normal;
+font-weight: 500;
+font-size: 20px;
+line-height: 30px;
+color: #444444;
+mix-blend-mode: normal;
+margin-right: 10px;
+}
+.file-attached{
+   
+    padding: 5px 18px;
+    
+    background: #E1F3FA;
+border-radius: 20px;
+    overflow: visible;
+  
+    position: relative;
+    font-style: normal;
+font-weight: normal;
+font-size: 20px;
+line-height: 30px;
+color: #444444;
+mix-blend-mode: normal;
+margin-right: 10px;
+margin-bottom: 10px;
+    
+}
+.remove-file{
+    position: absolute;
+    background: transparent;
+    color: white;
+    top: -19px;
+    right: -5px;
+    border-color: transparent;
+}
+.remove-file:hover,.remove-file .active,.remove-file:focus{
+    background: transparent !important;
+   box-shadow: none !important;
+    border-color: transparent !important;
+    outline:none !important;
+}
+*:focus {
+    outline: 0 !important;
+    border: none !important;
+}
+.upload-file-button1{
+    color: #96DEFB;
+    align-self: baseline;
+    justify-self: baseline;
+}
+.ad-file-icon{
+    margin-top:20px;
+    font-size:30px;
+
+}
+/*new task add*/
+.new-task-add{
+    margin-top:30px;
+}
+.task-add-btn-1{
+    background: transparent;
+    border: none;
+    font-style: normal;
+font-weight: 500;
+font-size: 20px;
+line-height: 30px;
+color: #BD9EFB;
+mix-blend-mode: normal;
+}
