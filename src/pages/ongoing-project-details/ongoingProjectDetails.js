@@ -10,7 +10,7 @@ import Select from "react-select";
 import makeAnimated from "react-select/animated";
 const OngoingProjectDetails = () => {
     const colourStyles = {
-        control: styles => ({ ...styles, backgroundColor: 'rgba(238, 232, 250, 0.5)',border:'1px solid #EEE8FA',borderRadius:"8px",height:"60px",boxShadow:"inset 0px 4px 20px rgba(189, 158, 251, 0.1)",fontSize:"16px",lineHeight:"24px" }),
+        control: styles => ({ ...styles, backgroundColor: 'rgba(238, 232, 250, 0.5)',border:'1px solid #EEE8FA',borderRadius:"8px",minHeight:"60px",boxShadow:"inset 0px 4px 20px rgba(189, 158, 251, 0.1)",fontSize:"16px",lineHeight:"24px" }),
     }
     const [visible, setVisible] = useState(false);
     const options = [
