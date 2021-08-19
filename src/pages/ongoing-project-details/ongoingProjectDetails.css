@@ -226,6 +226,10 @@ margin-bottom: 10px;
     align-self: baseline;
     justify-self: baseline;
 }
+.upload-file-button1:hover,.upload-file-button1:focus{
+    box-shadow: none !important;
+    background: transparent !important;
+}
 .ad-file-icon{
     margin-top:20px;
     font-size:30px;
@@ -245,6 +249,7 @@ line-height: 30px;
 color: #BD9EFB;
 mix-blend-mode: normal;
 }
+
 /*wbs entry modal*/
 .wbs-modal-body{
     padding-bottom: 40px;
@@ -371,3 +376,34 @@ padding: 15px 40px;
 }
 
 
+/*ADD TASK FORM*/
+.add-task-form-div{
+margin-top: 30px;
+border-top: 2px solid #96DEFB;
+}
+.add-task-form{
+    margin-top: 40px;
+    background: #FFFFFF;
+border: 1px solid #9DE0FA;
+box-sizing: border-box;
+box-shadow: 5px 10px 20px rgba(189, 158, 251, 0.1);
+border-radius: 20px;
+padding:20px;
+
+}
+.close-form{
+    margin-top: 10px;
+    text-align: right;
+}
+.closeform-custom-button{
+    background: transparent;
+    border:none !important;
+    outline:0;
+
+}
+.closeform-custom-button:hover,.closeform-custom-button:focus,.closeform-custom-button.active{
+    background: transparent !important;
+    border:none !important;
+    outline:0 !important;
+ 
+}

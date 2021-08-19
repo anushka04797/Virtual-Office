@@ -8,9 +8,18 @@ import IconButton from '@material-ui/core/IconButton';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
+import { CIcon } from "@coreui/icons-react";
 const OngoingProjectDetails = () => {
+
+    const [showTaskForm, setShowTaskForm] = useState(false);
+    const toggleTaskForm = () => {
+        setShowTaskForm(!showTaskForm);
+    };
+    const closeForm = () => {
+        setShowTaskForm(false)
+    }
     const colourStyles = {
-        control: styles => ({ ...styles, backgroundColor: 'rgba(238, 232, 250, 0.5)',border:'1px solid #EEE8FA',borderRadius:"8px",minHeight:"60px",boxShadow:"inset 0px 4px 20px rgba(189, 158, 251, 0.1)",fontSize:"16px",lineHeight:"24px" }),
+        control: styles => ({ ...styles, backgroundColor: 'rgba(238, 232, 250, 0.5)', border: '1px solid #EEE8FA', borderRadius: "8px", minHeight: "60px", boxShadow: "inset 0px 4px 20px rgba(189, 158, 251, 0.1)", fontSize: "16px", lineHeight: "24px" }),
     }
     const [visible, setVisible] = useState(false);
     const options = [
@@ -51,7 +60,7 @@ const OngoingProjectDetails = () => {
                                         htmlFor="endDate"
                                         className="custom-label2"
                                     >Task end Date</CFormLabel>
-                                    <CFormInput type="date" id="endDate"  className="custom-formgroup2" />
+                                    <CFormInput type="date" id="endDate" className="custom-formgroup2" />
                                 </div>
 
                                 {/*estimated person */}
@@ -83,19 +92,19 @@ const OngoingProjectDetails = () => {
                                         isMulti
                                         options={options}
                                         styles={colourStyles}
-                                        
+
                                     />
                                 </div>
                                 {/*already assigned*/}
                                 <div className="col-md-12 mb-3">
                                     <div className="file-show add-dude">
-<h5 className="added-images"><CButton className="remove-dude"><img src={"assets/icons/close-icon-red.png"}/></CButton> <img className="img-fluid added-worker-image" src={"assets/thumbnails/defaultuser1.png"} /></h5>
-                                    {/**dummy data,remove it when dynamic */}
-                                    <h5 className="added-images"><CButton className="remove-dude"><img src={"assets/icons/close-icon-red.png"}/></CButton> <img className="img-fluid added-worker-image" src={"assets/thumbnails/defaultuser2.png"} /></h5>
-                                    <h5 className="added-images"><CButton className="remove-dude"><img src={"assets/icons/close-icon-red.png"}/></CButton> <img className="img-fluid added-worker-image" src={"assets/thumbnails/defaultuser3.png"} /></h5>
-                                    <h5 className="added-images"><CButton className="remove-dude"><img src={"assets/icons/close-icon-red.png"}/></CButton> <img className="img-fluid added-worker-image" src={"assets/thumbnails/defaultuser4.png"} /></h5>
-                                    <h5 className="added-images"><CButton className="remove-dude"><img src={"assets/icons/close-icon-red.png"}/></CButton> <img className="img-fluid added-worker-image" src={"assets/thumbnails/defaultuser1.png"} /></h5>
-                                    
+                                        <h5 className="added-images"><CButton className="remove-dude"><img src={"assets/icons/close-icon-red.png"} /></CButton> <img className="img-fluid added-worker-image" src={"assets/thumbnails/defaultuser1.png"} /></h5>
+                                        {/**dummy data,remove it when dynamic */}
+                                        <h5 className="added-images"><CButton className="remove-dude"><img src={"assets/icons/close-icon-red.png"} /></CButton> <img className="img-fluid added-worker-image" src={"assets/thumbnails/defaultuser2.png"} /></h5>
+                                        <h5 className="added-images"><CButton className="remove-dude"><img src={"assets/icons/close-icon-red.png"} /></CButton> <img className="img-fluid added-worker-image" src={"assets/thumbnails/defaultuser3.png"} /></h5>
+                                        <h5 className="added-images"><CButton className="remove-dude"><img src={"assets/icons/close-icon-red.png"} /></CButton> <img className="img-fluid added-worker-image" src={"assets/thumbnails/defaultuser4.png"} /></h5>
+                                        <h5 className="added-images"><CButton className="remove-dude"><img src={"assets/icons/close-icon-red.png"} /></CButton> <img className="img-fluid added-worker-image" src={"assets/thumbnails/defaultuser1.png"} /></h5>
+
                                     </div>
                                 </div>
 
@@ -208,8 +217,115 @@ const OngoingProjectDetails = () => {
                                 {/*add new task option */}
 
                                 <div className="new-task-add">
-                                    <CButton className="task-add-btn-1">+ Add New Task</CButton>
+                                    <CButton className="task-add-btn-1" onClick={toggleTaskForm}>+ Add New Task</CButton>
                                 </div>
+
+                                {/*show add task form on click button */}
+                                {showTaskForm ?
+                                    <div className="add-task-form-div">
+                                        <CForm className="add-task-form">
+                                            <CContainer>
+                                            <div className="close-form"><CButton className="closeform-custom-button" onClick={closeForm}><img src={"assets/icons/close-button-salmon.png"} /></CButton></div>
+                                            <CRow>
+                                                {/**task title */}
+                                                <div className="col-md-6 mb-3">
+                                    <CFormLabel
+                                        htmlFor="taskTitle"
+                                        className="custom-label2"
+                                    >Task Title</CFormLabel>
+                                    <CFormInput type="text" id="taskTitle" className="custom-formgroup2" />
+                                </div>
+                                {/**work package */}
+                                <div className="col-md-6 mb-3">
+                                    <CFormLabel
+                                        htmlFor="workPackage"
+                                        className="custom-label2"
+                                    >Work Package</CFormLabel>
+                                    <CFormInput type="number" id="workPackage" className="custom-formgroup2" />
+                                </div>
+                                {/**Start date */}
+
+                                <div className="col-md-6 mb-3">
+                                    <CFormLabel
+                                        htmlFor="startDate"
+                                        className="custom-label2"
+                                    >Task Start Date</CFormLabel>
+                                    <CFormInput type="date" id="startDate" className="custom-formgroup2" />
+                                </div>
+                                {/*task end date */}
+
+                                <div className="col-md-6 mb-3">
+                                    <CFormLabel
+                                        htmlFor="endDate"
+                                        className="custom-label2"
+                                    >Task end Date</CFormLabel>
+                                    <CFormInput type="date" id="endDate" className="custom-formgroup2" />
+                                </div>
+{/**Task details */}
+  {/**Start date */}
+
+  <div className="col-md-12 mb-3">
+                                    <CFormLabel
+                                        htmlFor="taskDetails"
+                                        className="custom-label2"
+                                    >Task Details</CFormLabel>
+                                    <CFormInput type="text" id="taskDetails" className="custom-formgroup2" />
+                                </div>
+                                {/*estimated person */}
+                                <div className="col-md-6 mb-3">
+                                    <CFormLabel
+                                        htmlFor="estimatedPerons"
+                                        className="custom-label2"
+                                    >Estimated Persons</CFormLabel>
+                                    <CFormInput type="number" id="estimatedPerons" className="custom-formgroup2" />
+                                </div>
+                                {/*labor hours */}
+                                <div className="col-md-6 mb-3">
+                                    <CFormLabel
+                                        htmlFor="laborHours"
+                                        className="custom-label2"
+                                    >Labour Hours</CFormLabel>
+                                    <CFormInput type="number" id="laborHours" className="custom-formgroup2" />
+                                </div>
+
+                                {/*participants */}
+                                <div className="col-md-12 mb-3">
+                                    <CFormLabel htmlFor="participants" className="custom-label2">
+                                        Assignees
+                                    </CFormLabel>
+                                    <Select
+                                        closeMenuOnSelect={false}
+                                        components={animatedComponents}
+                                        name="participants"
+                                        isMulti
+                                        options={options}
+                                        styles={colourStyles}
+
+                                    />
+                                </div>
+                                {/*already assigned*/}
+                                <div className="col-md-12 mb-3">
+                                    <div className="file-show add-dude">
+                                        <h5 className="added-images"><CButton className="remove-dude"><img src={"assets/icons/close-icon-red.png"} /></CButton> <img className="img-fluid added-worker-image" src={"assets/thumbnails/defaultuser1.png"} /></h5>
+                                        {/**dummy data,remove it when dynamic */}
+                                        <h5 className="added-images"><CButton className="remove-dude"><img src={"assets/icons/close-icon-red.png"} /></CButton> <img className="img-fluid added-worker-image" src={"assets/thumbnails/defaultuser2.png"} /></h5>
+                                        <h5 className="added-images"><CButton className="remove-dude"><img src={"assets/icons/close-icon-red.png"} /></CButton> <img className="img-fluid added-worker-image" src={"assets/thumbnails/defaultuser3.png"} /></h5>
+                                        <h5 className="added-images"><CButton className="remove-dude"><img src={"assets/icons/close-icon-red.png"} /></CButton> <img className="img-fluid added-worker-image" src={"assets/thumbnails/defaultuser4.png"} /></h5>
+                                        <h5 className="added-images"><CButton className="remove-dude"><img src={"assets/icons/close-icon-red.png"} /></CButton> <img className="img-fluid added-worker-image" src={"assets/thumbnails/defaultuser1.png"} /></h5>
+
+                                    </div>
+                                </div>
+
+                                {/**submit button */}
+                                <div className="col-md-12 mb-3">
+                                    <CButton type="submit" className="create-wbs-button">Create WBS</CButton>
+                                </div>
+                            </CRow>
+                                            </CContainer>
+                                        </CForm>
+                                    </div>
+                                    : null
+                                }
                             </CCardBody>
 
                         </CCard>
