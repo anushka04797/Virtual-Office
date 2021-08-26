@@ -112,6 +112,14 @@ export default function MatSideBar() {
                     </ListItemIcon>
                     <ListItemText primary={"Projects"} />
                 </ListItem>
+                <ListItem button onClick={()=>{history.push('/dashboard/meetings')}} selected={location.pathName == "/dashboard/meetings"?true:false}>
+                    <ListItemIcon>
+                        {/* <DashboardRoundedIcon/> */}
+                        {/* <Icon><img src={DashBoardIconFigma}/></Icon> */}
+                        <img src={DashBoardIconFigma}/>
+                    </ListItemIcon>
+                    <ListItemText primary={"Meetings"} />
+                </ListItem>
             </List>
         
           

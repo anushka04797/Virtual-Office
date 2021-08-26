@@ -1,9 +1,7 @@
 import { React, useState } from 'react';
-import { makeStyles } from '@material-ui/styles';
 import './ongoingProjectDetails.css'
 import { CCard, CCardBody, CButton, CModal, CModalHeader, CModalBody, CContainer, CForm, CRow, CFormLabel, CFormInput, CModalTitle } from '@coreui/react';
 import GradeIcon from '@material-ui/icons/Grade';
-import { Link, Redirect, useHistory } from "react-router-dom";
 import IconButton from '@material-ui/core/IconButton';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import Select from "react-select";
