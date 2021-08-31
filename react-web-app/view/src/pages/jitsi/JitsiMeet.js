@@ -1,39 +1,134 @@
-import React from "react";
+import React, { Component } from 'react';
 
-const VideoConference = () => {
-    const jitsiContainerId = "jitsi-container-id";
-    const [jitsi, setJitsi] = React.useState({});
-    const loadJitsiScript = () => {
-        let resolveLoadJitsiScriptPromise = null;
-        const loadJitsiScriptPromise = new Promise((resolve) => {
-            resolveLoadJitsiScriptPromise = resolve;
+class JitsiComponent extends Component {
+    domain = 'meet.jit.si';
+    api = {};
+    constructor(props) {
+        super(props);
+        this.state = {
+            room: this.props.roomName,
+            user: {
+                name: this.props.username
+            },
+            isAudioMuted: false,
+            isVideoMuted: false
+        }
+    }
+
+    startMeet = () => {
+        const options = {
+            roomName: this.state.room,
+            width: '100%',
+            height: 500,
+            configOverwrite: { prejoinPageEnabled: false },
+            interfaceConfigOverwrite: {
+                // overwrite interface properties
+            },
+            parentNode: document.querySelector('#jitsi-iframe'),
+            userInfo: {
+                displayName: this.state.user.name
+            }
+        }
+        this.api = new window.JitsiMeetExternalAPI(this.domain, options);
+
+        this.api.addEventListeners({
+            readyToClose: this.handleClose,
+            participantLeft: this.handleParticipantLeft,
+            participantJoined: this.handleParticipantJoined,
+            videoConferenceJoined: this.handleVideoConferenceJoined,
+            videoConferenceLeft: this.handleVideoConferenceLeft,
+            audioMuteStatusChanged: this.handleMuteStatus,
+            videoMuteStatusChanged: this.handleVideoStatus
         });
-        const script = document.createElement("script");
-        script.src = "https://meet.jit.si/external_api.js";
-        script.async = true;
-        script.onload = resolveLoadJitsiScriptPromise
-        document.body.appendChild(script);
-        return loadJitsiScriptPromise;
-    };
-    
-    const initialiseJitsi = async () => {
-        if (!window.JitsiMeetExternalAPI) {
-            await loadJitsiScript();
+    }
+
+    handleClose = () => {
+        console.log("handleClose");
+        // this.props.onMeetingClose()
+    }
+
+    handleParticipantLeft = async (participant) => {
+        console.log("handleParticipantLeft", participant); // { id: "2baa184e" }
+        const data = await this.getParticipants();
+    }
+
+    handleParticipantJoined = async (participant) => {
+        console.log("handleParticipantJoined", participant); // { id: "2baa184e", displayName: "Shanu Verma", formattedDisplayName: "Shanu Verma" }
+        const data = await this.getParticipants();
+    }
+
+    handleVideoConferenceJoined = async (participant) => {
+        console.log("handleVideoConferenceJoined", participant); // { roomName: "bwb-bfqi-vmh", id: "8c35a951", displayName: "Akash Verma", formattedDisplayName: "Akash Verma (me)"}
+        const data = await this.getParticipants();
+    }
+
+    handleVideoConferenceLeft = () => {
+        console.log("handleVideoConferenceLeft");
+        this.props.onMeetingClose()
+    }
+
+    handleMuteStatus = (audio) => {
+        console.log("handleMuteStatus", audio); // { muted: true }
+    }
+
+    handleVideoStatus = (video) => {
+        console.log("handleVideoStatus", video); // { muted: true }
+    }
+
+    getParticipants() {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                resolve(this.api.getParticipantsInfo()); // get all participants
+            }, 500)
+        });
+    }
+
+    // custom events
+    executeCommand(command) {
+        this.api.executeCommand(command);;
+        if(command == 'hangup') {
+            return this.props.history.push('/dashboard/meetings');
         }
 
-        const _jitsi = new window.JitsiMeetExternalAPI("meet.jit.si", {
-            parentNode: document.getElementById(jitsiContainerId),
-        });
+        if(command == 'toggleAudio') {
+            this.setState({ isAudioMuted: !this.state.isAudioMuted });
+        }
 
-        setJitsi(_jitsi)
-    };
+        if(command == 'toggleVideo') {
+            this.setState({ isVideoMuted: !this.state.isVideoMuted });
+        }
+    }
 
-    React.useEffect(() => {
-        initialiseJitsi();
+    componentDidMount() {
+        if (window.JitsiMeetExternalAPI) {
+            this.startMeet();
+        } else {
+            alert('JitsiMeetExternalAPI not loaded');
+        }
+    }
 
-        return () => jitsi?.dispose?.();
-    }, []);
-    return <div id={jitsiContainerId} style={{ height: 720, width: "100%" }} />;
-};
+    render() {
+        const { isAudioMuted, isVideoMuted } = this.state;
+        return (
+            <>
+            {/* <header className="nav-bar">
+                <p className="item-left heading">Jitsi React</p>
+            </header> */}
+            <div id="jitsi-iframe"></div>
+            <div class="item-center">
+                <span>Custom Controls</span>
+            </div>
+            <div class="item-center">
+                <span>&nbsp;&nbsp;</span>
+                <i onClick={ () => this.executeCommand('toggleAudio') } className={`fas fa-2x grey-color ${isAudioMuted ? 'fa-microphone-slash' : 'fa-microphone'}`} aria-hidden="true" title="Mute / Unmute"></i>
+                <i onClick={ () => this.executeCommand('hangup') } className="fas fa-phone-slash fa-2x red-color" aria-hidden="true" title="Leave"></i>
+                <i onClick={ () => this.executeCommand('toggleVideo') } className={`fas fa-2x grey-color ${isVideoMuted ? 'fa-video-slash' : 'fa-video'}`} aria-hidden="true" title="Start / Stop camera"></i>
+                <i onClick={ () => this.executeCommand('toggleShareScreen') } className="fas fa-film fa-2x grey-color" aria-hidden="true" title="Share your screen"></i>
+            </div>
 
-export default VideoConference;
+            </>
+        );
+    }
+}
+
+export default JitsiComponent;
