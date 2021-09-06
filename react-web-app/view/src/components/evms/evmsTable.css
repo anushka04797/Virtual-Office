@@ -1,0 +1,16 @@
+.card-details2{
+    font-style: normal;
+font-weight: 400;
+font-size: 18px;
+line-height: 28px;
+color: #444444;
+text-transform: capitalize;
+mix-blend-mode: normal;
+}
+.p-header-4{
+    font-weight: 500 !important;
+
+}
+.evmsval{
+    color: green;
+}
