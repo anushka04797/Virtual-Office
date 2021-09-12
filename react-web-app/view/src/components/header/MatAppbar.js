@@ -20,7 +20,7 @@ import { drawerWidth } from '../../Config';
 import { useDispatch, useSelector } from 'react-redux';
 import { changeState } from '../../store/slices/DrawerSlice';
 import { useHistory } from 'react-router-dom';
-
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
 })(({ theme, open }) => ({
