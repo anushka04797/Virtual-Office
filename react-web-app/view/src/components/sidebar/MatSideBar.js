@@ -63,6 +63,7 @@ const DrawerFooter = styled("div")(({ theme }) => ({
 }));
 
 const Drawer = styled(MuiDrawer, {
+
   shouldForwardProp: (prop) => prop !== "open",
 })(({ theme, open }) => ({
   width: drawerWidth,
@@ -79,7 +80,9 @@ const Drawer = styled(MuiDrawer, {
   }),
 }));
 const useStyles = makeStyles((theme) => ({
+
   root: {
+    
     width: "100%",
     maxWidth: 360,
     backgroundColor: "theme.palette.background.paper",
@@ -87,8 +90,11 @@ const useStyles = makeStyles((theme) => ({
   nested: {
     paddingLeft: " theme.spacing(4)",
   },
+
 }));
-export default function MatSideBar() {
+export default function MatSideBar(props) {
+  const { window } = props;
+  const [mobileOpen, setMobileOpen] = useState(false);
   const classes = useStyles();
   const theme = useTheme();
   const open = useSelector((state) => state.drawer.open);
@@ -96,10 +102,16 @@ export default function MatSideBar() {
   let history = useHistory();
   let location = useLocation();
   const [opening, setOpen] = useState(true);
+  const[opening2,setOpen2]=useState(true);
   const handleClickProjects = () => {
     setOpen(!opening);
   };
-
+  const handleClickWBS=()=>{
+    setOpen2(!opening2);
+  }
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
   const handleDrawerClose = () => {
     dispatch(changeState(open ? false : true));
   };
@@ -107,7 +119,10 @@ export default function MatSideBar() {
     console.log(location.pathname);
   }, [location]);
   return (
-    <Drawer variant="permanent" open={open} className="custom-drawer">
+   <>
+   {/**Desktop menu */}
+    <Drawer variant="permanent" open={open} 
+     className="custom-drawer">
       <DrawerHeader>
         <IconButton onClick={handleDrawerClose}>
           {/* Logo */}
@@ -214,25 +229,66 @@ export default function MatSideBar() {
           selected={location.pathName == "/dashboard/meetings" ? true : false}
         >
           <ListItemIcon>
-          
             <img src={DashBoardIconFigma} />
           </ListItemIcon>
           <ListItemText primary={"Meetings"} />
         </ListItem>
-        {/*WBS*/ }
+        {/*WBS*/}
         <ListItem
           button
-          onClick={() => {
-            history.push("/dashboard/WBS");
-          }}
-          selected={location.pathName == "/dashboard/WBS" ? true : false}
+         onClick={handleClickWBS}
         >
           <ListItemIcon>
-          
             <img src={DashBoardIconFigma} />
           </ListItemIcon>
           <ListItemText primary={"WBS"} />
+          {opening2 ? <ExpandMore /> : <ExpandLess />}
         </ListItem>
+        {/**WBS Subroutes */}
+        <Collapse in={!opening2} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            {/**Create WBS */}
+            <ListItem
+              button
+              className={classes.nested}
+              onClick={() => {
+                history.push(
+                  "/dashboard/WBS/create-wbs"
+                );
+              }}
+              selected={
+                location.pathName ==
+                "/dashboard/WBS/create-wbs"
+                  ? true
+                  : false
+              }
+            >
+              <ListItemIcon>
+                <RadioButtonCheckedIcon />
+              </ListItemIcon>
+              <ListItemText primary="Create WBS" />
+            </ListItem>
+            {/**BOARD */}
+            <ListItem
+              button
+              className={classes.nested}
+              onClick={() => {
+                history.push("/dashboard/WBS/board");
+              }}
+              selected={
+                location.pathName == "/dashboard/WBS/board"
+                  ? true
+                  : false
+              }
+            >
+              <ListItemIcon>
+                <RadioButtonCheckedIcon />
+              </ListItemIcon>
+              <ListItemText primary="Board" />
+            </ListItem>
+          
+          </List>
+        </Collapse>
         {/**EVMS */}
         <ListItem
           button
@@ -242,7 +298,6 @@ export default function MatSideBar() {
           selected={location.pathName == "/dashboard/EVMS" ? true : false}
         >
           <ListItemIcon>
-          
             <img src={DashBoardIconFigma} />
           </ListItemIcon>
           <ListItemText primary={"EVMS"} />
@@ -256,7 +311,6 @@ export default function MatSideBar() {
           selected={location.pathName == "/dashboard/profile" ? true : false}
         >
           <ListItemIcon>
-          
             <img src={DashBoardIconFigma} />
           </ListItemIcon>
           <ListItemText primary={"Profile"} />
@@ -270,7 +324,6 @@ export default function MatSideBar() {
           selected={location.pathName == "/dashboard/timecards" ? true : false}
         >
           <ListItemIcon>
-          
             <img src={DashBoardIconFigma} />
           </ListItemIcon>
           <ListItemText primary={"Timecards"} />
@@ -281,15 +334,21 @@ export default function MatSideBar() {
           onClick={() => {
             history.push("/dashboard/shared-documents");
           }}
-          selected={location.pathName == "/dashboard/shared-documents" ? true : false}
+          selected={
+            location.pathName == "/dashboard/shared-documents" ? true : false
+          }
         >
           <ListItemIcon>
-          
             <img src={DashBoardIconFigma} />
           </ListItemIcon>
           <ListItemText primary={"Shared Docs"} />
         </ListItem>
       </List>
     </Drawer>
+
+    {/**mobile drawer */}
+   
+
+    </>
   );
 }

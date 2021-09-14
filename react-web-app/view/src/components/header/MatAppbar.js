@@ -247,7 +247,7 @@ export default function MatAppbar() {
               <AccountCircle />
             </IconButton>
           </Box>
-          <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+          <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
             <IconButton
               size="large"
               aria-label="show more"
