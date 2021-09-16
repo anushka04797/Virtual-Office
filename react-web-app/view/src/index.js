@@ -1,12 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import { icons } from './assets/icons'
 import App from './App';
 // import '@coreui/dist/css/coreui.min.css';
+
 import reportWebVitals from './reportWebVitals';
 import store from './store/Store'
 import { Provider } from 'react-redux'
-
+React.icons = icons
 ReactDOM.render(
   <Provider store={store}>
     <App/>

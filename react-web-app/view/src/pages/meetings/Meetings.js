@@ -1,4 +1,4 @@
-import { CContainer, CRow, CCol, CCard, CCardBody, CButton, CFormInput, CForm, CFormLabel, CFormSelect } from '@coreui/react';
+import { CContainer, CRow, CCol, CCard, CCardBody, CButton, CInput, CForm, CLabel, CSelect } from '@coreui/react';
 import { React, useState } from 'react';
 import VideoCallIcon from '@material-ui/icons/VideoCall';
 import './meetings.css';
@@ -83,39 +83,39 @@ const OurMeetings = () => {
                                 <CForm>
                                     {/**Project Name */}
                                     <div className="mb-3">
-                                        <CFormLabel className="custom-label3">Project Name</CFormLabel>
-                                        <CFormSelect aria-label="Default select example" className="custom-formgroup3">
+                                        <CLabel className="custom-label3">Project Name</CLabel>
+                                        <CSelect aria-label="Default select example" className="custom-formgroup3">
                                             <option disabled>Open this select menu</option>
                                             <option value="1">One</option>
                                             <option value="2">Two</option>
                                             <option value="3">Three</option>
-                                        </CFormSelect>
+                                        </CSelect>
                                     </div>
                                     {/**host name */}
                                     <div className="mb-3">
-                                        <CFormLabel
+                                        <CLabel
                                             htmlFor="hostName"
                                             className="custom-label3"
-                                        >Host</CFormLabel>
-                                        <CFormInput type="text" id="hostName" className="custom-formgroup3" />
+                                        >Host</CLabel>
+                                        <CInput type="text" id="hostName" className="custom-formgroup3" />
 
                                     </div>
                                     {/*agenda*/}
                                     <div className="mb-3">
-                                        <CFormLabel
+                                        <CLabel
                                             htmlFor="agendaItem"
                                             className="custom-label3"
-                                        >Meeting Agenda</CFormLabel>
-                                        <CFormInput type="text" id="agendaItem" className="custom-formgroup3" />
+                                        >Meeting Agenda</CLabel>
+                                        <CInput type="text" id="agendaItem" className="custom-formgroup3" />
 
                                     </div>
                                     {/*room name*/}
                                     <div className="mb-3">
-                                        <CFormLabel
+                                        <CLabel
                                             htmlFor="roomItem"
                                             className="custom-label3"
-                                        >Room Name</CFormLabel>
-                                        <CFormInput 
+                                        >Room Name</CLabel>
+                                        <CInput 
                                             type="text" 
                                             id="roomName" 
                                             name="roomName"
@@ -127,13 +127,13 @@ const OurMeetings = () => {
                                     </div>
                                     {/**password */}
                                     <div className="mb-3">
-                                        <CFormLabel
+                                        <CLabel
                                             htmlFor="exampleInputPassword1"
                                             className="custom-label3"
                                         >
                                             Password
-                                        </CFormLabel>
-                                        <CFormInput
+                                        </CLabel>
+                                        <CInput
                                             type="password"
                                             id="exampleInputPassword1"
                                             className="custom-formgroup3"

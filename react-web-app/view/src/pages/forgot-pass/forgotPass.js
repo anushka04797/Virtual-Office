@@ -2,8 +2,8 @@
 import React, { useState } from "react";
 import {
     CForm,
-    CFormLabel,
-    CFormInput,
+    CLabel,
+    CInput,
     CButton,
 } from "@coreui/react";
 import './forgotPass.css';
@@ -22,13 +22,13 @@ const ForgotPass = () => {
                             <div className="forgot-form-holder">
                                 <CForm>
                                     <div className="mb-3">
-                                        <CFormLabel
+                                        <CLabel
                                             htmlFor="exampleInputEmail1"
                                             className="custom-label"
                                         >
                                             Email
-                                        </CFormLabel>
-                                        <CFormInput
+                                        </CLabel>
+                                        <CInput
                                             type="email"
                                             id="exampleInputEmail1"
                                             aria-describedby="emailHelp"
