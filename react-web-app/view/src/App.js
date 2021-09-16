@@ -30,7 +30,7 @@ const loading = (
 const Login = React.lazy(() => import('./pages/sign-in/signIn'));
 const Register = React.lazy(() => import('./pages/sign-up/signUp'));
 const ForgotPass = React.lazy(() => import('./pages/forgot-pass/forgotPass'));
-const TheContainer = React.lazy(()=>import('./container/TheContainer'))
+const TheLayout = React.lazy(()=>import('./containers/TheLayout'))
 const App = () => {
   return (
     <>
@@ -42,7 +42,7 @@ const App = () => {
             <Route exact path="/" name="Sign in" render={props => <Login {...props} />} />
             <Route exact path="/register" name="Sign up" render={props => <Register {...props} />} />
             <Route exact path="/forgot-password" name="Forgot Password" render={props => <ForgotPass {...props} />} />
-            <ProtectedRoute path="/dashboard" name="Dashboard" component={TheContainer}/>
+            <ProtectedRoute path="/dashboard" name="Dashboard" component={TheLayout}/>
           </Switch>
         </React.Suspense>
       </HashRouter>

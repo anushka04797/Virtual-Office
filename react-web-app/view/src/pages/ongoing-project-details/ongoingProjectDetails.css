@@ -47,8 +47,8 @@ height: inherit;
 }
 
 .details-project-body{
-    padding-top: 30px;
-    padding-bottom: 90px;
+    /* padding-top: 30px;
+    padding-bottom: 30px; */
     padding-left:30px;
     padding-right: 30px;
 }
@@ -155,6 +155,7 @@ height: 55px;
 
 .information-show{
 margin-top: 35px;
+justify-content: center;
 }
 .project-details-points{
     font-style: normal;
@@ -237,7 +238,7 @@ margin-bottom: 10px;
 }
 /*new task add*/
 .new-task-add{
-    margin-top:30px;
+    margin-top:20px;
 }
 .task-add-btn-1{
     background: transparent;
@@ -406,4 +407,10 @@ padding:20px;
     border:none !important;
     outline:0 !important;
  
+}
+
+.child{
+    /* margin-left: auto;
+    order: 2; */
+    margin-right: 40px;
 }

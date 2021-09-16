@@ -3,10 +3,10 @@ import "./signIn.css";
 import {
   CForm,
   CInputGroup,
-  CFormLabel,
-  CFormInput,
+  CLabel,
+  CInput,
   CFormText,
-  CFormCheck,
+  CInputCheckbox,
   CButton,
 } from "@coreui/react";
 import { Link,Redirect,useHistory } from "react-router-dom";
@@ -31,13 +31,13 @@ const SignIn = () => {
                   <div className="form-holder">
                     <CForm className="custom-form">
                       <div className="mb-3">
-                        <CFormLabel
+                        <CLabel
                           htmlFor="exampleInputEmail1"
                           className="custom-label"
                         >
                           Email
-                        </CFormLabel>
-                        <CFormInput
+                        </CLabel>
+                        <CInput
                           type="email"
                           id="exampleInputEmail1"
                           aria-describedby="emailHelp"
@@ -48,13 +48,13 @@ const SignIn = () => {
     </CFormText> */}
                       </div>
                       <div className="mb-3">
-                        <CFormLabel
+                        <CLabel
                           htmlFor="exampleInputPassword1"
                           className="custom-label"
                         >
                           Password
-                        </CFormLabel>
-                        <CFormInput
+                        </CLabel>
+                        <CInput
                           type="password"
                           id="exampleInputPassword1"
                           className="custom-formgroup"
@@ -63,7 +63,7 @@ const SignIn = () => {
                       <div className="show-flex">
                         <div className="rem">
                           
-                          <CFormCheck
+                          <CInputCheckbox
                             className="mb-3 custom-check"
                             label="Remember Me"
                             onChange={(e) => {

@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import "./signUp.css";
 import {
   CForm,
-  CFormLabel,
+  CLabel,
   CButton,
-  CFormInput,
+  CInput,
 } from "@coreui/react";
 import { Link, useHistory } from "react-router-dom";
 
@@ -38,10 +38,10 @@ const Register = () => {
                   <div className="row">
                     {/**first name */}
                     <div className="col-md-6 col-sm-12 col-12 mb-3">
-                      <CFormLabel htmlFor="firstName" className="custom-label">
+                      <CLabel htmlFor="firstName" className="custom-label">
                         First Name
-                      </CFormLabel>
-                      <CFormInput
+                      </CLabel>
+                      <CInput
                         type="text"
                         id="firstName"
                         aria-describedby="fnHelp"
@@ -50,10 +50,10 @@ const Register = () => {
                     </div>
                     {/**last name */}
                     <div className="col-md-6 col-sm-12 col-12 mb-3">
-                      <CFormLabel htmlFor="lastName" className="custom-label">
+                      <CLabel htmlFor="lastName" className="custom-label">
                         Last Name
-                      </CFormLabel>
-                      <CFormInput
+                      </CLabel>
+                      <CInput
                         type="text"
                         id="lastName"
                         aria-describedby="lnHelp"
@@ -62,10 +62,10 @@ const Register = () => {
                     </div>
                     {/**Email */}
                     <div className="col-md-6 col-sm-12 col-12 mb-3">
-                      <CFormLabel htmlFor="email" className="custom-label">
+                      <CLabel htmlFor="email" className="custom-label">
                         Email
-                      </CFormLabel>
-                      <CFormInput
+                      </CLabel>
+                      <CInput
                         type="email"
                         id="email"
                         aria-describedby="emailHelp"
@@ -74,10 +74,10 @@ const Register = () => {
                     </div>
                     {/**Phone */}
                     <div className="col-md-6 col-sm-12 col-12 mb-3">
-                      <CFormLabel htmlFor="phone" className="custom-label">
+                      <CLabel htmlFor="phone" className="custom-label">
                         Phone
-                      </CFormLabel>
-                      <CFormInput
+                      </CLabel>
+                      <CInput
                         type="tel"
                         id="phone"
                         aria-describedby="phoneHelp"
@@ -86,13 +86,13 @@ const Register = () => {
                     </div>
                     {/**password */}
                     <div className="col-md-6 col-sm-12 mb-3">
-                      <CFormLabel
+                      <CLabel
                         htmlFor="exampleInputPassword1"
                         className="custom-label"
                       >
                         Password
-                      </CFormLabel>
-                      <CFormInput
+                      </CLabel>
+                      <CInput
                         type="password"
                         id="exampleInputPassword1"
                         className="custom-formgroup"
@@ -100,13 +100,13 @@ const Register = () => {
                     </div>
                     {/*confirm password */}
                     <div className="col-md-6 col-sm-12 mb-3">
-                      <CFormLabel
+                      <CLabel
                         htmlFor="confirmPass"
                         className="custom-label"
                       >
                         Confirm Password
-                      </CFormLabel>
-                      <CFormInput
+                      </CLabel>
+                      <CInput
                         type="password"
                         id="confirmPass"
                         className="custom-formgroup"
