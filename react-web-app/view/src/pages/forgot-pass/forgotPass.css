@@ -1,6 +1,6 @@
 .forgot-header{
-    padding-top: 300px;
-    font-family: Poppins;
+    padding-top: 150px;
+    /* font-family: Poppins; */
     font-style: normal;
     font-weight: 600;
     font-size: 48px;
@@ -11,7 +11,7 @@
 /*form codes*/
 .forgot-form-holder{
     margin-top: 50px;
-    font-family: 'Poppins' !important;
+    /* font-family: 'Poppins' !important; */
 }
 .form-control{
     background-color: transparent !important;
@@ -53,7 +53,7 @@ padding-bottom: 14px;
 } */
 .image-holder img{
     position: absolute;
-    top: 24%;
+    top: 12%;
     right: 7%;
 }
 

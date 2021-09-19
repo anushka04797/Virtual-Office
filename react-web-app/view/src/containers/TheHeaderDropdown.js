@@ -30,7 +30,9 @@ function logout(){
             className="c-avatar-img"
             alt="admin@bootstrapmaster.com"
           />
+         
         </div>
+        <span className="ml-2  u-name">User Name</span>
       </CDropdownToggle>
       <CDropdownMenu className="pt-0" placement="bottom-end">
         <CDropdownItem

@@ -6,7 +6,7 @@ padding-top: 100px;
     padding-top: 50px;
 }
 .form-header{
-    font-family: Poppins;
+/* font-family: Poppins; */
 font-style: normal;
 font-weight: 600;
 font-size: 48px;
@@ -32,7 +32,7 @@ color: #444444;
   
 }
 .custom-form{
-    font-family: 'Poppins' !important;
+    /* font-family: 'Poppins' !important; */
     margin-top: 60px;
 }
 .form-control{

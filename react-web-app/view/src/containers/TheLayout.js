@@ -5,7 +5,7 @@ import {
   TheFooter,
   TheHeader
 } from './index'
-
+import './TheLayout.css'
 const TheLayout = () => {
 
   return (
@@ -13,7 +13,7 @@ const TheLayout = () => {
       <TheSidebar/>
       <div className="c-wrapper">
         <TheHeader/>
-        <div className="c-body pt-10">
+        <div className="c-body pt-10 custom-color-c-app">
           <TheContent/>
         </div>
         {/* <TheFooter/> */}
