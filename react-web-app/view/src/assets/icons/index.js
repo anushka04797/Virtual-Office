@@ -31,7 +31,10 @@ import {
   cibStripe,
   cibPaypal,
   cibGooglePay,
-  cibCcAmex,cilBadge,cilControl
+  cibCcAmex,cilBadge,cilControl,
+  cibGhost,
+  
+
 } from '@coreui/icons'
 import {
   cifUs,
@@ -42,6 +45,13 @@ import {
   cifPl,
 } from '@coreui/icons'
 import {
+  cilLibraryAdd,
+  cilLibrary,
+  cilFolderOpen,
+  cilColumns,
+  cibCircle,
+  cilNoteAdd,
+  cilViewModule,
   cilClock,
   cilAlignCenter,
   cilGroup,
@@ -135,7 +145,8 @@ import {
   cilX,
   cilXCircle,
   cilWarning,
-  cilTag
+  cilTag,
+  cilChartLine
  
 } from '@coreui/icons'
 
@@ -241,7 +252,13 @@ cilCamera,
   cilXCircle,
   cilWarning,
   cilGroup,
-  cilBasket
+  cilBasket,
+  cibGhost,
+  cilNoteAdd,
+  cilViewModule,
+  cilLibraryAdd,
+  cilLibrary,
+  cilFolderOpen
 }, {
   cifUs,
   cifBr,
@@ -275,5 +292,9 @@ cilCamera,
   cibPaypal,
   cibGooglePay,
   cibCcAmex,
-  cibHubspot
+  cibHubspot,
+  cibCircle,
+  cilColumns,
+  cilChartLine
+  
 })

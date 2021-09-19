@@ -51,7 +51,8 @@ const OurMeetings = () => {
     return (
         <>
             <CContainer>
-                {!meeting ? (<CRow>
+                {!meeting ? (
+                <CRow>
                     {/**Upcoming meetings */}
                     <CCol md="12" lg="4">
                         <h4 className="section-name">Meetings</h4>
@@ -75,7 +76,7 @@ const OurMeetings = () => {
                         </div>
                     </CCol>
                     {/**create a new meeting */}
-                    <CCol md={{ span: 12, offset: 0 }} lg={{ span: 7, offset: 1 }}>
+                    <CCol md="12" lg="7">
                         <h4 className="section-name">Create a new meeting</h4>
                         {/**create that meeting!! */}
                         <CCard className="meeting-creator-form">

@@ -9,7 +9,7 @@ return(
     Scheduled Meetings
 </h3>
 
-<div className="card-holder1">
+<div className="card-holder1 ">
     <CCard className="project-card1">
         <CCardBody>
             <h6 className="id-no1">meeting id: #12340C</h6>
