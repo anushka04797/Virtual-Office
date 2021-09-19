@@ -6,7 +6,7 @@ import {
   CLabel,
   CInput,
   CFormText,
-  CInputCheckbox,
+ CInputCheckbox,
   CButton,
 } from "@coreui/react";
 import { Link,Redirect,useHistory } from "react-router-dom";
@@ -66,10 +66,12 @@ const SignIn = () => {
                           <CInputCheckbox
                             className="mb-3 custom-check"
                             label="Remember Me"
+                            id="remember"
                             onChange={(e) => {
                               console.log(e.target);
                             }}
                           />
+                          <CLabel for="remember">Remember me</CLabel>
                         </div>
 
                         <div className="forgot">

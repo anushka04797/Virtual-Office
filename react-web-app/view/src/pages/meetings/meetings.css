@@ -2,7 +2,7 @@
     font-size:30px;
     line-height: 42px;
     margin-bottom: 15px;
-    color: #444444;
+    color: #42526E;
 }
 .icon-holder{
     height: auto;
@@ -25,6 +25,12 @@
     background-color: #BD9EFB;
     outline: 0 !important;
     border: none !important;
+    color: #FFFFFF ;
+}
+.meeting-join-btn:hover{
+    color: #FFFFFF;
+    background: #BD9EFB;
+    box-shadow: 5px 10px 20px rgba(189, 158, 251, 0.2);
 }
 
 /*meeting creator form*/
@@ -48,7 +54,7 @@
     box-sizing: border-box;
     box-shadow: inset 0px 4px 20px rgba(189, 158, 251, 0.1);
     border-radius: 8px;
-    height: 60px;
+    height: 45px;
     font-style: normal;
     font-weight: normal;
     font-size: 16px;
@@ -60,7 +66,7 @@
     }
     .create-meeting-btn{
         margin-top: 30px;
-        background: #BD9EFB;
+        background: #0052cc;
     border-radius: 8px;
     font-style: normal;
     font-weight: 500;
@@ -73,10 +79,11 @@
     padding: 15px 40px;
     }
     .create-meeting-btn:hover{
-        background: #BD9EFB;
+        background: #004099;
         box-shadow: 5px 10px 20px rgba(189, 158, 251, 0.2);
         outline: none !important;
         border:transparent;
+        color: #FFFFFF;
     }
     .error{
         color: red;
