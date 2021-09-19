@@ -35,27 +35,27 @@ const completeProjects = () => {
                                         <span className="tooltiptext">1000.5</span>
                                     </CButton> */}
 
-                                    <CButton className="package-button paleYellow" variant="pill">
+                                    <CButton className="package-button paleYellow rounded-pill">
                                         Admin Panel Design
                                         <span className="tooltiptext">1000.5</span>
                                     </CButton>
-                                    <CButton className="package-button paleBlue" shape="rounded-pill">
+                                    <CButton className="package-button paleBlue rounded-pill">
                                         Database
                                         <span className="tooltiptext">1000.5</span>
                                     </CButton>
-                                    <CButton className="package-button lilac" shape="rounded-pill">
+                                    <CButton className="package-button lilac rounded-pill">
                                         API integration
                                         <span className="tooltiptext">1000.5</span>
                                     </CButton>
-                                    <CButton className="package-button paleYellow" shape="rounded-pill">
+                                    <CButton className="package-button paleYellow rounded-pill">
                                         NFC card and web token
                                         <span className="tooltiptext">1000.5</span>
                                     </CButton>
-                                    <CButton className="package-button paleBlue" shape="rounded-pill">
+                                    <CButton className="package-button paleBlue rounded-pill">
                                         Final delivery
                                         <span className="tooltiptext">1000.5</span>
                                     </CButton>
-                                    <CButton className="package-button pastelGreen" shape="rounded-pill">
+                                    <CButton className="package-button pastelGreen rounded-pill">
                                         Virtual Office Redesign
                                         <span className="tooltiptext">1000.5</span>
                                     </CButton>

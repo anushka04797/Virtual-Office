@@ -7,9 +7,16 @@ import {
   CDropdownToggle,
   CImg
 } from '@coreui/react'
+import { useHistory } from 'react-router-dom';
+
 import CIcon from '@coreui/icons-react'
 
 const TheHeaderDropdown = () => {
+  let history = useHistory();
+function logout(){
+  localStorage.clear()
+  history.push('/')
+}
   return (
     <CDropdown
       inNav
@@ -35,7 +42,7 @@ const TheHeaderDropdown = () => {
           <strong>Account</strong>
         </CDropdownItem>
  
-        <CDropdownItem>
+        <CDropdownItem onClick={()=>{logout()}}>
         <CIcon name="cil-account-logout" className="mfe-2" />
          Log out
         </CDropdownItem>

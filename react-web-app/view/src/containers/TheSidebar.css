@@ -1,0 +1,15 @@
+.custom-color{
+    background-color:rgba(0,0,0,.05) !important;
+    box-shadow: 5px 10px 20px rgba(189, 158, 251, 0.1);
+}
+.c-sidebar-nav-icon{
+color: #BD9EFB !important;
+/* height: 2.02rem; */
+}
+.name-brand1{
+    text-decoration-style: none !important;
+    color: #BD9EFB !important;
+    font-weight: 500;
+font-size: 20px;
+line-height: 30px;
+}
