@@ -12,19 +12,19 @@ import { Link, useHistory } from "react-router-dom";
 const ForgotPass = () => {
     return (
         <>
-            <div className="forgot-pass-page">
+            <div className="forgot-pass-page align-items-center">
                 <div className="container">
                    
                     <div className="row">
                         {/**form section */}
-                        <div className="col-lg-6 col-sm-12">
+                        <div className="col-lg-5 col-sm-12">
                         <h3 className="forgot-header">Forgot Password</h3>
                             <div className="forgot-form-holder">
                                 <CForm>
                                     <div className="mb-3">
                                         <CLabel
                                             htmlFor="exampleInputEmail1"
-                                            className="custom-label"
+                                            className="custom-label-forgot"
                                         >
                                             Email
                                         </CLabel>
@@ -32,7 +32,7 @@ const ForgotPass = () => {
                                             type="email"
                                             id="exampleInputEmail1"
                                             aria-describedby="emailHelp"
-                                            className="custom-formgroup"
+                                            className="custom-formgroup-forgot"
                                         />
                                         {/* <CFormText id="emailHelp">
       We'll never share your email with anyone else.
@@ -41,7 +41,7 @@ const ForgotPass = () => {
 
                                     {/**submit button */}
                                     <div className="submit-holder-pass">
-                                        <CButton type="submit" className="submit-button">
+                                        <CButton type="submit" className="submit-button-forgot">
                                             Send
                                         </CButton>
                                     </div>
@@ -51,9 +51,9 @@ const ForgotPass = () => {
 
 
                         {/**only image */}
-                        <div className="col-lg-6 col-sm-12 image-holder">
+                        <div className="col-lg-6 offset-lg-1 col-sm-12 image-holder no-mob-display-forgot">
                             <img
-                                src={"assets/bgs/password-banner.svg"}
+                                src={"assets/bgs/forgot-pass-2.svg"}
                                 alt="Image"
                                 className="img-fluid img-bg-forgot"
                             />
