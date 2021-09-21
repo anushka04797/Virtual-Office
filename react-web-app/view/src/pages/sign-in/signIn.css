@@ -99,10 +99,10 @@ padding-top: 50px;
     background-color: #0065ff;
     color: white;
 }
-.dum-text{
+.dum-text-1{
     color: rgb(107, 119, 140);
 }
-.final-footer{
+.final-footer-1{
     text-align: center !important;
     font-style: normal;
 font-weight: normal;
@@ -110,7 +110,7 @@ white-space: nowrap;
 font-size: 12px;
 line-height: 1.33333;
 }
-.registration-link{
+.registration-link-1{
     margin-left: 5px;
     color:#0065ff;
     text-decoration: none !important;

@@ -38,78 +38,78 @@ const Register = () => {
                   <div className="row">
                     {/**first name */}
                     <div className="col-md-6 col-sm-12 col-12 mb-3">
-                      <CLabel htmlFor="firstName" className="custom-label">
+                      <CLabel htmlFor="firstName" className="custom-label-2">
                         First Name
                       </CLabel>
                       <CInput
                         type="text"
                         id="firstName"
                         aria-describedby="fnHelp"
-                        className="custom-formgroup"
+                        className="custom-formgroup-2"
                       />
                     </div>
                     {/**last name */}
                     <div className="col-md-6 col-sm-12 col-12 mb-3">
-                      <CLabel htmlFor="lastName" className="custom-label">
+                      <CLabel htmlFor="lastName" className="custom-label-2">
                         Last Name
                       </CLabel>
                       <CInput
                         type="text"
                         id="lastName"
                         aria-describedby="lnHelp"
-                        className="custom-formgroup"
+                        className="custom-formgroup-2"
                       />
                     </div>
                     {/**Email */}
                     <div className="col-md-6 col-sm-12 col-12 mb-3">
-                      <CLabel htmlFor="email" className="custom-label">
+                      <CLabel htmlFor="email" className="custom-label-2">
                         Email
                       </CLabel>
                       <CInput
                         type="email"
                         id="email"
                         aria-describedby="emailHelp"
-                        className="custom-formgroup"
+                        className="custom-formgroup-2"
                       />
                     </div>
                     {/**Phone */}
                     <div className="col-md-6 col-sm-12 col-12 mb-3">
-                      <CLabel htmlFor="phone" className="custom-label">
+                      <CLabel htmlFor="phone" className="custom-label-2">
                         Phone
                       </CLabel>
                       <CInput
                         type="tel"
                         id="phone"
                         aria-describedby="phoneHelp"
-                        className="custom-formgroup"
+                        className="custom-formgroup-2"
                       />
                     </div>
                     {/**password */}
                     <div className="col-md-6 col-sm-12 mb-3">
                       <CLabel
                         htmlFor="exampleInputPassword1"
-                        className="custom-label"
+                        className="custom-label-2"
                       >
                         Password
                       </CLabel>
                       <CInput
                         type="password"
                         id="exampleInputPassword1"
-                        className="custom-formgroup"
+                        className="custom-formgroup-2"
                       />
                     </div>
                     {/*confirm password */}
                     <div className="col-md-6 col-sm-12 mb-3">
                       <CLabel
                         htmlFor="confirmPass"
-                        className="custom-label"
+                        className="custom-label-2"
                       >
                         Confirm Password
                       </CLabel>
                       <CInput
                         type="password"
                         id="confirmPass"
-                        className="custom-formgroup"
+                        className="custom-formgroup-2"
                       />
                     </div>
                     {/*submit button */}
