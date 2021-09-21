@@ -25,8 +25,8 @@ const SignIn = () => {
           <div className="row">
             {/**Form section */}
             <div className="col-lg-6 contents">
-              <div class="row justify-content-center">
-                <div class="col-md-8">
+              <div className="row justify-content-center">
+                <div className="col-md-8">
                   <h3 className="form-header">Sign in</h3>
                   <div className="form-holder">
                     <CForm className="custom-form">
@@ -71,7 +71,7 @@ const SignIn = () => {
                               console.log(e.target);
                             }}
                           />
-                          <CLabel for="remember" className="custom-check-label">Remember me</CLabel>
+                          <CLabel htmlFor="remember" className="custom-check-label">Remember me</CLabel>
                         </div>
 
                         <div className="forgot">
@@ -86,14 +86,14 @@ const SignIn = () => {
                     </CForm>
                     {/**Go to register */}
                     <div className="mb-4 mt-3">
-                      <h5 className="final-footer"><span className="dum-text">Don't have an account?</span><Link className="registration-link" to="/register">Register</Link></h5>
+                      <h5 className="final-footer-1"><span className="dum-text-1">Don't have an account?</span><Link className="registration-link-1" to="/register">Register</Link></h5>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
             {/**Background imahge section */}
-            <div class="col-lg-6 no-mob-display-sign-img">
+            <div className="col-lg-6 no-mob-display-sign-img">
               <img
                 src={"assets/bgs/sign-in.svg"}
                 alt="Image"
