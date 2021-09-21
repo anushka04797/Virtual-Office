@@ -95,7 +95,7 @@ const SignIn = () => {
             {/**Background imahge section */}
             <div className="col-lg-6 no-mob-display-sign-img">
               <img
-                src={"assets/bgs/sign-in.svg"}
+                src={"assets/bgs/sign-in-img.svg"}
                 alt="Image"
                 className="img-fluid img-bg"
               />
