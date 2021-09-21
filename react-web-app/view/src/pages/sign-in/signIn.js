@@ -24,7 +24,7 @@ const SignIn = () => {
         <div className="container">
           <div className="row">
             {/**Form section */}
-            <div className="col-md-6 contents">
+            <div className="col-lg-6 contents">
               <div class="row justify-content-center">
                 <div class="col-md-8">
                   <h3 className="form-header">Sign in</h3>
@@ -33,7 +33,7 @@ const SignIn = () => {
                       <div className="mb-3">
                         <CLabel
                           htmlFor="exampleInputEmail1"
-                          className="custom-label"
+                          className="custom-label-signin"
                         >
                           Email
                         </CLabel>
@@ -41,7 +41,7 @@ const SignIn = () => {
                           type="email"
                           id="exampleInputEmail1"
                           aria-describedby="emailHelp"
-                          className="custom-formgroup"
+                          className="custom-formgroup-signin"
                         />
                         {/* <CFormText id="emailHelp">
       We'll never share your email with anyone else.
@@ -50,14 +50,14 @@ const SignIn = () => {
                       <div className="mb-3">
                         <CLabel
                           htmlFor="exampleInputPassword1"
-                          className="custom-label"
+                          className="custom-label-signin"
                         >
                           Password
                         </CLabel>
                         <CInput
                           type="password"
                           id="exampleInputPassword1"
-                          className="custom-formgroup"
+                          className="custom-formgroup-signin"
                         />
                       </div>
                       <div className="show-flex">
@@ -71,7 +71,7 @@ const SignIn = () => {
                               console.log(e.target);
                             }}
                           />
-                          <CLabel for="remember">Remember me</CLabel>
+                          <CLabel for="remember" className="custom-check-label">Remember me</CLabel>
                         </div>
 
                         <div className="forgot">
@@ -79,7 +79,7 @@ const SignIn = () => {
                         </div>
                       </div>
                       <div className="submit-holder">
-                        <CButton type="button" onClick={()=>{login()}} className="submit-button">
+                        <CButton type="button" onClick={()=>{login()}} className="submit-button-signin">
                           Sign in
                         </CButton>
                       </div>
@@ -93,7 +93,7 @@ const SignIn = () => {
               </div>
             </div>
             {/**Background imahge section */}
-            <div class="col-md-6">
+            <div class="col-lg-6 no-mob-display-sign-img">
               <img
                 src={"assets/bgs/sign-in.svg"}
                 alt="Image"
