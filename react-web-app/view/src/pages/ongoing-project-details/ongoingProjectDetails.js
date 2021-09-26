@@ -119,9 +119,9 @@ const OngoingProjectDetails = () => {
 
             <div className="container">
 
-                <h3 className="dash-header">Ongoing Projects(5)</h3>
+                <h4 className="dash-header">Ongoing Projects(5)</h4>
                 <div className="row">
-                    <div className="col-md-12 mt-3">
+                    <div className="col-md-10 offset-md-1 col-sm-12 col-xs-12 mt-1">
                         <CCard className="card-ongoing-project">
                             <CCardBody className="details-project-body">
                                 <h4 className="ongoing-card-header"><IconButton aria-label="favourite" size="medium" >
@@ -146,27 +146,27 @@ const OngoingProjectDetails = () => {
                                         <span className="tooltiptext">1000.5</span>
                                     </CButton> */}
 
-                                    <CButton className="package-button paleYellow rounded-pill" >
+                                    <CButton className="package-button rounded-pill" >
                                         Admin Panel Design
                                         <span className="tooltiptext">1000.5</span>
                                     </CButton>
-                                    <CButton className="package-button paleBlue rounded-pill" >
+                                    <CButton className="package-button rounded-pill" >
                                         Database
                                         <span className="tooltiptext">1000.5</span>
                                     </CButton>
-                                    <CButton className="package-button lilac rounded-pill" >
+                                    <CButton className="package-button rounded-pill" >
                                         API integration
                                         <span className="tooltiptext">1000.5</span>
                                     </CButton>
-                                    <CButton className="package-button paleYellow rounded-pill" >
+                                    <CButton className="package-button rounded-pill" >
                                         NFC card and web token
                                         <span className="tooltiptext">1000.5</span>
                                     </CButton>
-                                    <CButton className="package-button paleBlue rounded-pill" >
+                                    <CButton className="package-button rounded-pill" >
                                         Final delivery
                                         <span className="tooltiptext">1000.5</span>
                                     </CButton>
-                                    <CButton className="package-button pastelGreen rounded-pill" >
+                                    <CButton className="package-button rounded-pill" >
                                         Virtual Office Redesign
                                         <span className="tooltiptext">1000.5</span>
                                     </CButton>
@@ -189,17 +189,17 @@ const OngoingProjectDetails = () => {
                                 </div>
 
                                 {/*project info in text */}
-                                <div className="information-show">
-                                    <div className="d-flex"> 
-                                        <h5 className="project-details-points child"><span className="info-header-1">Assigned by :</span>Ratan</h5>
-                                    {/* <h5 className="project-details-points"><span className="info-header-1">Work Package : </span>1000</h5> */}
-                                    <h5 className="project-details-points"><span className="info-header-1">Project Manager : </span>Pial Noman</h5>
+                                <div className="information-show row">
+                                    <div className="info-show-now col-md-6"> 
+                                        <h5 className="project-details-points child"><h5 className="info-header-1">Assigned by :</h5>Ratan</h5>
+                                    {/* <h5 className="project-details-points"><h5 className="info-header-1">Work Package : </h5>1000</h5> */}
+                                    <h5 className="project-details-points"><h5 className="info-header-1">Project Manager : </h5>Pial Noman</h5>
                                     </div>
-                              <div className="d-flex">
-                                    {/* <h5 className="project-details-points"><span className="info-header-1">Project Details :</span>Design and develop the app for the seller and buyer module</h5> */}
-                                    <h5 className="project-details-points child"><span className="info-header-1">Start Date : </span>31 January, 2021</h5>
+                              <div className="info-show-now col-md-6">
+                                    {/* <h5 className="project-details-points"><h5 className="info-header-1">Project Details :</h5>Design and develop the app for the seller and buyer module</h5> */}
+                                    <h5 className="project-details-points child"><h5 className="info-header-1">Start Date : </h5>31 January, 2021</h5>
 
-                                    <h5 className="project-details-points"><span className="info-header-1">Planned Delivery Date : </span>22 Feb, 2021</h5>
+                                    <h5 className="project-details-points"><h5 className="info-header-1">Planned Delivery Date : </h5>22 Feb, 2021</h5>
                                     </div>
                                 </div>
 
@@ -334,7 +334,7 @@ const OngoingProjectDetails = () => {
                         </CCard>
                     </div>
  {/**Dummy cards for viewing design */}
-                    <div className="col-md-12 mt-2">
+ <div className="col-md-10 offset-md-1 col-sm-12 col-xs-12 mt-1">
                         <CCard className="card-ongoing-project">
                             <CCardBody className="details-project-body">
                                 <h4 className="ongoing-card-header"><IconButton aria-label="favourite" size="medium" >
@@ -359,27 +359,27 @@ const OngoingProjectDetails = () => {
                                         <span className="tooltiptext">1000.5</span>
                                     </CButton> */}
 
-                                    <CButton className="package-button paleYellow rounded-pill">
+                                    <CButton className="package-button rounded-pill" >
                                         Admin Panel Design
                                         <span className="tooltiptext">1000.5</span>
                                     </CButton>
-                                    <CButton className="package-button paleBlue rounded-pill">
+                                    <CButton className="package-button rounded-pill" >
                                         Database
                                         <span className="tooltiptext">1000.5</span>
                                     </CButton>
-                                    <CButton className="package-button lilac rounded-pill">
+                                    <CButton className="package-button rounded-pill" >
                                         API integration
                                         <span className="tooltiptext">1000.5</span>
                                     </CButton>
-                                    <CButton className="package-button paleYellow rounded-pill">
+                                    <CButton className="package-button rounded-pill" >
                                         NFC card and web token
                                         <span className="tooltiptext">1000.5</span>
                                     </CButton>
-                                    <CButton className="package-button paleBlue rounded-pill">
+                                    <CButton className="package-button rounded-pill" >
                                         Final delivery
                                         <span className="tooltiptext">1000.5</span>
                                     </CButton>
-                                    <CButton className="package-button pastelGreen rounded-pill">
+                                    <CButton className="package-button rounded-pill" >
                                         Virtual Office Redesign
                                         <span className="tooltiptext">1000.5</span>
                                     </CButton>
@@ -402,17 +402,17 @@ const OngoingProjectDetails = () => {
                                 </div>
 
                                 {/*project info in text */}
-                                <div className="information-show">
-                                    <div className="d-flex"> 
-                                        <h5 className="project-details-points child"><span className="info-header-1">Assigned by :</span>Ratan</h5>
-                                    {/* <h5 className="project-details-points"><span className="info-header-1">Work Package : </span>1000</h5> */}
-                                    <h5 className="project-details-points"><span className="info-header-1">Project Manager : </span>Pial Noman</h5>
+                                <div className="information-show row">
+                                    <div className="info-show-now col-md-6"> 
+                                        <h5 className="project-details-points child"><h5 className="info-header-1">Assigned by :</h5>Ratan</h5>
+                                    {/* <h5 className="project-details-points"><h5 className="info-header-1">Work Package : </h5>1000</h5> */}
+                                    <h5 className="project-details-points"><h5 className="info-header-1">Project Manager : </h5>Pial Noman</h5>
                                     </div>
-                              <div className="d-flex">
-                                    {/* <h5 className="project-details-points"><span className="info-header-1">Project Details :</span>Design and develop the app for the seller and buyer module</h5> */}
-                                    <h5 className="project-details-points child"><span className="info-header-1">Start Date : </span>31 January, 2021</h5>
+                              <div className="info-show-now col-md-6">
+                                    {/* <h5 className="project-details-points"><h5 className="info-header-1">Project Details :</h5>Design and develop the app for the seller and buyer module</h5> */}
+                                    <h5 className="project-details-points child"><h5 className="info-header-1">Start Date : </h5>31 January, 2021</h5>
 
-                                    <h5 className="project-details-points"><span className="info-header-1">Planned Delivery Date : </span>22 Feb, 2021</h5>
+                                    <h5 className="project-details-points"><h5 className="info-header-1">Planned Delivery Date : </h5>22 Feb, 2021</h5>
                                     </div>
                                 </div>
 
@@ -546,7 +546,8 @@ const OngoingProjectDetails = () => {
 
                         </CCard>
                     </div>
-                   
+
+                   {/**Dummy card,REMOVE AFTER DYNAMIC DATA LOAD */}
                     
                 </div>
             </div>
