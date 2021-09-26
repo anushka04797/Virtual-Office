@@ -1,24 +1,26 @@
 .dash-header{
-font-style: normal;
-font-weight: 300;
-font-size: 30px;
-line-height: 45px;
-margin-top: 30px;
-margin-bottom: 20px;
+    font-size: 24px;
+    font-style: inherit;
+    line-height: 32px;
+    font-weight: 500;
+    color: #5e6c84 !important;
 text-align: left;
+letter-spacing: -0.01em;
+margin-bottom: 30px;
 }
 .card-ongoing-project{
-background: #FFFFFF;
-box-shadow: 5px 10px 20px rgba(189, 158, 251, 0.1);
-border-radius: 10px;
+/* background: #FFFFFF; */
+border-radius: 3px;
+    box-shadow: rgb(9 30 66 / 25%) 0px 1px 1px, rgb(9 30 66 / 13%) 0px 0px 1px 1px;
 border: none !important;
 }
 .ongoing-card-header{
-    font-style: normal;
-font-weight: 600;
-font-size: 24px;
-line-height: 36px;
-color: #444444;
+    font-size: 1.14286em;
+    font-style: inherit;
+    line-height: 1.25;
+    font-weight: 600;
+    letter-spacing: -0.006em;
+    color: #172B4D;
 
 
 }
@@ -30,16 +32,17 @@ hr.header-underline1{
     width: 277px;
     background: #96DEFB;
     opacity: 1 !important;
+    margin-top: -1px !important;
     
 }
 .progress-background{
-    background: #EEE8FA;
+    background: #B2E6FA;
     border-radius: 40px 0px 0px 40px;
-height: 10px;
+height: 8px;
 box-shadow: inset 0px 4px 4px rgba(189, 158, 251, 0.2);
 }
 .custom-progress1{
-  background: #BD9EFB !important;
+  background: #2998F9 !important;
  
 box-shadow: 4px 0px 10px rgba(189, 158, 251, 0.5);
 height: inherit;
@@ -47,10 +50,7 @@ height: inherit;
 }
 
 .details-project-body{
-    /* padding-top: 30px;
-    padding-bottom: 30px; */
-    padding-left:30px;
-    padding-right: 30px;
+    padding: 20px 16px;
 }
 .show-amount{
 text-align: right;
@@ -58,51 +58,59 @@ font-style: normal;
 font-weight: 500;
 font-size: 12px;
 line-height: 18px;
-color: #444444;
+color: rgb(107, 119, 140);
 
 mix-blend-mode: normal;
 }
 .tiny-header1{
 font-weight: 500 !important;
+color: rgb(107, 119, 140);
 }
 .tasks-done{
-    font-style: normal;
-font-weight: 400;
-font-size: 20px;
-line-height: 30px;
-color: #444444;
+    font-size: 14px;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    color:rgb(23,43,77);
+    font-weight: 400;
+    line-height: 20px;
 
-mix-blend-mode: normal;
-margin-top: 30px;
+/* mix-blend-mode: normal;
+margin-top: 30px; */
 }
 .all-da-buttons-1{
-    margin-top: 35px;
+    margin-top: 10px;
 }
 .package-button{
 /* font-family: Poppins; */
 font-style: normal;
 font-weight: 600;
-font-size: 16px;
-line-height: 24px;
-padding: 12px 34px ;
+font-size: 12px;
+line-height: 18px;
+padding: 5px 10px ;
 margin-right: 10px;
 border-color: transparent;
 margin-top: 10px;
 position: relative;
+background-color: #0052CC;
+color: #FAFBFC;
+}
+.package-button:hover{
+    color: #FAFBFC;
+    background-color: #0065ff;
 }
 .package-button .tooltiptext {
     visibility: hidden;
-    width: 120px;
+    width: 100px;
     background-color: white;
     color: #444444;
     text-align: center;
-    border: 1px solid #BD9EFB;
+    border: 1px solid #2998F9;
 border-radius: 8px;
-    padding: 5px 0;
+    padding: 2px 0;
     font-style: normal;
 font-weight: normal;
 font-size: 12px;
-line-height: 18px;
+line-height: 17px;
     /* Position the tooltip */
     position: absolute;
     z-index: 1;
@@ -118,7 +126,7 @@ line-height: 18px;
     margin-left: -5px;
     border-width: 10px;
     border-style: solid;
-    border-color: #BD9EFB transparent transparent transparent;
+    border-color: #2998F9 transparent transparent transparent;
   }
   
   .package-button:hover .tooltiptext{
@@ -144,31 +152,34 @@ line-height: 18px;
 }
 
 .all-da-workers1{
-    margin-top: 30px;
+    margin-top: 22px;
 }
 .worker-image{
     margin-right: 8px;
-    width: 55px;
-height: 55px;
+    width: 30px;
+height: 30px;
 }
 
 
 .information-show{
-margin-top: 35px;
+margin-top: 22px;
 justify-content: center;
 }
 .project-details-points{
-    font-style: normal;
-font-weight: 300;
-font-size: 20px;
-line-height: 30px;
-color: #444444;
-
-mix-blend-mode: normal;
+    font-size: 14px;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    color:rgb(23,43,77);
+    font-weight: 400;
+    line-height:20px;
 margin-bottom: 20px;
+/* display: flex; */
 }
 .info-header-1{
     font-weight: 500;
+    color: rgb(107, 119, 140);
+    font-size: 14px;
+    line-height:20px;
 }
 
 /*file view*/
@@ -376,7 +387,9 @@ padding: 15px 40px;
     border:transparent;
 }
 
-
+/* .info-show-now{
+    display: flex;
+} */
 /*ADD TASK FORM*/
 .add-task-form-div{
 margin-top: 30px;
@@ -409,8 +422,17 @@ padding:20px;
  
 }
 
-.child{
-    /* margin-left: auto;
-    order: 2; */
+/* .child{
+    margin-left: auto;
+    order: 2;
     margin-right: 40px;
+} */
+
+@media all and (min-width:300px) and (max-width:600px){
+    hr.header-underline1{
+        width: 200px;
+    }
+    /* .info-show-now,.project-details-points{
+        display: block;
+    } */
 }
