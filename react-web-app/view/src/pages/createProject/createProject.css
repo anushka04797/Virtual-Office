@@ -19,9 +19,9 @@
 
 }
 .section-name-createproject{
-    font-size: 1.71429em;
+    font-size: 24px;
     font-style: inherit;
-    line-height: 1.16667;
+    line-height: 32px;
     font-weight: 500;
     color: rgb(23, 43, 77);
    
@@ -33,14 +33,14 @@
     line-height: 1.42857;
     font-weight: 600;
 }
-.custom-forminput-5{
+.custom-forminput-6{
     font-size:14px !important;
     line-height: 1.42857;
     color: rgb(133,133,133);
     
 
 }
-.custom-forminput-5:active,.custom-forminput-5:focus{
+.custom-forminput-6:active,.custom-forminput-6:focus{
     border:2px solid #0065ff;
     box-shadow: none !important;
 }
