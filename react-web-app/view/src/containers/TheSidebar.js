@@ -24,7 +24,7 @@ const TheSidebar = () => {
   const show = useSelector(state => state.sidebarShow)
 
   return (
-    <CSidebar colorScheme="light"
+    <CSidebar colorScheme="light" 
       show={show}
       onShowChange={(val) => dispatch(changeState(val))}
     >
@@ -43,7 +43,7 @@ const TheSidebar = () => {
         /> */}
         <span className="c-sidebar-brand-minimized name-brand1">VO</span>
       </CSidebarBrand>
-      <CSidebarNav>
+      <CSidebarNav className="vo-sidebar">
 
         {/* <CCreateElement
           items={navigation}
@@ -54,33 +54,33 @@ const TheSidebar = () => {
             CSidebarNavTitle
           }}
         /> */}
-           <CSidebarNavItem to="/dashboard" icon="cil-speedometer" name="Dashboard"></CSidebarNavItem>
+           <CSidebarNavItem to="/dashboard" icon="cil-speedometer" name="Dashboard" className="vo-navItem"></CSidebarNavItem>
            {/**Projects */}
-           <CSidebarNavDropdown icon="cib-ghost" name="Projects">
-<CSidebarNavItem to="/dashboard/Projects/ongoing-project-details-view" name="Ongoing Projects" icon="cib-circle"></CSidebarNavItem>
-<CSidebarNavItem to="/dashboard/Projects/completed-projects" name="Completed Projects" icon="cil-check-circle"></CSidebarNavItem>
-<CSidebarNavItem to="/dashboard/Projects/create-new-project" name="Create New Project" icon="cil-note-add"></CSidebarNavItem>
+           <CSidebarNavDropdown icon="cib-ghost" name="Projects" className="vo-navItem">
+<CSidebarNavItem to="/dashboard/Projects/ongoing-project-details-view" name="Ongoing Projects" icon="cib-circle"className="vo-navItem"  ></CSidebarNavItem>
+<CSidebarNavItem to="/dashboard/Projects/completed-projects" name="Completed Projects" icon="cil-check-circle"className="vo-navItem" ></CSidebarNavItem>
+<CSidebarNavItem to="/dashboard/Projects/create-new-project" name="Create New Project" icon="cil-note-add"className="vo-navItem" ></CSidebarNavItem>
 
 
            </CSidebarNavDropdown>
            {/**Meetings */}
-           <CSidebarNavItem to="/dashboard/meetings" icon="cil-view-module" name="Meetings"></CSidebarNavItem>
+           <CSidebarNavItem to="/dashboard/meetings" icon="cil-view-module" name="Meetings" className="vo-navItem"></CSidebarNavItem>
      {/**WBS */}
-     <CSidebarNavDropdown icon="cil-spreadsheet" name="WBS">
-<CSidebarNavItem to="/dashboard/WBS/create-wbs" icon="cil-library-add" name="Create WBS"></CSidebarNavItem>
-<CSidebarNavItem to="/dashboard/WBS/board" icon="cil-columns" name="Board"></CSidebarNavItem>
+     <CSidebarNavDropdown icon="cil-spreadsheet" name="WBS" className="vo-navItem">
+<CSidebarNavItem to="/dashboard/WBS/create-wbs" icon="cil-library-add" name="Create WBS"className="vo-navItem"  ></CSidebarNavItem>
+<CSidebarNavItem to="/dashboard/WBS/board" icon="cil-columns" name="Board"className="vo-navItem" ></CSidebarNavItem>
 
 </CSidebarNavDropdown>
 {/**EVMS */}
-<CSidebarNavItem to="/dashboard/EVMS"name="EVMS" icon="cil-chart-line"></CSidebarNavItem>
+<CSidebarNavItem to="/dashboard/EVMS"name="EVMS" icon="cil-chart-line" className="vo-navItem"></CSidebarNavItem>
 {/**Profile */}
-<CSidebarNavItem to="/dashboard/profile"name="Profile" icon="cil-user"></CSidebarNavItem>
+<CSidebarNavItem to="/dashboard/profile"name="Profile" icon="cil-user" className="vo-navItem"></CSidebarNavItem>
 
 {/**Timecards */}
-<CSidebarNavItem to="/dashboard/timecards"name="Timecards" icon="cil-library"></CSidebarNavItem>
+<CSidebarNavItem to="/dashboard/timecards"name="Timecards" icon="cil-library" className="vo-navItem"></CSidebarNavItem>
 
 {/**Shared Docs */}
-<CSidebarNavItem to="/dashboard/shared-documents"name="Shared Documents" icon="cil-folder-open"></CSidebarNavItem>
+<CSidebarNavItem to="/dashboard/shared-documents"name="Shared Documents" icon="cil-folder-open" className="vo-navItem"></CSidebarNavItem>
 
       </CSidebarNav>
       <CSidebarMinimizer />
