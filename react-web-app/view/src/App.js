@@ -5,7 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import './App.css';
 import ProtectedRoute from './components/protected-route/ProtectedRoute'
 import { ThemeProvider,createTheme } from '@material-ui/core/styles';
-import { PALETTE_MODE } from './Config';
+import { PALETTE_MODE } from './config';
 const theme = createTheme({
   palette: {
     mode: PALETTE_MODE,

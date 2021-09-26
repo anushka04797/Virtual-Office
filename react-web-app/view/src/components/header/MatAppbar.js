@@ -16,7 +16,7 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import MailIcon from '@material-ui/icons/Mail';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
-import { drawerWidth } from '../../Config';
+import { drawerWidth } from '../../config';
 import { useDispatch, useSelector } from 'react-redux';
 import { changeState } from '../../store/slices/DrawerSlice';
 import { useHistory } from 'react-router-dom';

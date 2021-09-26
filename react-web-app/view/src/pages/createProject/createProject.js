@@ -1,9 +1,11 @@
-import { CContainer, CRow ,CCol, CCard, CCardHeader, CCardBody, CForm, CLabel,CInput, CButton} from '@coreui/react';
+import { CContainer, CRow, CCol, CCard, CCardHeader, CCardBody, CForm, CLabel, CInput, CButton } from '@coreui/react';
 import React from 'react'
 import './createProject.css'
 
-const createNewProject =()=>{
-return(
+const CreateNewProject = () => {
+  
+  
+  return (
     <>
   <CContainer>
       <CRow>
@@ -106,12 +108,8 @@ return(
 </CCardBody>
 </CCard>
 
-      </div>    
-      </CRow>
-  </CContainer>
-    
     </>
-)
+  )
 
 }
-export default createNewProject;
+export default CreateNewProject;

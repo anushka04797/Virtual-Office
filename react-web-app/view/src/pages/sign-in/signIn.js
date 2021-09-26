@@ -10,7 +10,7 @@ import {
   CButton,
 } from "@coreui/react";
 import { Link,Redirect,useHistory } from "react-router-dom";
-import { TOKEN } from "../../Config";
+import { TOKEN } from "../../config";
 
 const SignIn = () => {
   let history = useHistory();
