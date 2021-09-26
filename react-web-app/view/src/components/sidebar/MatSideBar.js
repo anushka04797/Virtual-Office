@@ -14,7 +14,7 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import { useDispatch, useSelector } from "react-redux";
 import { changeState } from "../../store/slices/DrawerSlice";
-import { drawerWidth } from "../../Config";
+import { drawerWidth } from "../../config";
 import DashBoardIconFigma from "../../assets/icons/dashboard-icon.svg";
 import Icon from "@material-ui/core/Icon";
 import ExpandLess from "@material-ui/icons/ExpandLess";

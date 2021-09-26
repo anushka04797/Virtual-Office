@@ -1,11 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit'
 import ConfigSlice from './slices/ConfigSlice'
 import DrawerSlice from './slices/DrawerSlice'
+import ProjectsSlice from './slices/ProjectsSlice'
 import SidebarSlice from './slices/SideBarSlice'
 export default configureStore({
   reducer: {
     drawer: DrawerSlice,
     config: ConfigSlice,
-    sidebar:SidebarSlice
+    sidebar:SidebarSlice,
+    projects : ProjectsSlice
   },
 })
