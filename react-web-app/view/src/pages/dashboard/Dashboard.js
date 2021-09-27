@@ -30,19 +30,14 @@ const Dashboard=()=> {
         <CContainer>
             {/**Row for showing da tables */}
             <CRow>
-                <CCol lg="6">
-<ProjectTables/>
-                </CCol>
-                <CCol  lg="6">
-<AssignedToMe/>
-                </CCol>
-                <CCol lg="6">
-<EvmsShow/>
-                </CCol>
-                <CCol  lg="6">
-<ScheduledMeetings/>
-                </CCol>
+                <div className="col-lg-5 offset-lg-1"><ProjectTables/></div>
+
+                <div className="col-lg-5"><AssignedToMe/></div> 
                 
+                <div className="col-lg-5 offset-lg-1"><EvmsShow/></div>
+                
+                <div className="col-lg-5"><ScheduledMeetings/></div>
+            
 
             </CRow>
         </CContainer>
