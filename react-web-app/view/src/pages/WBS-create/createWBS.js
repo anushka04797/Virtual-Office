@@ -54,8 +54,8 @@ const CreateNewWBS = () => {
             <CContainer>
                 <CRow>
                     <div className="col-md-8 offset-md-2 col-sm-12">
-                        <CCard className="custom-project-card-1">
-                            <CCardHeader className="project-header-3"> <h4 className="section-name-projectcreate">Create a WBS</h4>
+                        <CCard className="custom-wbs-card-1">
+                            <CCardHeader className="project-wbs-1"> <h4 className="section-name-wbscreate">Create a WBS</h4>
                             </CCardHeader>
                             <CCardBody>
                                 <CContainer>
@@ -63,7 +63,7 @@ const CreateNewWBS = () => {
                                         <CRow>
                                             {/**project name */}
                                             <div className="col-lg-12 mb-3">
-                                                <CLabel className="custom-label-5">
+                                                <CLabel className="custom-label-wbs5">
                                                     Select Project
                                                 </CLabel>
                                                 <Select
@@ -89,35 +89,35 @@ const CreateNewWBS = () => {
                                             }
                                             {/**wbs title */}
                                             <div className="col-lg-12 mb-3">
-                                                <CLabel className="custom-label-5">
+                                                <CLabel className="custom-label-wbs5">
                                                     Title
                                                 </CLabel>
                                                 <CInput className="custom-forminput-5" onChange={setWbsTitle}></CInput>
                                             </div>
                                             {/**WBS description */}
                                             <div className="col-lg-12 mb-3">
-                                                <CLabel className="custom-label-5">
+                                                <CLabel className="custom-label-wbs5">
                                                     Description
                                                 </CLabel>
                                                 <CTextarea className="custom-forminput-5" onChange={setWbsDetails}></CTextarea>
                                             </div>
                                             {/**Start date */}
                                             <div className="col-lg-6 mb-3">
-                                                <CLabel className="custom-label-5">
+                                                <CLabel className="custom-label-wbs5">
                                                     Start date
                                                 </CLabel>
                                                 <CInput type="date" className="custom-forminput-5" onChange={setWbsStartDate}></CInput>
                                             </div>
                                             {/**End date */}
                                             <div className="col-lg-6 mb-3">
-                                                <CLabel className="custom-label-5">
+                                                <CLabel className="custom-label-wbs5">
                                                     End date
                                                 </CLabel>
                                                 <CInput max={selectedProjectEndDate} type="date" className="custom-forminput-5" onChange={setWbsEndDate}></CInput>
                                             </div>
                                             {/**Assignees */}
                                             <div className="col-lg-12 mb-3">
-                                                <CLabel className="custom-label-5">
+                                                <CLabel className="custom-label-wbs5">
                                                     Assignee(s)
                                                 </CLabel>
                                                 <Select className="custom-forminput-5" 
@@ -130,9 +130,9 @@ const CreateNewWBS = () => {
                                             </div>
                                             {/**submit buttons */}
                                             <div className="col-md-12">
-                                                <div className="project-form-button-holders mt-3">
-                                                    <CButton type="submit" className="create-btn-prjct create-prjct">Create Project</CButton>
-                                                    <CButton className="create-btn-prjct cancel-prjct">Cancel</CButton>
+                                                <div className="projectwbs-form-button-holders mt-3">
+                                                    <CButton type="submit" className="create-btn-prjctwbs create-wbs">Create Project</CButton>
+                                                    <CButton className="create-btn-prjctwbs cancel-wbs">Cancel</CButton>
                                                 </div>
                                             </div>
                                         </CRow>

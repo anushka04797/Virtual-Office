@@ -1,10 +1,10 @@
-.card-header.project-header-3 {
+.card-header.project-wbs-1 {
   background-color: rgb(255, 255, 255);
   text-align: center;
   border-color: transparent;
 }
 
-.custom-project-card-1 {
+.custom-wbs-card-1 {
   padding: 32px 40px;
   background: rgb(255, 255, 255);
   border-radius: 3px;
@@ -13,14 +13,14 @@
   color: rgb(94, 108, 132);
   border-color: transparent;
 }
-.section-name-createproject {
+.section-name-createwbs {
   font-size: 1.71429em;
   font-style: inherit;
   line-height: 1.16667;
   font-weight: 500;
   color: rgb(23, 43, 77);
 }
-.custom-label-5 {
+.custom-label-wbs5 {
   color: rgb(23, 43, 77);
   font-size: 14px;
   line-height: 1.42857;
@@ -36,7 +36,7 @@
   border: 2px solid #0065ff;
   box-shadow: none !important;
 }
-.create-btn-prjct {
+.create-btn-prjctwbs {
   -webkit-box-align: baseline;
   align-items: baseline;
   border-width: 0px;
@@ -49,29 +49,29 @@
   font-size: 14px;
   line-height: 2.28571em;
 }
-.create-prjct {
+.create-wbs {
   background-color: #0052cc;
   color: white;
 }
-.create-prjct:hover {
+.create-wbs:hover {
   background-color: #0065ff;
   color: white;
 }
-.cancel-prjct {
+.cancel-wbs {
   line-height: 2.28571em;
   color: rgb(66, 82, 110) !important;
 }
-.cancel-prjct:hover {
+.cancel-wbs:hover {
   background-color: rgba(9, 30, 66, 0.04);
 }
 .custom-forminput-5:active {
     border: none !important;
 }
 @media all and (min-width: 992px) {
-  .project-form-button-holders {
+  .projectwbs-form-button-holders {
     text-align: center !important;
   }
-  .cancel-prjct {
+  .cancel-wbs {
     margin-left: 10px;
   }
 }
