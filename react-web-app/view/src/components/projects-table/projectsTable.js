@@ -15,16 +15,16 @@ return (
     <CCard className="project-card1">
         <CCardBody>
             <h6 className="id-no1">project id: #12340C</h6>
-            <h5 className="card-details1"><span className="p-header-3">Project Name (key):</span> Virtual Office</h5>
-            <h5 className="card-details1"><span className="p-header-3">Lead Name :</span>Pial Noman</h5>
+            <h5 className="card-details1"><span className="p-header-3">Project Name (key): </span> Virtual Office</h5>
+            <h5 className="card-details1"><span className="p-header-3">Lead Name : </span>Pial Noman</h5>
         </CCardBody>
     
     </CCard>
     <CCard className="project-card1">
         <CCardBody>
             <h6 className="id-no1">project id : #12340C</h6>
-            <h5 className="card-details1"><span className="p-header-3">Project Name (key):</span> Virtual Office</h5>
-            <h5 className="card-details1"><span className="p-header-3">Lead Name :</span>Pial Noman</h5>
+            <h5 className="card-details1"><span className="p-header-3">Project Name (key): </span> Virtual Office</h5>
+            <h5 className="card-details1"><span className="p-header-3">Lead Name : </span>Pial Noman</h5>
         </CCardBody>
     
     </CCard>

@@ -1,14 +1,15 @@
 .card-details2{
-    font-style: normal;
-font-weight: 400;
-font-size: 18px;
-line-height: 28px;
-color: #444444;
+    font-size: 14px;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    color:rgb(23,43,77);
+    font-weight: 400;
 text-transform: capitalize;
 mix-blend-mode: normal;
 }
 .p-header-4{
     font-weight: 500 !important;
+    color: rgb(107, 119, 140);
 
 }
 .evmsval{
