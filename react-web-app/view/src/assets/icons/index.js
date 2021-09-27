@@ -146,7 +146,8 @@ import {
   cilXCircle,
   cilWarning,
   cilTag,
-  cilChartLine
+  cilChartLine,
+  cilCheckAlt
  
 } from '@coreui/icons'
 
@@ -295,6 +296,7 @@ cilCamera,
   cibHubspot,
   cibCircle,
   cilColumns,
-  cilChartLine
+  cilChartLine,
+  cilCheckAlt
   
 })

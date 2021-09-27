@@ -123,6 +123,7 @@ const OngoingProjectDetails = () => {
                 <div className="row">
                     <div className="col-md-10 offset-md-1 col-sm-12 col-xs-12 mt-1">
                         <CCard className="card-ongoing-project">
+                       
                             <CCardBody className="details-project-body">
                                 <h4 className="ongoing-card-header"><IconButton aria-label="favourite" size="medium" >
                                     <GradeIcon fontSize="inherit" className="fav-button" />
@@ -329,6 +330,10 @@ const OngoingProjectDetails = () => {
                                     </div>
                                     : null
                                 }
+                                 <div className="ongoing-action-card-buttons">
+                                    <CButton className="view-ongoing-details"><CIcon name="cil-list-rich" className="mr-1"/>View Details</CButton>
+                                    <CButton className="mark-ongoing-completed"><CIcon name="cil-check-alt" className="mr-1"/>Mark as Completed</CButton>
+                                </div>
                             </CCardBody>
 
                         </CCard>
