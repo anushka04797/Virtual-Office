@@ -1,8 +1,11 @@
 .section-name{
-    font-size:30px;
-    line-height: 42px;
-    margin-bottom: 15px;
-    color: #42526E;
+    font-size: 24px;
+    font-style: inherit;
+    line-height: 32px;
+    font-weight: 500;
+    color: #5e6c84 !important;
+    letter-spacing: -0.01em;
+    margin-bottom: 22px;
 }
 .icon-holder{
     height: auto;
@@ -12,78 +15,105 @@
     margin-right: 14px;
 }
 .videoIcon{
-    color: #BD9EFB;
+    color: #0052cc;
     font-size: 45px;
 }
 .meeting-cards{
-    box-shadow: 5px 10px 20px rgba(189, 158, 251, 0.1);
-    margin-bottom: 10px;
-    color: #444444;
+    border-radius: 3px;
+    box-shadow: rgb(9 30 66 / 25%) 0px 1px 1px, rgb(9 30 66 / 13%) 0px 0px 1px 1px;
+border: none !important;
 }
-
+.meeting-id{
+    font-style: normal;
+    font-size: 12px;
+    color: rgb(107, 119, 140);
+    line-height: 16px;
+    font-weight: 600;
+    mix-blend-mode: normal;
+    text-transform: capitalize;  
+}
 .meeting-join-btn{
-    background-color: #BD9EFB;
-    outline: 0 !important;
-    border: none !important;
-    color: #FFFFFF ;
+    -webkit-box-align: baseline;
+    align-items: baseline;
+    border-width: 0px;
+    border-radius: 3px;
+    box-sizing: border-box;
+    font-style: normal;
+    font-weight: 500;
+    height: 32px;
+    padding: 0px 20px;
+    font-size: 14px;
+    line-height:2.28571em;
+    background-color: #0052CC;
+    color: white;
 }
 .meeting-join-btn:hover{
-    color: #FFFFFF;
-    background: #BD9EFB;
+    background-color: #0065ff;
+    color: white;
     box-shadow: 5px 10px 20px rgba(189, 158, 251, 0.2);
 }
-
+.projectName{
+    font-size: 14px;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    color:rgb(23,43,77);
+    font-weight: 600;
+text-transform: capitalize;
+mix-blend-mode: normal;
+}
 /*meeting creator form*/
 .meeting-creator-form{
     padding: 20px;
-    box-shadow: 5px 10px 20px rgba(189, 158, 251, 0.1);
+    background: rgb(255, 255, 255);
+    border-radius: 3px;
+    box-shadow: rgb(0 0 0 / 10%) 0px 0px 10px;
+    box-sizing: border-box;
+    border-color: transparent;
 }
 .custom-label3{
 
-    font-style: normal;
-    font-weight: 500;
-    font-size: 16px;
-    line-height: 24px;
-    color: #444444;
-    mix-blend-mode: normal;
-    opacity: 0.8;
+    color: rgb(23, 43, 77);
+    font-size: 14px;
+    line-height: 1.42857;
+    font-weight: 600;
+    /* opacity: 0.8; */
     }
     .custom-formgroup3{
-        background: rgba(238, 232, 250, 0.5);
-    border: 1px solid #EEE8FA;
+        /* background: rgba(238, 232, 250, 0.5); */
+    /* border: 1px solid #EEE8FA; */
     box-sizing: border-box;
-    box-shadow: inset 0px 4px 20px rgba(189, 158, 251, 0.1);
-    border-radius: 8px;
-    height: 45px;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 16px;
-    line-height: 24px;
-    color: rgba(68, 68, 68, 0.5);
-    
-    mix-blend-mode: normal;
-    opacity: 0.8;
+    /* box-shadow: inset 0px 4px 20px rgba(189, 158, 251, 0.1); */
+    font-size:14px !important;
+    line-height: 1.42857;
+    color: rgb(133,133,133);
+    }
+    .custom-formgroup3:active,.custom-formgroup3:focus{
+        border:2px solid #0065ff;
+        box-shadow: none !important;
     }
     .create-meeting-btn{
-        margin-top: 30px;
-        background: #0052cc;
-    border-radius: 8px;
-    font-style: normal;
-    font-weight: 500;
-    font-size: 16px;
-    line-height: 24px;
-    letter-spacing: 0.3px;
-    color: #FFFFFF;
-    outline: none;
-    border-color: transparent;
-    padding: 15px 40px;
+        margin-top: 22px;
+        -webkit-box-align: baseline;
+        align-items: baseline;
+        border-width: 0px;
+        border-radius: 3px;
+        box-sizing: border-box;
+        font-style: normal;
+        font-weight: 500;
+        height: 40px;
+        padding: 0px 20px;
+        font-size: 14px;
+        line-height:2.28571em;
+        background-color: #0052CC;
+        color: white;
     }
     .create-meeting-btn:hover{
-        background: #004099;
+        background-color: #0065ff;
+    color: white;
         box-shadow: 5px 10px 20px rgba(189, 158, 251, 0.2);
         outline: none !important;
         border:transparent;
-        color: #FFFFFF;
+       
     }
     .error{
         color: red;
