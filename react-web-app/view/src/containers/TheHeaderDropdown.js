@@ -39,12 +39,17 @@ function logout(){
           header
           tag="div"
           color="light"
-          className="text-center"
+          className="text-center drop-text"
         >
           <strong>Account</strong>
         </CDropdownItem>
- 
-        <CDropdownItem onClick={()=>{logout()}}>
+        <CDropdownItem className="drop-text" to="/dashboard/profile">
+          <CIcon name="cil-user" className="mfe-2" />Profile
+        </CDropdownItem> 
+    
+     
+        <CDropdownItem divider />
+        <CDropdownItem onClick={()=>{logout()}} className="drop-text">
         <CIcon name="cil-account-logout" className="mfe-2" />
          Log out
         </CDropdownItem>

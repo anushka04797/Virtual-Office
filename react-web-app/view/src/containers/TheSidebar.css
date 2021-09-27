@@ -22,7 +22,12 @@ color: #0065ff !important;
     letter-spacing: -0.01em;
 text-decoration-color: none !important;
 }
-
+.c-sidebar-brand-minimized{
+    font-size: 18px;
+    font-style: inherit;
+    line-height: 18px;
+    color: rgb(66, 82, 110) !important;
+}
 .vo-sidebar{
     background-color: #FAFBFC !important;
 }
