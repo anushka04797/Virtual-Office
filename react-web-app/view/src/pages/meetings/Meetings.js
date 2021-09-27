@@ -52,9 +52,9 @@ const OurMeetings = () => {
         <>
             <CContainer>
                 {!meeting ? (
-                <CRow>
+                <div className="row">
                     {/**Upcoming meetings */}
-                    <CCol md="12" lg="4">
+                    <div className="col-md-12 col-lg-4 offset-lg-1">
                         <h4 className="section-name">Meetings</h4>
                         {/*Meeting list */}
                         <div>
@@ -73,10 +73,11 @@ const OurMeetings = () => {
                                 </CCardBody>
                             </CCard>
                             {/**dummy cards,remove after dynamic */}
+                        </div> 
                         </div>
-                    </CCol>
                     {/**create a new meeting */}
-                    <CCol md="12" lg="7">
+                    <div className="col-md-12 col-lg-6" >
+                   
                         <h4 className="section-name">Create a new meeting</h4>
                         {/**create that meeting!! */}
                         <CCard className="meeting-creator-form">
@@ -150,8 +151,8 @@ const OurMeetings = () => {
                                 </CForm>
                             </CCardBody>
                         </CCard>
-                    </CCol>
-                </CRow>):
+                        </div>
+                    </div>):
                 (<CRow>
                     <JitsiMeet roomName={roomName} username="Shaif" onMeetingClose={()=>create_meeting(false)}/>
                 </CRow>)}
