@@ -1,5 +1,5 @@
 import { createSlice,createAsyncThunk } from '@reduxjs/toolkit'
-import { JsonClient } from '../../config'
+import { JsonClient } from '../../Config'
 const initialState = {
   data:[],
   assignee:[],

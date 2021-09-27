@@ -1,6 +1,6 @@
 import React from "react";
 import { Redirect, Route } from "react-router-dom";
-import { TOKEN } from "../../config";
+import { TOKEN } from "../../Config";
 
 function ProtectedRoute({ component: Component, ...restOfProps }) {
   const isAuthenticated = localStorage.getItem(TOKEN)?true:false;

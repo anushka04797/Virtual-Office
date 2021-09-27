@@ -19,7 +19,7 @@ import Settings from '@material-ui/icons/Settings';
 import Logout from '@material-ui/icons/Logout';
 import { changeUserDropdownMenuState } from '../../store/slices/ConfigSlice';
 import { useHistory } from 'react-router-dom';
-import { drawerWidth } from '../../config';
+import { drawerWidth } from '../../Config';
 import MatAppbar from './MatAppbar';
 
 const AppBar = styled(MuiAppBar, {
