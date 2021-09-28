@@ -21,10 +21,10 @@ import navigation from './_nav'
 
 const TheSidebar = () => {
   const dispatch = useDispatch()
-  const show = useSelector(state => state.sidebarShow)
+  const show = useSelector(state => state.sidebar.sidebarShow)
 
   return (
-    <CSidebar colorScheme="light" 
+    <CSidebar colorScheme="light"
       show={show}
       onShowChange={(val) => dispatch(changeState(val))}
     >
