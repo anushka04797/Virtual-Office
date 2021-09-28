@@ -3,9 +3,11 @@ import GradeIcon from '@material-ui/icons/Grade';
 import '../ongoing-project-details/ongoingProjectDetails.css'
 import IconButton from '@material-ui/core/IconButton';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
+import { useHistory } from "react-router-dom";
 import React from 'react';
-
-const completeProjects = () => {
+import { CIcon } from "@coreui/icons-react";
+const CompleteProjects = () => {
+    let historyTo = useHistory();
     return (
         <>
             <div className="container">
@@ -116,7 +118,9 @@ const completeProjects = () => {
                                 </div> */}
 
                                 {/*show add task form on click button */}
-                             
+                                <div className="ongoing-action-card-buttons">
+                                <CButton className="view-ongoing-details" onClick={() => historyTo.push('/dashboard/Projects/completed-projects/details/1')}><CIcon name="cil-list-rich" className="mr-1" />View Details</CButton>
+                                </div>
                             </CCardBody>
 
                         </CCard>
@@ -127,4 +131,4 @@ const completeProjects = () => {
         </>
     )
 }
-export default completeProjects;
+export default CompleteProjects;

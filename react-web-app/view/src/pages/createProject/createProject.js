@@ -46,14 +46,14 @@ const CreateNewProject = () => {
                         <CInput className="custom-forminput-6"></CInput>
                       </div>
                       {/**estimated persons */}
-                      <div className="col-lg-6 mb-3">
+                      <div className="col-lg-4 mb-3">
                         <CLabel className="custom-label-5">
                           Estimated Person(s)
                         </CLabel>
                         <CInput className="custom-forminput-6"></CInput>
                       </div>
                       {/**Assignees */}
-                      <div className="col-lg-6 mb-3">
+                      <div className="col-lg-8 mb-3">
                         <CLabel className="custom-label-5">
                           Assignee(s)
                         </CLabel>

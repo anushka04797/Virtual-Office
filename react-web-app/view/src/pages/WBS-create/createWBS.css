@@ -64,9 +64,7 @@
 .cancel-wbs:hover {
   background-color: rgba(9, 30, 66, 0.04);
 }
-.custom-forminput-5:active {
-    border: none !important;
-}
+
 @media all and (min-width: 992px) {
   .projectwbs-form-button-holders {
     text-align: center !important;

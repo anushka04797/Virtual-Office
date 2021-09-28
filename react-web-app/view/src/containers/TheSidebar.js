@@ -57,7 +57,7 @@ const TheSidebar = () => {
            <CSidebarNavItem to="/dashboard" icon="cil-speedometer" name="Dashboard" className="vo-navItem"></CSidebarNavItem>
            {/**Projects */}
            <CSidebarNavDropdown icon="cib-ghost" name="Projects" className="vo-navItem">
-<CSidebarNavItem to="/dashboard/Projects/ongoing-project-details-view" name="Ongoing Projects" icon="cib-circle"className="vo-navItem"  ></CSidebarNavItem>
+<CSidebarNavItem to="/dashboard/Projects/ongoing-projects" name="Ongoing Projects" icon="cib-circle"className="vo-navItem"  ></CSidebarNavItem>
 <CSidebarNavItem to="/dashboard/Projects/completed-projects" name="Completed Projects" icon="cil-check-circle"className="vo-navItem" ></CSidebarNavItem>
 <CSidebarNavItem to="/dashboard/Projects/create-new-project" name="Create New Project" icon="cil-note-add"className="vo-navItem" ></CSidebarNavItem>
 
