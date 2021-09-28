@@ -7,8 +7,9 @@ import AddCircleIcon from '@material-ui/icons/AddCircle';
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
 import { CIcon } from "@coreui/icons-react";
+import { useHistory } from "react-router-dom";
 const OngoingProjectDetails = () => {
-
+    let history = useHistory();
     const [showTaskForm, setShowTaskForm] = useState(false);
     const toggleTaskForm = () => {
         setShowTaskForm(!showTaskForm);
@@ -125,7 +126,7 @@ const OngoingProjectDetails = () => {
                         <CCard className="card-ongoing-project">
                        
                             <CCardBody className="details-project-body">
-                                <h4 className="ongoing-card-header"><IconButton aria-label="favourite" size="medium" >
+                                <h4 className="ongoing-card-header"><IconButton aria-label="favourite" disabled size="medium" >
                                     <GradeIcon fontSize="inherit" className="fav-button" />
                                 </IconButton>Virtual Guard</h4>
                                 <hr className="header-underline1" />
@@ -331,7 +332,7 @@ const OngoingProjectDetails = () => {
                                     : null
                                 }
                                  <div className="ongoing-action-card-buttons">
-                                    <CButton className="view-ongoing-details"><CIcon name="cil-list-rich" className="mr-1"/>View Details</CButton>
+                                    <CButton className="view-ongoing-details" onClick={() => history.push('/dashboard/Projects/ongoing-projects/details/1')}><CIcon name="cil-list-rich" className="mr-1" />View Details</CButton>
                                     <CButton className="mark-ongoing-completed"><CIcon name="cil-check-alt" className="mr-1"/>Mark as Completed</CButton>
                                 </div>
                             </CCardBody>
@@ -342,7 +343,7 @@ const OngoingProjectDetails = () => {
  <div className="col-md-10 offset-md-1 col-sm-12 col-xs-12 mt-1">
                         <CCard className="card-ongoing-project">
                             <CCardBody className="details-project-body">
-                                <h4 className="ongoing-card-header"><IconButton aria-label="favourite" size="medium" >
+                                <h4 className="ongoing-card-header"><IconButton aria-label="favourite" disabled size="medium">
                                     <GradeIcon fontSize="inherit" className="fav-button" />
                                 </IconButton>Virtual Guard</h4>
                                 <hr className="header-underline1" />

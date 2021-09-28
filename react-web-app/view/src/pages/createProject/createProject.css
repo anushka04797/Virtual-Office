@@ -41,7 +41,7 @@
 
 }
 .custom-forminput-6:active,.custom-forminput-6:focus{
-    border:2px solid #0065ff;
+    border:2px solid #0065ff !important;
     box-shadow: none !important;
 }
 .create-btn-prjct{
