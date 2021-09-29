@@ -48,7 +48,7 @@ const ongoingDetailsView = () => {
                                         <h6 className="project-point-details">120 </h6>
                                     </div>
                                     {/**Assignees */}
-                                    <div className="col-md-12 mt-2 ">
+                                    <div className="col-md-12 mt-4">
 
                                         <h5 className="projectName mb-2">Assignee(s)-(5)</h5>
                                         <div className="row">
