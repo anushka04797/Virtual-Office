@@ -2,7 +2,7 @@ import { CContainer, CRow, CCol, CCard, CCardHeader, CCardBody, CForm, CLabel, C
 import React, { useState } from 'react'
 
 const WbsModal = (props) => {
-    console.log(props.data)
+    // console.log(props.data)
 
     return (
         <>

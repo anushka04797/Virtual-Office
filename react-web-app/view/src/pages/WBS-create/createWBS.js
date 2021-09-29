@@ -15,7 +15,7 @@ const CreateNewWBS = () => {
 
     const getAssigneeList = (option)=> {
         dispatch(fetchProjectsAssigneeThunk(option.work_package_number))
-        console.log(assigneeList)
+        console.log("assigneeList", assigneeList)
         setSelectedProject(option)
         setSelectedProjectEndDate(option.planned_delivery_date)
     }
