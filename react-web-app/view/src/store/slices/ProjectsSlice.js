@@ -10,13 +10,13 @@ const initialState = {
 
 export const fetchProjectsThunk = createAsyncThunk('projects/fetchProjectsThunk', async (user_id) => {
   const response = await JsonClient.get('project/assigned/all/'+user_id+'/')
-  console.log(response.data)
+  // console.log("project/assigned/all/", response.data)
   return response.data
 })
 
 export const fetchProjectsAssigneeThunk = createAsyncThunk('projects/fetchProjectsAssigneeThunk', async (work_package_number) => {
     const response = await JsonClient.get('project/assignee/list/'+work_package_number+'/')
-    console.log('thunk result',response.data)
+    // console.log('thunk result',response.data)
     let projectAssignee = []
     response.data.map((item)=> {
         if(!projectAssignee.find(assignee => assignee.id == item.assignee.id)){
@@ -28,7 +28,7 @@ export const fetchProjectsAssigneeThunk = createAsyncThunk('projects/fetchProjec
 
 export const fetchWbsThunk = createAsyncThunk('wbs/createWbsThunk', async (data) => {
   const response = await JsonClient.post('wbs/create/', data)
-  console.log(response.data)
+  // console.log("wbs/create/", response.data)
   return response.data
 })
 
