@@ -48,7 +48,7 @@ const ongoingDetailsView = () => {
                                         <h6 className="project-point-details">120 </h6>
                                     </div>
                                     {/**Assignees */}
-                                    <div className="col-md-12 mt-2">
+                                    <div className="col-md-12 mt-2 ">
 
                                         <h5 className="projectName mb-2">Assignee(s)-(5)</h5>
                                         <div className="row">
@@ -84,20 +84,71 @@ const ongoingDetailsView = () => {
                                     </div>
 
                                     {/**Shared files */}
-                                    <div className="col-md-12 mt-2">
-                                    <h5 className="projectName">Shared Files</h5>
-                                                   <div className="file-show">
-                                   
-                                    <h5 className="file-attached-ongoing rounded-pill"><CButton className="remove-file-ongoing"><img src={"assets/icons/close-btn.svg"} /></CButton>somefile.file</h5> 
+                                    <div className="col-md-12 mt-4 mb-2">
+                                        <h5 className="projectName mb-3">Shared Files</h5>
+                                        <div className="file-show-ongoing-details row">
+                                            <div className="col-md-6 col-sm-6 col-lg-3">
+                                                <div className="file-attached-ongoing rounded-pill"><CButton className="remove-file-ongoing"><img src={"assets/icons/icons8-close-64-blue.png"} className="close-icon-size" /></CButton>somefile.file</div>
+                                            </div>
 
 
-                                    {/* *extra static buttons,delete code after dynamic implementation */}
-                                    <h5 className="file-attached-ongoing rounded-pill"><CButton className="remove-file-ongoing"><img src={"assets/icons/close-btn.svg"} /></CButton>somefiledjfkdjkfjdkjfkdjkfjkdjfk.file</h5>
-                                 
-                                </div> 
+
+                                            {/* *extra static buttons,delete code after dynamic implementation */}
+                                            <div className="col-md-6 col-sm-6 col-lg-3">
+                                                <div className="file-attached-ongoing rounded-pill"><CButton className="remove-file-ongoing"><img src={"assets/icons/icons8-close-64-blue.png"} className="close-icon-size" /></CButton>abcdjskjdksjkds.xvts</div>
+                                            </div><div className="col-md-6 col-sm-6 col-lg-3">
+                                                <div className="file-attached-ongoing rounded-pill"><CButton className="remove-file-ongoing"><img src={"assets/icons/icons8-close-64-blue.png"} className="close-icon-size" /></CButton>abcdjskjdksjkds.xvts</div>
+                                            </div><div className="col-md-6 col-sm-6 col-lg-3">
+                                                <div className="file-attached-ongoing rounded-pill"><CButton className="remove-file-ongoing"><img src={"assets/icons/icons8-close-64-blue.png"} className="close-icon-size" /></CButton>abcdjskjdksjkds.xvts</div>
+                                            </div><div className="col-md-6 col-sm-6 col-lg-3">
+                                                <div className="file-attached-ongoing rounded-pill"><CButton className="remove-file-ongoing"><img src={"assets/icons/icons8-close-64-blue.png"} className="close-icon-size" /></CButton>abcdjskjdksjkds.xvts</div>
+                                            </div><div className="col-md-6 col-sm-6 col-lg-3">
+                                                <div className="file-attached-ongoing rounded-pill"><CButton className="remove-file-ongoing"><img src={"assets/icons/icons8-close-64-blue.png"} className="close-icon-size" /></CButton>abcdjskjdksjkds.xvts</div>
+                                            </div>
+
+                                        </div>
                                     </div>
 
 
+                                    {/**_________subtasks_____________________ */}
+                                    <div className="col-md-12 mt-2 mb-2">
+                                        <hr className="header-underline1" />
+                                        <h5 className="projectName mb-3">Sub Tasks</h5>
+                                        {/**Task cards */}
+                                        <div className="row">
+
+                                            <div className="col-md-12 mb-1">
+                                                <div className="task-cards">
+                                                <div className="crud-btuttons-1">
+                                                    <CButton className="edit-project-on-2"><CIcon name="cil-pencil" /></CButton>
+                                                    <CButton className="delete-project-2"><CIcon name="cil-trash" /></CButton>
+                                                </div>
+                                                <h5 className="project-details-points child"><span className="info-header-1">Subtask : </span>API Development</h5>
+                                                <h5 className="info-header-1">Tasks :</h5>
+                                                <ol className="task-lists">
+                                                    <li className="task-list-item"><span className="info-header-1">Task Title: </span>Correct API for add operation</li>
+                                                    <li className="task-list-item"><span className="info-header-1">Task Title: </span>Correct API for sign in operation</li>
+                                                </ol>
+                                                </div>
+                                            </div>
+                                            {/**______DUMMY TASK CARDS,DELETE ONCE DYNAMIC */}
+                                            <div className="col-md-12">
+                                                <div className="task-cards">
+                                                <div className="crud-btuttons-1">
+                                                    <CButton className="edit-project-on-2"><CIcon name="cil-pencil" /></CButton>
+                                                    <CButton className="delete-project-2"><CIcon name="cil-trash" /></CButton>
+                                                </div>
+                                                <h5 className="project-details-points child"><span className="info-header-1">Subtask : </span>API Development</h5>
+                                                <h5 className="info-header-1">Tasks :</h5>
+                                                <ol className="task-lists">
+                                                    <li className="task-list-item"><span className="info-header-1">Task Title: </span>Correct API for add operation</li>
+                                                    <li className="task-list-item"><span className="info-header-1">Task Title: </span>Correct API for sign in operation</li>
+                                                </ol>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
                                 </div>
                             </CCardBody>
                         </CCard>
