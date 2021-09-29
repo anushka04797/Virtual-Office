@@ -8,6 +8,11 @@ text-align: left;
 letter-spacing: -0.01em;
 margin-bottom: 30px;
 }
+.card-ongoing-project{
+    border-radius: 3px;
+    box-shadow: rgb(9 30 66 / 25%) 0px 1px 1px, rgb(9 30 66 / 13%) 0px 0px 1px 1px;
+border: none !important;
+}
 .ongoing-card-header-1{
     font-size: 1.14286em;
     font-style: inherit;
@@ -70,7 +75,7 @@ margin-bottom: 30px;
 text-transform: capitalize;
 mix-blend-mode: normal;
 }
-
+/**-------------------------DEVELOPER SHOW----------------------------------------------------**/
 .developer-circle-thumbnail-1{
     width: 55px;
     height: 55px;
@@ -84,6 +89,7 @@ mix-blend-mode: normal;
     line-height: 20px;
   align-self: center;
 }
+/**-----Attached Files-------------------- **/
 .file-attached-ongoing{
    
     padding: 5px 8px;
@@ -101,19 +107,19 @@ color: #FAFBFC;
 mix-blend-mode: normal;
 margin-right: 10px;
 margin-bottom: 10px;
+text-align: center;
+overflow-wrap: break-word;
+word-break: break-word;
+
     
-}
-.file-show{
-    display: flex;
-    align-items: baseline;
 }
 .remove-file-ongoing{
     position: absolute;
     background: transparent;
 
     color: white;
-    top: -15px;
-    right: -15px;
+    top: -18px;
+    right: -22px;
     border-color: transparent;
 }
 .remove-file-ongoing:hover,.remove-file-ongoing .active,.remove-file-ongoing:focus{
@@ -125,8 +131,72 @@ margin-bottom: 10px;
 *:focus {
     outline: 0 !important;
     border: none !important;
+}.close-icon-size{
+    height: 22px;
 }
-        /*media query*/
+/**_______________subtask lists____________**/
+.project-details-points,.task-list-item{
+    font-size: 14px;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    color:rgb(23,43,77);
+    font-weight: 400;
+    line-height:20px;
+margin-bottom: 20px;
+/* display: flex; */
+}
+.info-header-1{
+    font-weight: 500;
+    color: rgb(107, 119, 140);
+    font-size: 14px;
+    line-height:20px;
+}
+.edit-project-on-2{
+    margin-left: auto;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 18px;
+    padding: 0px 5px ;
+    margin-right: 10px;
+    border-color: transparent;
+    margin-top: 10px;
+    position: relative;
+    color: #FAFBFC;
+    background-color: #00B0FF;
+}
+.edit-project-on-2:hover{
+    background-color: #1976D2;
+    color: #FFFFFF;
+}
+.delete-project-2{
+    margin-left: auto;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 18px;
+    padding: 0px 5px ;
+    margin-right: 10px;
+    border-color: transparent;
+    margin-top: 10px;
+    position: relative;
+    color: #FAFBFC;
+    background-color: #B71C1C; 
+}
+.delete-project-2:hover{
+    background-color: #E53935;
+    color: #FFFFFF;
+}
+.crud-btuttons-1{
+    margin-bottom: 14px !important;
+}
+.task-cards{
+    border-radius: 3px;
+    box-shadow: rgb(9 30 66 / 25%) 0px 1px 1px, rgb(9 30 66 / 13%) 0px 0px 1px 1px;
+border: none !important;
+padding:4px 15px;
+}
+        /*____________media query___________*/
         @media all and (min-width:300px) and (max-width:992px){
             .developer-circle-thumbnail-1{
                 width: 40px;
@@ -136,6 +206,10 @@ margin-bottom: 10px;
         @media all and (min-width:992px){
             .card-header-portion-ongoing{
                 display: flex;
+                
+            }
+            .crud-btuttons-1{
+                text-align: right;
                 
             }
         }
