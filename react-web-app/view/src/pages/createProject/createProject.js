@@ -1,15 +1,46 @@
 import { CContainer, CRow, CCol, CCard, CCardHeader, CCardBody, CForm, CLabel, CInput, CButton } from '@coreui/react';
-import React from 'react'
-import './createProject.css'
+import {React,Component} from 'react';
+import './createProject.css';
+import { ActionMeta, OnChangeValue } from 'react-select';
+import Creatable, { CreatableSelect,makeCreatableSelect } from 'react-select/creatable';
+import Select from "react-select";
+import makeAnimated from "react-select/animated";
 
+// class CreatableSingle extends Component {
+//   handleChange = (
+//     newValue: OnChangeValue[options,false],
+//     actionMeta: ActionMeta<options>
+//   ) => {
+//     console.group('Value Changed');
+//     console.log(newValue);
+//     console.log(`action: ${actionMeta.action}`);
+//     console.groupEnd();
+//   };
+//   handleInputChange = (inputValue, ActionMeta) => {
+//     console.group('Input Changed');
+//     console.log(inputValue);
+//     console.log(`action: ${actionMeta.action}`);
+//     console.groupEnd();
+// }
+// }
 const CreateNewProject = () => {
+  const colourStyles = {
+    control: styles => ({ ...styles, fontSize: '14px !important', lineHeight: '1.42857', borderRadius: "8px",borderRadius:".25rem",color:"rgb(133,133,133)"}),
+}
+const options = [
+  { value: "nypd", label: "New York Police Department" },
+  { value: "lapd", label: "Los Angeles Police Department" },
+  { value: "miamipd", label: "Miami Police Department" },
+  { value: "dmp", label: "Dhaka Metropoliton Police" },
 
+];
 
+const animatedComponents = makeAnimated();
   return (
     <>
       <CContainer>
         <CRow>
-          <div className="col-md-8 offset-md-2 col-sm-12">
+          <div className="col-lg-10 offset-lg-1 col-sm-12">
             <CCard className="custom-project-card-1">
               <CCardHeader className="project-header-3"> <h4 className="section-name-projectcreate">Create a new project</h4>
               </CCardHeader>
@@ -19,10 +50,19 @@ const CreateNewProject = () => {
                     <CRow>
                       {/**task delivery order */}
                       <div className="col-lg-12 mb-3">
-                        <CLabel className="custom-label-5">
+                        <CLabel className="custom-label-5" htmlFor="tdo">
                           Task Delivery Order
                         </CLabel>
-                        <CInput className="custom-forminput-6"></CInput>
+                        <Select
+                                        closeMenuOnSelect={true}
+                                        components={animatedComponents}
+                                        name="tdo"
+                                        isClearable
+                                        options={options}
+                                        styles={colourStyles}
+                                     
+
+                        />
                       </div>
                       {/**Sub task */}
                       <div className="col-lg-6 mb-3">
@@ -46,14 +86,14 @@ const CreateNewProject = () => {
                         <CInput className="custom-forminput-6"></CInput>
                       </div>
                       {/**estimated persons */}
-                      <div className="col-lg-4 mb-3">
+                      <div className="col-lg-5 mb-3">
                         <CLabel className="custom-label-5">
                           Estimated Person(s)
                         </CLabel>
                         <CInput className="custom-forminput-6"></CInput>
                       </div>
                       {/**Assignees */}
-                      <div className="col-lg-8 mb-3">
+                      <div className="col-lg-7 mb-3">
                         <CLabel className="custom-label-5">
                           Assignee(s)
                         </CLabel>
