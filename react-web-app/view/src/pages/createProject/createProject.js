@@ -1,5 +1,5 @@
 import { CContainer, CRow, CCol, CCard, CCardHeader, CCardBody, CForm, CLabel, CInput, CButton } from '@coreui/react';
-import {React,Component} from 'react';
+import {React,Component, useState} from 'react';
 import './createProject.css';
 import { ActionMeta, OnChangeValue } from 'react-select';
 import Creatable, { CreatableSelect,makeCreatableSelect } from 'react-select/creatable';
@@ -23,9 +23,11 @@ import makeAnimated from "react-select/animated";
 //     console.groupEnd();
 // }
 // }
+
 const CreateNewProject = () => {
   const colourStyles = {
-    control: styles => ({ ...styles, fontSize: '14px !important', lineHeight: '1.42857', borderRadius: "8px",borderRadius:".25rem",color:"rgb(133,133,133)"}),
+    // control: (styles, state) => ({ ...styles,height:"35px", fontSize: '14px !important', lineHeight: '1.42857', borderRadius: "8px",borderRadius:".25rem",color:"rgb(133,133,133)",border:state.isFocused ? '2px solid #0065ff' :'inherit'}),
+    option: (provided, state) => ({...provided, fontSize: '14px !important'})
 }
 const options = [
   { value: "nypd", label: "New York Police Department" },
@@ -34,6 +36,18 @@ const options = [
   { value: "dmp", label: "Dhaka Metropoliton Police" },
 
 ];
+
+const handleChange = (field, value) => {
+  switch (field) {
+    case 'options':
+      setRoleValue(value)
+      break
+
+    default:
+      break
+  }
+}
+const [roleValue,setRoleValue]=useState('');
 
 const animatedComponents = makeAnimated();
   return (
@@ -53,30 +67,35 @@ const animatedComponents = makeAnimated();
                         <CLabel className="custom-label-5" htmlFor="tdo">
                           Task Delivery Order
                         </CLabel>
-                        <Select
+                        <Creatable
                                         closeMenuOnSelect={true}
-                                        components={animatedComponents}
+                                       
                                         name="tdo"
+                                        placeholder="Select from list or create new"
                                         isClearable
+                                        onChange={(value) => handleChange('options', value)}
+                                        classNamePrefix="custom-forminput-6"
+                                        value={roleValue}
                                         options={options}
                                         styles={colourStyles}
+                                       
                                      
 
                         />
                       </div>
                       {/**Sub task */}
                       <div className="col-lg-6 mb-3">
-                        <CLabel className="custom-label-5">
+                        <CLabel className="custom-label-5" htmlFor="sTask">
                           Subtask
                         </CLabel>
-                        <CInput className="custom-forminput-6"></CInput>
+                        <CInput className="custom-forminput-6" name="sTask"></CInput>
                       </div>
                       {/**work package number */}
                       <div className="col-lg-6 mb-3">
-                        <CLabel className="custom-label-5">
+                        <CLabel className="custom-label-5" htmlFor="workPackageNo">
                           Work Package Number
                         </CLabel>
-                        <CInput className="custom-forminput-6"></CInput>
+                        <CInput className="custom-forminput-6" id="workPackageNo"></CInput>
                       </div>
                       {/**Task title */}
                       <div className="col-lg-12 mb-3">
@@ -94,10 +113,25 @@ const animatedComponents = makeAnimated();
                       </div>
                       {/**Assignees */}
                       <div className="col-lg-7 mb-3">
-                        <CLabel className="custom-label-5">
+                        <CLabel className="custom-label-5" htmlFor="workerBees">
                           Assignee(s)
                         </CLabel>
-                        <CInput className="custom-forminput-6"></CInput>
+                        <Select
+                                        closeMenuOnSelect={false}
+                                       
+                                        name="workerBees"
+                                        placeholder="Select from list"
+                                        isClearable
+                                        isMulti={true}
+                                        onChange={(value) => handleChange('options', value)}
+                                        classNamePrefix="custom-forminput-6"
+                                        value={roleValue}
+                                        options={options}
+                                        styles={colourStyles}
+                                       
+                                     
+
+                        />
                       </div>
                       {/**pMs */}
                       <div className="col-lg-6 mb-3">
