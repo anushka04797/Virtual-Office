@@ -33,16 +33,18 @@
     line-height: 1.42857;
     font-weight: 600;
 }
-.custom-forminput-6{
+.custom-forminput-6,.css-yk16xz-control{
     font-size:14px !important;
     line-height: 1.42857;
     color: rgb(133,133,133);
     
 
 }
-.custom-forminput-6:active,.custom-forminput-6:focus{
+.custom-forminput-6:active,.custom-forminput-6:focus,.css-yk16xz-control:active,.css-yk16xz-control:focus{
     border:2px solid #0065ff !important;
     box-shadow: none !important;
+    font-size:14px !important;
+    line-height: 1.42857;
 }
 .create-btn-prjct{
     -webkit-box-align: baseline;
