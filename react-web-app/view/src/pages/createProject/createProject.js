@@ -27,7 +27,8 @@ import makeAnimated from "react-select/animated";
 const CreateNewProject = () => {
   const colourStyles = {
     // control: (styles, state) => ({ ...styles,height:"35px", fontSize: '14px !important', lineHeight: '1.42857', borderRadius: "8px",borderRadius:".25rem",color:"rgb(133,133,133)",border:state.isFocused ? '2px solid #0065ff' :'inherit'}),
-    option: (provided, state) => ({...provided, fontSize: '14px !important'})
+    option: (provided, state) => ({...provided, fontSize: '14px !important'}),
+   
 }
 const options = [
   { value: "nypd", label: "New York Police Department" },
@@ -36,18 +37,28 @@ const options = [
   { value: "dmp", label: "Dhaka Metropoliton Police" },
 
 ];
+const options1 = [
+  { value: "nypd", label: "La Casa De papel" },
+  { value: "lapd", label: "Aninda" },
+  { value: "miamipd", label: "Pial Noman" },
+  { value: "dmp", label: "Saif Rahi" },
+
+];
 
 const handleChange = (field, value) => {
   switch (field) {
     case 'options':
       setRoleValue(value)
       break
-
+ case 'options1':
+   setAssigneeValue(value)
+   break
     default:
       break
   }
 }
 const [roleValue,setRoleValue]=useState('');
+const [assigneeValue,setAssigneeValue]=useState('')
 
 const animatedComponents = makeAnimated();
   return (
@@ -64,15 +75,16 @@ const animatedComponents = makeAnimated();
                     <CRow>
                       {/**task delivery order */}
                       <div className="col-lg-12 mb-3">
-                        <CLabel className="custom-label-5" htmlFor="tdo">
+                        <CLabel className="custom-label-5" htmlFor="tdo"  aria-labelledby="tdo">
                           Task Delivery Order
                         </CLabel>
                         <Creatable
                                         closeMenuOnSelect={true}
+                                       aria-labelledby="tdo"
+                                        id="tdo"
                                        
-                                        name="tdo"
                                         placeholder="Select from list or create new"
-                                        isClearable
+                                        isClearable={true}
                                         onChange={(value) => handleChange('options', value)}
                                         classNamePrefix="custom-forminput-6"
                                         value={roleValue}
@@ -113,20 +125,21 @@ const animatedComponents = makeAnimated();
                       </div>
                       {/**Assignees */}
                       <div className="col-lg-7 mb-3">
-                        <CLabel className="custom-label-5" htmlFor="workerBees">
+                        <CLabel className="custom-label-5" htmlFor="workerBees" aria-labelledby="workerBees">
                           Assignee(s)
                         </CLabel>
                         <Select
                                         closeMenuOnSelect={false}
-                                       
-                                        name="workerBees"
+                                       aria-labelledby="workerBees"
+                                        id="workerBees"
+                                        minHeight="35px"
                                         placeholder="Select from list"
-                                        isClearable
+                                        isClearable={true}
                                         isMulti={true}
-                                        onChange={(value) => handleChange('options', value)}
+                                        onChange={(value) => handleChange('options1', value)}
                                         classNamePrefix="custom-forminput-6"
-                                        value={roleValue}
-                                        options={options}
+                                        value={assigneeValue}
+                                        options={options1}
                                         styles={colourStyles}
                                        
                                      

@@ -57,9 +57,10 @@ const TheSidebar = () => {
            <CSidebarNavItem to="/dashboard" icon="cil-speedometer" name="Dashboard" className="vo-navItem"></CSidebarNavItem>
            {/**Projects */}
            <CSidebarNavDropdown icon="cib-ghost" name="Projects" className="vo-navItem">
-<CSidebarNavItem to="/dashboard/Projects/ongoing-projects" name="Ongoing Projects" icon="cib-circle"className="vo-navItem"  ></CSidebarNavItem>
-<CSidebarNavItem to="/dashboard/Projects/completed-projects" name="Completed Projects" icon="cil-check-circle"className="vo-navItem" ></CSidebarNavItem>
-<CSidebarNavItem to="/dashboard/Projects/create-new-project" name="Create New Project" icon="cil-note-add"className="vo-navItem" ></CSidebarNavItem>
+           <CSidebarNavItem to="/dashboard/Projects/create-new-project" name="Create New Project" className="vo-navItem" ></CSidebarNavItem>
+<CSidebarNavItem to="/dashboard/Projects/ongoing-projects" name="Ongoing Projects" className="vo-navItem"  ></CSidebarNavItem>
+<CSidebarNavItem to="/dashboard/Projects/completed-projects" name="Completed Projects" className="vo-navItem" ></CSidebarNavItem>
+
 
 
            </CSidebarNavDropdown>
@@ -67,8 +68,8 @@ const TheSidebar = () => {
            <CSidebarNavItem to="/dashboard/meetings" icon="cil-view-module" name="Meetings" className="vo-navItem"></CSidebarNavItem>
      {/**WBS */}
      <CSidebarNavDropdown icon="cil-spreadsheet" name="WBS" className="vo-navItem">
-<CSidebarNavItem to="/dashboard/WBS/create-wbs" icon="cil-library-add" name="Create WBS"className="vo-navItem"  ></CSidebarNavItem>
-<CSidebarNavItem to="/dashboard/WBS/board" icon="cil-columns" name="Board"className="vo-navItem" ></CSidebarNavItem>
+<CSidebarNavItem to="/dashboard/WBS/create-wbs"  name="Create WBS"className="vo-navItem"  ></CSidebarNavItem>
+<CSidebarNavItem to="/dashboard/WBS/board"  name="Board"className="vo-navItem" ></CSidebarNavItem>
 
 </CSidebarNavDropdown>
 {/**EVMS */}
