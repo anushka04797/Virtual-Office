@@ -147,7 +147,9 @@ import {
   cilWarning,
   cilTag,
   cilChartLine,
-  cilCheckAlt
+  cilCheckAlt,
+  cilPenAlt,
+  cilPen
  
 } from '@coreui/icons'
 
@@ -259,7 +261,8 @@ cilCamera,
   cilViewModule,
   cilLibraryAdd,
   cilLibrary,
-  cilFolderOpen
+  cilFolderOpen,
+  cilPenAlt
 }, {
   cifUs,
   cifBr,
@@ -297,6 +300,7 @@ cilCamera,
   cibCircle,
   cilColumns,
   cilChartLine,
-  cilCheckAlt
+  cilCheckAlt,
+  cilPen
   
 })
