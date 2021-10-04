@@ -1,10 +1,10 @@
 import React from 'react'
 import { CForm, CLabel, CInput, CCardBody, CCard,CButton } from '@coreui/react'
-
+import './changePassoword.css';
 const changePassword = () => {
     return (
         <>
-            <CCard className="mt-3 card-view-profile">
+            <CCard className="mt-4 card-change-password">
                 <CCardBody>
                     <CForm>
                         <div className="mb-2">

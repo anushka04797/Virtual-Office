@@ -149,7 +149,8 @@ import {
   cilChartLine,
   cilCheckAlt,
   cilPenAlt,
-  cilPen
+  cilPen,
+  cilArrowThickToTop
  
 } from '@coreui/icons'
 
@@ -301,6 +302,7 @@ cilCamera,
   cilColumns,
   cilChartLine,
   cilCheckAlt,
-  cilPen
+  cilPen,
+  cilArrowThickToTop
   
 })
