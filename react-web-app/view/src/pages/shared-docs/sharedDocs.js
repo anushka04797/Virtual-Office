@@ -50,7 +50,7 @@ const sharedDocuments = () => {
               <CContainer>
                 <h3 className="profile-page-header">View Shared Documents</h3>
                 <CRow>
-                  <div className="col-lg-8 offset-lg-2">
+                  <div className="col-md-12">
                     <ShowDocuments />
                   </div>
                 </CRow>

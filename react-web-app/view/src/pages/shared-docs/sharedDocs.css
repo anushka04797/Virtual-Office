@@ -73,3 +73,63 @@
     line-height: 32px;
     outline: none;
 }
+.expand-btn-holder{
+    text-align: right;
+}
+.see-all-btn{
+    color: #0052CC;
+    
+}
+.see-all-btn:hover{
+    color: #0065FF;
+    outline: none;
+    
+}
+.see-all-btn:focus{
+    outline: transparent !important;
+    border: transparent !important; 
+    box-shadow: none !important;
+}
+.icon-holder{
+    text-align: center;
+}
+.file-icon-show{
+    color: #0065ff;
+}
+.project-name{
+    font-size: 1.14286em;
+    font-style: inherit;
+    line-height: 1.25;
+    color: #172B4D;
+    font-weight: 600;
+    letter-spacing: -0.006em;
+    margin-top: 20px;
+    
+}
+.file-name{
+    line-height: 20px;
+    font-size: 14px;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    font-weight: 600;
+    color: #172B4D;
+}
+.create-time,.uploadedBy{
+    font-size: 12px;
+    
+    line-height: 16px;
+}
+.thicc-header{
+    color: rgb(107, 119, 140);
+    font-weight: 600;
+}
+.doc-file-body{
+    padding: 5px !important;
+    text-align: center;
+}
+.doc-cards{
+    border-radius: 3px;
+    box-shadow: rgb(9 30 66 / 25%) 0px 1px 1px, rgb(9 30 66 / 13%) 0px 0px 1px 1px;
+border: none !important; 
+cursor: pointer;
+}
