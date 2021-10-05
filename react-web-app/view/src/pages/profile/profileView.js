@@ -29,8 +29,8 @@ const UserProfile = () => {
   };
   const [visible, setVisible] = useState(false);
   const profileEditForm = () => {
-    setVisible(!visible);
-  };
+    setVisible(!visible);  
+  }
 
   return (
     <>
