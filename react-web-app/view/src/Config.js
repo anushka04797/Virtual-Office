@@ -57,6 +57,14 @@ export const PUBLIC_API = axios.create({
   }
 })
 
+export const PUBLIC_FORM_API = axios.create({
+  baseURL: API_URL,
+  timeout: 100000,
+  headers:{
+    "Content-Type": "multipart/form-data",
+  }
+})
+
 export const isLoggedIn=()=>{
   if(localStorage.getItem(TOKEN)===null){
     return false;
