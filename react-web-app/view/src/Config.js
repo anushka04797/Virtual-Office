@@ -37,6 +37,18 @@ API.interceptors.request.use(
     return Promise.reject(error);
   }
 );
+FILE_API.interceptors.request.use(
+  function(config) {
+    const token = localStorage.getItem(TOKEN); 
+    if (token) {
+      config.headers["Authorization"] = 'Bearer ' + token;
+    }
+    return config;
+  },
+  function(error) {
+    return Promise.reject(error);
+  }
+);
 export const PUBLIC_API = axios.create({
   baseURL: API_URL,
   timeout: 100000,
