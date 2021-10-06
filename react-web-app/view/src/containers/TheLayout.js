@@ -1,6 +1,7 @@
 import React from 'react'
 import { useDispatch } from 'react-redux';
 import { fetchProjectsThunk } from '../store/slices/ProjectsSlice';
+import { fetchWbsThunk } from '../store/slices/WbsSlice';
 import {
   TheContent,
   TheSidebar,
@@ -12,6 +13,7 @@ const TheLayout = () => {
   const dispatch = useDispatch()
   React.useEffect(()=>{
     dispatch(fetchProjectsThunk(5))
+    dispatch(fetchWbsThunk(5))
   },[])
   return (
     <div className="c-app c-default-layout">

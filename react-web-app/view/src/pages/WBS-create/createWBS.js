@@ -31,6 +31,7 @@ const CreateNewWBS = () => {
     const createWbs = ()=> {
         const wbsDataSet = {
             "project": selectedProject.id,
+            "work_package_number": selectedProject.work_package_number,
             "assignee": null,
             "reporter": "5",
             "title": wbsTile.target.value,
@@ -45,7 +46,8 @@ const CreateNewWBS = () => {
         }
         wbsAssignees.forEach(element => {
             wbsDataSet.assignee = element.id;
-            dispatch(fetchWbsThunk(wbsDataSet))
+            const response = dispatch(fetchWbsThunk(wbsDataSet))
+            console.log("Create WBS:", response)
         });
     }
 
@@ -131,7 +133,7 @@ const CreateNewWBS = () => {
                                             {/**submit buttons */}
                                             <div className="col-md-12">
                                                 <div className="projectwbs-form-button-holders mt-3">
-                                                    <CButton type="submit" className="create-btn-prjctwbs create-wbs">Create Project</CButton>
+                                                    <CButton type="submit" className="create-btn-prjctwbs create-wbs">Create WBS</CButton>
                                                     <CButton className="create-btn-prjctwbs cancel-wbs">Cancel</CButton>
                                                 </div>
                                             </div>
