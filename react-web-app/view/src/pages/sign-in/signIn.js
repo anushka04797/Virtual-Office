@@ -9,15 +9,23 @@ import {
  CInputCheckbox,
   CButton,
 } from "@coreui/react";
-import { Link,Redirect,useHistory } from "react-router-dom";
+import { Link,Redirect,useHistory,useLocation } from "react-router-dom";
 import { TOKEN } from "../../Config";
+import { useSnackbar } from 'notistack';
 
 const SignIn = () => {
   let history = useHistory();
+  let location = useLocation()
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   function login(){
     localStorage.setItem(TOKEN,'1234')
     history.push('/dashboard')
   }
+  React.useEffect(()=>{
+    if(location.registration == true){
+      enqueueSnackbar('Registration Success! Please verify your email',{variant:'success'});
+    }
+  })
   return (
     <>
       {localStorage.getItem(TOKEN)?<Redirect to="/dashboard"/>:<div className="signin-content">
