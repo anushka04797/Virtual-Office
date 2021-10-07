@@ -1,10 +1,12 @@
 import { CContainer, CRow, CCol, CCard, CCardHeader, CCardBody, CForm, CLabel, CInput, CButton } from '@coreui/react';
-import {React,Component, useState} from 'react';
+import { React, Component, useState } from 'react';
 import './createProject.css';
 import { ActionMeta, OnChangeValue } from 'react-select';
-import Creatable, { CreatableSelect,makeCreatableSelect } from 'react-select/creatable';
+import Creatable, { CreatableSelect, makeCreatableSelect } from 'react-select/creatable';
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
+import { useFormik } from 'formik';
+import { API } from '../../Config';
 
 // class CreatableSingle extends Component {
 //   handleChange = (
@@ -27,40 +29,69 @@ import makeAnimated from "react-select/animated";
 const CreateNewProject = () => {
   const colourStyles = {
     // control: (styles, state) => ({ ...styles,height:"35px", fontSize: '14px !important', lineHeight: '1.42857', borderRadius: "8px",borderRadius:".25rem",color:"rgb(133,133,133)",border:state.isFocused ? '2px solid #0065ff' :'inherit'}),
-    option: (provided, state) => ({...provided, fontSize: '14px !important'}),
-   
-}
-const options = [
-  { value: "nypd", label: "New York Police Department" },
-  { value: "lapd", label: "Los Angeles Police Department" },
-  { value: "miamipd", label: "Miami Police Department" },
-  { value: "dmp", label: "Dhaka Metropoliton Police" },
+    option: (provided, state) => ({ ...provided, fontSize: '14px !important' }),
 
-];
-const options1 = [
-  { value: "nypd", label: "La Casa De papel" },
-  { value: "lapd", label: "Aninda" },
-  { value: "miamipd", label: "Pial Noman" },
-  { value: "dmp", label: "Saif Rahi" },
-
-];
-
-const handleChange = (field, value) => {
-  switch (field) {
-    case 'options':
-      setRoleValue(value)
-      break
- case 'options1':
-   setAssigneeValue(value)
-   break
-    default:
-      break
   }
-}
-const [roleValue,setRoleValue]=useState('');
-const [assigneeValue,setAssigneeValue]=useState('')
+  const options = [
+    { value: "nypd", label: "New York Police Department" },
+    { value: "lapd", label: "Los Angeles Police Department" },
+    { value: "miamipd", label: "Miami Police Department" },
+    { value: "dmp", label: "Dhaka Metropoliton Police" },
 
-const animatedComponents = makeAnimated();
+  ];
+  const options1 = [
+    { value: "nypd", label: "La Casa De papel" },
+    { value: "lapd", label: "Aninda" },
+    { value: "miamipd", label: "Pial Noman" },
+    { value: "dmp", label: "Saif Rahi" },
+
+  ];
+
+  const handleChange = (field, value) => {
+    switch (field) {
+      case 'options':
+        formCreateProject.setValues({task_delivery_order:value.label})
+        break
+      case 'options1':
+        setAssigneeValue(value)
+        break
+      default:
+        break
+    }
+  }
+  const [roleValue, setRoleValue] = useState('');
+  const [assigneeValue, setAssigneeValue] = useState('')
+  const validate_create_project_form=(values)=>{
+    const errors={}
+    if(!values.task_delivery_order) errors.task_delivery_order="Task Delivery Order is required"
+    return errors
+  }
+  const create_project=async()=>{
+    console.log('values',formCreateProject.values)
+    // API.post('project/create/',formCreateProject.values).then((res)=>{
+    //   console.log(res)
+    // })
+  }
+  const formCreateProject = useFormik({
+    initialValues:{
+      task_delivery_order: "", 
+      sub_task: "", 
+      work_package_number: "", 
+      task_title: "", 
+      estimated_person: "", 
+      planned_delivery_date: "", 
+      assignee: '', 
+      pm: '', 
+      planned_hours: "", 
+      planned_value: "", 
+      remaining_hours: ""
+    },
+    validateOnChange:true,
+    validateOnBlur:true,
+    validate: validate_create_project_form,
+    onSubmit: create_project
+  })
+  const animatedComponents = makeAnimated();
   return (
     <>
       <CContainer>
@@ -75,24 +106,20 @@ const animatedComponents = makeAnimated();
                     <CRow>
                       {/**task delivery order */}
                       <div className="col-lg-12 mb-3">
-                        <CLabel className="custom-label-5" htmlFor="tdo"  aria-labelledby="tdo">
+                        <CLabel className="custom-label-5" htmlFor="tdo" aria-labelledby="tdo">
                           Task Delivery Order
                         </CLabel>
                         <Creatable
-                                        closeMenuOnSelect={true}
-                                       aria-labelledby="tdo"
-                                        id="tdo"
-                                       
-                                        placeholder="Select from list or create new"
-                                        isClearable={true}
-                                        onChange={(value) => handleChange('options', value)}
-                                        classNamePrefix="custom-forminput-6"
-                                        value={roleValue}
-                                        options={options}
-                                        styles={colourStyles}
-                                       
-                                     
-
+                          closeMenuOnSelect={true}
+                          aria-labelledby="tdo"
+                          id="tdo"
+                          placeholder="Select from list or create new"
+                          isClearable={true}
+                          onChange={(value) => handleChange('options', value)}
+                          classNamePrefix="custom-forminput-6"
+                          value={formCreateProject.values.task_delivery_order}
+                          options={options}
+                          styles={colourStyles}
                         />
                       </div>
                       {/**Sub task */}
@@ -129,20 +156,20 @@ const animatedComponents = makeAnimated();
                           Assignee(s)
                         </CLabel>
                         <Select
-                                        closeMenuOnSelect={false}
-                                       aria-labelledby="workerBees"
-                                        id="workerBees"
-                                        minHeight="35px"
-                                        placeholder="Select from list"
-                                        isClearable={true}
-                                        isMulti={true}
-                                        onChange={(value) => handleChange('options1', value)}
-                                        classNamePrefix="custom-forminput-6"
-                                        value={assigneeValue}
-                                        options={options1}
-                                        styles={colourStyles}
-                                       
-                                     
+                          closeMenuOnSelect={false}
+                          aria-labelledby="workerBees"
+                          id="workerBees"
+                          minHeight="35px"
+                          placeholder="Select from list"
+                          isClearable={true}
+                          isMulti={true}
+                          onChange={(value) => handleChange('options1', value)}
+                          classNamePrefix="custom-forminput-6"
+                          value={assigneeValue}
+                          options={options1}
+                          styles={colourStyles}
+
+
 
                         />
                       </div>
@@ -185,7 +212,7 @@ const animatedComponents = makeAnimated();
                       {/**submit buttons */}
                       <div className="col-md-12">
                         <div className="project-form-button-holders mt-3">
-                          <CButton className="create-btn-prjct create-prjct">Create Project</CButton>
+                          <CButton type="button" onClick={formCreateProject.handleSubmit} className="create-btn-prjct create-prjct">Create Project</CButton>
                           <CButton className="create-btn-prjct cancel-prjct">Cancel</CButton>
                         </div>
                       </div>
