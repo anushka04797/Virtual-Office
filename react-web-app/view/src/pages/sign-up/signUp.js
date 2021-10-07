@@ -119,9 +119,9 @@ const Register = () => {
                       </CButton>
                     </div>
                     {/**Go to sign in */}
-<div class="mb-4 mt-3">
-  <h5 className="final-footer"><span className="dum-text">Already have an account?</span><Link className="registration-link" to="/">Sign in</Link></h5>
-</div>
+                    <div class="mb-4 mt-3">
+                      <h5 className="final-footer"><span className="dum-text">Already have an account?</span><Link className="registration-link" to="/">Sign in</Link></h5>
+                    </div>
                   </div>
                 </CForm>
               </div>

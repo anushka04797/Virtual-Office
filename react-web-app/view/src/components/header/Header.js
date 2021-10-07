@@ -1,22 +1,8 @@
 import * as React from 'react';
 import { styled } from '@material-ui/core/styles';
 import MuiAppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
 import { useDispatch, useSelector } from 'react-redux';
 import { changeState } from '../../store/slices/DrawerSlice';
-import ImageAvatars from './UserAvatar';
-import Grid from '@material-ui/core/Grid';
-
-import Avatar from '@material-ui/core/Avatar';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import Divider from '@material-ui/core/Divider';
-import PersonAdd from '@material-ui/icons/PersonAdd';
-import Settings from '@material-ui/icons/Settings';
-import Logout from '@material-ui/icons/Logout';
 import { changeUserDropdownMenuState } from '../../store/slices/ConfigSlice';
 import { useHistory } from 'react-router-dom';
 import { drawerWidth } from '../../Config';

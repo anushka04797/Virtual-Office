@@ -12,11 +12,11 @@ export const fetchWbsThunk = createAsyncThunk('wbs/fetchWbsThunk', async (user_i
   return response.data
 })
 
-// export const fetchWbsThunk = createAsyncThunk('wbs/createWbsThunk', async (data) => {
-//   const response = await JsonClient.post('wbs/create/', data)
-//   console.log(response.data)
-//   return response.data
-// })
+export const fetchWbsUpdateThunk = createAsyncThunk('wbs/createWbsThunk', async (data) => {
+  const response = await JsonClient.post('wbs/create/', data)
+  console.log(response.data)
+  return response.data
+})
 
 export const wbsSlice = createSlice({
   name: 'wbs',
