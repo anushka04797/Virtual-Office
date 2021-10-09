@@ -73,7 +73,11 @@ const TheSidebar = () => {
 
 </CSidebarNavDropdown>
 {/**EVMS */}
-<CSidebarNavItem to="/dashboard/EVMS"name="EVMS" icon="cil-chart-line" className="vo-navItem"></CSidebarNavItem>
+{/* <CSidebarNavItem to="/dashboard/EVMS"name="EVMS" icon="cil-chart-line" className="vo-navItem"></CSidebarNavItem> */}
+<CSidebarNavDropdown icon="cil-chart-line" name="EVMS" className="vo-navItem">
+<CSidebarNavItem to="/dashboard/EVMS/create"  name="Create EVMS"className="vo-navItem"  ></CSidebarNavItem>
+<CSidebarNavItem to="/dashboard/EVMS/view"  name="View EVMS"className="vo-navItem" ></CSidebarNavItem>
+</CSidebarNavDropdown>
 {/**Profile */}
 <CSidebarNavItem to="/dashboard/profile"name="Profile" icon="cil-user" className="vo-navItem"></CSidebarNavItem>
 
