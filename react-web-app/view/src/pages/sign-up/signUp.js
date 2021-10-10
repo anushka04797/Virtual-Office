@@ -7,8 +7,58 @@ import {
   CInput,
 } from "@coreui/react";
 import { Link, useHistory } from "react-router-dom";
+import { useFormik } from 'formik'
+import * as Yup from 'yup'
+import { PUBLIC_FORM_API } from "../../Config";
+
+const SignupSchema = Yup.object().shape({
+  first_name: Yup.string()
+    .min(2, 'Too Short!')
+    .max(50, 'Too Long!')
+    .required('Required'),
+  last_name: Yup.string()
+    .min(2, 'Too Short!')
+    .max(50, 'Too Long!')
+    .required('Required'),
+  email: Yup.string().email('Invalid email').required('Required'),
+});
 
 const Register = () => {
+
+  const validateSignUpForm = (values) => {
+    const errors = {};
+    if (!values.first_name) errors.first_name = "First Name is required!"
+    if (!values.email) errors.email = "Email is required!"
+    //if (values.password !== values.confirm_pass) errors.confirm_pass = "Confirm your password"
+    return errors;
+  }
+  const sign_up = () => {
+    let formData = new FormData();
+    for(const [key,value] of Object.entries(formSignUp.values)){
+      formData.append(key,value)
+    }
+    PUBLIC_FORM_API.post('auth/register/',formData).then((res)=>{
+      console.log(res)
+    })
+  }
+  const reset_form = () => {
+    formSignUp.resetForm()
+  }
+  const formSignUp = useFormik({
+    initialValues: {
+      first_name: '',
+      last_name: '',
+      email: '',
+      phone: '',
+      password: '',
+      //confirm_pass: ''
+    },
+    //validationSchema:{SignupSchema},
+    validateOnChange: true,
+    validateOnBlur: true,
+    validate: validateSignUpForm,
+    onSubmit: sign_up
+  })
   return (
     <>
       <div className="register-page">
@@ -17,14 +67,14 @@ const Register = () => {
           {/**img uplaod div */}
 
           <div className="seller-pro-pic-holder">
-            <div class="seller-profile-pic-div">
+            <div className="seller-profile-pic-div">
               <img src={"assets/bgs/dummy-user.svg"} />
             </div>
-            <label for="propic" class="pro-img-up-btn mb-0">
+            <label for="propic" className="pro-img-up-btn mb-0">
               {/* <!-- propic --> */}
               <input
                 id="propic"
-                class="form-control form-control-md"
+                className="form-control form-control-md"
                 type="file"
               />
             </label>
@@ -43,7 +93,10 @@ const Register = () => {
                       </CLabel>
                       <CInput
                         type="text"
-                        id="firstName"
+                        id="first_name"
+                        name="first_name"
+                        value={formSignUp.values.first_name}
+                        onChange={formSignUp.handleChange}
                         aria-describedby="fnHelp"
                         className="custom-formgroup-2"
                       />
@@ -55,7 +108,10 @@ const Register = () => {
                       </CLabel>
                       <CInput
                         type="text"
-                        id="lastName"
+                        id="last_name"
+                        name="last_name"
+                        value={formSignUp.values.last_name}
+                        onChange={formSignUp.handleChange}
                         aria-describedby="lnHelp"
                         className="custom-formgroup-2"
                       />
@@ -68,9 +124,13 @@ const Register = () => {
                       <CInput
                         type="email"
                         id="email"
+                        name="email"
+                        value={formSignUp.values.email}
+                        onChange={formSignUp.handleChange}
                         aria-describedby="emailHelp"
                         className="custom-formgroup-2"
                       />
+                      {formSignUp.touched.email && formSignUp.errors.email && <p style={{color:'red'}}>{formSignUp.errors.email}</p>}
                     </div>
                     {/**Phone */}
                     <div className="col-md-6 col-sm-12 col-12 mb-3">
@@ -80,6 +140,9 @@ const Register = () => {
                       <CInput
                         type="tel"
                         id="phone"
+                        name="phone"
+                        value={formSignUp.values.phone}
+                        onChange={formSignUp.handleChange}
                         aria-describedby="phoneHelp"
                         className="custom-formgroup-2"
                       />
@@ -94,12 +157,15 @@ const Register = () => {
                       </CLabel>
                       <CInput
                         type="password"
-                        id="exampleInputPassword1"
+                        id="password"
+                        name="password"
+                        value={formSignUp.values.password}
+                        onChange={formSignUp.handleChange}
                         className="custom-formgroup-2"
                       />
                     </div>
                     {/*confirm password */}
-                    <div className="col-md-6 col-sm-12 mb-3">
+                    {/* <div className="col-md-6 col-sm-12 mb-3">
                       <CLabel
                         htmlFor="confirmPass"
                         className="custom-label-2"
@@ -108,18 +174,21 @@ const Register = () => {
                       </CLabel>
                       <CInput
                         type="password"
-                        id="confirmPass"
+                        id="confirm_pass"
+                        name="confirm_pass"
+                        value={formSignUp.values.confirm_pass}
+                        onChange={formSignUp.handleChange}
                         className="custom-formgroup-2"
                       />
-                    </div>
+                    </div> */}
                     {/*submit button */}
                     <div className="sign-holder">
-                      <CButton type="submit" className="submit-button-s">
+                      <CButton type="button" disabled={!formSignUp.isValid} onClick={formSignUp.handleSubmit} className="submit-button-s">
                         Sign up
                       </CButton>
                     </div>
                     {/**Go to sign in */}
-                    <div class="mb-4 mt-3">
+                    <div className="mb-4 mt-3">
                       <h5 className="final-footer"><span className="dum-text">Already have an account?</span><Link className="registration-link" to="/">Sign in</Link></h5>
                     </div>
                   </div>
