@@ -15,6 +15,11 @@ import ScheduledMeetings from '../../components/scheduledMeetings/scheduledMeets
 import EvmsShow  from '../../components/evms/evmsTable'
 import ProjectTables from '../../components/projects-table/projectsTable'
 import AssignedToMe from '../../components/assignedProjects/assignedProjects';
+import { useLocation } from 'react-router';
+import { useSnackbar } from 'notistack';
+import { useDispatch } from 'react-redux';
+import { fetchPersonalDetails } from '../../store/slices/ProfileSlice';
+import { USER_ID } from '../../Config';
 const loading = (
     <div className="pt-3 text-center">
       <div className="sk-spinner sk-spinner-pulse"></div>
@@ -22,8 +27,15 @@ const loading = (
 )
 
 const Dashboard=()=> {
+    let location = useLocation()
+    const dispatch = useDispatch()
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     React.useEffect(()=>{
         console.log('dashboard mounted')
+        dispatch(fetchPersonalDetails(localStorage.getItem(USER_ID)))
+        if(location.state?.from == 'login'){
+            enqueueSnackbar('Welcome ',{variant:'success'})
+        }
     },[])
     return (
         <>

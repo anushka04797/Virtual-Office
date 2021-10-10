@@ -8,14 +8,20 @@ import {
   CImg
 } from '@coreui/react'
 import { useHistory } from 'react-router-dom';
-
+import { API } from '../Config';
 import CIcon from '@coreui/icons-react'
 
 const TheHeaderDropdown = () => {
   let history = useHistory();
 function logout(){
-  localStorage.clear()
-  history.push('/')
+  API.get('auth/logout/').then((res)=>{
+    localStorage.clear()
+    history.push('/')
+  }).catch(err=>{
+    localStorage.clear()
+    history.push('/')
+  })
+  
 }
   return (
     <CDropdown
