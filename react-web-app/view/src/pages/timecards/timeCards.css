@@ -65,16 +65,56 @@ margin-bottom: 20px;
     color: white;
    
 }
+.tiny-header--5{
+    font-weight: 600;
+    letter-spacing: -0.006em;
+    font-size: 1.14286em;
+    font-style: inherit;
+    line-height: 1.25;
+    color: #172B4D;
+}
 .generate-card-button:hover{
     background-color: #0065ff;
     color: white;
 }
+.file-format-download{
+    border-width: 0px;
+    border-radius: 3px;
+    box-sizing: border-box;
+    font-style: normal;
+    font-weight: 500;
+    height: 30px;
+    padding: 0px 15px;
+    font-size: 12px;
+    line-height:18px; 
+    background-color: #0065FF;
+    color: white;
+    margin-right: 10px;
+}
+.file-format-download:hover{
+    background-color: #0066ffa2;
+    color: white;
+}
+/*media query*/
+@media all and (min-width:300px) and (max-width:600px){
+    .generate-card-button{
+        margin-top: 25px;
+    }
+}
 
+@media all and (min-width:600px) and (max-width:992px){
+    .generate-card-button{
+        margin-top: 30px;
+    }
+}
 @media all and (min-width:992px){
    .generate-card-button{
        margin-top: 30px;
    }
    .button-holder--3{
     text-align: center;
+   }
+   .name-for-wbs{
+       min-height: 35px;
    }
 }

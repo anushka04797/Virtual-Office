@@ -1,5 +1,5 @@
 import React from 'react';
-import { HashRouter, Route, Switch } from 'react-router-dom';
+import { HashRouter, Route, Switch,Redirect } from 'react-router-dom';
 import '@coreui/coreui/dist/css/coreui.min.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './App.css';
@@ -39,7 +39,8 @@ const App = () => {
         <React.Suspense fallback={loading}>
           <Switch>
             
-            <Route exact path="/" name="Sign in" render={props => <Login {...props} />} />
+            <Route exact path="/"><Redirect to="/login"></Redirect></Route>
+            <Route exact path="/login" name="Sign in" render={props => <Login {...props} />} />
             <Route exact path="/register" name="Sign up" render={props => <Register {...props} />} />
             <Route exact path="/forgot-password" name="Forgot Password" render={props => <ForgotPass {...props} />} />
             <ProtectedRoute path="/dashboard" name="Dashboard" component={TheLayout}/>
