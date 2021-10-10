@@ -24,25 +24,36 @@ const SignupSchema = Yup.object().shape({
 });
 
 const Register = () => {
-
+  let history = useHistory()
+  const [avatar,setAvatar]= useState()
+  const [image,setImage]=useState()
   const validateSignUpForm = (values) => {
     const errors = {};
     if (!values.first_name) errors.first_name = "First Name is required!"
     if (!values.email) errors.email = "Email is required!"
-    //if (values.password !== values.confirm_pass) errors.confirm_pass = "Confirm your password"
+    if (values.password !== values.confirm_pass) errors.confirm_pass = "Confirm your password"
     return errors;
   }
   const sign_up = () => {
     let formData = new FormData();
     for(const [key,value] of Object.entries(formSignUp.values)){
-      formData.append(key,value)
+      if(key != 'confirm_pass'){
+        formData.append(key,value)
+      }
     }
     PUBLIC_FORM_API.post('auth/register/',formData).then((res)=>{
+      if(res.data.success == 'True' && res.status == 200){
+        history.push({pathname:'/login',state:{registration:true}})
+      }
       console.log(res)
     })
   }
   const reset_form = () => {
     formSignUp.resetForm()
+  }
+  const onImageChange=(file)=>{
+    setAvatar(URL.createObjectURL(file))
+    setImage(file)
   }
   const formSignUp = useFormik({
     initialValues: {
@@ -51,7 +62,7 @@ const Register = () => {
       email: '',
       phone: '',
       password: '',
-      //confirm_pass: ''
+      confirm_pass: ''
     },
     //validationSchema:{SignupSchema},
     validateOnChange: true,
@@ -68,14 +79,15 @@ const Register = () => {
 
           <div className="seller-pro-pic-holder">
             <div className="seller-profile-pic-div">
-              <img src={"assets/bgs/dummy-user.svg"} />
+              <img src={avatar?avatar:"assets/bgs/dummy-user.svg"} />
             </div>
-            <label for="propic" className="pro-img-up-btn mb-0">
+            <label for="propic" className={image?"pro-img-up-btn mb-0 remove-img":"pro-img-up-btn mb-0"}>
               {/* <!-- propic --> */}
               <input
                 id="propic"
                 className="form-control form-control-md"
                 type="file"
+                onChange={(event) => onImageChange(event.target.files[0])}
               />
             </label>
           </div>
@@ -165,7 +177,7 @@ const Register = () => {
                       />
                     </div>
                     {/*confirm password */}
-                    {/* <div className="col-md-6 col-sm-12 mb-3">
+                    <div className="col-md-6 col-sm-12 mb-3">
                       <CLabel
                         htmlFor="confirmPass"
                         className="custom-label-2"
@@ -180,7 +192,7 @@ const Register = () => {
                         onChange={formSignUp.handleChange}
                         className="custom-formgroup-2"
                       />
-                    </div> */}
+                    </div>
                     {/*submit button */}
                     <div className="sign-holder">
                       <CButton type="button" disabled={!formSignUp.isValid} onClick={formSignUp.handleSubmit} className="submit-button-s">

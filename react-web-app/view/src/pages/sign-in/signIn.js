@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./signIn.css";
 import {
   CForm,
@@ -10,28 +10,37 @@ import {
   CButton,
 } from "@coreui/react";
 import { Link,Redirect,useHistory } from "react-router-dom";
-import { PUBLIC_API, TOKEN } from "../../Config";
+import { PUBLIC_API, TOKEN, USER_ID } from "../../Config";
 import { useFormik } from "formik";
-
+import { useLocation } from "react-router";
+import { useSnackbar } from "notistack";
 const SignIn = () => {
   let history = useHistory();
+  let location = useLocation()
   const validate_login_form=(values)=>{
     console.log(values);
     const errors = {};
     if (!values.email) errors.email = "Email is required!"
+    if (!values.password) errors.password = "Password is required!"
     //if (!values.country_id) errors.country_id = "Country is required!"
     console.log(errors);
     return errors;
   }
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const login=()=>{
+    
     PUBLIC_API.post('auth/login/',formLogin.values).then((res)=>{
       if(res.status == 200 && res.data.success == 'True'){
         localStorage.setItem(TOKEN,res.data.token)
         localStorage.setItem('groups',res.data.group)
-        history.push('/dashboard')
+        localStorage.setItem(USER_ID,res.data.user_id)
+        history.push({pathname:'/dashboard',state:{from:'login'}})
       }
     }).catch(err=>{
-      console.log(err)
+      console.log(err.response)
+      if(err.response.status == 403){
+        enqueueSnackbar('Your account is not active yet',{variant:"warning"})
+      }
     })
   }
   const formLogin = useFormik({
@@ -45,6 +54,11 @@ const SignIn = () => {
     onSubmit: login
   })
   
+  useEffect(()=>{
+    if(location.state?.registration){
+      enqueueSnackbar('Registration Succefull, Please verify email to login', { variant: 'info' })
+    }
+  })
   return (
     <>
       {localStorage.getItem(TOKEN)?<Redirect to="/dashboard"/>:<div className="signin-content">
@@ -72,6 +86,7 @@ const SignIn = () => {
                           onChange={formLogin.handleChange}
                           aria-describedby="emailHelp"
                           className="custom-formgroup-signin"
+                          required
                         />
                         {/* <CFormText id="emailHelp">
       We'll never share your email with anyone else.
@@ -91,6 +106,7 @@ const SignIn = () => {
                           value={formLogin.values.password}
                           onChange={formLogin.handleChange}
                           className="custom-formgroup-signin"
+                          
                         />
                       </div>
                       <div className="show-flex">
@@ -112,7 +128,7 @@ const SignIn = () => {
                         </div>
                       </div>
                       <div className="submit-holder">
-                        <CButton type="button" onClick={formLogin.handleSubmit} className="submit-button-signin">
+                        <CButton type="button" onClick={formLogin.handleSubmit} className="submit-button-signin" disabled={!formLogin.isValid}>
                           Sign in
                         </CButton>
                       </div>
