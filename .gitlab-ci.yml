@@ -9,4 +9,3 @@ deploy:
   script:
     - npm --version
     - npm install
-    - npm start
