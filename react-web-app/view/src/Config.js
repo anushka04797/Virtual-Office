@@ -3,7 +3,7 @@ const status = 'prod'
 export const API_URL = status === 'prod' ? 'http://103.123.8.52:7000/' : 'http://localhost:8000/'
 export const TOKEN = "access_token"
 export const USER_ID = "user_id"
-export const BASE_URL = 'http://103.123.8.52:7000/'
+export const BASE_URL = 'http://103.123.8.52:7000'
 export const credentials = {
   "GOOGLE_CLIENT_ID": "705019730299-kfb5arnuisah2135tka05uka6h7v901a.apps.googleusercontent.com",
   "FACEBOOK_APP_ID": "788095958681659"

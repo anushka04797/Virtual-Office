@@ -58,7 +58,7 @@ const SignIn = () => {
     if(location.state?.registration){
       enqueueSnackbar('Registration Succefull, Please verify email to login', { variant: 'info' })
     }
-  })
+  },[])
   return (
     <>
       {localStorage.getItem(TOKEN)?<Redirect to="/dashboard"/>:<div className="signin-content">
