@@ -1,6 +1,15 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {CButton, CCard, CCardBody} from '@coreui/react';
-  const assignedProjectsDashboard =()=>{
+import {useDispatch, useSelector} from "react-redux";
+import {useSnackbar} from "notistack";
+import { fetchUserWiseWbsThunk } from '../../store/slices/WbsSlice';
+import {USER_ID} from "../../Config";
+  const AssignedProjectsDashboard =()=>{
+      const dispatch = useDispatch()
+      const  wbs = useSelector(state => state.wbs.data);
+      React.useEffect(()=>{
+        dispatch(fetchUserWiseWbsThunk(localStorage.getItem(USER_ID)))
+    },[])
 return (
     <>
     
@@ -10,23 +19,18 @@ return (
 </h3>
 
 <div className="card-holder1">
+    { wbs.slice(0, 3).map((item, idx) => (
+
+
     <CCard className="project-card1">
         <CCardBody>
-        <h6 className="id-no1">project id: #12340C</h6>
-            <h5 className="card-details1"><span className="p-header-3">Task Title:</span> Virtual Office</h5>
-            <h5 className="card-details1"><span className="p-header-3">Due Date :</span>15th September,2021</h5>
+        <h6 className="id-no1">project id: #{ item.project.work_package_number }</h6>
+            <h5 className="card-details1"><span className="p-header-3">Task Title:</span> {item.project.task_title}</h5>
+            <h5 className="card-details1"><span className="p-header-3">Due Date :</span> {item.project.planned_delivery_date}</h5>
         </CCardBody>
     
     </CCard>
-    <CCard className="project-card1">
-        <CCardBody>
-        <h6 className="id-no1">project id: #12340C</h6>
-            <h5 className="card-details1"><span className="p-header-3">Task Title:</span> Virtual Office</h5>
-            <h5 className="card-details1"><span className="p-header-3">Due Date :</span>15th September,2021</h5>
-        </CCardBody>
-    
-    </CCard>
- 
+ ))}
     </div>
     <div className="button-holder3"><CButton className="tiny-buttons1">View all</CButton></div>
 </div>
@@ -34,4 +38,4 @@ return (
     </>
 )
   }
-  export default assignedProjectsDashboard;
+  export default AssignedProjectsDashboard;
