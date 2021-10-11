@@ -56,7 +56,7 @@ showMore =()=>{
    <CCol lg="3" md="6" sm="6"  key={i}>
    <CCard className="doc-cards">
 <CCardBody className="doc-file-body">
-<div className="icon-holder">
+<div className="icon-holder-shared-files">
    <CIcon name="cil-file" className="file-icon-show" size="2xl"></CIcon>
 </div>
 <h5 className="file-name mt-2">{car.fileName}</h5>

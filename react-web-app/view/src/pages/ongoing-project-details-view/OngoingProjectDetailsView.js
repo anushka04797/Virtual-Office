@@ -1,14 +1,40 @@
-import { CCardBody, CCard, CButton, CBadge } from '@coreui/react'
-import React from 'react';
+import { CCardBody, CCard,CForm, CButton, CBadge, CModal,CModalHeader, CModalTitle, CModalBody, CContainer } from '@coreui/react'
+import React, { useState } from 'react';
 import GradeIcon from '@material-ui/icons/Grade';
 import IconButton from '@material-ui/core/IconButton';
 import './OngoingProjectDetailsView.css'
 import CIcon from '@coreui/icons-react';
 
-const ongoingDetailsView = () => {
+const OngoingDetailsView = () => {
+    const [basicInfoEdit,setBasicInfoEdit]=useState(false);
+    const [taskInfoEdit,setTaskInfoEdit]=useState(false);
+    const editBasicInfoForm=()=>{
+        setBasicInfoEdit(!basicInfoEdit);
+    }
+    const editTaskInfoForm=()=>{
+     setTaskInfoEdit(!taskInfoEdit)   
+    }
+
     return (
         <>
             <div className="container">
+                {/**edit basic information */}
+                <CModal alignment="center" show={basicInfoEdit} onClose={editBasicInfoForm}>
+<CModalHeader onDismiss={()=>setBasicInfoEdit(!basicInfoEdit)} closeButton>
+<CModalTitle className="modal-title-projects">
+<span className="edit-profile-form-header">Edit Project Info</span>
+   <CModalBody>
+       <CContainer>
+           <CForm>
+
+           </CForm>
+       </CContainer>
+       </CModalBody> 
+</CModalTitle>
+</CModalHeader>
+                </CModal>
+
+                {/**header portion */}
                 <h3 className="dash-header-1">Project Details</h3>
                 {/**Details card */}
                 <div className="row">
@@ -20,7 +46,7 @@ const ongoingDetailsView = () => {
                                         <GradeIcon fontSize="inherit" className="fav-button" />
                                     </IconButton>Virtual Guard</h4>
 
-                                    <CButton className="edit-project-on"><CIcon name="cil-pencil" className="mr-1" /> Edit Details</CButton>
+                                    <CButton className="edit-project-on" onClick={()=>editBasicInfoForm()}><CIcon name="cil-pencil" className="mr-1" /> Edit Details</CButton>
                                 </div>
                                 <hr className="header-underline1" />
                                 {/*task percentage portion */}
@@ -48,40 +74,12 @@ const ongoingDetailsView = () => {
                                         <h6 className="project-point-details">120 </h6>
                                     </div>
                                     {/**Assignees */}
-                                    <div className="col-md-12 mt-4">
+                                    {/* <div className="col-md-12 mt-4">
 
                                         <h5 className="projectName mb-2">Assignee(s)-(5)</h5>
-                                        <div className="row">
-                                            <div className="col-md-6 mb-1"><div className="avatar-credentials1 d-flex">
-
-                                                <img src={"avatars/1.jpg"} className="developer-circle-thumbnail-1 mr-2 rounded-circle" /><h6 className="employee-name-developer">Kibria Papel<CBadge color="info" className="ml-1">Developer</CBadge></h6>
-                                            </div>
-                                            </div>
-
-                                            {/**Other dummy items,remove it once dynamic data is fetched */}
-                                            <div className="col-md-6 mb-1"><div className="avatar-credentials1 d-flex">
-
-                                                <img src={"avatars/1.jpg"} className="developer-circle-thumbnail-1 mr-2 rounded-circle" /><h6 className="employee-name-developer">Kibria Papel <CBadge color="info" className="ml-1">Developer</CBadge></h6>
-                                            </div>
-                                            </div>
-                                            <div className="col-md-6 mb-1"><div className="avatar-credentials1 d-flex">
-
-                                                <img src={"avatars/1.jpg"} className="developer-circle-thumbnail-1 mr-2 rounded-circle" /><h6 className="employee-name-developer">Kibria Papel <CBadge color="info" className="ml-1">Developer</CBadge></h6>
-                                            </div>
-                                            </div>
-                                            <div className="col-md-6 mb-1"><div className="avatar-credentials1 d-flex">
-
-                                                <img src={"avatars/1.jpg"} className="developer-circle-thumbnail-1 mr-2 rounded-circle" /><h6 className="employee-name-developer">Kibria Papel <CBadge color="info" className="ml-1">Developer</CBadge></h6>
-                                            </div>
-                                            </div>
-                                            <div className="col-md-6 mb-1"><div className="avatar-credentials1 d-flex">
-
-                                                <img src={"avatars/1.jpg"} className="developer-circle-thumbnail-1 mr-2 rounded-circle" /><h6 className="employee-name-developer">Kibria Papel <CBadge color="info" className="ml-1">Developer</CBadge></h6>
-                                            </div>
-                                            </div>
-                                        </div>
-                                        {/**Other dummy items,remove it once dynamic data is fetched */}
-                                    </div>
+                                        
+                                       
+                                    </div> */}
 
                                     {/**Shared files */}
                                     <div className="col-md-12 mt-4 mb-2">
@@ -118,34 +116,107 @@ const ongoingDetailsView = () => {
                                         <div className="row">
 
                                             <div className="col-md-12 mb-1">
+
                                                 <div className="task-cards">
-                                                <div className="crud-btuttons-1">
-                                                    <CButton className="edit-project-on-2"><CIcon name="cil-pencil" /></CButton>
-                                                    <CButton className="delete-project-2"><CIcon name="cil-trash" /></CButton>
-                                                </div>
-                                                <h5 className="project-details-points child"><span className="info-header-1">Subtask : </span>API Development</h5>
-                                                <h5 className="info-header-1">Tasks :</h5>
-                                                <ol className="task-lists">
+                                                    <div className="crud-btuttons-1">
+                                                        <CButton className="edit-project-on-2"><CIcon name="cil-pencil" /></CButton>
+                                                        <CButton className="delete-project-2"><CIcon name="cil-trash" /></CButton>
+                                                    </div>
+                                                    <h5 className="project-details-points child"><span className="info-header-1">Task Title : </span>API Development</h5>
+                                                    {/**assignees */}
+
+                                                    <div>
+                                                        <h5 className="info-header-1">Assignee(s)-(5)</h5>
+                                                        <div className="row">
+                                                            <div className="col-md-6 mb-1"><div className="avatar-credentials1 d-flex">
+
+                                                                <img src={"avatars/1.jpg"} className="developer-circle-thumbnail-1 mr-2 rounded-circle" /><h6 className="employee-name-developer">Kibria Papel<CBadge color="info" className="ml-1">Developer</CBadge></h6>
+                                                            </div>
+                                                            </div>
+
+                                                            {/**Other dummy items,remove it once dynamic data is fetched */}
+                                                            <div className="col-md-6 mb-1"><div className="avatar-credentials1 d-flex">
+
+                                                                <img src={"avatars/1.jpg"} className="developer-circle-thumbnail-1 mr-2 rounded-circle" /><h6 className="employee-name-developer">Kibria Papel <CBadge color="info" className="ml-1">Developer</CBadge></h6>
+                                                            </div>
+                                                            </div>
+                                                            <div className="col-md-6 mb-1"><div className="avatar-credentials1 d-flex">
+
+                                                                <img src={"avatars/1.jpg"} className="developer-circle-thumbnail-1 mr-2 rounded-circle" /><h6 className="employee-name-developer">Kibria Papel <CBadge color="info" className="ml-1">Developer</CBadge></h6>
+                                                            </div>
+                                                            </div>
+                                                            <div className="col-md-6 mb-1"><div className="avatar-credentials1 d-flex">
+
+                                                                <img src={"avatars/1.jpg"} className="developer-circle-thumbnail-1 mr-2 rounded-circle" /><h6 className="employee-name-developer">Kibria Papel <CBadge color="info" className="ml-1">Developer</CBadge></h6>
+                                                            </div>
+                                                            </div>
+                                                            <div className="col-md-6 mb-1"><div className="avatar-credentials1 d-flex">
+
+                                                                <img src={"avatars/1.jpg"} className="developer-circle-thumbnail-1 mr-2 rounded-circle" /><h6 className="employee-name-developer">Kibria Papel <CBadge color="info" className="ml-1">Developer</CBadge></h6>
+                                                            </div>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                    <h5 className="project-details-points child mt-2"><span className="info-header-1">Subtask:</span>Virtual Office</h5>
+                                                    {/* <ol className="task-lists">
                                                     <li className="task-list-item"><span className="info-header-1">Task Title: </span>Correct API for add operation</li>
                                                     <li className="task-list-item"><span className="info-header-1">Task Title: </span>Correct API for sign in operation</li>
-                                                </ol>
+                                                </ol> */}
                                                 </div>
                                             </div>
                                             {/**______DUMMY TASK CARDS,DELETE ONCE DYNAMIC */}
-                                            <div className="col-md-12">
+                                            <div className="col-md-12 mb-1">
+
                                                 <div className="task-cards">
-                                                <div className="crud-btuttons-1">
-                                                    <CButton className="edit-project-on-2"><CIcon name="cil-pencil" /></CButton>
-                                                    <CButton className="delete-project-2"><CIcon name="cil-trash" /></CButton>
-                                                </div>
-                                                <h5 className="project-details-points child"><span className="info-header-1">Subtask : </span>API Development</h5>
-                                                <h5 className="info-header-1">Tasks :</h5>
-                                                <ol className="task-lists">
-                                                    <li className="task-list-item"><span className="info-header-1">Task Title: </span>Correct API for add operation</li>
-                                                    <li className="task-list-item"><span className="info-header-1">Task Title: </span>Correct API for sign in operation</li>
-                                                </ol>
+                                                    <div className="crud-btuttons-1">
+                                                        <CButton className="edit-project-on-2"><CIcon name="cil-pencil" /></CButton>
+                                                        <CButton className="delete-project-2"><CIcon name="cil-trash" /></CButton>
+                                                    </div>
+                                                    <h5 className="project-details-points child"><span className="info-header-1">Task Title : </span>API Development</h5>
+                                                    {/**assignees */}
+
+                                                    <div>
+                                                        <h5 className="info-header-1">Assignee(s)-(5)</h5>
+                                                        <div className="row">
+                                                            <div className="col-md-6 mb-1"><div className="avatar-credentials1 d-flex">
+
+                                                                <img src={"avatars/1.jpg"} className="developer-circle-thumbnail-1 mr-2 rounded-circle" /><h6 className="employee-name-developer">Kibria Papel<CBadge color="info" className="ml-1">Developer</CBadge></h6>
+                                                            </div>
+                                                            </div>
+
+                                                            {/**Other dummy items,remove it once dynamic data is fetched */}
+                                                            <div className="col-md-6 mb-1"><div className="avatar-credentials1 d-flex">
+
+                                                                <img src={"avatars/1.jpg"} className="developer-circle-thumbnail-1 mr-2 rounded-circle" /><h6 className="employee-name-developer">Kibria Papel <CBadge color="info" className="ml-1">Developer</CBadge></h6>
+                                                            </div>
+                                                            </div>
+                                                            <div className="col-md-6 mb-1"><div className="avatar-credentials1 d-flex">
+
+                                                                <img src={"avatars/1.jpg"} className="developer-circle-thumbnail-1 mr-2 rounded-circle" /><h6 className="employee-name-developer">Kibria Papel <CBadge color="info" className="ml-1">Developer</CBadge></h6>
+                                                            </div>
+                                                            </div>
+                                                            <div className="col-md-6 mb-1"><div className="avatar-credentials1 d-flex">
+
+                                                                <img src={"avatars/1.jpg"} className="developer-circle-thumbnail-1 mr-2 rounded-circle" /><h6 className="employee-name-developer">Kibria Papel <CBadge color="info" className="ml-1">Developer</CBadge></h6>
+                                                            </div>
+                                                            </div>
+                                                            <div className="col-md-6 mb-1"><div className="avatar-credentials1 d-flex">
+
+                                                                <img src={"avatars/1.jpg"} className="developer-circle-thumbnail-1 mr-2 rounded-circle" /><h6 className="employee-name-developer">Kibria Papel <CBadge color="info" className="ml-1">Developer</CBadge></h6>
+                                                            </div>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                    <h5 className="project-details-points child mt-2"><span className="info-header-1">Subtask:</span>Virtual Office</h5>
+                                                    {/* <ol className="task-lists">
+                                                <li className="task-list-item"><span className="info-header-1">Task Title: </span>Correct API for add operation</li>
+                                                <li className="task-list-item"><span className="info-header-1">Task Title: </span>Correct API for sign in operation</li>
+                                            </ol> */}
                                                 </div>
                                             </div>
+
                                         </div>
 
                                     </div>
@@ -161,4 +232,4 @@ const ongoingDetailsView = () => {
         </>
     )
 }
-export default ongoingDetailsView
+export default OngoingDetailsView

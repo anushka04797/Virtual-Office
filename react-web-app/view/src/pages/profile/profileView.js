@@ -37,7 +37,7 @@ const UserProfile = () => {
       <CContainer>
         <CModal alignment="center" show={visible} onClose={profileEditForm}>
           <CModalHeader onDismiss={() => setVisible(!visible)} closeButton>
-            <CModalTitle className="modal-title">
+            <CModalTitle className="modal-title-profile">
               <span className="edit-profile-form-header">
                 Edit Profile Info
               </span>

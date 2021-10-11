@@ -90,7 +90,7 @@
     border: transparent !important; 
     box-shadow: none !important;
 }
-.icon-holder{
+.icon-holder,.icon-holder-shared-files{
     text-align: center;
 }
 .file-icon-show{

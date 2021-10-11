@@ -267,14 +267,14 @@ mix-blend-mode: normal;
     padding-bottom: 40px;
 }
 
-.modal-content{
+/* .modal-content{
     box-shadow: 5px 10px 20px rgba(189, 158, 251, 0.2);
     border-radius: 30px !important;
    
     background: #FFFFFF;
     
     
-}
+} */
 
 .modal-backdrop{
     z-index: 2000;
@@ -302,10 +302,10 @@ mix-blend-mode: normal;
 margin-top: 20px;
 margin-bottom: 40px;
 }
-.modal-header{
+/* .modal-header{
     background: #EEE8FA;
 border-radius: 30px 30px 0px 0px;
-}
+} */
 .wbs-modal-header{
     background: #EEE8FA;
 
