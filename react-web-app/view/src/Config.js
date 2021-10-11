@@ -1,8 +1,9 @@
 import axios from 'axios';
 const status = 'prod'
-export const API_URL = status === 'prod' ? 'http://103.123.8.52:7000/api/' : 'http://localhost:8000/'
+export const API_URL = status === 'prod' ? 'http://103.123.8.52:7000/' : 'http://localhost:8000/'
 export const TOKEN = "access_token"
-export const BASE_URL = 'http://103.123.8.52:7000'
+export const USER_ID = "user_id"
+export const BASE_URL = 'http://103.123.8.52:7000/'
 export const credentials = {
   "GOOGLE_CLIENT_ID": "705019730299-kfb5arnuisah2135tka05uka6h7v901a.apps.googleusercontent.com",
   "FACEBOOK_APP_ID": "788095958681659"
@@ -57,6 +58,14 @@ export const PUBLIC_API = axios.create({
   }
 })
 
+export const PUBLIC_FORM_API = axios.create({
+  baseURL: API_URL,
+  timeout: 100000,
+  headers:{
+    "Content-Type": "multipart/form-data",
+  }
+})
+
 export const isLoggedIn=()=>{
   if(localStorage.getItem(TOKEN)===null){
     return false;
@@ -74,7 +83,7 @@ export async function JsonClient(endpoint, { body, ...customConfig } = {}) {
     ...customConfig,
     headers: {
       ...headers,
-    //   "Authorization": `Bearer ${localStorage.getItem(TOKEN)}`,
+      "Authorization": `Bearer ${localStorage.getItem(TOKEN)}`,
       ...customConfig.headers,
     },
   }

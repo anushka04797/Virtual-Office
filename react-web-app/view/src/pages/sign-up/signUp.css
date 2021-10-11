@@ -70,6 +70,9 @@
     background-size: cover;
     transform: translate(-50%, -50%);
   }
+  .remove-img{
+    /* background-image: url("../../assets/icons/dash-circle.svg") !important; */
+  }
   
   .pro-img-up-btn img {
     width: 18px;

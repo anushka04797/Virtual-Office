@@ -1,8 +1,8 @@
 import { CContainer, CRow, CCol, CCard, CCardHeader, CCardBody, CForm, CLabel, CInput, CButton } from '@coreui/react';
-import {React,Component, useState} from 'react';
+import { React, Component, useState } from 'react';
 import './createProject.css';
 import { ActionMeta, OnChangeValue } from 'react-select';
-import Creatable, { CreatableSelect,makeCreatableSelect } from 'react-select/creatable';
+import Creatable, { CreatableSelect, makeCreatableSelect } from 'react-select/creatable';
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
 
@@ -27,40 +27,40 @@ import makeAnimated from "react-select/animated";
 const CreateNewProject = () => {
   const colourStyles = {
     // control: (styles, state) => ({ ...styles,height:"35px", fontSize: '14px !important', lineHeight: '1.42857', borderRadius: "8px",borderRadius:".25rem",color:"rgb(133,133,133)",border:state.isFocused ? '2px solid #0065ff' :'inherit'}),
-    option: (provided, state) => ({...provided, fontSize: '14px !important'}),
-   
-}
-const options = [
-  { value: "nypd", label: "New York Police Department" },
-  { value: "lapd", label: "Los Angeles Police Department" },
-  { value: "miamipd", label: "Miami Police Department" },
-  { value: "dmp", label: "Dhaka Metropoliton Police" },
+    option: (provided, state) => ({ ...provided, fontSize: '14px !important' }),
 
-];
-const options1 = [
-  { value: "nypd", label: "La Casa De papel" },
-  { value: "lapd", label: "Aninda" },
-  { value: "miamipd", label: "Pial Noman" },
-  { value: "dmp", label: "Saif Rahi" },
-
-];
-
-const handleChange = (field, value) => {
-  switch (field) {
-    case 'options':
-      setRoleValue(value)
-      break
- case 'options1':
-   setAssigneeValue(value)
-   break
-    default:
-      break
   }
-}
-const [roleValue,setRoleValue]=useState('');
-const [assigneeValue,setAssigneeValue]=useState('')
+  const options = [
+    { value: "nypd", label: "New York Police Department" },
+    { value: "lapd", label: "Los Angeles Police Department" },
+    { value: "miamipd", label: "Miami Police Department" },
+    { value: "dmp", label: "Dhaka Metropoliton Police" },
 
-const animatedComponents = makeAnimated();
+  ];
+  const options1 = [
+    { value: "nypd", label: "La Casa De papel" },
+    { value: "lapd", label: "Aninda" },
+    { value: "miamipd", label: "Pial Noman" },
+    { value: "dmp", label: "Saif Rahi" },
+
+  ];
+
+  const handleChange = (field, value) => {
+    switch (field) {
+      case 'options':
+        setRoleValue(value)
+        break
+      case 'options1':
+        setAssigneeValue(value)
+        break
+      default:
+        break
+    }
+  }
+  const [roleValue, setRoleValue] = useState('');
+  const [assigneeValue, setAssigneeValue] = useState('')
+
+  const animatedComponents = makeAnimated();
   return (
     <>
       <CContainer>
@@ -75,23 +75,23 @@ const animatedComponents = makeAnimated();
                     <CRow>
                       {/**task delivery order */}
                       <div className="col-lg-12 mb-3">
-                        <CLabel className="custom-label-5" htmlFor="tdo"  aria-labelledby="tdo">
+                        <CLabel className="custom-label-5" htmlFor="tdo" aria-labelledby="tdo">
                           Task Delivery Order
                         </CLabel>
                         <Creatable
-                                        closeMenuOnSelect={true}
-                                       aria-labelledby="tdo"
-                                        id="tdo"
-                                       
-                                        placeholder="Select from list or create new"
-                                        isClearable={true}
-                                        onChange={(value) => handleChange('options', value)}
-                                        classNamePrefix="custom-forminput-6"
-                                        value={roleValue}
-                                        options={options}
-                                        styles={colourStyles}
-                                       
-                                     
+                          closeMenuOnSelect={true}
+                          aria-labelledby="tdo"
+                          id="tdo"
+
+                          placeholder="Select from list or create new"
+                          isClearable={true}
+                          onChange={(value) => handleChange('options', value)}
+                          classNamePrefix="custom-forminput-6"
+                          value={roleValue}
+                          options={options}
+                          styles={colourStyles}
+
+
 
                         />
                       </div>
@@ -129,20 +129,20 @@ const animatedComponents = makeAnimated();
                           Assignee(s)
                         </CLabel>
                         <Select
-                                        closeMenuOnSelect={false}
-                                       aria-labelledby="workerBees"
-                                        id="workerBees"
-                                        minHeight="35px"
-                                        placeholder="Select from list"
-                                        isClearable={true}
-                                        isMulti={true}
-                                        onChange={(value) => handleChange('options1', value)}
-                                        classNamePrefix="custom-forminput-6"
-                                        value={assigneeValue}
-                                        options={options1}
-                                        styles={colourStyles}
-                                       
-                                     
+                          closeMenuOnSelect={false}
+                          aria-labelledby="workerBees"
+                          id="workerBees"
+                          minHeight="35px"
+                          placeholder="Select from list"
+                          isClearable={true}
+                          isMulti={true}
+                          onChange={(value) => handleChange('options1', value)}
+                          classNamePrefix="custom-forminput-6"
+                          value={assigneeValue}
+                          options={options1}
+                          styles={colourStyles}
+
+
 
                         />
                       </div>
