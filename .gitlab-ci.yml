@@ -1,0 +1,18 @@
+variables:
+  GIT_CLEAN_FLAGS: none # disable git clean ** this is important **
+
+stages:
+  - deploy
+
+deploy:
+  stage: deploy
+  script:
+    - npm --version
+    - npm install
+    - cd react-web-app/view
+    - npm i
+    - npm run build
+    - cd ..
+    - cd ..
+    - npm start
+    - echo "deployed successfully :)"
