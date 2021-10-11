@@ -79,7 +79,7 @@ const Register = () => {
 
           <div className="seller-pro-pic-holder">
             <div className="seller-profile-pic-div">
-              <img src={avatar?avatar:"assets/bgs/dummy-user.svg"} />
+              <img src={avatar?avatar:"assets/bgs/dummy-user.svg"} className="avatar-img" />
             </div>
             <label for="propic" className={image?"pro-img-up-btn mb-0 remove-img":"pro-img-up-btn mb-0"}>
               {/* <!-- propic --> */}
