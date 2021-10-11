@@ -13,7 +13,4 @@ deploy:
     - ls
     - npm install --force
     - npm run build
-    - cd ..
-    - cd ..
-    - npm start
     - echo "deployed successfully :)"
