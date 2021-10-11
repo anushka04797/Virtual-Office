@@ -5,6 +5,7 @@ import ProfileSlice from './slices/ProfileSlice'
 import ProjectsSlice from './slices/ProjectsSlice'
 import SidebarSlice from './slices/SideBarSlice'
 import WbsSlice from './slices/WbsSlice'
+import MeetingSlice from "./slices/MeetingSlice"
 export default configureStore({
   reducer: {
     drawer: DrawerSlice,
@@ -12,6 +13,7 @@ export default configureStore({
     sidebar: SidebarSlice,
     projects: ProjectsSlice,
     wbs: WbsSlice,
-    profile:ProfileSlice
+    profile:ProfileSlice,
+    meeting: MeetingSlice
   },
 })

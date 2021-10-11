@@ -1,7 +1,15 @@
 import React from 'react'
 import {CButton, CCard, CCardBody} from '@coreui/react';
+import {useDispatch, useSelector} from "react-redux";
+import {fetchMeetingList} from "../../store/slices/MeetingSlice";
+import {USER_ID} from "../../Config";
 
-const scheduleMeetings=()=>{
+const ScheduleMeetings=()=>{
+    const dispatch = useDispatch()
+    const  meeting = useSelector(state => state.meeting.data);
+    React.useEffect(()=>{
+        dispatch(fetchMeetingList(localStorage.getItem(USER_ID)))
+    },[])
 return(
     <>
      <div className="main-holder-projects">
@@ -10,22 +18,16 @@ return(
 </h3>
 
 <div className="card-holder1 ">
+    {meeting.slice(0, 3).map((item, idx) => (
     <CCard className="project-card1">
         <CCardBody>
-            <h6 className="id-no1">meeting id: #12340C</h6>
-            <h5 className="card-details1"><span className="p-header-3">Project Name:</span> Virtual Office</h5>
-            <h5 className="card-details1"><span className="p-header-3">Date and Time :</span>Today,1:53pm</h5>
+            <h6 className="id-no1">meeting id: #{item.room_id}</h6>
+            <h5 className="card-details1"><span className="p-header-3">Project Name:</span> {item.project.task_delivery_order}</h5>
+            <h5 className="card-details1"><span className="p-header-3">Date and Time :</span> {item.start_time}</h5>
         </CCardBody>
     
     </CCard>
-    <CCard className="project-card1">
-        <CCardBody>
-            <h6 className="id-no1">meeting id : #12340C</h6>
-            <h5 className="card-details1"><span className="p-header-3">Project Name:</span> Virtual Office</h5>
-            <h5 className="card-details1"><span className="p-header-3">Date and Time :</span>10th September,2021,10:15am</h5>
-        </CCardBody>
-    
-    </CCard>
+    ))}
    
     </div>
     <div className="button-holder3"><CButton className="tiny-buttons1">View all</CButton></div>
@@ -35,4 +37,4 @@ return(
     </>
 )
 }
-export default scheduleMeetings
+export default ScheduleMeetings
