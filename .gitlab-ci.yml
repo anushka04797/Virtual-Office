@@ -11,7 +11,7 @@ deploy:
     - npm install
     - cd react-web-app/view/
     - ls
-    - npm install
+    - npm install --force
     - npm run build
     - cd ..
     - cd ..
