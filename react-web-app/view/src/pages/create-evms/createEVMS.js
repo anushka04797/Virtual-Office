@@ -80,19 +80,7 @@ const ProjectEVMS = () => {
                     <CLabel className="custom-label-5" htmlFor="wPackage">
                         Work Package
                       </CLabel>  
-                      <Select
-                        closeMenuOnSelect={true}
-                        aria-labelledby="wPackage"
-                        id="wPackage"
-                        placeholder="Work Package Number"
-                        isClearable={false}
-                        isMulti={false}
-                        onChange={(value) => handleChange("workPackage", value)}
-                        classNamePrefix="custom-forminput-6"
-                        value={packageValue}
-                        options={workPackage}
-                        styles={colourStyles}
-                      />
+                    <CInput name="wPackage" id="wPackage" type="number" readOnly/>
                     </div>
                     {/**Earned Value */}
                     <div className="col-lg-6 mb-3">

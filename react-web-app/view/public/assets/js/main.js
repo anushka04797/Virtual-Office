@@ -10,14 +10,14 @@ window.addEventListener('load', function() {
 
 // Add class to navigation when scrolling down
 
-document.addEventListener('scroll', function() {
-  const header = document.querySelector('.header-main');
-  if (window.scrollY >= 20) {
-    header.classList.add('fade-in');
-  } else {
-    header.classList.remove('fade-in');
-  }
-});
+// document.addEventListener('scroll', function() {
+//   const header = document.querySelector('.header-main');
+//   if (window.scrollY >= 20) {
+//     header.classList.add('fade-in');
+//   } else {
+//     header.classList.remove('fade-in');
+//   }
+// });
 
 // Add class when mobile navigation icon is clicked
 
