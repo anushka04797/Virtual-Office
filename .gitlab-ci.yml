@@ -15,5 +15,5 @@ deploy:
     - npm run build
     - cd ..
     - cd ..
-    - npm start server.js
+    - npm start
     - echo "deployed successfully :)"
