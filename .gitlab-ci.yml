@@ -9,8 +9,4 @@ deploy:
   script:
     - npm --version
     - npm install
-    - cd react-web-app/view/
-    - ls
-    - npm install
-    - npm run build
-    - echo "deployed successfully :)"
+    
