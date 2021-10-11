@@ -9,7 +9,7 @@ deploy:
   script:
     - npm --version
     - npm install
-    - cd react-web-app/view
+    - cd react-web-app/view/
     - npm i
     - npm run build
     - cd ..
