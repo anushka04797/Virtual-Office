@@ -2,6 +2,7 @@ import { createSlice,createAsyncThunk } from '@reduxjs/toolkit'
 import { JsonClient } from '../../Config'
 const initialState = {
   data:[],
+  pm_projects:[],
   assignee:[],
   wbs: [],
   status:'idle',
@@ -10,6 +11,11 @@ const initialState = {
 
 export const fetchProjectsThunk = createAsyncThunk('projects/fetchProjectsThunk', async (user_id) => {
   const response = await JsonClient.get('project/assigned/all/'+user_id+'/')
+  // console.log("project/assigned/all/", response.data)
+  return response.data
+})
+export const fetchProjectsForPMThunk = createAsyncThunk('projects/fetchProjectsForPMThunk', async (user_id) => {
+  const response = await JsonClient.get('project/all/'+user_id+'/')
   // console.log("project/assigned/all/", response.data)
   return response.data
 })
@@ -60,7 +66,12 @@ export const projectsSlice = createSlice({
       state.status = 'succeeded'
       // Add any fetched posts to the array
       state.wbs = action.payload
-  },
+    },
+    [fetchProjectsForPMThunk.fulfilled]: (state, action) => {
+      //state.status = 'succeeded'
+      // Add any fetched posts to the array
+      state.pm_projects = action.payload
+    },
   }
 })
 

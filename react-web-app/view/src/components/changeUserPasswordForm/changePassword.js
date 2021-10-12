@@ -1,5 +1,5 @@
 import React from 'react'
-import { CForm, CLabel, CInput, CCardBody, CCard,CButton } from '@coreui/react'
+import { CForm, CLabel, CInput, CCardBody, CCard, CButton } from '@coreui/react'
 import './changePassoword.css';
 const changePassword = () => {
     return (
@@ -11,14 +11,14 @@ const changePassword = () => {
                             <CLabel className="custom-label-5" htmlFor="userOldPass">
                                 Old Password
                             </CLabel>
-                            <CInput type="password" name="userOldPass" className="custom-forminput-6"></CInput>
+                            <CInput type="password" name="userOldPass" className="custom-forminput-6" />
                         </div>
                         {/**New Password */}
                         <div className="mb-2">
                             <CLabel className="custom-label-5" htmlFor="userNewPass">
                                 New Password
                             </CLabel>
-                            <CInput type="password" name="userNewPass" className="custom-forminput-6"></CInput>
+                            <CInput type="password" name="userNewPass" className="custom-forminput-6" />
                         </div>
 
                         {/**Confirm new password */}
@@ -28,11 +28,11 @@ const changePassword = () => {
                             </CLabel>
                             <CInput type="password" name="userConfPass" className="custom-forminput-6"></CInput>
                         </div>
-{/**BUtton groups */}
-<div className="project-form-button-holders mt-3">
-    <CButton className="profile-form-btn update-profile">Update Password</CButton>
-                          <CButton className="profile-form-btn cancel-update">Cancel</CButton>
-    </div>
+                        {/**BUtton groups */}
+                        <div className="project-form-button-holders mt-3">
+                            <CButton className="profile-form-btn update-profile">Update Password</CButton>
+                            <CButton className="profile-form-btn cancel-update">Cancel</CButton>
+                        </div>
                     </CForm>
                 </CCardBody>
 

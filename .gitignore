@@ -2,6 +2,7 @@
 node_modules
 /dist
 react-web-app/view/node_modules
+react-web-app/view/build
 react-web-app/view/package-lock.json
 package-lock.json
 

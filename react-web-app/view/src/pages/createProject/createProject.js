@@ -1,13 +1,14 @@
 import { CContainer, CRow, CCol, CCard, CCardHeader, CCardBody, CForm, CLabel, CInput, CButton } from '@coreui/react';
-import { React, Component, useState } from 'react';
+import { React, Component, useState, useEffect } from 'react';
 import './createProject.css';
 import { ActionMeta, OnChangeValue } from 'react-select';
 import Creatable, { CreatableSelect, makeCreatableSelect } from 'react-select/creatable';
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
 import { useFormik } from 'formik';
-import { API } from '../../Config';
-
+import { API, USER_ID } from '../../Config';
+import { useDispatch, useSelector } from 'react-redux'
+import { fetchProjectsForPMThunk } from '../../store/slices/ProjectsSlice';
 // class CreatableSingle extends Component {
 //   handleChange = (
 //     newValue: OnChangeValue[options,false],
@@ -32,66 +33,78 @@ const CreateNewProject = () => {
     option: (provided, state) => ({ ...provided, fontSize: '14px !important' }),
 
   }
-  const options = [
-    { value: "nypd", label: "New York Police Department" },
-    { value: "lapd", label: "Los Angeles Police Department" },
-    { value: "miamipd", label: "Miami Police Department" },
-    { value: "dmp", label: "Dhaka Metropoliton Police" },
+  const dispatch = useDispatch()
+  const profile_details = useSelector(state => state.profile.data)
+  const tdo_list = useSelector(state=>{
+    let temp = state.projects.pm_projects
+    // temp.filter((v,i,a)=>a.findIndex(t=>(JSON.stringify(t) === JSON.stringify(v)))===i)
+    let tdo_list = temp.filter((value, index, array) => array.findIndex((t) => t.task_delivery_order === value.task_delivery_order) === index); 
+    return tdo_list
+  })
 
-  ];
-  const options1 = [
-    { value: "nypd", label: "La Casa De papel" },
-    { value: "lapd", label: "Aninda" },
-    { value: "miamipd", label: "Pial Noman" },
-    { value: "dmp", label: "Saif Rahi" },
-
-  ];
-
-  const handleChange = (field, value) => {
-    switch (field) {
-      case 'options':
-        formCreateProject.setValues({task_delivery_order:value.label})
-        break
-      case 'options1':
-        setAssigneeValue(value)
-        break
-      default:
-        break
-    }
-  }
-  const [roleValue, setRoleValue] = useState('');
+  // const handleChange = (field, value) => {
+  //   switch (field) {
+  //     case 'options':
+  //       formCreateProject.setValues({ task_delivery_order: value.label })
+  //       break
+  //     case 'options1':
+  //       setAssigneeValue(value)
+  //       break
+  //     default:
+  //       break
+  //   }
+  // }
+  const handleChange = (newValue, actionMeta) => {
+    formCreateProject.setFieldValue('task_delivery_order')
+    formCreateProject.setValues({
+      task_delivery_order:newValue
+    })
+    console.log('form values',formCreateProject.values)
+    console.group('Value Changed');
+    console.log(newValue);
+    console.log(`action: ${actionMeta.action}`);
+    console.groupEnd();
+  };
+  const handleInputChange = (inputValue, actionMeta) => {
+    console.group('Input Changed');
+    console.log(inputValue);
+    console.log(`action: ${actionMeta.action}`);
+    console.groupEnd();
+  };
   const [assigneeValue, setAssigneeValue] = useState('')
-  const validate_create_project_form=(values)=>{
-    const errors={}
-    if(!values.task_delivery_order) errors.task_delivery_order="Task Delivery Order is required"
+  const validate_create_project_form = (values) => {
+    const errors = {}
+    if (!values.task_delivery_order) errors.task_delivery_order = "Task Delivery Order is required"
     return errors
   }
-  const create_project=async()=>{
-    console.log('values',formCreateProject.values)
+  const create_project = async () => {
+    console.log('values', formCreateProject.values)
     // API.post('project/create/',formCreateProject.values).then((res)=>{
     //   console.log(res)
     // })
   }
   const formCreateProject = useFormik({
-    initialValues:{
-      task_delivery_order: "", 
-      sub_task: "", 
-      work_package_number: "", 
-      task_title: "", 
-      estimated_person: "", 
-      planned_delivery_date: "", 
-      assignee: '', 
-      pm: '', 
-      planned_hours: "", 
-      planned_value: "", 
+    initialValues: {
+      task_delivery_order: "",
+      sub_task: "",
+      work_package_number: "",
+      task_title: "",
+      estimated_person: "",
+      planned_delivery_date: "",
+      assignee: '',
+      pm: localStorage.getItem(USER_ID),
+      planned_hours: "",
+      planned_value: "",
       remaining_hours: ""
     },
-    validateOnChange:true,
-    validateOnBlur:true,
+    validateOnChange: true,
+    validateOnBlur: true,
     validate: validate_create_project_form,
     onSubmit: create_project
   })
-  const animatedComponents = makeAnimated();
+  useEffect(()=>{
+    dispatch(fetchProjectsForPMThunk(localStorage.getItem(USER_ID)))
+  },[])
   return (
     <>
       <CContainer>
@@ -115,10 +128,13 @@ const CreateNewProject = () => {
                           id="tdo"
                           placeholder="Select from list or create new"
                           isClearable={true}
-                          onChange={(value) => handleChange('options', value)}
+                          onChange={handleChange}
+                          onInputChange={handleInputChange}
                           classNamePrefix="custom-forminput-6"
                           value={formCreateProject.values.task_delivery_order}
-                          options={options}
+                          options={tdo_list}
+                          getOptionLabel= {option=>option.task_delivery_order+' > '+option.sub_task}
+                          getOptionValue = {option=>option.task_delivery_order}
                           styles={colourStyles}
                         />
                       </div>
@@ -166,7 +182,7 @@ const CreateNewProject = () => {
                           onChange={(value) => handleChange('options1', value)}
                           classNamePrefix="custom-forminput-6"
                           value={assigneeValue}
-                          options={options1}
+                          options={[]}
                           styles={colourStyles}
 
 
@@ -178,14 +194,14 @@ const CreateNewProject = () => {
                         <CLabel className="custom-label-5">
                           PM(s)
                         </CLabel>
-                        <CInput className="custom-forminput-6"></CInput>
+                        <CInput className="custom-forminput-6" value={profile_details.first_name + ' ' + profile_details.last_name} readOnly />
                       </div>
                       {/**Planned delivery date */}
                       <div className="col-lg-6 mb-3">
                         <CLabel className="custom-label-5">
                           Planned Delivery Date
                         </CLabel>
-                        <CInput className="custom-forminput-6"></CInput>
+                        <CInput className="custom-forminput-6" type="date" />
                       </div>
                       {/**Planned Value */}
                       <div className="col-lg-4 mb-3">
