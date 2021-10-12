@@ -35,11 +35,13 @@
   
   .seller-profile-pic-div img {
     width: 95px;
-    height: auto;
+    height: 95px;
     position: absolute;
     top: 50%;
     left: 50%;
+    border-radius: 50%;
     transform: translate(-50%, -50%);
+    object-fit: cover;
   }
   
   .pro-img-up-btn {
@@ -69,6 +71,9 @@
     height: 18px;
     background-size: cover;
     transform: translate(-50%, -50%);
+  }
+  .remove-img{
+    /* background-image: url("../../assets/icons/dash-circle.svg") !important; */
   }
   
   .pro-img-up-btn img {

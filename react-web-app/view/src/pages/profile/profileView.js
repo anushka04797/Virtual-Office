@@ -37,7 +37,7 @@ const UserProfile = () => {
       <CContainer>
         <CModal alignment="center" show={visible} onClose={profileEditForm}>
           <CModalHeader onDismiss={() => setVisible(!visible)} closeButton>
-            <CModalTitle className="modal-title">
+            <CModalTitle className="modal-title-profile">
               <span className="edit-profile-form-header">
                 Edit Profile Info
               </span>
@@ -110,7 +110,7 @@ const UserProfile = () => {
                       <CButton className="profile-form-btn update-profile">
                         Update Info
                       </CButton>
-                      <CButton className="profile-form-btn cancel-update">
+                      <CButton className="profile-form-btn cancel-update" onClick={() => setVisible(!visible)}>
                         Cancel
                       </CButton>
                     </div>

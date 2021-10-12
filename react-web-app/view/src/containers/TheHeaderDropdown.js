@@ -8,15 +8,23 @@ import {
   CImg
 } from '@coreui/react'
 import { useHistory } from 'react-router-dom';
-
+import { API, BASE_URL } from '../Config';
 import CIcon from '@coreui/icons-react'
+import { useSelector, useDispatch } from 'react-redux';
 
 const TheHeaderDropdown = () => {
   let history = useHistory();
-function logout(){
-  localStorage.clear()
-  history.push('/')
-}
+  const profile_details = useSelector(state=>state.profile.data)
+  function logout() {
+    API.get('auth/logout/').then((res) => {
+      localStorage.clear()
+      history.push('/')
+    }).catch(err => {
+      localStorage.clear()
+      history.push('/')
+    })
+
+  }
   return (
     <CDropdown
       inNav
@@ -26,13 +34,13 @@ function logout(){
       <CDropdownToggle className="c-header-nav-link" caret={false}>
         <div className="c-avatar">
           <CImg
-            src={'avatars/6.jpg'}
+            src={profile_details.profile_pic!=null?BASE_URL+profile_details.profile_pic:'avatars/6.jpg'}
             className="c-avatar-img"
             alt="admin@bootstrapmaster.com"
           />
-         
+
         </div>
-        <span className="ml-2  u-name">User Name</span>
+        <span className="ml-2  u-name">{profile_details.first_name}</span>
       </CDropdownToggle>
       <CDropdownMenu className="pt-0" placement="bottom-end">
         <CDropdownItem
@@ -45,13 +53,13 @@ function logout(){
         </CDropdownItem>
         <CDropdownItem className="drop-text" to="/dashboard/profile">
           <CIcon name="cil-user" className="mfe-2" />Profile
-        </CDropdownItem> 
-    
-     
+        </CDropdownItem>
+
+
         <CDropdownItem divider />
-        <CDropdownItem onClick={()=>{logout()}} className="drop-text">
-        <CIcon name="cil-account-logout" className="mfe-2" />
-         Log out
+        <CDropdownItem onClick={() => { logout() }} className="drop-text">
+          <CIcon name="cil-account-logout" className="mfe-2" />
+          Log out
         </CDropdownItem>
       </CDropdownMenu>
     </CDropdown>
