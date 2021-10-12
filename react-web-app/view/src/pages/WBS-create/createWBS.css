@@ -26,15 +26,19 @@
   line-height: 1.42857;
   font-weight: 600;
 }
-.custom-forminput-5 {
-  font-size: 14px !important;
+.custom-forminput-6{
+  font-size:14px !important;
   line-height: 1.42857;
-  color: rgb(133, 133, 133);
+  color: rgb(133,133,133);
+  height: 38px;
+  
+
 }
-.custom-forminput-5:active,
-.custom-forminput-5:focus {
-  border: 2px solid #0065ff;
+.custom-forminput-6:active,.custom-forminput-6:focus{
+  border:2px solid #2684ff !important;
   box-shadow: none !important;
+  font-size:14px !important;
+  line-height: 1.42857;
 }
 .create-btn-prjctwbs {
   -webkit-box-align: baseline;

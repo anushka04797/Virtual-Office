@@ -114,4 +114,10 @@
     .action-button-holders--2{
         margin-left: auto;
     }
+    .project-form-button-holders{
+        text-align: center !important;
+    }
+    .cancel-update{
+        margin-left: 10px;
+    }
 }
