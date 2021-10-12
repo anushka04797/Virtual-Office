@@ -5,6 +5,8 @@ import { ActionMeta, OnChangeValue } from 'react-select';
 import Creatable, { CreatableSelect, makeCreatableSelect } from 'react-select/creatable';
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
+import { useFormik } from 'formik';
+import { API } from '../../Config';
 
 // class CreatableSingle extends Component {
 //   handleChange = (
@@ -48,7 +50,7 @@ const CreateNewProject = () => {
   const handleChange = (field, value) => {
     switch (field) {
       case 'options':
-        setRoleValue(value)
+        formCreateProject.setValues({task_delivery_order:value.label})
         break
       case 'options1':
         setAssigneeValue(value)
@@ -59,7 +61,36 @@ const CreateNewProject = () => {
   }
   const [roleValue, setRoleValue] = useState('');
   const [assigneeValue, setAssigneeValue] = useState('')
-
+  const validate_create_project_form=(values)=>{
+    const errors={}
+    if(!values.task_delivery_order) errors.task_delivery_order="Task Delivery Order is required"
+    return errors
+  }
+  const create_project=async()=>{
+    console.log('values',formCreateProject.values)
+    // API.post('project/create/',formCreateProject.values).then((res)=>{
+    //   console.log(res)
+    // })
+  }
+  const formCreateProject = useFormik({
+    initialValues:{
+      task_delivery_order: "", 
+      sub_task: "", 
+      work_package_number: "", 
+      task_title: "", 
+      estimated_person: "", 
+      planned_delivery_date: "", 
+      assignee: '', 
+      pm: '', 
+      planned_hours: "", 
+      planned_value: "", 
+      remaining_hours: ""
+    },
+    validateOnChange:true,
+    validateOnBlur:true,
+    validate: validate_create_project_form,
+    onSubmit: create_project
+  })
   const animatedComponents = makeAnimated();
   return (
     <>
@@ -82,17 +113,13 @@ const CreateNewProject = () => {
                           closeMenuOnSelect={true}
                           aria-labelledby="tdo"
                           id="tdo"
-
                           placeholder="Select from list or create new"
                           isClearable={true}
                           onChange={(value) => handleChange('options', value)}
                           classNamePrefix="custom-forminput-6"
-                          value={roleValue}
+                          value={formCreateProject.values.task_delivery_order}
                           options={options}
                           styles={colourStyles}
-
-
-
                         />
                       </div>
                       {/**Sub task */}
@@ -185,7 +212,7 @@ const CreateNewProject = () => {
                       {/**submit buttons */}
                       <div className="col-md-12">
                         <div className="project-form-button-holders mt-3">
-                          <CButton className="create-btn-prjct create-prjct">Create Project</CButton>
+                          <CButton type="button" onClick={formCreateProject.handleSubmit} className="create-btn-prjct create-prjct">Create Project</CButton>
                           <CButton className="create-btn-prjct cancel-prjct">Cancel</CButton>
                         </div>
                       </div>
