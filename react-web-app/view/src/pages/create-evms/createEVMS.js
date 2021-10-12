@@ -6,9 +6,10 @@ import {
   CForm,
   CLabel,
   CInput,
-  CButton
+  CButton,
+  CAlert
 } from "@coreui/react";
-import React,{useState} from "react";
+import React, { useState } from "react";
 import Select from "react-select";
 import "../createProject/createProject.css"
 const ProjectEVMS = () => {
@@ -74,67 +75,96 @@ const ProjectEVMS = () => {
                         options={projects}
                         styles={colourStyles}
                       />
+                      {/**View related TDO details */}
+                      <div className="mt-1">
+                        <CAlert color="primary">
+                          <small>
+                            <b>Work Package Number:</b> 1234
+                            <br />
+                            <b>Estimated Persons: </b> 4
+                            <br />
+                            <b>Planned Delivery Date: </b> 12th October,2021
+                            <br/>
+                            <b>Assignee(s):</b> Kibria Papel,Pial Noman,Mabia Mishu
+                          </small>
+                        </CAlert>
+                      </div>
                     </div>
                     {/**Work package */}
                     <div className="col-lg-6 mb-3">
-                    <CLabel className="custom-label-5" htmlFor="wPackage">
+                      <CLabel className="custom-label-5" htmlFor="wPackage">
                         Work Package
-                      </CLabel>  
-                    <CInput name="wPackage" id="wPackage" type="number" readOnly/>
+                      </CLabel>
+                      <CInput name="wPackage" id="wPackage" type="number" readOnly />
                     </div>
                     {/**Earned Value */}
                     <div className="col-lg-6 mb-3">
-                        <CLabel className="custom-label-5" htmlFor="earnedValue">
-                            Earned Value
-                        </CLabel>
-                        <CInput className="custom-forminput-6" name="earnedValue" id="earnedValue">
+                      <CLabel className="custom-label-5" htmlFor="earnedValue">
+                        Earned Value
+                      </CLabel>
+                      <CInput className="custom-forminput-6" name="earnedValue" id="earnedValue">
 
-                        </CInput>
-                        
-                        </div> 
-                        {/**Actual Cost */}
-                        <div className="col-lg-6 mb-3">
-                        <CLabel className="custom-label-5" htmlFor="actualCost">
-                            Actual Cost
-                        </CLabel>
-                        <CInput className="custom-forminput-6" name="actualCost" id="actualCost"/>
-                        </div>
-                        {/**estimate at completion */}
-                        <div className="col-lg-6 mb-3">
-                        <CLabel className="custom-label-5" htmlFor="estAtCompltn">
-                           Estimate at completion
-                        </CLabel>
-                        <CInput className="custom-forminput-6" name="estAtCompltn" id="estAtCompltn"/>
-                        </div>
-                        {/**estimate to completion */}
-                        <div className="col-lg-6 mb-3">
-                        <CLabel className="custom-label-5" htmlFor="estToCompltn">
-                           Estimate to completion
-                        </CLabel>
-                        <CInput className="custom-forminput-6" name="estToCompltn" id="estToCompltn"/>
-                        </div>
-                        {/**variance at completion */}
-                        <div className="col-lg-6 mb-3">
-                        <CLabel className="custom-label-5" htmlFor="varAtCompltn">
-                          Variance at completion
-                        </CLabel>
-                        <CInput className="custom-forminput-6" name="varAtCompltn" id="varAtCompltn"/>
+                      </CInput>
 
-                        </div>
-                        {/**budget at completion */}
-                        <div className="col-lg-6 mb-3">
-                        <CLabel className="custom-label-5" htmlFor="budgetAtCompletion">
-                         Budget at completion
-                        </CLabel>
-                        <CInput className="custom-forminput-6" name="budgetAtCompletion" id="budgetAtCompletion"/>
-                        </div>
-                         {/**submit buttons */}
-                      <div className="col-md-12">
-                        <div className="project-form-button-holders mt-3">
-                          <CButton className="create-btn-prjct create-prjct">Create EVMS</CButton>
-                          <CButton className="create-btn-prjct cancel-prjct">Cancel</CButton>
-                        </div>
+                    </div>
+                    {/**Actual Cost */}
+                    <div className="col-lg-6 mb-3">
+                      <CLabel className="custom-label-5" htmlFor="actualCost">
+                        Actual Cost
+                      </CLabel>
+                      <CInput className="custom-forminput-6" name="actualCost" id="actualCost" />
+                    </div>
+                    {/**estimate at completion */}
+                    <div className="col-lg-6 mb-3">
+                      <CLabel className="custom-label-5" htmlFor="estAtCompltn">
+                        Estimate at completion
+                      </CLabel>
+                      <CInput className="custom-forminput-6" name="estAtCompltn" id="estAtCompltn" />
+                    </div>
+                    {/**estimate to completion */}
+                    <div className="col-lg-6 mb-3">
+                      <CLabel className="custom-label-5" htmlFor="estToCompltn">
+                        Estimate to completion
+                      </CLabel>
+                      <CInput className="custom-forminput-6" name="estToCompltn" id="estToCompltn" />
+                    </div>
+                    {/**Planned Value */}
+                   
+                    <div className="col-lg-6 mb-3">
+                      <CLabel className="custom-label-5" htmlFor="plannedVal">
+                       Planned Value
+                      </CLabel>
+                      <CInput className="custom-forminput-6" name="plannedVal" id="plannedVal" />
+                    </div>
+                    {/**Planned hours */}
+                    <div className="col-lg-6 mb-3">
+                      <CLabel className="custom-label-5" htmlFor="plannedHrs">
+                       Planned Hours
+                      </CLabel>
+                      <CInput className="custom-forminput-6" name="plannedHrs" id="plannedHrs" />
+                    </div>
+                     {/**variance at completion */}
+                    <div className="col-lg-6 mb-3">
+                      <CLabel className="custom-label-5" htmlFor="varAtCompltn">
+                        Variance at completion
+                      </CLabel>
+                      <CInput className="custom-forminput-6" name="varAtCompltn" id="varAtCompltn" />
+
+                    </div>
+                    {/**budget at completion */}
+                    <div className="col-lg-6 mb-3">
+                      <CLabel className="custom-label-5" htmlFor="budgetAtCompletion">
+                        Budget at completion
+                      </CLabel>
+                      <CInput className="custom-forminput-6" name="budgetAtCompletion" id="budgetAtCompletion" />
+                    </div>
+                    {/**submit buttons */}
+                    <div className="col-md-12">
+                      <div className="project-form-button-holders mt-3">
+                        <CButton className="create-btn-prjct create-prjct">Create EVMS</CButton>
+                        <CButton className="create-btn-prjct cancel-prjct">Cancel</CButton>
                       </div>
+                    </div>
 
                   </CRow>
                 </CForm>

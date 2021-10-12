@@ -94,35 +94,35 @@ const CreateNewWBS = () => {
                                                 <CLabel className="custom-label-wbs5">
                                                     Title
                                                 </CLabel>
-                                                <CInput className="custom-forminput-5" onChange={setWbsTitle}></CInput>
+                                                <CInput className="custom-forminput-6" onChange={setWbsTitle}></CInput>
                                             </div>
                                             {/**WBS description */}
                                             <div className="col-lg-12 mb-3">
                                                 <CLabel className="custom-label-wbs5">
                                                     Description
                                                 </CLabel>
-                                                <CTextarea className="custom-forminput-5" onChange={setWbsDetails}></CTextarea>
+                                                <CTextarea className="custom-forminput-6" onChange={setWbsDetails}></CTextarea>
                                             </div>
                                             {/**Start date */}
                                             <div className="col-lg-6 mb-3">
                                                 <CLabel className="custom-label-wbs5">
                                                     Start date
                                                 </CLabel>
-                                                <CInput type="date" className="custom-forminput-5" onChange={setWbsStartDate}></CInput>
+                                                <CInput type="date" className="custom-forminput-6" onChange={setWbsStartDate}></CInput>
                                             </div>
                                             {/**End date */}
                                             <div className="col-lg-6 mb-3">
                                                 <CLabel className="custom-label-wbs5">
                                                     End date
                                                 </CLabel>
-                                                <CInput max={selectedProjectEndDate} type="date" className="custom-forminput-5" onChange={setWbsEndDate}></CInput>
+                                                <CInput max={selectedProjectEndDate} type="date" className="custom-forminput-6" onChange={setWbsEndDate}></CInput>
                                             </div>
                                             {/**Assignees */}
                                             <div className="col-lg-12 mb-3">
                                                 <CLabel className="custom-label-wbs5">
                                                     Assignee(s)
                                                 </CLabel>
-                                                <Select className="custom-forminput-5" 
+                                                <Select className="custom-forminput-6" 
                                                     options={assigneeList}
                                                     isMulti
                                                     getOptionLabel={option => option.first_name + " " + option.last_name}
