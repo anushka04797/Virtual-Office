@@ -1,5 +1,7 @@
 import React from 'react'
 import { useDispatch } from 'react-redux';
+import { USER_ID } from '../Config';
+import { fetchPersonalDetails } from '../store/slices/ProfileSlice';
 import { fetchProjectsThunk } from '../store/slices/ProjectsSlice';
 import { fetchWbsThunk } from '../store/slices/WbsSlice';
 import {
@@ -14,6 +16,7 @@ const TheLayout = () => {
   React.useEffect(()=>{
     dispatch(fetchProjectsThunk(5))
     dispatch(fetchWbsThunk(5))
+    dispatch(fetchPersonalDetails(localStorage.getItem(USER_ID)))
   },[])
   return (
     <div className="c-app c-default-layout">
