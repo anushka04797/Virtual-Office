@@ -110,7 +110,7 @@ const UserProfile = () => {
                       <CButton className="profile-form-btn update-profile">
                         Update Info
                       </CButton>
-                      <CButton className="profile-form-btn cancel-update" onClick={() => setVisible(!visible)}>
+                      <CButton className="profile-form-btn cancel-update" type="reset" onClick={() => setVisible(!visible)}>
                         Cancel
                       </CButton>
                     </div>
