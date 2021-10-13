@@ -2,7 +2,8 @@ import { CContainer, CRow, CCol, CCard, CCardHeader, CCardBody, CForm, CLabel, C
 import { React, Component, useState, useEffect } from 'react';
 import './createProject.css';
 import { ActionMeta, OnChangeValue } from 'react-select';
-import Creatable, { CreatableSelect, makeCreatableSelect } from 'react-select/creatable';
+import CreatableSelect from 'react-select/creatable';
+import Creatable from 'react-select/creatable';
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
 import { useFormik } from 'formik';
@@ -34,43 +35,76 @@ const CreateNewProject = () => {
 
   }
   const dispatch = useDispatch()
+  const [selectedTDO,setSelectedTDO]=useState()
+  const [selectedSubTask,setSelectedSubTask] = useState()
   const profile_details = useSelector(state => state.profile.data)
+  const projects = useSelector(state=>state.projects.pm_projects)
   const tdo_list = useSelector(state=>{
     let temp = state.projects.pm_projects
     // temp.filter((v,i,a)=>a.findIndex(t=>(JSON.stringify(t) === JSON.stringify(v)))===i)
     let tdo_list = temp.filter((value, index, array) => array.findIndex((t) => t.task_delivery_order === value.task_delivery_order) === index); 
     return tdo_list
   })
-
-  // const handleChange = (field, value) => {
-  //   switch (field) {
-  //     case 'options':
-  //       formCreateProject.setValues({ task_delivery_order: value.label })
-  //       break
-  //     case 'options1':
-  //       setAssigneeValue(value)
-  //       break
-  //     default:
-  //       break
-  //   }
-  // }
-  const handleChange = (newValue, actionMeta) => {
-    formCreateProject.setFieldValue('task_delivery_order')
-    formCreateProject.setValues({
-      task_delivery_order:newValue
+  const [sub_task_list,setSubTaskList] = useState([])
+  function get_sub_tasks(tdo){
+    let temp = []
+    projects.forEach((project,idx)=>{
+      if(project.task_delivery_order == tdo.task_delivery_order){
+        temp.push({value:project.sub_task,label:project.sub_task})
+      }
     })
+    return temp.filter((value, index, array) => array.findIndex((t) => t.sub_task === value.sub_task) === index)
+  }
+  const [work_packages,setWorkPackages] = useState([])
+  function get_work_packages(tdo){
+    let temp = []
+    projects.forEach((project,idx)=>{
+      if(project.task_delivery_order == tdo.task_delivery_order){
+        temp.push({value:project.work_package_number,label:project.work_package_number})
+      }
+    })
+    return temp.filter((value, index, array) => array.findIndex((t) => t.work_package_number === value.work_package_number) === index)
+  }
+  const handleChange = (newValue, actionMeta) => {
+    formCreateProject.setFieldValue('task_delivery_order',newValue.task_delivery_order)
+    setSelectedTDO(newValue)
+    setSubTaskList(get_sub_tasks(newValue))
+    setWorkPackages(get_work_packages(newValue))
+    console.group('Value Changed',newValue.task_delivery_order);
     console.log('form values',formCreateProject.values)
-    console.group('Value Changed');
-    console.log(newValue);
     console.log(`action: ${actionMeta.action}`);
     console.groupEnd();
   };
+  const handleTDOCreate=(inputValue)=>{
+    console.group('Option created',inputValue);
+  }
+  const handleSubTaskChange=(newValue,actionMeta)=>{
+    console.log('handle sub task change')
+    setSelectedSubTask(newValue)
+    formCreateProject.setFieldValue('sub_task',newValue.sub_task)
+  }
+  const handleWorkPackageNumberChange =(newValue,actionMeta)=>{
+    formCreateProject.setFieldValue('work_package_number',newValue.work_package_number)
+    console.log('values',formCreateProject.values)
+  }
   const handleInputChange = (inputValue, actionMeta) => {
+    
+    formCreateProject.setFieldValue('task_delivery_order',inputValue)
+    // setSubTaskList(get_sub_tasks(inputValue))
+    // setWorkPackages(get_work_packages(inputValue))
     console.group('Input Changed');
     console.log(inputValue);
     console.log(`action: ${actionMeta.action}`);
     console.groupEnd();
   };
+  const handleSubTaskInputChange=(inputValue,actionMeta)=>{
+    if(actionMeta.action == 'select-option'){
+      formCreateProject.setFieldValue('sub_task',inputValue)
+    }
+  }
+  const handleWorkPackageInputChange=(inputValue,actionMeta)=>{
+    formCreateProject.setFieldValue('work_package_number',inputValue)
+  }
   const [assigneeValue, setAssigneeValue] = useState('')
   const validate_create_project_form = (values) => {
     const errors = {}
@@ -102,6 +136,7 @@ const CreateNewProject = () => {
     validate: validate_create_project_form,
     onSubmit: create_project
   })
+  
   useEffect(()=>{
     dispatch(fetchProjectsForPMThunk(localStorage.getItem(USER_ID)))
   },[])
@@ -122,7 +157,7 @@ const CreateNewProject = () => {
                         <CLabel className="custom-label-5" htmlFor="tdo" aria-labelledby="tdo">
                           Task Delivery Order
                         </CLabel>
-                        <Creatable
+                        <CreatableSelect
                           closeMenuOnSelect={true}
                           aria-labelledby="tdo"
                           id="tdo"
@@ -130,10 +165,11 @@ const CreateNewProject = () => {
                           isClearable={true}
                           onChange={handleChange}
                           onInputChange={handleInputChange}
+                          onCreateOption={handleTDOCreate}
                           classNamePrefix="custom-forminput-6"
-                          value={formCreateProject.values.task_delivery_order}
+                          value={selectedTDO}
                           options={tdo_list}
-                          getOptionLabel= {option=>option.task_delivery_order+' > '+option.sub_task}
+                          getOptionLabel= {option=>option.task_delivery_order}
                           getOptionValue = {option=>option.task_delivery_order}
                           styles={colourStyles}
                         />
@@ -143,14 +179,43 @@ const CreateNewProject = () => {
                         <CLabel className="custom-label-5" htmlFor="sTask">
                           Subtask
                         </CLabel>
-                        <CInput className="custom-forminput-6" name="sTask"></CInput>
+                        <Creatable
+                          closeMenuOnSelect={true}
+                          aria-labelledby="sub_task"
+                          id="sub_task"
+                          placeholder="Select from list or create new"
+                          isClearable={true}
+                          onChange={handleSubTaskChange}
+                          onInputChange={handleSubTaskInputChange}
+                          classNamePrefix="custom-forminput-6"
+                          value={formCreateProject.values.sub_task}
+                          options={sub_task_list}
+                          getOptionLabel= {option=>option.label}
+                          getOptionValue = {option=>option.value}
+                          styles={colourStyles}
+                        />
+                        {/* <CInput className="custom-forminput-6" name="sTask"></CInput> */}
                       </div>
                       {/**work package number */}
                       <div className="col-lg-6 mb-3">
                         <CLabel className="custom-label-5" htmlFor="workPackageNo">
                           Work Package Number
                         </CLabel>
-                        <CInput className="custom-forminput-6" id="workPackageNo"></CInput>
+                        <Creatable
+                          closeMenuOnSelect={true}
+                          aria-labelledby="workPackageNo"
+                          id="workPackageNo"
+                          placeholder="Select from list or create new"
+                          isClearable={true}
+                          onChange={handleWorkPackageNumberChange}
+                          onInputChange={handleWorkPackageInputChange}
+                          classNamePrefix="custom-forminput-6"
+                          value={formCreateProject.values.work_package_number}
+                          options={work_packages}
+                          getOptionLabel= {option=>option.label}
+                          getOptionValue = {option=>option.value}
+                          styles={colourStyles}
+                        />
                       </div>
                       {/**Task title */}
                       <div className="col-lg-12 mb-3">

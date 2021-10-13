@@ -38,9 +38,10 @@ const SignIn = () => {
       }
     }).catch(err=>{
       console.log(err.response)
-      if(err.response.status == 403){
-        enqueueSnackbar('Your account is not active yet',{variant:"warning"})
-      }
+      enqueueSnackbar(err.response.data.message,{variant:"warning"})
+      // if(err.response.status == 403){
+      //   enqueueSnackbar('Your account is not active yet',{variant:"warning"})
+      // }
     })
   }
   const formLogin = useFormik({

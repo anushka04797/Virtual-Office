@@ -1,41 +1,39 @@
-import React, {useState} from 'react';
-import {CButton, CCard, CCardBody} from '@coreui/react';
-import {useDispatch, useSelector} from "react-redux";
-import {useSnackbar} from "notistack";
+import React, { useState } from 'react';
+import { CButton, CCard, CCardBody } from '@coreui/react';
+import { useDispatch, useSelector } from "react-redux";
+import { useSnackbar } from "notistack";
 import { fetchUserWiseWbsThunk } from '../../store/slices/WbsSlice';
-import {USER_ID} from "../../Config";
-  const AssignedProjectsDashboard =()=>{
-      const dispatch = useDispatch()
-      const  wbs = useSelector(state => state.wbs.data);
-      React.useEffect(()=>{
+import { USER_ID } from "../../Config";
+const AssignedProjectsDashboard = () => {
+    const dispatch = useDispatch()
+    const wbs = useSelector(state => state.wbs.data);
+    React.useEffect(() => {
         dispatch(fetchUserWiseWbsThunk(localStorage.getItem(USER_ID)))
-    },[])
-return (
-    <>
-    
-    <div className="main-holder-projects">
-<h3 className="projectsHeader">
-    Assigned to me
-</h3>
+    }, [])
+    return (
+        <>
 
-<div className="card-holder1">
-    { wbs.slice(0, 3).map((item, idx) => (
+            <div className="main-holder-projects">
+                <h3 className="projectsHeader">
+                    Assigned to me
+                </h3>
 
+                <div className="card-holder1">
+                    {wbs!=undefined && wbs.slice(0, 3).map((item, idx) => (
+                        <CCard className="project-card1">
+                            <CCardBody>
+                                <h6 className="id-no1">project id: #{item.project.work_package_number}</h6>
+                                <h5 className="card-details1"><span className="p-header-3">Task Title:</span> {item.project.task_title}</h5>
+                                <h5 className="card-details1"><span className="p-header-3">Due Date :</span> {item.project.planned_delivery_date}</h5>
+                            </CCardBody>
 
-    <CCard className="project-card1">
-        <CCardBody>
-        <h6 className="id-no1">project id: #{ item.project.work_package_number }</h6>
-            <h5 className="card-details1"><span className="p-header-3">Task Title:</span> {item.project.task_title}</h5>
-            <h5 className="card-details1"><span className="p-header-3">Due Date :</span> {item.project.planned_delivery_date}</h5>
-        </CCardBody>
-    
-    </CCard>
- ))}
-    </div>
-    <div className="button-holder3"><CButton className="tiny-buttons1">View all</CButton></div>
-</div>
-    
-    </>
-)
-  }
-  export default AssignedProjectsDashboard;
+                        </CCard>
+                    ))}
+                </div>
+                {wbs!=undefined && wbs.length>3 && <div className="button-holder3"><CButton className="tiny-buttons1">View all</CButton></div>}
+            </div>
+
+        </>
+    )
+}
+export default AssignedProjectsDashboard;
