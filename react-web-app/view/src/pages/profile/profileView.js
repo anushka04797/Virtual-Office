@@ -35,7 +35,7 @@ const UserProfile = () => {
   const profile_details = useSelector(state => state.profile.data)
   const inputFile = useRef(null)
   const [image, setImage] = useState()
-  const [avatar, setAvatar] = useState(profile_details ? (BASE_URL + profile_details.profile_pic) : "assets/bgs/dummy-user.svg")
+  const [avatar, setAvatar] = useState(profile_details ? (BASE_URL + profile_details.profile_pic) : "avatars/user-avatar-default.png")
   const [visible, setVisible] = useState(false);
   const dispatch = useDispatch()
   const onImageChange = (image) => {
