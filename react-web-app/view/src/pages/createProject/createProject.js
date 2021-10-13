@@ -10,6 +10,7 @@ import { useFormik } from 'formik';
 import { API, USER_ID } from '../../Config';
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchProjectsForPMThunk } from '../../store/slices/ProjectsSlice';
+import swal from 'sweetalert'
 // class CreatableSingle extends Component {
 //   handleChange = (
 //     newValue: OnChangeValue[options,false],
@@ -37,6 +38,8 @@ const CreateNewProject = () => {
   const dispatch = useDispatch()
   const [selectedTDO,setSelectedTDO]=useState()
   const [selectedSubTask,setSelectedSubTask] = useState()
+  const [work_package_number,setWorkPackageNumber] = useState()
+  const [assignees,setAssignees]=useState([])
   const profile_details = useSelector(state => state.profile.data)
   const projects = useSelector(state=>state.projects.pm_projects)
   const tdo_list = useSelector(state=>{
@@ -49,7 +52,7 @@ const CreateNewProject = () => {
   function get_sub_tasks(tdo){
     let temp = []
     projects.forEach((project,idx)=>{
-      if(project.task_delivery_order == tdo.task_delivery_order){
+      if(project.task_delivery_order == tdo){
         temp.push({value:project.sub_task,label:project.sub_task})
       }
     })
@@ -59,19 +62,21 @@ const CreateNewProject = () => {
   function get_work_packages(tdo){
     let temp = []
     projects.forEach((project,idx)=>{
-      if(project.task_delivery_order == tdo.task_delivery_order){
+      if(project.task_delivery_order == tdo){
         temp.push({value:project.work_package_number,label:project.work_package_number})
       }
     })
     return temp.filter((value, index, array) => array.findIndex((t) => t.work_package_number === value.work_package_number) === index)
   }
   const handleChange = (newValue, actionMeta) => {
-    formCreateProject.setFieldValue('task_delivery_order',newValue.task_delivery_order)
-    setSelectedTDO(newValue)
-    setSubTaskList(get_sub_tasks(newValue))
-    setWorkPackages(get_work_packages(newValue))
-    console.group('Value Changed',newValue.task_delivery_order);
-    console.log('form values',formCreateProject.values)
+    if(actionMeta.action == 'select-option'){
+      formCreateProject.setFieldValue('task_delivery_order',newValue.task_delivery_order)
+      setSelectedTDO(newValue)
+      setSubTaskList(get_sub_tasks(newValue.task_delivery_order))
+      setWorkPackages(get_work_packages(newValue.task_delivery_order))
+      console.group('Value Changed',newValue.task_delivery_order);
+      console.log('form values',formCreateProject.values)
+    }
     console.log(`action: ${actionMeta.action}`);
     console.groupEnd();
   };
@@ -79,43 +84,69 @@ const CreateNewProject = () => {
     console.group('Option created',inputValue);
   }
   const handleSubTaskChange=(newValue,actionMeta)=>{
-    console.log('handle sub task change')
-    setSelectedSubTask(newValue)
-    formCreateProject.setFieldValue('sub_task',newValue.sub_task)
+    if(actionMeta.action == 'select-option'){
+      console.log('handle sub task change')
+      setSelectedSubTask(newValue)
+      formCreateProject.setFieldValue('sub_task',newValue.value)
+    }
   }
   const handleWorkPackageNumberChange =(newValue,actionMeta)=>{
-    formCreateProject.setFieldValue('work_package_number',newValue.work_package_number)
-    console.log('values',formCreateProject.values)
+    if(actionMeta.action == 'select-option'){
+      console.log('selected work package',newValue)
+      setWorkPackageNumber(newValue)
+      formCreateProject.setFieldValue('work_package_number',String(newValue.value))
+    }
+  }
+  const handleAssigneeChange =(value,actionMeta)=>{
+    if(actionMeta.action=='select-option'){
+      console.log('selected assignee',value)
+      let temp=[]
+      value.forEach((item,idx)=>{
+        temp.push(Number(item.value))
+      })
+      formCreateProject.setFieldValue('assignee',temp)
+    }
+    console.log(value,actionMeta.action)
   }
   const handleInputChange = (inputValue, actionMeta) => {
+    if(actionMeta.action == 'input-change'){
+      formCreateProject.setFieldValue('task_delivery_order',inputValue)
+      setSubTaskList(get_sub_tasks(inputValue))
+      setWorkPackages(get_work_packages(inputValue))
+      console.group('Input Changed',inputValue);
+    }
     
-    formCreateProject.setFieldValue('task_delivery_order',inputValue)
-    // setSubTaskList(get_sub_tasks(inputValue))
-    // setWorkPackages(get_work_packages(inputValue))
-    console.group('Input Changed');
-    console.log(inputValue);
     console.log(`action: ${actionMeta.action}`);
     console.groupEnd();
   };
   const handleSubTaskInputChange=(inputValue,actionMeta)=>{
-    if(actionMeta.action == 'select-option'){
+    if(actionMeta.action == 'input-change'){
       formCreateProject.setFieldValue('sub_task',inputValue)
     }
   }
   const handleWorkPackageInputChange=(inputValue,actionMeta)=>{
-    formCreateProject.setFieldValue('work_package_number',inputValue)
+    if(actionMeta.action == 'input-change'){
+      formCreateProject.setFieldValue('work_package_number',String(inputValue))
+    }
   }
-  const [assigneeValue, setAssigneeValue] = useState('')
   const validate_create_project_form = (values) => {
     const errors = {}
     if (!values.task_delivery_order) errors.task_delivery_order = "Task Delivery Order is required"
+    if (!values.sub_task) errors.sub_task = "Sub Task is required"
     return errors
   }
   const create_project = async () => {
-    console.log('values', formCreateProject.values)
-    // API.post('project/create/',formCreateProject.values).then((res)=>{
-    //   console.log(res)
-    // })
+    console.log('values', JSON.stringify(formCreateProject.values))
+    API.post('project/create/',formCreateProject.values).then((res)=>{
+      console.log(res)
+      if(res.status == 200 && res.data.success=='True'){
+        formCreateProject.resetForm()
+        setSelectedSubTask(null)
+        setSelectedTDO(null)
+        setWorkPackageNumber(null)
+        swal('Created!','Successfuly Created','success')
+      }
+    })
   }
   const formCreateProject = useFormik({
     initialValues: {
@@ -125,7 +156,7 @@ const CreateNewProject = () => {
       task_title: "",
       estimated_person: "",
       planned_delivery_date: "",
-      assignee: '',
+      assignee: [],
       pm: localStorage.getItem(USER_ID),
       planned_hours: "",
       planned_value: "",
@@ -139,6 +170,14 @@ const CreateNewProject = () => {
   
   useEffect(()=>{
     dispatch(fetchProjectsForPMThunk(localStorage.getItem(USER_ID)))
+    API.get('auth/assignee/list/').then((res)=>{
+      console.log('assignees',res.data.data)
+      let temp=[]
+      Array.from(res.data.data).forEach((item,idx)=>{
+        temp.push({value:item.id,label:item.first_name+' '+item.last_name})
+      })
+      setAssignees(temp)
+    })
   },[])
   return (
     <>
@@ -210,7 +249,7 @@ const CreateNewProject = () => {
                           onChange={handleWorkPackageNumberChange}
                           onInputChange={handleWorkPackageInputChange}
                           classNamePrefix="custom-forminput-6"
-                          value={formCreateProject.values.work_package_number}
+                          value={work_package_number}
                           options={work_packages}
                           getOptionLabel= {option=>option.label}
                           getOptionValue = {option=>option.value}
@@ -222,14 +261,14 @@ const CreateNewProject = () => {
                         <CLabel className="custom-label-5">
                           Task Title
                         </CLabel>
-                        <CInput className="custom-forminput-6"></CInput>
+                        <CInput id="task_title" name="task_title" value={formCreateProject.values.task_title} onChange={formCreateProject.handleChange} className="custom-forminput-6"/>
                       </div>
                       {/**estimated persons */}
                       <div className="col-lg-5 mb-3">
                         <CLabel className="custom-label-5">
                           Estimated Person(s)
                         </CLabel>
-                        <CInput className="custom-forminput-6"></CInput>
+                        <CInput id="estimated_person" name="estimated_person" value={formCreateProject.values.estimated_person} onChange={formCreateProject.handleChange} className="custom-forminput-6"></CInput>
                       </div>
                       {/**Assignees */}
                       <div className="col-lg-7 mb-3">
@@ -244,14 +283,13 @@ const CreateNewProject = () => {
                           placeholder="Select from list"
                           isClearable={true}
                           isMulti={true}
-                          onChange={(value) => handleChange('options1', value)}
+                          onChange={handleAssigneeChange}
                           classNamePrefix="custom-forminput-6"
-                          value={assigneeValue}
-                          options={[]}
+                          //value={assigneeValue}
+                          options={assignees?assignees:[]}
+                          // getOptionLabel= {option=>option.first_name+' '+option.last_name}
+                          // getOptionValue = {option=>option.id}
                           styles={colourStyles}
-
-
-
                         />
                       </div>
                       {/**pMs */}
@@ -266,14 +304,14 @@ const CreateNewProject = () => {
                         <CLabel className="custom-label-5">
                           Planned Delivery Date
                         </CLabel>
-                        <CInput className="custom-forminput-6" type="date" />
+                        <CInput id="planned_delivery_date" name="planned_delivery_date" value={formCreateProject.values.planned_delivery_date} onChange={formCreateProject.handleChange} className="custom-forminput-6" type="date" />
                       </div>
                       {/**Planned Value */}
                       <div className="col-lg-4 mb-3">
                         <CLabel className="custom-label-5">
                           Planned Value
                         </CLabel>
-                        <CInput className="custom-forminput-6"></CInput>
+                        <CInput id="planned_value" name="planned_value" value={formCreateProject.values.planned_value} onChange={formCreateProject.handleChange} className="custom-forminput-6"></CInput>
                       </div>
                       {/**planned hours */}
 
@@ -281,14 +319,14 @@ const CreateNewProject = () => {
                         <CLabel className="custom-label-5">
                           Planned hr(s)
                         </CLabel>
-                        <CInput className="custom-forminput-6"></CInput>
+                        <CInput id="planned_hours" name="planned_hours" value={formCreateProject.values.planned_hours} onChange={formCreateProject.handleChange} className="custom-forminput-6"></CInput>
                       </div>
                       {/**remaining hours */}
                       <div className="col-lg-4 mb-3">
                         <CLabel className="custom-label-5">
                           Remaining hr(s)
                         </CLabel>
-                        <CInput className="custom-forminput-6"></CInput>
+                        <CInput id="remaining_hours" name="remaining_hours" value={formCreateProject.values.remaining_hours} onChange={formCreateProject.handleChange} className="custom-forminput-6"></CInput>
                       </div>
                       {/**submit buttons */}
                       <div className="col-md-12">
