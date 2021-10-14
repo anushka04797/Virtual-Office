@@ -124,7 +124,7 @@ const UserProfile = () => {
     })
   }
   useEffect(() => {
-    setAvatar(profile_details.profile_pic?(BASE_URL + profile_details.profile_pic):"assets/bgs/dummy-user.svg")
+    setAvatar(profile_details.profile_pic?(BASE_URL + profile_details.profile_pic):"avatars/user-avatar-default.png")
   }, [profile_details])
   const profile_update_form = useFormik({
     initialValues: {
