@@ -20,7 +20,7 @@ return (
 </h3>
 
 <div className="card-holder1">
-    { projects.slice(0, 3).map((item, idx) => (
+    { projects!=undefined && projects.slice(0, 3).map((item, idx) => (
     <CCard className="project-card1">
         <CCardBody>
             <h6 className="id-no1">project id: #{item.work_package_number}</h6>

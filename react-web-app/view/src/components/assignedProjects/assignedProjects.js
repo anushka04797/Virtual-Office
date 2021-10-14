@@ -19,7 +19,7 @@ return (
 </h3>
 
 <div className="card-holder1">
-    { wbs.slice(0, 3).map((item, idx) => (
+    { wbs!=undefined && wbs.slice(0, 3).map((item, idx) => (
 
 
     <CCard className="project-card1">
