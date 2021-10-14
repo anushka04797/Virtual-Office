@@ -54,6 +54,11 @@ const SignIn = () => {
     validate: validate_login_form,
     onSubmit: login
   })
+  const handleKeyPress = (event) => {
+    if(event.key === 'Enter'){
+      login(formLogin.values)
+    }
+  }
   
   useEffect(()=>{
     if(location.state?.registration){
@@ -107,7 +112,7 @@ const SignIn = () => {
                           value={formLogin.values.password}
                           onChange={formLogin.handleChange}
                           className="custom-formgroup-signin"
-                          
+                          onKeyPress={handleKeyPress}
                         />
                       </div>
                       <div className="show-flex">

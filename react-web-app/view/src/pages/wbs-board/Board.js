@@ -57,23 +57,25 @@ const WbsBoard = () => {
                 }
             ]
         }
-        wbsList.forEach(element => {
-            if (element.status === 1) {
-                // console.log("1st cond", data.lanes[0])
-                temp_data.lanes[0].cards.push({ "id": element.id.toString(), "laneId": "lane1", "title": element.title, "description": element.description, "label": "★ " + element.end_date })
-                console.log('1', temp_data)
-            }
-            else if (element.status === 2) {
-                // console.log("2nd cond", temp_data.lanes[1])
-                temp_data.lanes[1].cards.push({ "id": element.id.toString(), "laneId": "lane2", "title": element.title, "description": element.description, "label": "★ " + element.end_date })
-                console.log('2', temp_data)
-            }
-            else if (element.status === 3) {
-                // console.log("3rd cond", temp_data.lanes[2])
-                temp_data.lanes[2].cards.push({ "id": element.id.toString(), "laneId": "lane3", "title": element.title, "description": element.description, "label": "★ " + element.end_date })
-                console.log('3', temp_data)
-            }
-        })
+        if(wbsList!=undefined){
+            wbsList.forEach(element => {
+                if (element.status === 1) {
+                    // console.log("1st cond", data.lanes[0])
+                    temp_data.lanes[0].cards.push({ "id": element.id.toString(), "laneId": "lane1", "title": element.title, "description": element.description, "label": "★ " + element.end_date })
+                    console.log('1', temp_data)
+                }
+                else if (element.status === 2) {
+                    // console.log("2nd cond", temp_data.lanes[1])
+                    temp_data.lanes[1].cards.push({ "id": element.id.toString(), "laneId": "lane2", "title": element.title, "description": element.description, "label": "★ " + element.end_date })
+                    console.log('2', temp_data)
+                }
+                else if (element.status === 3) {
+                    // console.log("3rd cond", temp_data.lanes[2])
+                    temp_data.lanes[2].cards.push({ "id": element.id.toString(), "laneId": "lane3", "title": element.title, "description": element.description, "label": "★ " + element.end_date })
+                    console.log('3', temp_data)
+                }
+            })
+        }
         // console.log('temp data', temp_data)
         setBoardData(temp_data)
     }

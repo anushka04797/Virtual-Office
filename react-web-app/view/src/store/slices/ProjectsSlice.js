@@ -3,6 +3,7 @@ import { JsonClient } from '../../Config'
 const initialState = {
   data:[],
   pm_projects:[],
+  tdo_list:[],
   assignee:[],
   wbs: [],
   status:'idle',
@@ -16,7 +17,7 @@ export const fetchProjectsThunk = createAsyncThunk('projects/fetchProjectsThunk'
 })
 export const fetchProjectsForPMThunk = createAsyncThunk('projects/fetchProjectsForPMThunk', async (user_id) => {
   const response = await JsonClient.get('project/all/'+user_id+'/')
-  // console.log("project/assigned/all/", response.data)
+  console.log("pm projects", response.data)
   return response.data
 })
 
@@ -42,7 +43,10 @@ export const projectsSlice = createSlice({
   name: 'projects',
   initialState,
   reducers: {
-    
+    push_item: (state,val) => {
+      console.log('dispatching ----- ',val)
+      state.tdo_list = [...state.tdo_list,val.payload]
+    },
   },
   extraReducers: {
     [fetchProjectsThunk.pending]: (state, action) => {
@@ -71,10 +75,18 @@ export const projectsSlice = createSlice({
       //state.status = 'succeeded'
       // Add any fetched posts to the array
       state.pm_projects = action.payload
+      if(action.payload.length>0){
+        let temp = action.payload.filter((value, index, array) => array.findIndex((t) => t.task_delivery_order === value.task_delivery_order) === index); 
+        let tdo_temp=[]
+        temp.forEach((tdo,idx)=>{
+          tdo_temp.push({value:tdo.task_delivery_order,label:tdo.task_delivery_order})
+        })
+        state.tdo_list= tdo_temp
+      }
     },
   }
 })
 
 // Action creators are generated for each case reducer function
-
+export const { push_item} = projectsSlice.actions
 export default projectsSlice.reducer
