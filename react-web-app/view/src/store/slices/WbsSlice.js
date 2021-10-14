@@ -8,19 +8,19 @@ const initialState = {
 
 export const fetchWbsThunk = createAsyncThunk('wbs/fetchWbsThunk', async (user_id) => {
   const response = await JsonClient.get('wbs/all/' + user_id)
-  console.log("response.data", response.data)
+  console.log("all wbs", response.data)
   return response.data
 })
 
 export const fetchUserWiseWbsThunk = createAsyncThunk('wbs/fetchUserWiseWbsThunk', async (user_id) => {
   const response = await JsonClient.get('wbs/user/all/' + user_id)
-  console.log("response.data", response.data)
+  console.log("user wise wbs", response.data)
   return response.data
 })
 
 export const fetchWbsUpdateThunk = createAsyncThunk('wbs/createWbsThunk', async (data) => {
   const response = await JsonClient.post('wbs/create/', data)
-  console.log(response.data)
+  console.log('wbs create response',response.data)
   return response.data
 })
 

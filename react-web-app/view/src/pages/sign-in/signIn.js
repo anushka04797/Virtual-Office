@@ -38,9 +38,10 @@ const SignIn = () => {
       }
     }).catch(err=>{
       console.log(err.response)
-      if(err.response.status == 403){
-        enqueueSnackbar('Your account is not active yet',{variant:"warning"})
-      }
+      enqueueSnackbar(err.response.data.message,{variant:"warning"})
+      // if(err.response.status == 403){
+      //   enqueueSnackbar('Your account is not active yet',{variant:"warning"})
+      // }
     })
   }
   const formLogin = useFormik({
@@ -53,6 +54,11 @@ const SignIn = () => {
     validate: validate_login_form,
     onSubmit: login
   })
+  const handleKeyPress = (event) => {
+    if(event.key === 'Enter'){
+      login(formLogin.values)
+    }
+  }
   
   useEffect(()=>{
     if(location.state?.registration){
@@ -106,7 +112,7 @@ const SignIn = () => {
                           value={formLogin.values.password}
                           onChange={formLogin.handleChange}
                           className="custom-formgroup-signin"
-                          
+                          onKeyPress={handleKeyPress}
                         />
                       </div>
                       <div className="show-flex">

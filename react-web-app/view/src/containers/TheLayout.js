@@ -4,6 +4,7 @@ import { USER_ID } from '../Config';
 import { fetchPersonalDetails } from '../store/slices/ProfileSlice';
 import { fetchProjectsThunk } from '../store/slices/ProjectsSlice';
 import { fetchWbsThunk } from '../store/slices/WbsSlice';
+import { fetchProjectsForPMThunk } from '../store/slices/ProjectsSlice';
 import {
   TheContent,
   TheSidebar,
@@ -14,9 +15,10 @@ import './TheLayout.css'
 const TheLayout = () => {
   const dispatch = useDispatch()
   React.useEffect(()=>{
-    dispatch(fetchProjectsThunk(5))
-    dispatch(fetchWbsThunk(5))
+    dispatch(fetchProjectsThunk(localStorage.getItem(USER_ID)))
+    dispatch(fetchWbsThunk(localStorage.getItem(USER_ID)))
     dispatch(fetchPersonalDetails(localStorage.getItem(USER_ID)))
+    dispatch(fetchProjectsForPMThunk(localStorage.getItem(USER_ID)))
   },[])
   return (
     <div className="c-app c-default-layout">
