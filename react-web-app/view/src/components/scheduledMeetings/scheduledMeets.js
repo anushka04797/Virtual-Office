@@ -30,7 +30,9 @@ return(
     ))}
    
     </div>
-    <div className="button-holder3"><CButton className="tiny-buttons1">View all</CButton></div>
+         {meeting != undefined && meeting.length > 3 &&
+         <div className="button-holder3"><CButton className="tiny-buttons1">View all</CButton></div>
+         }
 </div>
 
     

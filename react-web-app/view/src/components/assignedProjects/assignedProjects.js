@@ -19,6 +19,7 @@ return (
 </h3>
 
 <div className="card-holder1">
+
     { wbs!=undefined && wbs.slice(0, 3).map((item, idx) => (
 
 
@@ -31,8 +32,13 @@ return (
     
     </CCard>
  ))}
+    {
+        wbs == undefined && <span>No data</span>
+    }
     </div>
-    <div className="button-holder3"><CButton className="tiny-buttons1">View all</CButton></div>
+        {wbs != undefined && wbs.length > 3 &&
+        <div className="button-holder3"><CButton className="tiny-buttons1">View all</CButton></div>
+        }
 </div>
     
     </>
