@@ -1,11 +1,11 @@
-import React, { Suspense } from 'react'
+import React, { Suspense, useState } from 'react'
 import {
   Redirect,
   Route,
   Switch
 } from 'react-router-dom'
 import { CContainer, CFade } from '@coreui/react'
-
+import {user_groups} from '../helper'
 // routes config
 import innerRoutes from '../routes/DashboardRoutes'
 
@@ -16,9 +16,10 @@ const loading = (
 )
 
 const TheContent = () => {
+  const [groups,setGroups]=useState(user_groups())
   React.useEffect(()=>{
     console.log('Container mounted')
-},[])
+  },[])
   return (
     <main className="c-main">
       <CContainer>

@@ -12,13 +12,14 @@ import {
   TheHeader
 } from './index'
 import './TheLayout.css'
+import { has_group } from '../helper';
 const TheLayout = () => {
   const dispatch = useDispatch()
   React.useEffect(()=>{
     dispatch(fetchProjectsThunk(localStorage.getItem(USER_ID)))
     dispatch(fetchWbsThunk(localStorage.getItem(USER_ID)))
     dispatch(fetchPersonalDetails(localStorage.getItem(USER_ID)))
-    dispatch(fetchProjectsForPMThunk(localStorage.getItem(USER_ID)))
+    if(has_group('pm')) dispatch(fetchProjectsForPMThunk(localStorage.getItem(USER_ID)))
   },[])
   return (
     <div className="c-app c-default-layout">

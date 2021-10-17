@@ -1,5 +1,6 @@
 import { createSlice,createAsyncThunk } from '@reduxjs/toolkit'
 import { JsonClient } from '../../Config'
+
 const initialState = {
   data:[],
   pm_projects:[],
@@ -38,7 +39,6 @@ export const fetchWbsThunk = createAsyncThunk('wbs/createWbsThunk', async (data)
   // console.log("wbs/create/", response.data)
   return response.data
 })
-
 export const projectsSlice = createSlice({
   name: 'projects',
   initialState,

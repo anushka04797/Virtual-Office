@@ -27,12 +27,12 @@ const SignIn = () => {
     return errors;
   }
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-  const login=()=>{
-    
+  const login=()=>{  
     PUBLIC_API.post('auth/login/',formLogin.values).then((res)=>{
+      console.log('login response',res.data)
       if(res.status == 200 && res.data.success == 'True'){
         localStorage.setItem(TOKEN,res.data.token)
-        localStorage.setItem('groups',res.data.group)
+        localStorage.setItem('groups',JSON.parse(res.data.groups))
         localStorage.setItem(USER_ID,res.data.user_id)
         history.push({pathname:'/dashboard',state:{from:'login'}})
       }

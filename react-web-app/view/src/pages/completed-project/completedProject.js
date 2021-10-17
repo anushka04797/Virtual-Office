@@ -6,21 +6,24 @@ import AddCircleIcon from '@material-ui/icons/AddCircle';
 import { useHistory } from "react-router-dom";  
 import React from 'react';
 import { CIcon } from "@coreui/icons-react";
+import { useSelector } from 'react-redux';
+
 const CompleteProjects = () => {
     let historyTo = useHistory();
+    const projects=useSelector(state=> state.projects.data.filter((project)=> project.status === 1))
     return (
         <>
             <div className="container">
-                <h3 className="dash-header">Completed Projects(5)</h3>
+                <h3 className="dash-header">Completed Projects({projects.length})</h3>
                 <div className="row">
                  
                 <div className="col-md-10 offset-md-1 col-sm-12 col-xs-12 mt-1">
-                        <CCard className="card-ongoing-project">
+                        {projects!=undefined && projects.map((project,idx)=>(<CCard className="card-ongoing-project">
                             <CCardBody className="details-project-body">
                                
                                 <h4 className="ongoing-card-header"><IconButton aria-label="favourite" size="medium" >
                                     <GradeIcon fontSize="inherit" className="fav-button" />
-                                </IconButton>Virtual Guard</h4>
+                                </IconButton>{project.task_delivery_order}</h4>
                                 <hr className="header-underline1" />
 
                                 {/*task percentage portion */}
@@ -85,15 +88,15 @@ const CompleteProjects = () => {
                                 {/*project info in text */}
                                 <div className="information-show row">
                                     <div className="info-show-now col-md-6"> 
-                                        <h5 className="project-details-points child"><h5 className="info-header-1">Assigned by :</h5>Ratan</h5>
+                                        <h5 className="project-details-points child"><h5 className="info-header-1">Assigned by :</h5>{project.pm.first_name+' '+project.pm.last_name}</h5>
                                     {/* <h5 className="project-details-points"><h5 className="info-header-1">Work Package : </h5>1000</h5> */}
-                                    <h5 className="project-details-points"><h5 className="info-header-1">Project Manager : </h5>Pial Noman</h5>
+                                    <h5 className="project-details-points"><h5 className="info-header-1">Project Manager : </h5>{project.pm.first_name+' '+project.pm.last_name}</h5>
                                     </div>
                               <div className="info-show-now col-md-6">
                                     {/* <h5 className="project-details-points"><h5 className="info-header-1">Project Details :</h5>Design and develop the app for the seller and buyer module</h5> */}
-                                    <h5 className="project-details-points child"><h5 className="info-header-1">Start Date : </h5>31 January, 2021</h5>
+                                    <h5 className="project-details-points child"><h5 className="info-header-1">Start Date : </h5>{project.date_created}</h5>
 
-                                    <h5 className="project-details-points"><h5 className="info-header-1">Planned Delivery Date : </h5>22 Feb, 2021</h5>
+                                    <h5 className="project-details-points"><h5 className="info-header-1">Planned Delivery Date : </h5>{project.planned_delivery_date}</h5>
                                     </div>
                                 </div>
 
@@ -123,7 +126,7 @@ const CompleteProjects = () => {
                                 </div>
                             </CCardBody>
 
-                        </CCard>
+                        </CCard>))}
                     </div>
                 </div>
             </div>
