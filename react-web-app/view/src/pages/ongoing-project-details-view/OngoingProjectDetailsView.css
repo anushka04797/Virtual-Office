@@ -25,7 +25,7 @@ margin-bottom: 30px;
 .fav-button{
     color: #FBCA91;
     }
-    .edit-project-on{
+    .edit-ongoing-project-title{
         /* margin-left: auto; */
         font-style: normal;
         font-weight: 600;
@@ -33,21 +33,23 @@ margin-bottom: 30px;
         margin-top: -13px;
        padding:0 !important;
         margin-left: 10px;
-        border-color: transparent;
-        color: #1976D2;
+        border-color: transparent !important;
+       
+
        
     }
     .pen-icon{
-        margin: 0 !important
-        ;
+        margin: 0 !important;
+        color: #1976D2;
     }
-    .edit-project-on:hover{
+
+    .edit-ongoing-project-title:hover .pen-icon{
       
         color: #00B0FF;
     }
-   .delete-project-2:active,.delete-project-2:focus, .edit-project-ongoing-task:active,.edit-project-ongoing-task:focus,.cancel-name:active,.cancel-name:focus,.edit-project-on:focus,.edit-project-on:active,.confirm-name:focus,.confirm-name:active{
-        border: transparent;
-        outline: 0;
+   .delete-project-2:active,.delete-project-2:focus, .edit-project-ongoing-task:active,.edit-project-ongoing-task:focus,.cancel-name:active,.cancel-name:focus,.edit-ongoing-project-title:focus,.edit-ongoing-project-title:active,.confirm-name:focus,.confirm-name:active{
+        border-color: transparent;
+        outline: 0 !important;
         box-shadow: none !important;
         transition: none !important;
     }
@@ -55,26 +57,33 @@ margin-bottom: 30px;
         font-style: normal;
         font-weight: 600;
         font-size: 12px;
-        margin-top: -3px;
+        margin-top: 0px;
        padding:0 !important;
         margin-left: 10px;
-        border-color: transparent;
+        border-color: transparent !important;
+       
+    }
+    .tick{
+
         color: #004D40;
     }
-    .confirm-name:hover{
+    .confirm-name:hover >.tick{
         color: #2E7D32;
     }
     .cancel-name{
         font-style: normal;
         font-weight: 600;
         font-size: 12px;
-        margin-top: -3px;
+        margin-top: 0px;
        padding:0 !important;
         margin-left: 10px;
-        border-color: transparent;
+        border-color: transparent !important;
+        
+    }
+    .cross{
         color: #B71C1C;
     }
-    .cancel-name:hover{
+    .cancel-name:hover .cross{
         color:#D32F2F ;
     }
     .custom-forminput-6{
@@ -215,12 +224,83 @@ margin-bottom: 30px;
     }
 
 
+/*____________EDIT FORMS____________*/
+.custom-label-5{
+    color: rgb(23, 43, 77);
+    font-size: 14px;
+    line-height: 1.42857;
+    font-weight: 600;
+}
+.custom-forminput-6{
+    font-size:14px !important;
+    line-height: 1.42857;
+    color: rgb(133,133,133);
+    height: 38px;
+    
 
+}
+.css-f8y4bk-control,.custom-forminput-6__control{
+    padding: 0px !important;
+    min-height: 35px !important;
+    font-size:14px !important;
+    line-height: 1.42857;
+    color: rgb(133,133,133) !important;
+}
+.css-1uccc91-singleValue {
+    color: rgb(133,133,133) !important;
+}
+
+.custom-forminput-6:active,.custom-forminput-6:focus,.css-f8y4bk-control:active,.css-f8y4bk-control:focus{
+    border:2px solid #2684ff !important;
+    box-shadow: none !important;
+    font-size:14px !important;
+    line-height: 1.42857;
+}
+.profile-form-btn{
+    -webkit-box-align: baseline;
+    align-items: baseline;
+    border-width: 0px;
+    border-radius: 3px;
+    box-sizing: border-box;
+    font-style: normal;
+    font-weight: 500;
+    height: 32px;
+    padding: 0px 10px;
+    font-size: 14px;
+    line-height:2.28571em; 
+}
+.update-profile{
+    background-color: #0052CC;
+    color: white;
+}
+.update-profile:hover{
+    background-color: #0065ff;
+    color: white;
+}
+.cancel-update{
+    line-height: 2.28571em;
+    color: rgb(66, 82, 110) !important;
+   
+}
+.cancel-update:hover{
+    background-color: rgba(9, 30, 66, 0.04);
+    color: #2b2b2b;
+}
 
 
     /**MEDIA QUERY**/
     @media all and (min-width:992px){
         .project-actions{
             text-align: right;
+        }
+        .crud-btuttons-1{
+            text-align: right;
+            
+        }
+        .project-form-button-holders{
+            text-align: center !important;
+        }
+        .cancel-update{
+            margin-left: 10px;
         }
     }

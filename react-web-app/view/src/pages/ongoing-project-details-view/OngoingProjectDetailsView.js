@@ -5,51 +5,177 @@ import IconButton from '@material-ui/core/IconButton';
 import './OngoingProjectDetailsView.css'
 import CIcon from '@coreui/icons-react';
 import Select from "react-select";
+import Creatable from 'react-select/creatable';
+import { FamilyRestroomRounded } from '@material-ui/icons';
 
 const OngoingDetailsView = () => {
-    const [status, setStatus] = useState('start');
-    const radioHandler = (status) => {
+    const [status, setStatus] = useState(0);
+    const [titleStatus,setTitleStatus]=useState(1);
+    const radioHandler = (status,titleStatus) => {
         setStatus(status);
+        setTitleStatus(titleStatus);
     };
+    const [editModal, setEditModal] = useState('');
+    const editInfoForm = () => {
+        setEditModal(!editModal)
+    }
+    const colourStyles = {
+        // control: (styles, state) => ({ ...styles,height:"35px", fontSize: '14px !important', lineHeight: '1.42857', borderRadius: "8px",borderRadius:".25rem",color:"rgb(133,133,133)",border:state.isFocused ? '2px solid #0065ff' :'inherit'}),
+        option: (provided, state) => ({ ...provided, fontSize: '14px !important' }),
 
+    }
+    const [assigneeValue, setAssigneeValue] = useState('')
+    const assignees = [
+        { value: "1", label: "La Casa De papel" },
+        { value: "2", label: "Aninda" },
+        { value: "3", label: "Pial Noman" },
+        { value: "4", label: "Saif Rahi" },
+
+    ];
+    const handleChange = (field, value) => {
+        switch (field) {
+
+            case 'assignees':
+                setAssigneeValue(value)
+                break
+            default:
+                break
+        }
+    }
     return (
         <>
             <CContainer>
-                {/**card show */}
+                {/**Edit ongoing project details starts */}
+                <CModal scrollable alignment="center" show={editModal} onClose={editInfoForm}>
+                    <CModalHeader onDismiss={() => setEditModal(!editModal)} closeButton>
+                        <CModalTitle className="modal-title-projects">
+                            <span className="edit-profile-form-header">Edit Project Info</span>
 
-                {/**header portion */}
+                        </CModalTitle>
+                    </CModalHeader>
+                    <CModalBody>
+                        <CContainer>
+                            <CForm>
+                                <CRow>
+                                    {/**Subtask Name*/}
+                                    <CCol lg="12" className="mb-2">
+                                        <CLabel htmlFor="subTaskName" className="custom-label-5">Sub Task Name</CLabel>
+                                        <CInput id="subTaskName" name="subTaskName" type="text" className="custom-forminput-6" />
+                                    </CCol>
+                                    {/**PM Name */}
+                                    <CCol lg="6" className="mb-2">
+                                        <CLabel htmlFor="pmName" className="custom-label-5">PM Name</CLabel>
+                                        <CInput id="pmName" name="pmName" type="text" className="custom-forminput-6" readOnly />
+                                    </CCol>
+                                    {/**Work Package Number */}
+                                    <CCol lg="6" className="mb-2">
+                                        <CLabel htmlFor="wpNumber" className="custom-label-5">Work Package Number</CLabel>
+                                        <CInput id="wpNumber" name="wpNumber" type="number" className="custom-forminput-6" min="0" />
+                                    </CCol>
+                                    {/**Task Title */}
+                                    <CCol lg="12" className="mb-2">
+                                        <CLabel htmlFor="taskTitle" className="custom-label-5">Task Title</CLabel>
+                                        <CInput id="taskTitle" name="taskTitle" type="text" className="custom-forminput-6" />
+                                    </CCol>
+                                     {/**assignees */}
+                                     <CCol lg="12" classID="mb-2">
+                                        <CLabel htmlFor="assignees" className="custom-label-5">Assignee(s)</CLabel>
+                                        <Creatable
+                                            closeMenuOnSelect={false}
+                                            aria-labelledby="assignees"
+                                            id="assignees"
+                                            placeholder="Select from list or create new"
+                                            isClearable
+                                            onChange={(value) => handleChange('assignees', value)}
+isMulti
+                                            classNamePrefix="custom-forminput-6"
+                                            value={assigneeValue}
+                                            options={assignees}
+                                            // getOptionLabel= {option=>option.task_delivery_order}
+                                            // getOptionValue = {option=>option.task_delivery_order}
+                                            styles={colourStyles}
+                                        />
+                                    </CCol>
+                                    {/**Estimated persons */}
+                                    <CCol lg="6" className="mb-2">
+                                        <CLabel htmlFor="estPersons" className="custom-label-5">Estimated Person(s)</CLabel>
+                                        <CInput id="estPersons" name="estPersons" type="number" className="custom-forminput-6" min="0" />
+                                    </CCol>
+                                   
+                                    {/**planned Value */}
+                                    <CCol lg="6" className="mb-2">
+                                        <CLabel htmlFor="plannedVal" className="custom-label-5">Planned Value</CLabel>
+                                        <CInput id="plannedVal" name="plannedVal" type="number" className="custom-forminput-6" min="0" />
+                                    </CCol>
+                                    {/**Planned hours */}
+                                    <CCol lg="6" className="mb-2">
+                                        <CLabel htmlFor="plannedHrs" className="custom-label-5">Planned Value</CLabel>
+                                        <CInput id="plannedHrs" name="plannedHrs" type="number" className="custom-forminput-6" min="0" />
+                                    </CCol>
+                                    {/**Remaining hours */}
+                                    <CCol lg="6" className="mb-2">
+                                        <CLabel htmlFor="remHrs" className="custom-label-5">Planned Value</CLabel>
+                                        <CInput id="remHrs" name="remHrs" type="number" className="custom-forminput-6" min="0" />
+                                    </CCol>
+                                    {/**Action buttons */}
+                                    <CCol md="12" className="mt-2">
+                                        <div className="project-form-button-holders mt-3">
+                                            <CButton className="profile-form-btn update-profile">
+                                                Update Info
+                                            </CButton>
+                                            <CButton className="profile-form-btn cancel-update" onClick={() => editInfoForm(!editModal)} type="reset">
+                                                Cancel
+                                            </CButton>
+                                        </div>
+                                    </CCol>
+                                </CRow>
+                            </CForm>
+                        </CContainer>
+                    </CModalBody>
+                </CModal>
+                {/**Edit ongoing project details ends */}
                 <h3 className="dash-header-1">Project Details</h3>
-                <div className="card-header-portion-ongoing">
-                    <h4 className="ongoing-card-header-1"><IconButton aria-label="favourite" disabled size="medium" color="primary">
-                        <GradeIcon fontSize="inherit" className="fav-button" />
-                    </IconButton>Virtual Guard</h4>
+           {status ===0?
+           (
+              <div className="card-header-portion-ongoing">
+                         <h4 className="ongoing-card-header-1"><IconButton aria-label="favourite" disabled size="medium" color="primary">
+                             <GradeIcon fontSize="inherit" className="fav-button" />
+                         </IconButton>Virtual Guard</h4>
 
-                    <CButton className="edit-project-on" variant='ghost' ><CIcon name="cil-pencil" className="mr-1 pen-icon" /></CButton>
-                  
-                </div>
+                         <CButton className="edit-ongoing-project-title" variant='ghost' onClick={(e) => radioHandler(1,0)}><CIcon name="cil-pencil" className="mr-1 pen-icon" /></CButton>
+
+                     
+                     </div>):null}
+                 {/**header portion */}
+             
+
+               
                 {/**Show the form for edit when clicked */}
+                  { status===1 ? (
                 <div className="card-header-portion-ongoing">
 
                     <CForm>
-                       
+
                         <CInput className="custom-forminput-6" type="text">
-                          
+
                         </CInput>
                     </CForm>
                     <div>
-                    <CButton variant="ghost" className="confirm-name"><CIcon name="cil-check-circle" className="mr-1" size="xl"/></CButton>
-                    <CButton variant="ghost" className="cancel-name"><CIcon name="cil-x-circle" className="mr-1" size="xl"/></CButton>
+                        <CButton variant="ghost" className="confirm-name" onClick={(e)=>radioHandler(0,1)}><CIcon name="cil-check-circle" className="mr-1 tick" size="xl" /></CButton>
+                        <CButton variant="ghost" className="cancel-name"onClick={(e)=>radioHandler(0,1)}><CIcon name="cil-x-circle" className="mr-1 cross" size="xl" /></CButton>
                     </div>
-                   
-                </div>
+
+                </div>): null}
+                 
+   {/**card show */}
                 <hr className="header-underline1" />
-                  {/**Details card */}
-                  <div className="row">
-                  <div className="col-md-10 offset-md-1 col-sm-12 col-xs-12 mt-1">
-                  <CCard className="card-ongoing-project">
-                  <CCardBody className="details-project-body">
-                             
-                              
+                {/**Details card */}
+                <div className="row">
+                    <div className="col-md-10 offset-md-1 col-sm-12 col-xs-12 mt-1 mb-2">
+                        <CCard className="card-ongoing-project">
+                            <CCardBody className="details-project-body">
+
+
                                 {/*task percentage portion */}
                                 <div className="ongoing-initial-info row">
                                     <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Sub Task Name</h6>
@@ -74,45 +200,45 @@ const OngoingDetailsView = () => {
                                     <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Remaining Hours</h6>
                                         <h6 className="project-point-details">120 </h6>
                                     </div>
-                                    </div>
-                               
-                                    {/**assignees */}
-                                    <div className="col-md-12 mt-4 mb-2">
-                                        <h5 className="projectName mb-3">Shared Files</h5>
-                                        <div className="file-show-ongoing-details row">
-                                            <div className="col-md-6 col-sm-6 col-lg-3">
-                                                <div className="file-attached-ongoing rounded-pill"><CButton className="remove-file-ongoing"><img src={"assets/icons/icons8-close-64-blue.png"} className="close-icon-size" /></CButton>KIbria Papel</div>
-                                            </div>
+                                </div>
 
-
-
-                                            {/* *extra static buttons,delete code after dynamic implementation */}
-                                            <div className="col-md-6 col-sm-6 col-lg-3">
-                                                <div className="file-attached-ongoing rounded-pill"><CButton className="remove-file-ongoing"><img src={"assets/icons/icons8-close-64-blue.png"} className="close-icon-size" /></CButton>hassibul Hassan</div>
-                                            </div><div className="col-md-6 col-sm-6 col-lg-3">
-                                                <div className="file-attached-ongoing rounded-pill"><CButton className="remove-file-ongoing"><img src={"assets/icons/icons8-close-64-blue.png"} className="close-icon-size" /></CButton>Pial noman</div>
-                                            </div><div className="col-md-6 col-sm-6 col-lg-3">
-                                                <div className="file-attached-ongoing rounded-pill"><CButton className="remove-file-ongoing"><img src={"assets/icons/icons8-close-64-blue.png"} className="close-icon-size" /></CButton>Fahmida Sharmin</div>
-                                            </div><div className="col-md-6 col-sm-6 col-lg-3">
-                                                <div className="file-attached-ongoing rounded-pill"><CButton className="remove-file-ongoing"><img src={"assets/icons/icons8-close-64-blue.png"} className="close-icon-size" /></CButton>Saif Azad</div>
-                                            </div><div className="col-md-6 col-sm-6 col-lg-3">
-                                                <div className="file-attached-ongoing rounded-pill"><CButton className="remove-file-ongoing"><img src={"assets/icons/icons8-close-64-blue.png"} className="close-icon-size" /></CButton>Hafij Shobuj</div>
-                                            </div>
-
+                                {/**assignees */}
+                                <div className="col-md-12 mt-4 mb-2">
+                                    <h5 className="projectName mb-3">Asssignee(s)-(6)</h5>
+                                    <div className="file-show-ongoing-details row">
+                                        <div className="col-md-6 col-sm-6 col-lg-3">
+                                            <div className="file-attached-ongoing rounded-pill"><CButton className="remove-file-ongoing"><img src={"assets/icons/icons8-close-64-blue.png"} className="close-icon-size" /></CButton>KIbria Papel</div>
                                         </div>
-                                    </div>
-                                    {/**ACTION BUTTONS !!!!!!!!!! */}
-                                    <div className="col-md-12 mt-2 mb-2">
-                                        <div className="project-actions">
-                                        <CButton className="edit-project-ongoing-task"><CIcon name="cil-pencil" className="mr-1" /> Edit </CButton>
-                                        <CButton className="delete-project-2"><CIcon name="cil-trash" className="mr-1"  /> Delete</CButton>
-                                        </div>
-                                    </div>
-                                    </CCardBody>
 
-                  </CCard>
-                      </div>    
-                  </div>
+
+
+                                        {/* *extra static buttons,delete code after dynamic implementation */}
+                                        <div className="col-md-6 col-sm-6 col-lg-3">
+                                            <div className="file-attached-ongoing rounded-pill"><CButton className="remove-file-ongoing"><img src={"assets/icons/icons8-close-64-blue.png"} className="close-icon-size" /></CButton>hassibul Hassan</div>
+                                        </div><div className="col-md-6 col-sm-6 col-lg-3">
+                                            <div className="file-attached-ongoing rounded-pill"><CButton className="remove-file-ongoing"><img src={"assets/icons/icons8-close-64-blue.png"} className="close-icon-size" /></CButton>Pial noman</div>
+                                        </div><div className="col-md-6 col-sm-6 col-lg-3">
+                                            <div className="file-attached-ongoing rounded-pill"><CButton className="remove-file-ongoing"><img src={"assets/icons/icons8-close-64-blue.png"} className="close-icon-size" /></CButton>Fahmida Sharmin</div>
+                                        </div><div className="col-md-6 col-sm-6 col-lg-3">
+                                            <div className="file-attached-ongoing rounded-pill"><CButton className="remove-file-ongoing"><img src={"assets/icons/icons8-close-64-blue.png"} className="close-icon-size" /></CButton>Saif Azad</div>
+                                        </div><div className="col-md-6 col-sm-6 col-lg-3">
+                                            <div className="file-attached-ongoing rounded-pill"><CButton className="remove-file-ongoing"><img src={"assets/icons/icons8-close-64-blue.png"} className="close-icon-size" /></CButton>Hafij Shobuj</div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                {/**ACTION BUTTONS !!!!!!!!!! */}
+                                <div className="col-md-12 mt-2 mb-2">
+                                    <div className="project-actions">
+                                        <CButton className="edit-project-ongoing-task" onClick={() => editInfoForm()} ><CIcon name="cil-pencil" className="mr-1" /> Edit </CButton>
+                                        <CButton className="delete-project-2"><CIcon name="cil-trash" className="mr-1" /> Delete</CButton>
+                                    </div>
+                                </div>
+                            </CCardBody>
+
+                        </CCard>
+                    </div>
+                </div>
             </CContainer>
         </>
     )
