@@ -38,7 +38,9 @@ const SignIn = () => {
       }
     }).catch(err=>{
       console.log(err.response)
-      enqueueSnackbar(err.response.data.message,{variant:"warning"})
+      if(err?.response?.data?.message){
+        enqueueSnackbar(err.response.data.message,{variant:"warning"})
+      }
       // if(err.response.status == 403){
       //   enqueueSnackbar('Your account is not active yet',{variant:"warning"})
       // }
