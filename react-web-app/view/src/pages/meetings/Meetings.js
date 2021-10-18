@@ -85,8 +85,8 @@ const OurMeetings = () => {
                                 <CForm>
                                     {/**Project Name */}
                                     <div className="mb-3">
-                                        <CLabel className="custom-label3">Project Name</CLabel>
-                                        <CSelect aria-label="Default select example" className="custom-formgroup3">
+                                        <CLabel className="custom-label-5">Project Name</CLabel>
+                                        <CSelect aria-label="Default select example" className="custom-forminput-6">
                                             <option disabled>Open this select menu</option>
                                             <option value="1">One</option>
                                             <option value="2">Two</option>
@@ -97,31 +97,31 @@ const OurMeetings = () => {
                                     <div className="mb-3">
                                         <CLabel
                                             htmlFor="hostName"
-                                            className="custom-label3"
+                                            className="custom-label-5"
                                         >Host</CLabel>
-                                        <CInput type="text" id="hostName" className="custom-formgroup3" />
+                                        <CInput type="text" id="hostName" className="custom-forminput-6" />
 
                                     </div>
                                     {/*agenda*/}
                                     <div className="mb-3">
                                         <CLabel
                                             htmlFor="agendaItem"
-                                            className="custom-label3"
+                                            className="custom-label-5"
                                         >Meeting Agenda</CLabel>
-                                        <CInput type="text" id="agendaItem" className="custom-formgroup3" />
+                                        <CInput type="text" id="agendaItem" className="custom-forminput-6" />
 
                                     </div>
                                     {/*room name*/}
                                     <div className="mb-3">
                                         <CLabel
                                             htmlFor="roomItem"
-                                            className="custom-label3"
+                                            className="custom-label-5"
                                         >Room Name</CLabel>
                                         <CInput 
                                             type="text" 
                                             id="roomName" 
                                             name="roomName"
-                                            className="custom-formgroup3" 
+                                            className="custom-forminput-6" 
                                             value={roomName} 
                                             onChange={(event)=>{setRoomName(event.target.value);formMeeting.handleChange(event)}}
                                         />
@@ -131,14 +131,14 @@ const OurMeetings = () => {
                                     <div className="mb-3">
                                         <CLabel
                                             htmlFor="exampleInputPassword1"
-                                            className="custom-label3"
+                                            className="custom-label-5"
                                         >
                                             Password
                                         </CLabel>
                                         <CInput
                                             type="password"
                                             id="exampleInputPassword1"
-                                            className="custom-formgroup3"
+                                            className="custom-forminput-6"
                                             value={password} onChange={(event)=>setPassword(event.target.value)}
                                         />
 

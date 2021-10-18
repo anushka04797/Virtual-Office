@@ -45,6 +45,13 @@ const ForgotPass = () => {
                                             Send
                                         </CButton>
                                     </div>
+                                    {/**redirect to other pages */}
+                                    <h5 className="dum-text mt-3">Here by mistake?</h5>
+                                    <div className="redirect-to-pages mt-2">
+
+                                    <h5 className="final-footer"><Link className="registration-link" to="/">Sign in</Link></h5>
+                                    <h5 className="final-footer sign-up-forgot"><Link className="registration-link" to="/register">Register</Link></h5> 
+                                    </div>
                                 </CForm>
                             </div>
                         </div>
