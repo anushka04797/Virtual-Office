@@ -135,7 +135,7 @@ const OngoingProjectDetails = () => {
                 <div className="row">
                     <div className="col-md-10 offset-md-1 col-sm-12 col-xs-12 mt-1">
                         {projects!=undefined && Array.from(projects).map((project,idx)=>(<CCard className="card-ongoing-project">
-                            <CCardBody className="details-project-body">
+                            <CCardBody className="details-project-body" key={idx}>
                                 <h4 className="ongoing-card-header">
                                     <IconButton aria-label="favourite" disabled size="medium" >
                                         <GradeIcon fontSize="inherit" className="fav-button" />
@@ -314,7 +314,7 @@ const OngoingProjectDetails = () => {
                                     : null
                                 }
                                 <div className="ongoing-action-card-buttons">
-                                    <CButton className="view-ongoing-details" onClick={() => history.push('/dashboard/Projects/ongoing-projects/details/1')}><CIcon name="cil-list-rich" className="mr-1" />View Details</CButton>
+                                    <CButton className="view-ongoing-details" onClick={() => history.push({pathname:'/dashboard/Projects/ongoing-projects/details/'+project.project.id,state:{project:project}})}><CIcon name="cil-list-rich" className="mr-1" />View Details</CButton>
                                     <CButton className="mark-ongoing-completed"><CIcon name="cil-check-alt" className="mr-1" />Mark as Completed</CButton>
                                 </div>
                             </CCardBody>

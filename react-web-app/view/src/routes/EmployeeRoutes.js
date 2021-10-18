@@ -4,10 +4,10 @@ const Dashboard = React.lazy(() => import('../pages/dashboard/Dashboard'));
 const routes = [
     { path: '/dashboard', exact: true, name: 'Dashboard', component: Dashboard },
     { path: '/dashboard/Projects/ongoing-projects', exact: true, name: 'Ongoing Projects', component: React.lazy(() => import('../pages/ongoing-project-details/ongoingProjectDetails')) },
-    { path: '/dashboard/Projects/ongoing-projects/details/1', exact: true, name: 'Ongoing Project Details', component: React.lazy(() => import('../pages/ongoing-project-details-view/OngoingProjectDetailsView')) },
+    { path: '/dashboard/Projects/ongoing-projects/details', exact: true, name: 'Ongoing Project Details', component: React.lazy(() => import('../pages/ongoing-project-details-view/OngoingProjectDetailsView')) },
     { path: '/dashboard/Meetings', exact: true, name: 'Meetings', component: React.lazy(() => import('../pages/meetings/Meetings')) },
     { path: '/dashboard/Projects/completed-projects', exact: true, name: 'Completed Projects', component: React.lazy(() => import('../pages/completed-project/completedProject')) },
-    { path: '/dashboard/Projects/completed-projects/details/1', exact: true, name: 'Completed Projects details', component: React.lazy(() => import('../pages/completed-project-details-view/CompletedProjectDetails')) },
+    { path: '/dashboard/Projects/completed-projects/details', exact: true, name: 'Completed Projects details', component: React.lazy(() => import('../pages/completed-project-details-view/CompletedProjectDetails')) },
     { path: '/dashboard/EVMS/view', exact: true, name: 'EVMS View', component: React.lazy(() => import('../pages/evms-view/evmsView')) },
 
     { path: '/dashboard/WBS/create-wbs', exact: true, name: 'WBS', component: React.lazy(() => import('../pages/WBS-create/createWBS')) },

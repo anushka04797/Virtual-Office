@@ -37,7 +37,7 @@ const SignIn = () => {
         history.push({pathname:'/dashboard',state:{from:'login'}})
       }
     }).catch(err=>{
-      console.log(err.response)
+      console.log(err)
       if(err?.response?.data?.message){
         enqueueSnackbar(err.response.data.message,{variant:"warning"})
       }
