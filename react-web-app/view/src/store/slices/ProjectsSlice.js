@@ -13,7 +13,6 @@ const initialState = {
 
 export const fetchProjectsThunk = createAsyncThunk('projects/fetchProjectsThunk', async (user_id) => {
   const response = await JsonClient.get('project/assigned/all/'+user_id+'/')
-  // console.log("project/assigned/all/", response.data)
   return response.data
 })
 export const fetchProjectsForPMThunk = createAsyncThunk('projects/fetchProjectsForPMThunk', async (user_id) => {

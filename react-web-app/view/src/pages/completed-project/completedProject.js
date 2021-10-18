@@ -7,10 +7,11 @@ import { useHistory } from "react-router-dom";
 import React from 'react';
 import { CIcon } from "@coreui/icons-react";
 import { useSelector } from 'react-redux';
+import { BASE_URL } from '../../Config';
 
 const CompleteProjects = () => {
     let historyTo = useHistory();
-    const projects=useSelector(state=> state.projects.data.filter((project)=> project.status === 1))
+    const projects=useSelector(state=> state.projects.data.filter((project)=> project.project.status === 1))
     return (
         <>
             <div className="container">
@@ -23,13 +24,13 @@ const CompleteProjects = () => {
                                
                                 <h4 className="ongoing-card-header"><IconButton aria-label="favourite" size="medium" >
                                     <GradeIcon fontSize="inherit" className="fav-button" />
-                                </IconButton>{project.task_delivery_order}</h4>
+                                </IconButton>{project.project.task_delivery_order.title}</h4>
                                 <hr className="header-underline1" />
 
                                 {/*task percentage portion */}
                                 <div>
                                     <h5 className="tasks-done"><span className="tiny-header1">Task Done : </span>5/10 </h5>
-                                    <h6 className="show-amount">200/400 Hrs</h6>
+                                    <h6 className="show-amount">200/{parseInt(project.project.planned_hours)} Hrs</h6>
                                     <div className="progress progress-background">
 
 
@@ -71,32 +72,23 @@ const CompleteProjects = () => {
 
                                 {/*Project participants */}
                                 <div className="all-da-workers1">
-                                    <img className="img-fluid worker-image" src={"assets/thumbnails/defaultuser1.png"} />
-                                    <img className="img-fluid worker-image" src={"assets/thumbnails/defaultuser2.png"} />
-                                    <img className="img-fluid worker-image" src={"assets/thumbnails/defaultuser3.png"} />
-                                    <img className="img-fluid worker-image" src={"assets/thumbnails/defaultuser4.png"} />
-                                    <img className="img-fluid worker-image" src={"assets/thumbnails/defaultuser1.png"} />
-                                    <img className="img-fluid worker-image" src={"assets/thumbnails/defaultuser2.png"} />
-                                    <img className="img-fluid worker-image" src={"assets/thumbnails/defaultuser3.png"} />
-                                    <img className="img-fluid worker-image" src={"assets/thumbnails/defaultuser4.png"} />
-                                    <img className="img-fluid worker-image" src={"assets/thumbnails/defaultuser1.png"} />
-                                    <img className="img-fluid worker-image" src={"assets/thumbnails/defaultuser2.png"} />
-
-
+                                    {project.assignees.length>0 && Array.from(project.assignees).map((assignee,idx)=>(
+                                        <img className="img-fluid worker-image" src={BASE_URL+assignee.profile_pic} />    
+                                    ))}
                                 </div>
 
                                 {/*project info in text */}
                                 <div className="information-show row">
                                     <div className="info-show-now col-md-6"> 
-                                        <h5 className="project-details-points child"><h5 className="info-header-1">Assigned by :</h5>{project.pm.first_name+' '+project.pm.last_name}</h5>
+                                        <h5 className="project-details-points child"><h5 className="info-header-1">Assigned by :</h5>{project.project.pm.first_name+' '+project.project.pm.last_name}</h5>
                                     {/* <h5 className="project-details-points"><h5 className="info-header-1">Work Package : </h5>1000</h5> */}
-                                    <h5 className="project-details-points"><h5 className="info-header-1">Project Manager : </h5>{project.pm.first_name+' '+project.pm.last_name}</h5>
+                                    <h5 className="project-details-points"><h5 className="info-header-1">Project Manager : </h5>{project.project.pm.first_name+' '+project.project.pm.last_name}</h5>
                                     </div>
                               <div className="info-show-now col-md-6">
                                     {/* <h5 className="project-details-points"><h5 className="info-header-1">Project Details :</h5>Design and develop the app for the seller and buyer module</h5> */}
                                     <h5 className="project-details-points child"><h5 className="info-header-1">Start Date : </h5>{project.date_created}</h5>
 
-                                    <h5 className="project-details-points"><h5 className="info-header-1">Planned Delivery Date : </h5>{project.planned_delivery_date}</h5>
+                                    <h5 className="project-details-points"><h5 className="info-header-1">Planned Delivery Date : </h5>{project.project.planned_delivery_date}</h5>
                                     </div>
                                 </div>
 
