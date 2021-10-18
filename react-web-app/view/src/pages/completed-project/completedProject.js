@@ -32,8 +32,6 @@ const CompleteProjects = () => {
                                     <h5 className="tasks-done"><span className="tiny-header1">Task Done : </span>5/10 </h5>
                                     <h6 className="show-amount">200/{parseInt(project.project.planned_hours)} Hrs</h6>
                                     <div className="progress progress-background">
-
-
                                         <div className="progress-bar custom-progress1 progress-bar-animated" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" style={{ width: '25%' }}></div>
                                     </div>
                                 </div>
@@ -43,31 +41,12 @@ const CompleteProjects = () => {
                                         Front End Design
                                         <span className="tooltiptext">1000.5</span>
                                     </CButton> */}
-
-                                    <CButton className="package-button rounded-pill" >
-                                        Admin Panel Design
-                                        <span className="tooltiptext">1000.5</span>
-                                    </CButton>
-                                    <CButton className="package-button rounded-pill" >
-                                        Database
-                                        <span className="tooltiptext">1000.5</span>
-                                    </CButton>
-                                    <CButton className="package-button rounded-pill" >
-                                        API integration
-                                        <span className="tooltiptext">1000.5</span>
-                                    </CButton>
-                                    <CButton className="package-button rounded-pill" >
-                                        NFC card and web token
-                                        <span className="tooltiptext">1000.5</span>
-                                    </CButton>
-                                    <CButton className="package-button rounded-pill" >
-                                        Final delivery
-                                        <span className="tooltiptext">1000.5</span>
-                                    </CButton>
-                                    <CButton className="package-button rounded-pill" >
-                                        Virtual Office Redesign
-                                        <span className="tooltiptext">1000.5</span>
-                                    </CButton>
+                                    {Array.from(project.subtasks).length>0 && Array.from(project.subtasks).map((task,idx)=>(
+                                        <CButton className="package-button rounded-pill" >
+                                        {task.sub_task}
+                                            <span className="tooltiptext">{task.work_package_index}</span>
+                                        </CButton>
+                                    ))}
                                 </div>
 
                                 {/*Project participants */}

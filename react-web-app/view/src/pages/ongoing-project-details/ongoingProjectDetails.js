@@ -157,31 +157,12 @@ const OngoingProjectDetails = () => {
                                         Front End Design
                                         <span className="tooltiptext">1000.5</span>
                                     </CButton> */}
-
-                                    <CButton className="package-button rounded-pill" >
-                                        Admin Panel Design
-                                        <span className="tooltiptext">1000.5</span>
-                                    </CButton>
-                                    <CButton className="package-button rounded-pill" >
-                                        Database
-                                        <span className="tooltiptext">1000.5</span>
-                                    </CButton>
-                                    <CButton className="package-button rounded-pill" >
-                                        API integration
-                                        <span className="tooltiptext">1000.5</span>
-                                    </CButton>
-                                    <CButton className="package-button rounded-pill" >
-                                        NFC card and web token
-                                        <span className="tooltiptext">1000.5</span>
-                                    </CButton>
-                                    <CButton className="package-button rounded-pill" >
-                                        Final delivery
-                                        <span className="tooltiptext">1000.5</span>
-                                    </CButton>
-                                    <CButton className="package-button rounded-pill" >
-                                        Virtual Office Redesign
-                                        <span className="tooltiptext">1000.5</span>
-                                    </CButton>
+                                    {Array.from(project.subtasks).length>0 && Array.from(project.subtasks).map((task,idx)=>(
+                                        <CButton className="package-button rounded-pill" >
+                                        {task.sub_task}
+                                            <span className="tooltiptext">{task.work_package_index}</span>
+                                        </CButton>
+                                    ))}
                                 </div>
 
                                 {/*Project participants */}
