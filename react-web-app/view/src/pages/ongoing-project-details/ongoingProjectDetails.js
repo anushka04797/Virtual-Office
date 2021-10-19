@@ -50,7 +50,8 @@ const OngoingProjectDetails = () => {
             {/**WBS MODAL */}
             <CModal alignment="center" scrollable visible={visible} onClose={() => setVisible(false)} className="wbs-modal">
                 <CModalHeader className="wbs-modal-header" closeButton>
-                    <CModalTitle className="modal-title"><span className="bold-part1">Wireframe</span> <span className="light-part1">(50/100 Hrs)</span></CModalTitle></CModalHeader>
+                    <CModalTitle className="modal-title"><span className="bold-part1">Wireframe</span> <span className="light-part1">(50/100 Hrs)</span></CModalTitle>
+                </CModalHeader>
                 <CModalBody className="wbs-modal-body">
                     <CContainer>
                         <h6 className="task-name1">Seller &amp; Buyer module wireframe design with prototype</h6>

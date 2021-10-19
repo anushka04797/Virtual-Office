@@ -302,7 +302,7 @@ const CreateNewProject = () => {
                           isMulti={true}
                           onChange={handleAssigneeChange}
                           classNamePrefix="custom-forminput-6"
-                          //value={assigneeValue}
+                          //value={assignees}
                           options={assignees?assignees:[]}
                           // getOptionLabel= {option=>option.first_name+' '+option.last_name}
                           // getOptionValue = {option=>option.id}

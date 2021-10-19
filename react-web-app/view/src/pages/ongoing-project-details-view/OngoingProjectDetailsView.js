@@ -7,7 +7,8 @@ import CIcon from '@coreui/icons-react';
 import Select from "react-select";
 import Creatable from 'react-select/creatable';
 import { useHistory, useLocation } from 'react-router';
-import { BASE_URL } from '../../Config';
+import { API, BASE_URL } from '../../Config';
+import swal from 'sweetalert';
 
 const OngoingDetailsView = () => {
     const [status, setStatus] = useState(0);
@@ -55,6 +56,47 @@ const OngoingDetailsView = () => {
                 break
         }
     }
+    const delete_subtask=(work_package_index)=>{
+        swal({
+          title: "Are you sure?",
+          text: "Once deleted, you will not be able to recover this record!",
+          icon: "warning",
+          buttons: true,
+          dangerMode: true,
+        })
+        .then((willDelete) => {
+          if (willDelete) {
+            API.delete('/project/subtask/delete/'+work_package_index+"/").then(response=>{
+              if(response.data.success=="True"){
+                // const data=Array.from(employees);
+                // for(let index=0;index<data.length;index++){
+                //   if(data[index].id==work_package_index.id){
+                //     data.splice(index,1);
+                //     break;
+                //   }
+                // }
+                // setEmployees(data);
+                swal("Poof! Your selected loan record has been deleted!", {
+                  icon: "success",
+                });
+                
+              }
+              else if(response.data.success=="False"){
+                swal("Poof!"+response.data.message, {
+                  icon: "error",
+                });
+              }
+              
+            }).catch(error=>{
+              //swal("Failed!",error,"error");
+            })
+            
+          }
+        });
+      }
+      const delete_assignee=(assignee_id)=>{
+
+      }
     return (
         <>
             <CContainer>
@@ -217,21 +259,19 @@ const OngoingDetailsView = () => {
                                     <div className="file-show-ongoing-details row">
                                         {project!=undefined && Array.from(project.assignees).map((item,idx)=>(
                                             <div key={idx} className="col-md-6 col-sm-6 col-lg-3">
-                                                <div className="file-attached-ongoing rounded-pill"><CButton className="remove-file-ongoing"><img src={"assets/icons/icons8-close-64-blue.png"} className="close-icon-size" /></CButton>{item.first_name+' '+item.last_name}</div>
+                                                <div className="file-attached-ongoing rounded-pill">
+                                                    <CButton type="button" onClick={()=>delete_assignee(item.id)} className="remove-file-ongoing"><img src={"assets/icons/icons8-close-64-blue.png"} className="close-icon-size" /></CButton>{item.first_name+' '+item.last_name}
+                                                </div>
                                             </div>
                                         ))}
-
-
-
                                         {/* *extra static buttons,delete code after dynamic implementation */}
-
                                     </div>
                                 </div>
                                 {/**ACTION BUTTONS !!!!!!!!!! */}
                                 <div className="col-md-12 mt-2 mb-2">
                                     <div className="project-actions">
                                         <CButton className="edit-project-ongoing-task" onClick={() => editInfoForm()} ><CIcon name="cil-pencil" className="mr-1" /> Edit </CButton>
-                                        <CButton className="delete-project-2"><CIcon name="cil-trash" className="mr-1" /> Delete</CButton>
+                                        <CButton type="button" onClick={()=>delete_subtask(project.project.work_package_index)} className="delete-project-2"><CIcon name="cil-trash" className="mr-1" /> Delete</CButton>
                                     </div>
                                 </div>
                             </CCardBody>
