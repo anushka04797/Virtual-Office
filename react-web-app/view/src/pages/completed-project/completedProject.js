@@ -1,4 +1,4 @@
-import { CCard, CCardBody, CButton, CModal, CModalHeader, CModalBody, CContainer, CForm, CRow} from '@coreui/react';
+import { CCard, CCardBody, CButton, CModal, CModalHeader, CModalBody, CContainer, CForm, CRow, CAlert} from '@coreui/react';
 import GradeIcon from '@material-ui/icons/Grade';
 import '../ongoing-project-details/ongoingProjectDetails.css'
 import IconButton from '@material-ui/core/IconButton';
@@ -98,6 +98,18 @@ const CompleteProjects = () => {
                             </CCardBody>
 
                         </CCard>))}
+                        {/**If no projects are there */}
+                        {projects==''? (
+                        
+                       
+                             
+                              <CAlert className="no-value-show-alert"  color="primary">Currently there are no completed projects</CAlert>     
+                            
+                      
+                    ):null
+                    
+                    
+                    }
                     </div>
                 </div>
             </div>
