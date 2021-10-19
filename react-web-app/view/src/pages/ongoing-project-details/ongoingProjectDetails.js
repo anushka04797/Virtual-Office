@@ -1,6 +1,6 @@
 import { React, useEffect, useState } from 'react';
 import './ongoingProjectDetails.css'
-import { CCard, CCardBody, CButton, CModal, CModalHeader, CModalBody, CContainer, CForm, CRow, CLabel, CInput, CModalTitle } from '@coreui/react';
+import {CAlert, CCard, CCardBody, CButton, CModal, CModalHeader, CModalBody, CContainer, CForm, CRow, CLabel, CInput, CModalTitle } from '@coreui/react';
 import GradeIcon from '@material-ui/icons/Grade';
 import IconButton from '@material-ui/core/IconButton';
 import Select from "react-select";
@@ -320,6 +320,18 @@ const OngoingProjectDetails = () => {
                             </CCardBody>
 
                         </CCard>))}
+                        {/**If no projects are there */}
+                        {projects==''? (
+                        
+                       
+                             
+                        <CAlert className="no-value-show-alert"  color="primary">Currently there are no ongoing projects</CAlert>     
+                      
+                
+              ):null
+              
+              
+              }
                     </div>
                     {/**Dummy cards for viewing design */}
 
