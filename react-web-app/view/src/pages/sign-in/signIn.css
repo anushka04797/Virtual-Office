@@ -39,7 +39,7 @@ padding-top: 50px;
     font-size:14px !important;
     line-height: 1.42857;
     color: rgb(133,133,133);
-    height: 35px !important;
+    height: 38px !important;
 }
 .custom-formgroup-signin:active,.custom-formgroup-signin:focus{
     border:2px solid #0065ff;
@@ -116,7 +116,16 @@ line-height: 1.33333;
     text-decoration: none !important;
     font-weight: 600;
 }
-
+.password-container{
+    position:relative;
+}
+.pwd-container-img{
+    cursor: pointer;
+  position: absolute;
+  width: 20px;
+  right: 8px;
+  top: 8px;
+}
 /*media queries*/
 @media all and (min-width:300px) and (max-width:992px){
     .no-mob-display-sign-img{

@@ -13,3 +13,6 @@
     font-size: 14px;
     line-height: 20px;
 }
+.c-avatar-img{
+    object-fit: cover;
+}

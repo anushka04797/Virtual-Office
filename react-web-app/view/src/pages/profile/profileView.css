@@ -144,6 +144,16 @@ margin-bottom: 20px;
     line-height: 32px;
     outline: none;
 }
+.password-container{
+    position:relative;
+  }
+  .pwd-container-img{
+    cursor: pointer;
+  position: absolute;
+  width: 20px;
+  right: 8px;
+  top: 8px;
+  }
 
 /****_____MEDIA QUERY________***/
 @media all and (min-width:300px) and (max-width:600px){
