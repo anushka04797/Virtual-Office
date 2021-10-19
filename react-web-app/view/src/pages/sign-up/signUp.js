@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import "./signUp.css";
+import hidePwdImg from '../../assets/icons/Showpass-show.svg';
+import showPwdImg from '../../assets/icons/Hide.svg';
 import {
   CForm,
   CLabel,
@@ -25,8 +27,10 @@ const SignupSchema = Yup.object().shape({
 
 const Register = () => {
   let history = useHistory()
-  const [avatar,setAvatar]= useState()
-  const [image,setImage]=useState()
+  const [avatar, setAvatar] = useState()
+  const [isRevealPwd, setIsRevealPwd] = useState(false);
+  const [isRevealConfPwd, setIsRevealConfPwd] = useState(false);
+  const [image, setImage] = useState()
   const validateSignUpForm = (values) => {
     const errors = {};
     if (!values.first_name) errors.first_name = "First Name is required!"
@@ -36,17 +40,17 @@ const Register = () => {
   }
   const sign_up = () => {
     let formData = new FormData();
-    for(const [key,value] of Object.entries(formSignUp.values)){
-      if(key != 'confirm_pass'){
-        formData.append(key,value)
+    for (const [key, value] of Object.entries(formSignUp.values)) {
+      if (key != 'confirm_pass') {
+        formData.append(key, value)
       }
     }
     if(image!=null && image!=undefined){
       formData.append('profile_pic',image)
     }
-    PUBLIC_FORM_API.post('auth/register/',formData).then((res)=>{
-      if(res.data.success == 'True' && res.status == 200){
-        history.push({pathname:'/login',state:{registration:true}})
+    PUBLIC_FORM_API.post('auth/register/', formData).then((res) => {
+      if (res.data.success == 'True' && res.status == 200) {
+        history.push({ pathname: '/login', state: { registration: true } })
       }
       console.log(res)
     })
@@ -54,7 +58,7 @@ const Register = () => {
   const reset_form = () => {
     formSignUp.resetForm()
   }
-  const onImageChange=(file)=>{
+  const onImageChange = (file) => {
     setAvatar(URL.createObjectURL(file))
     setImage(file)
   }
@@ -82,9 +86,9 @@ const Register = () => {
 
           <div className="seller-pro-pic-holder">
             <div className="seller-profile-pic-div">
-              <img src={avatar?avatar:"avatars/user-avatar-default.png"} className="avatar-img" />
+              <img src={avatar ? avatar : "avatars/user-avatar-default.png"} className="avatar-img" />
             </div>
-            <label for="propic" className={image?"pro-img-up-btn mb-0 remove-img":"pro-img-up-btn mb-0"}>
+            <label for="propic" className={image ? "pro-img-up-btn mb-0 remove-img" : "pro-img-up-btn mb-0"}>
               {/* <!-- propic --> */}
               <input
                 id="propic"
@@ -145,7 +149,7 @@ const Register = () => {
                         aria-describedby="emailHelp"
                         className="custom-formgroup-2"
                       />
-                      {formSignUp.touched.email && formSignUp.errors.email && <p style={{color:'red'}}>{formSignUp.errors.email}</p>}
+                      {formSignUp.touched.email && formSignUp.errors.email && <p style={{ color: 'red' }}>{formSignUp.errors.email}</p>}
                     </div>
                     {/**Phone */}
                     <div className="col-md-6 col-sm-12 col-12 mb-3">
@@ -170,14 +174,21 @@ const Register = () => {
                       >
                         Password
                       </CLabel>
-                      <CInput
-                        type="password"
-                        id="password"
-                        name="password"
-                        value={formSignUp.values.password}
-                        onChange={formSignUp.handleChange}
-                        className="custom-formgroup-2"
-                      />
+                      <div className="password-container">
+                        <CInput
+                          type={isRevealPwd ? "text" : "password"}
+                          id="password"
+                          name="password"
+                          value={formSignUp.values.password}
+                          onChange={formSignUp.handleChange}
+                          className="custom-formgroup-2"
+                        />
+                        <img className="pwd-container-img"
+                          title={isRevealPwd ? "Hide Confirm password" : "Show Confirm password"}
+                          src={isRevealPwd ? hidePwdImg : showPwdImg}
+                          onClick={() => setIsRevealPwd(prevState => !prevState)}
+                        />
+                      </div>
                     </div>
                     {/*confirm password */}
                     <div className="col-md-6 col-sm-12 mb-3">
@@ -187,14 +198,21 @@ const Register = () => {
                       >
                         Confirm Password
                       </CLabel>
-                      <CInput
-                        type="password"
-                        id="confirm_pass"
-                        name="confirm_pass"
-                        value={formSignUp.values.confirm_pass}
-                        onChange={formSignUp.handleChange}
-                        className="custom-formgroup-2"
-                      />
+                      <div className="password-container">
+                        <CInput
+                          type={isRevealConfPwd ? "text" : "password"}
+                          id="confirm_pass"
+                          name="confirm_pass"
+                          value={formSignUp.values.confirm_pass}
+                          onChange={formSignUp.handleChange}
+                          className="custom-formgroup-2"
+                        />
+                        <img className="pwd-container-img"
+                          title={isRevealConfPwd ? "Hide password" : "Show password"}
+                          src={isRevealConfPwd ? hidePwdImg : showPwdImg}
+                          onClick={() => setIsRevealConfPwd(prevState => !prevState)}
+                        />
+                      </div>
                     </div>
                     {/*submit button */}
                     <div className="sign-holder">

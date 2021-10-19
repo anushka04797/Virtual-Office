@@ -9,6 +9,8 @@ import {
  CInputCheckbox,
   CButton,
 } from "@coreui/react";
+import hidePwdImg from '../../assets/icons/Showpass-show.svg';
+import showPwdImg from '../../assets/icons/Hide.svg';
 import { Link,Redirect,useHistory } from "react-router-dom";
 import { PUBLIC_API, TOKEN, USER_ID } from "../../Config";
 import { useFormik } from "formik";
@@ -26,6 +28,8 @@ const SignIn = () => {
     console.log(errors);
     return errors;
   }
+  // const [password, setPwd] = useState('');
+  const [isRevealPwd, setIsRevealPwd] = useState(false);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const login=()=>{  
     PUBLIC_API.post('auth/login/',formLogin.values).then((res)=>{
@@ -107,8 +111,9 @@ const SignIn = () => {
                         >
                           Password
                         </CLabel>
+                        <div className="password-container">
                         <CInput
-                          type="password"
+                          type={isRevealPwd ? "text" : "password"}
                           id="password"
                           name="password"
                           value={formLogin.values.password}
@@ -116,6 +121,12 @@ const SignIn = () => {
                           className="custom-formgroup-signin"
                           onKeyPress={handleKeyPress}
                         />
+                          <img className="pwd-container-img"
+                        title={isRevealPwd ? "Hide password" : "Show password"}
+                        src={isRevealPwd ? hidePwdImg : showPwdImg}
+                        onClick={() => setIsRevealPwd(prevState => !prevState)}
+                      />
+                      </div>
                       </div>
                       <div className="show-flex">
                         <div className="rem">
