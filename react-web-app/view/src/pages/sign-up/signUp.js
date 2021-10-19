@@ -41,7 +41,7 @@ const Register = () => {
         formData.append(key,value)
       }
     }
-    if(image!=null){
+    if(image!=null && image!=undefined){
       formData.append('profile_pic',image)
     }
     PUBLIC_FORM_API.post('auth/register/',formData).then((res)=>{
