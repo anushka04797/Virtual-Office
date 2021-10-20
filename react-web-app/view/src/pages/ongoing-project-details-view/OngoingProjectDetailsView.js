@@ -7,15 +7,19 @@ import CIcon from '@coreui/icons-react';
 import Select from "react-select";
 import Creatable from 'react-select/creatable';
 import { useHistory, useLocation } from 'react-router';
-import { API, BASE_URL } from '../../Config';
+import { API, BASE_URL, USER_ID } from '../../Config';
 import swal from 'sweetalert';
+import {useDispatch} from 'react-redux'
+import { fetchProjectsThunk } from '../../store/slices/ProjectsSlice';
 
 const OngoingDetailsView = () => {
+    const dispatch = useDispatch()
     const [status, setStatus] = useState(0);
     const [project, setProject] = useState()
     let location = useLocation()
     let history = useHistory()
     const [titleStatus, setTitleStatus] = useState(1);
+    const [tdo,setTdo]=useState('')
     const radioHandler = (status, titleStatus) => {
         setStatus(status);
         setTitleStatus(titleStatus);
@@ -41,11 +45,30 @@ const OngoingDetailsView = () => {
         if (location.state != undefined) {
             console.log('project', location.state.project)
             setProject(location.state.project)
+            setTdo(location.state.project.project.task_delivery_order.title)
         }
         else {
             history.goBack()
         }
     }, [])
+    const handle_tdo_title_change=(id)=>{
+        console.log({title:tdo})
+        API.put('project/change-tdo-title/'+id+'/',{title:tdo}).then((res)=>{
+            console.log('rs',res.data)
+            if(res.data.success == 'True'){
+                setStatus(0)
+                setTitleStatus(0)
+                // let temp = project
+                // temp.project.task_delivery_order = res.data.data
+                // setProject(temp)
+                dispatch(fetchProjectsThunk(localStorage.getItem(USER_ID)))
+                swal('Updated','Task Delivery Order name has been updated','success')
+            }
+        }).catch(err=>{
+            console.log(err)
+            swal('Failed','Proccess Failed','error')
+        })
+    }
     const handleChange = (field, value) => {
         switch (field) {
 
@@ -56,47 +79,47 @@ const OngoingDetailsView = () => {
                 break
         }
     }
-    const delete_subtask=(work_package_index)=>{
+    const delete_subtask = (work_package_index) => {
         swal({
-          title: "Are you sure?",
-          text: "Once deleted, you will not be able to recover this record!",
-          icon: "warning",
-          buttons: true,
-          dangerMode: true,
+            title: "Are you sure?",
+            text: "Once deleted, you will not be able to recover this record!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
         })
-        .then((willDelete) => {
-          if (willDelete) {
-            API.delete('/project/subtask/delete/'+work_package_index+"/").then(response=>{
-              if(response.data.success=="True"){
-                // const data=Array.from(employees);
-                // for(let index=0;index<data.length;index++){
-                //   if(data[index].id==work_package_index.id){
-                //     data.splice(index,1);
-                //     break;
-                //   }
-                // }
-                // setEmployees(data);
-                swal("Poof! Your selected loan record has been deleted!", {
-                  icon: "success",
-                });
-                
-              }
-              else if(response.data.success=="False"){
-                swal("Poof!"+response.data.message, {
-                  icon: "error",
-                });
-              }
-              
-            }).catch(error=>{
-              //swal("Failed!",error,"error");
-            })
-            
-          }
-        });
-      }
-      const delete_assignee=(assignee_id)=>{
+            .then((willDelete) => {
+                if (willDelete) {
+                    API.delete('/project/subtask/delete/' + work_package_index + "/").then(response => {
+                        if (response.data.success == "True") {
+                            // const data=Array.from(employees);
+                            // for(let index=0;index<data.length;index++){
+                            //   if(data[index].id==work_package_index.id){
+                            //     data.splice(index,1);
+                            //     break;
+                            //   }
+                            // }
+                            // setEmployees(data);
+                            swal("Poof! Your selected loan record has been deleted!", {
+                                icon: "success",
+                            });
 
-      }
+                        }
+                        else if (response.data.success == "False") {
+                            swal("Poof!" + response.data.message, {
+                                icon: "error",
+                            });
+                        }
+
+                    }).catch(error => {
+                        //swal("Failed!",error,"error");
+                    })
+
+                }
+            });
+    }
+    const delete_assignee = (assignee_id) => {
+
+    }
     return (
         <>
             <CContainer>
@@ -192,13 +215,13 @@ const OngoingDetailsView = () => {
                 {status === 0 ?
                     (
                         <div className="card-header-portion-ongoing">
-                            <h4 className="ongoing-card-header-1"><IconButton aria-label="favourite" disabled size="medium" color="primary">
-                                <GradeIcon fontSize="inherit" className="fav-button" />
-                            </IconButton>{project!=undefined? project.project.task_delivery_order.title:''}</h4>
-
+                            <h4 className="ongoing-card-header-1">
+                                <IconButton aria-label="favourite" disabled size="medium" color="primary">
+                                    <GradeIcon fontSize="inherit" className="fav-button" />
+                                </IconButton>
+                                {project != undefined ? project.project.task_delivery_order.title : ''}
+                            </h4>
                             <CButton className="edit-ongoing-project-title" variant='ghost' onClick={(e) => radioHandler(1, 0)}><CIcon name="cil-pencil" className="mr-1 pen-icon" /></CButton>
-
-
                         </div>) : null}
                 {/**header portion */}
 
@@ -208,12 +231,11 @@ const OngoingDetailsView = () => {
                 {status === 1 ? (
                     <div className="card-header-portion-ongoing">
                         <CForm>
-                            <CInput className="custom-forminput-6" type="text">
-                            </CInput>
+                            <CInput value={tdo} onChange={(event)=>setTdo(event.target.value)} className="custom-forminput-6" type="text"/>
                         </CForm>
                         <div>
-                            <CButton variant="ghost" className="confirm-name" onClick={(e) => radioHandler(0, 1)}><CIcon name="cil-check-circle" className="mr-1 tick" size="xl" /></CButton>
-                            <CButton variant="ghost" className="cancel-name" onClick={(e) => radioHandler(0, 1)}><CIcon name="cil-x-circle" className="mr-1 cross" size="xl" /></CButton>
+                            <CButton type="button" variant="ghost" className="confirm-name" onClick={(e) => handle_tdo_title_change(project.project.task_delivery_order.id)}><CIcon name="cil-check-circle" className="mr-1 tick" size="xl" /></CButton>
+                            <CButton type="button" variant="ghost" className="cancel-name" onClick={(e) => radioHandler(0, 1)}><CIcon name="cil-x-circle" className="mr-1 cross" size="xl" /></CButton>
                         </div>
 
                     </div>) : null}
@@ -257,10 +279,10 @@ const OngoingDetailsView = () => {
                                 <div className="col-md-12 mt-4 mb-2">
                                     <h5 className="projectName mb-3">Asssignee(s)-(6)</h5>
                                     <div className="file-show-ongoing-details row">
-                                        {project!=undefined && Array.from(project.assignees).map((item,idx)=>(
+                                        {project != undefined && Array.from(project.assignees).map((item, idx) => (
                                             <div key={idx} className="col-md-6 col-sm-6 col-lg-3">
                                                 <div className="file-attached-ongoing rounded-pill">
-                                                    <CButton type="button" onClick={()=>delete_assignee(item.id)} className="remove-file-ongoing"><img src={"assets/icons/icons8-close-64-blue.png"} className="close-icon-size" /></CButton>{item.first_name+' '+item.last_name}
+                                                    <CButton type="button" onClick={() => delete_assignee(item.id)} className="remove-file-ongoing"><img src={"assets/icons/icons8-close-64-blue.png"} className="close-icon-size" /></CButton>{item.first_name + ' ' + item.last_name}
                                                 </div>
                                             </div>
                                         ))}
@@ -271,7 +293,7 @@ const OngoingDetailsView = () => {
                                 <div className="col-md-12 mt-2 mb-2">
                                     <div className="project-actions">
                                         <CButton className="edit-project-ongoing-task" onClick={() => editInfoForm()} ><CIcon name="cil-pencil" className="mr-1" /> Edit </CButton>
-                                        <CButton type="button" onClick={()=>delete_subtask(project.project.work_package_index)} className="delete-project-2"><CIcon name="cil-trash" className="mr-1" /> Delete</CButton>
+                                        <CButton type="button" onClick={() => delete_subtask(project.project.work_package_index)} className="delete-project-2"><CIcon name="cil-trash" className="mr-1" /> Delete</CButton>
                                     </div>
                                 </div>
                             </CCardBody>

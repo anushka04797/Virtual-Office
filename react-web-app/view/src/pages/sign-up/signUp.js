@@ -35,7 +35,7 @@ const Register = () => {
     const errors = {};
     if (!values.first_name) errors.first_name = "First Name is required!"
     if (!values.email) errors.email = "Email is required!"
-    if (values.password !== values.confirm_pass) errors.confirm_pass = "Confirm your password"
+    if (values.password != values.confirm_pass || String(values.password.length).length>7) errors.confirm_pass = "Confirm your password"
     return errors;
   }
   const sign_up = () => {
