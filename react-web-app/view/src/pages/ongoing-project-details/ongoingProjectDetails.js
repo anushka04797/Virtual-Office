@@ -322,7 +322,7 @@ const OngoingProjectDetails = () => {
 
                         </CCard>))}
                         {/**If no projects are there */}
-                        {projects==''? (
+                        {projects==undefined || projects =='' || projects == null? (
                         
                        
                              

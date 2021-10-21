@@ -9,40 +9,84 @@ import {
   CButton,
   CAlert
 } from "@coreui/react";
+import { BASE_URL } from '../../Config';
 import React, { useState } from "react";
 import Select from "react-select";
-import "../createProject/createProject.css"
+import "../createProject/createProject.css";
+import { fetchProjectsThunk, fetchProjectsAssigneeThunk, fetchWbsThunk } from '../../store/slices/ProjectsSlice';
+import { useDispatch, useSelector } from 'react-redux'
+import { useFormik } from 'formik';
+import { API, USER_ID } from '../../Config';
+import swal from 'sweetalert'
 const ProjectEVMS = () => {
   const colourStyles = {
     // control: (styles, state) => ({ ...styles,height:"35px", fontSize: '14px !important', lineHeight: '1.42857', borderRadius: "8px",borderRadius:".25rem",color:"rgb(133,133,133)",border:state.isFocused ? '2px solid #0065ff' :'inherit'}),
     option: (provided, state) => ({ ...provided, fontSize: "14px !important" }),
   };
-  const projects = [
-    { value: "1", label: "Virtual Office" },
-    { value: "2", label: "Virtual Doctor" },
-    { value: "3", label: "Jahaji App" },
-    { value: "4", label: "SmartHome" },
-  ];
-  const workPackage = [
-    { value: "1", label: "100.4" },
-    { value: "2", label: "1000.4" },
-    { value: "3", label: "1000.5" },
-    { value: "4", label: "1000.6" },
-  ];
+  const projects = useSelector(state=>state.projects.pm_projects)
+ 
+  const dispatch = useDispatch();
+  React.useEffect(() => {
+    dispatch(fetchProjectsThunk(5))
+}, [])
+  const assigneeList = useSelector(state=>state.projects.assignee)
+const projectDetails = useSelector(state=>state.projects.project)
   const handleChange = (field, value) => {
     switch (field) {
       case "projects":
         setProjectValue(value);
+        console.log('projectValue',projectValue);
         break;
-      case "workPackage":
-        setPackageValue(value);
-        break;
+      // case "workPackage":
+      //   setPackageValue(value);
+      //   break;
       default:
         break;
     }
   };
-  const [projectValue, setProjectValue] = useState("");
-  const [packageValue, setPackageValue] = useState("");
+  const [projectValue, setProjectValue] = useState();
+
+  const [selectedProjectEndDate, setSelectedProjectEndDate] = useState()
+const getAssigneeList = (option)=> {
+  dispatch(fetchProjectsAssigneeThunk(option.work_package_number))
+  console.log("assigneeList", assigneeList)
+  setProjectValue(option)
+  setSelectedProjectEndDate(option.planned_delivery_date)
+}
+  const create_evms = async()=>{
+    console.log('values',JSON.stringify(formCreateEVMS.values))
+    API.post('evms/create/',formCreateEVMS.values).then((res)=>{
+      console.log(res)
+      if(res.status == 200 && res.data.success =='True'){
+        reset_form()
+        swal('Created!','Successfuly Created','success')
+      }
+    })
+  }
+  const reset_form=()=>{
+    formCreateEVMS.resetForm()
+   
+  
+  }
+const formCreateEVMS= useFormik({
+  initialValues:{
+    project:"",
+    work_package_number:"",
+    earned_value:"",
+    actual_cost:"",
+    estimate_at_completion:"",
+    estimate_to_completion:"",
+    planned_value:"",
+    planned_hours:"",
+    variance_at_completion:"",
+    budget_at_completion:""
+
+  },
+  
+  validateOnChange: true,
+    validateOnBlur: true,
+    onSubmit: create_evms
+})
 
   return (
     <>
@@ -58,7 +102,7 @@ const ProjectEVMS = () => {
                 <CForm className="mt-3">
                   <CRow>
                     {/**Project Name */}
-                    <div className="col-lg-6 mb-3">
+                    <div className="col-lg-12 mb-3">
                       <CLabel className="custom-label-5" htmlFor="project">
                         Project
                       </CLabel>
@@ -66,37 +110,47 @@ const ProjectEVMS = () => {
                         closeMenuOnSelect={true}
                         aria-labelledby="project"
                         id="project"
+                        getOptionLabel={option => option.task_delivery_order.title + " / " + option.sub_task}
+                        getOptionValue={option => option.id}
                         placeholder="Select a project"
                         isClearable={false}
                         isMulti={false}
-                        onChange={(value) => handleChange("projects", value)}
+                        // onChange={(value) => handleChange("projects", value)}
+                        onChange={getAssigneeList}
                         classNamePrefix="custom-forminput-6"
-                        value={projectValue}
+                      
                         options={projects}
                         styles={colourStyles}
                       />
                       {/**View related TDO details */}
-                      <div className="mt-1">
+                      {projectValue != null?
+                      (<div className="mt-1">
                         <CAlert color="primary">
                           <small>
-                            <b>Work Package Number:</b> 1234
+                            <b>Work Package Number:</b> {projectValue.work_package_number}
                             <br />
-                            <b>Estimated Persons: </b> 4
+                            <b>Estimated Persons: </b> {projectValue.estimated_person}
                             <br />
-                            <b>Planned Delivery Date: </b> 12th October,2021
+                            <b>Planned Delivery Date: </b> {projectValue.planned_delivery_date}
                             <br/>
-                            <b>Assignee(s):</b> Kibria Papel,Pial Noman,Mabia Mishu
+                            {/* <b>Assignee(s):</b>     {assigneeList.length>0 && Array.from(assigneeList).map((assignee,idx)=>(
+                              <span>{assignee}</span>
+                            ))} */}
+                          
+                           
                           </small>
                         </CAlert>
                       </div>
+                      ):
+                      null}
                     </div>
                     {/**Work package */}
-                    <div className="col-lg-6 mb-3">
+                    {/* <div className="col-lg-6 mb-3">
                       <CLabel className="custom-label-5" htmlFor="wPackage">
                         Work Package
                       </CLabel>
                       <CInput name="wPackage" id="wPackage" type="number" readOnly />
-                    </div>
+                    </div> */}
                     {/**Earned Value */}
                     <div className="col-lg-6 mb-3">
                       <CLabel className="custom-label-5" htmlFor="earnedValue">
