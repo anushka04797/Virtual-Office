@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CButton, CCard, CCardBody } from '@coreui/react';
+import { CButton, CCard, CCardBody,CAlert } from '@coreui/react';
 import { useDispatch, useSelector } from "react-redux";
 import { useSnackbar } from "notistack";
 import { fetchUserWiseWbsThunk } from '../../store/slices/WbsSlice';
@@ -29,6 +29,18 @@ const AssignedProjectsDashboard = () => {
 
                         </CCard>
                     ))}
+                              { /**If no wbs */}
+ {wbs==undefined? (
+                        
+                       
+                             
+                        <CAlert className="no-value-show-alert"  color="primary">Currently there are no projects assigned to you</CAlert>     
+                      
+                
+              ):null
+              
+              
+              }
                 </div>
                 {wbs!=undefined && wbs.length>3 && <div className="button-holder3"><CButton className="tiny-buttons1">View all</CButton></div>}
             </div>

@@ -1,12 +1,14 @@
 import React from 'react';
 import './projectsTable.css';
-import { CButton, CCard, CCardBody } from '@coreui/react';
+import { CButton, CCard, CCardBody,CAlert } from '@coreui/react';
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProjectsThunk } from "../../store/slices/ProjectsSlice";
 import { USER_ID } from "../../Config";
+import { useHistory } from "react-router-dom";
 
 
 const ProjectsTableDashboard = () => {
+    let history = useHistory();
     const dispatch = useDispatch()
     const projects = useSelector(state => state.projects.data);
     React.useEffect(() => {
@@ -29,9 +31,22 @@ const ProjectsTableDashboard = () => {
                             </CCardBody>
                         </CCard>
                     ))}
-
+                      { /**If no projects */}
+ {projects==''|| projects==undefined? (
+                        
+                       
+                             
+                        <CAlert className="no-value-show-alert"  color="primary">Currently there are no ongoing projects</CAlert>     
+                      
+                
+              ):null
+              
+              
+              }
                 </div>
-                {projects!=undefined && projects.length>3 && <div className="button-holder3"><CButton className="tiny-buttons1">View all</CButton></div>}
+                {projects!=undefined && projects.length>3  && <div className="button-holder3"><CButton className="tiny-buttons1" onClick={() => history.push({pathname:'/dashboard/Projects/ongoing-projects'})}>View all</CButton></div>}
+             
+              
             </div>
         </>
     )
