@@ -124,7 +124,7 @@ const OngoingDetailsView = () => {
         <>
             <CContainer>
                 {/**Edit ongoing project details starts */}
-                <CModal scrollable alignment="center" show={editModal} onClose={editInfoForm}>
+                <CModal alignment="center" show={editModal} onClose={editInfoForm}>
                     <CModalHeader onDismiss={() => setEditModal(!editModal)} closeButton>
                         <CModalTitle className="modal-title-projects">
                             <span className="edit-profile-form-header">Edit Project Info</span>

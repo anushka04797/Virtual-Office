@@ -42,8 +42,8 @@ const TimeCards = () => {
                     <CRow>
                         {/**assignees */}
                         <CCol lg="4" md="12">
-                            <h5 className="info-header-4">Name: </h5>
-                            <h5 className="project-details-points name-for-wbs">Fahmida Sharmin Pranto</h5>
+                            {/* <h5 className="info-header-4">Name: </h5>
+                            <h5 className="project-details-points name-for-wbs">Fahmida Sharmin Pranto</h5> */}
                             {/**IF PM */}
                             <div>
                                 <CLabel className="custom-label-5" htmlFor="assigneeSelect">
