@@ -9,7 +9,7 @@ import Creatable from 'react-select/creatable';
 import { useHistory, useLocation } from 'react-router';
 import { API, BASE_URL, USER_ID } from '../../Config';
 import swal from 'sweetalert';
-import {useDispatch} from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { fetchProjectsThunk } from '../../store/slices/ProjectsSlice';
 import {
     useParams
@@ -22,7 +22,7 @@ const OngoingDetailsView = () => {
     let location = useLocation()
     let history = useHistory()
     const [titleStatus, setTitleStatus] = useState(1);
-    const [tdo,setTdo]=useState('')
+    const [tdo, setTdo] = useState('')
     const radioHandler = (status, titleStatus) => {
         setStatus(status);
         setTitleStatus(titleStatus);
@@ -52,30 +52,30 @@ const OngoingDetailsView = () => {
         }
         else {
             //history.goBack()
-            
+
         }
         // API.get('project/details/'+work_package_number+'/').then((res)=>{
         //     console.log('project details',res.data)
         //     setProject(res.data.data)
         // })
-        console.log('project',project)
+        console.log('project', project)
     }, [])
-    const handle_tdo_title_change=(id)=>{
-        console.log({title:tdo})
-        API.put('project/change-tdo-title/'+id+'/',{title:tdo}).then((res)=>{
-            console.log('rs',res.data)
-            if(res.data.success == 'True'){
+    const handle_tdo_title_change = (id) => {
+        console.log({ title: tdo })
+        API.put('project/change-tdo-title/' + id + '/', { title: tdo }).then((res) => {
+            console.log('rs', res.data)
+            if (res.data.success == 'True') {
                 setStatus(0)
                 setTitleStatus(0)
                 // let temp = project
                 // temp.project.task_delivery_order = res.data.data
                 // setProject(temp)
                 dispatch(fetchProjectsThunk(localStorage.getItem(USER_ID)))
-                swal('Updated','Task Delivery Order name has been updated','success')
+                swal('Updated', 'Task Delivery Order name has been updated', 'success')
             }
-        }).catch(err=>{
+        }).catch(err => {
             console.log(err)
-            swal('Failed','Proccess Failed','error')
+            swal('Failed', 'Proccess Failed', 'error')
         })
     }
     const handleChange = (field, value) => {
@@ -227,7 +227,7 @@ const OngoingDetailsView = () => {
                                 <IconButton aria-label="favourite" disabled size="medium" color="primary">
                                     <GradeIcon fontSize="inherit" className="fav-button" />
                                 </IconButton>
-                                {project!=undefined ? project.project.task_delivery_order.title : ''}
+                                {project != undefined ? project.project.task_delivery_order.title : ''}
                             </h4>
                             <CButton className="edit-ongoing-project-title" variant='ghost' onClick={(e) => radioHandler(1, 0)}><CIcon name="cil-pencil" className="mr-1 pen-icon" /></CButton>
                         </div>) : null}
@@ -239,7 +239,7 @@ const OngoingDetailsView = () => {
                 {status === 1 ? (
                     <div className="card-header-portion-ongoing">
                         <CForm>
-                            <CInput value={tdo} onChange={(event)=>setTdo(event.target.value)} className="custom-forminput-6" type="text"/>
+                            <CInput value={tdo} onChange={(event) => setTdo(event.target.value)} className="custom-forminput-6" type="text" />
                         </CForm>
                         <div>
                             <CButton type="button" variant="ghost" className="confirm-name" onClick={(e) => handle_tdo_title_change(project.project.task_delivery_order.id)}><CIcon name="cil-check-circle" className="mr-1 tick" size="xl" /></CButton>
