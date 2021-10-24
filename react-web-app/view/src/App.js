@@ -6,6 +6,7 @@ import './App.css';
 import ProtectedRoute from './components/protected-route/ProtectedRoute'
 import { ThemeProvider,createTheme } from '@material-ui/core/styles';
 import { PALETTE_MODE } from './Config';
+import AuthVerify from './AuthVerify';
 const theme = createTheme({
   palette: {
     mode: PALETTE_MODE,
@@ -32,6 +33,10 @@ const Register = React.lazy(() => import('./pages/sign-up/signUp'));
 const ForgotPass = React.lazy(() => import('./pages/forgot-pass/forgotPass'));
 const TheLayout = React.lazy(()=>import('./containers/TheLayout'))
 const App = () => {
+  const logOut = () => {
+    console.log('logging out')
+    //dispatch(logout());
+  };
   return (
     <>
     <ThemeProvider theme={theme}>
@@ -46,6 +51,7 @@ const App = () => {
             <ProtectedRoute path="/dashboard" name="Dashboard" component={TheLayout}/>
           </Switch>
         </React.Suspense>
+        {/* <AuthVerify logOut={logOut}/> */}
       </HashRouter>
     </ThemeProvider>
     </>

@@ -11,8 +11,11 @@ import { API, BASE_URL, USER_ID } from '../../Config';
 import swal from 'sweetalert';
 import {useDispatch} from 'react-redux'
 import { fetchProjectsThunk } from '../../store/slices/ProjectsSlice';
-
+import {
+    useParams
+} from "react-router-dom";
 const OngoingDetailsView = () => {
+    const { work_package_number } = useParams();
     const dispatch = useDispatch()
     const [status, setStatus] = useState(0);
     const [project, setProject] = useState()
@@ -48,8 +51,14 @@ const OngoingDetailsView = () => {
             setTdo(location.state.project.project.task_delivery_order.title)
         }
         else {
-            history.goBack()
+            //history.goBack()
+            
         }
+        // API.get('project/details/'+work_package_number+'/').then((res)=>{
+        //     console.log('project details',res.data)
+        //     setProject(res.data.data)
+        // })
+        console.log('project',project)
     }, [])
     const handle_tdo_title_change=(id)=>{
         console.log({title:tdo})
@@ -71,7 +80,6 @@ const OngoingDetailsView = () => {
     }
     const handleChange = (field, value) => {
         switch (field) {
-
             case 'assignees':
                 setAssigneeValue(value)
                 break
@@ -219,7 +227,7 @@ const OngoingDetailsView = () => {
                                 <IconButton aria-label="favourite" disabled size="medium" color="primary">
                                     <GradeIcon fontSize="inherit" className="fav-button" />
                                 </IconButton>
-                                {project != undefined ? project.project.task_delivery_order.title : ''}
+                                {project!=undefined ? project.project.task_delivery_order.title : ''}
                             </h4>
                             <CButton className="edit-ongoing-project-title" variant='ghost' onClick={(e) => radioHandler(1, 0)}><CIcon name="cil-pencil" className="mr-1 pen-icon" /></CButton>
                         </div>) : null}

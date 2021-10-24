@@ -36,6 +36,11 @@ const SignIn = () => {
       console.log('login response',res.data)
       if(res.status == 200 && res.data.success == 'True'){
         localStorage.setItem(TOKEN,res.data.token)
+        let expires_after = new Date()
+        localStorage.setItem('TOKEN', JSON.stringify({
+          time: new Date(expires_after.getFullYear(),expires_after.getMonth(),expires_after.getDate()+2,expires_after.getUTCHours(),expires_after.getMinutes(),expires_after.getSeconds()),
+          data: res.data.token
+        }));
         localStorage.setItem('groups',JSON.parse(res.data.groups))
         localStorage.setItem(USER_ID,res.data.user_id)
         history.push({pathname:'/dashboard',state:{from:'login'}})

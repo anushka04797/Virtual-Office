@@ -12,6 +12,7 @@ import { Link, useHistory } from "react-router-dom";
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { PUBLIC_FORM_API } from "../../Config";
+import CircularProgress from '@mui/material/CircularProgress';
 
 const SignupSchema = Yup.object().shape({
   first_name: Yup.string()
@@ -24,21 +25,30 @@ const SignupSchema = Yup.object().shape({
     .required('Required'),
   email: Yup.string().email('Invalid email').required('Required'),
 });
-
+const override = css`
+  display: block;
+  margin: 0 auto;
+  border-color: red;
+`;
 const Register = () => {
   let history = useHistory()
+  const [submitted,setSubmitted]=useState(false)
   const [avatar, setAvatar] = useState()
   const [isRevealPwd, setIsRevealPwd] = useState(false);
   const [isRevealConfPwd, setIsRevealConfPwd] = useState(false);
   const [image, setImage] = useState()
+  const [responseErrors,setResponseErrors]=useState(['1','2'])
   const validateSignUpForm = (values) => {
     const errors = {};
-    if (!values.first_name) errors.first_name = "First Name is required!"
+    if (!values.first_name) errors.first_name = "Name is required!"
     if (!values.email) errors.email = "Email is required!"
-    if (values.password != values.confirm_pass || String(values.password.length).length>7) errors.confirm_pass = "Confirm your password"
+    if (!values.password || String(values.password).length<8) errors.password = "Password is required!"
+    if (values.password != values.confirm_pass) errors.confirm_pass = "Confirm your password"
     return errors;
   }
-  const sign_up = () => {
+  const sign_up = (values) => {
+    console.log(values)
+    setSubmitted(true)
     let formData = new FormData();
     for (const [key, value] of Object.entries(formSignUp.values)) {
       if (key != 'confirm_pass') {
@@ -49,11 +59,19 @@ const Register = () => {
       formData.append('profile_pic',image)
     }
     PUBLIC_FORM_API.post('auth/register/', formData).then((res) => {
+      setSubmitted(false)
       if (res.data.success == 'True' && res.status == 200) {
         history.push({ pathname: '/login', state: { registration: true } })
       }
-      console.log(res)
+      else{
+        console.log(res.data)
+        setResponseErrors(res.data)
+      }
+    }).catch(err=>{
+      setSubmitted(false)
+      console.log(err)
     })
+    
   }
   const reset_form = () => {
     formSignUp.resetForm()
@@ -88,7 +106,7 @@ const Register = () => {
             <div className="seller-profile-pic-div">
               <img src={avatar ? avatar : "avatars/user-avatar-default.png"} className="avatar-img" />
             </div>
-            <label for="propic" className={image ? "pro-img-up-btn mb-0 remove-img" : "pro-img-up-btn mb-0"}>
+            <label htmlFor="propic" className={image ? "pro-img-up-btn mb-0 remove-img" : "pro-img-up-btn mb-0"}>
               {/* <!-- propic --> */}
               <input
                 id="propic"
@@ -98,17 +116,20 @@ const Register = () => {
               />
             </label>
           </div>
-
+          
           {/**submit form */}
           <div className="custom-form-holder">
             <div className="row">
               <div className="col-md-10 offset-md-1 col-sm-12 offset-sm-0">
+              {Array.from(responseErrors).map((error,idx)=>{
+                <p key={idx}>{error}</p>
+              })}
                 <CForm className="custom-form-sign">
                   <div className="row">
                     {/**first name */}
                     <div className="col-md-6 col-sm-12 col-12 mb-3">
                       <CLabel htmlFor="firstName" className="custom-label-2">
-                        First Name
+                        First Name *
                       </CLabel>
                       <CInput
                         type="text"
@@ -119,6 +140,7 @@ const Register = () => {
                         aria-describedby="fnHelp"
                         className="custom-formgroup-2"
                       />
+                      {formSignUp.touched.first_name && formSignUp.errors.first_name && <small style={{ color: 'red' }}>{formSignUp.errors.first_name}</small>}
                     </div>
                     {/**last name */}
                     <div className="col-md-6 col-sm-12 col-12 mb-3">
@@ -138,7 +160,7 @@ const Register = () => {
                     {/**Email */}
                     <div className="col-md-6 col-sm-12 col-12 mb-3">
                       <CLabel htmlFor="email" className="custom-label-2">
-                        Email
+                        Email *
                       </CLabel>
                       <CInput
                         type="email"
@@ -149,7 +171,7 @@ const Register = () => {
                         aria-describedby="emailHelp"
                         className="custom-formgroup-2"
                       />
-                      {formSignUp.touched.email && formSignUp.errors.email && <p style={{ color: 'red' }}>{formSignUp.errors.email}</p>}
+                      {formSignUp.touched.email && formSignUp.errors.email && <small style={{ color: 'red' }}>{formSignUp.errors.email}</small>}
                     </div>
                     {/**Phone */}
                     <div className="col-md-6 col-sm-12 col-12 mb-3">
@@ -172,7 +194,7 @@ const Register = () => {
                         htmlFor="exampleInputPassword1"
                         className="custom-label-2"
                       >
-                        Password
+                        Password * (<small style={{ color: 'black' }}>Minimum 8 characters</small>)
                       </CLabel>
                       <div className="password-container">
                         <CInput
@@ -183,6 +205,7 @@ const Register = () => {
                           onChange={formSignUp.handleChange}
                           className="custom-formgroup-2"
                         />
+                        {formSignUp.touched.password && formSignUp.errors.password && <small style={{ color: 'red' }}>{formSignUp.errors.password}</small>}
                         <img className="pwd-container-img"
                           title={isRevealPwd ? "Hide Confirm password" : "Show Confirm password"}
                           src={isRevealPwd ? hidePwdImg : showPwdImg}
@@ -216,9 +239,9 @@ const Register = () => {
                     </div>
                     {/*submit button */}
                     <div className="sign-holder">
-                      <CButton type="button" disabled={!formSignUp.isValid} onClick={formSignUp.handleSubmit} className="submit-button-s">
+                      {submitted?<CircularProgress/>:<CButton type="button" onClick={formSignUp.handleSubmit} className="submit-button-s">
                         Sign up
-                      </CButton>
+                      </CButton>}
                     </div>
                     {/**Go to sign in */}
                     <div className="mb-4 mt-3">

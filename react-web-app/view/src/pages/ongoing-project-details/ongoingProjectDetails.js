@@ -1,6 +1,6 @@
 import { React, useEffect, useState } from 'react';
 import './ongoingProjectDetails.css'
-import {CAlert, CCard, CCardBody, CButton, CModal, CModalHeader, CModalBody, CContainer, CForm, CRow, CLabel, CInput, CModalTitle } from '@coreui/react';
+import { CAlert, CCard, CCardBody, CButton, CModal, CModalHeader, CModalBody, CContainer, CForm, CRow, CLabel, CInput, CModalTitle } from '@coreui/react';
 import GradeIcon from '@material-ui/icons/Grade';
 import IconButton from '@material-ui/core/IconButton';
 import Select from "react-select";
@@ -14,14 +14,14 @@ const OngoingProjectDetails = () => {
     let history = useHistory();
     const [showTaskForm, setShowTaskForm] = useState(false);
     //const projects=useSelector(state=> state.projects.data.filter((item)=> project.project.status === 0))
-    const projects = useSelector(state=>{
-        let temp =[]
-        state.projects.data.forEach((item,idx)=>{
-            if(item.project.status == 0){
+    const projects = useSelector(state => {
+        let temp = []
+        state.projects.data.forEach((item, idx) => {
+            if (item.project.status == 0) {
                 temp.push(item)
             }
         })
-        console.log('temp',temp)
+        console.log('temp', temp)
         return temp
     })
     const toggleTaskForm = () => {
@@ -42,9 +42,9 @@ const OngoingProjectDetails = () => {
 
     ];
     const animatedComponents = makeAnimated();
-    useEffect(()=>{
-        console.log('projects',projects)
-    },[projects])
+    useEffect(() => {
+        console.log('projects', projects)
+    }, [projects])
     return (
         <>
             {/**WBS MODAL */}
@@ -135,7 +135,7 @@ const OngoingProjectDetails = () => {
                 <h4 className="dash-header">Ongoing Projects({Array.from(projects).length})</h4>
                 <div className="row">
                     <div className="col-md-10 offset-md-1 col-sm-12 col-xs-12 mt-1">
-                        {projects!=undefined && Array.from(projects).map((project,idx)=>(<CCard className="card-ongoing-project">
+                        {projects != undefined && Array.from(projects).map((project, idx) => (<CCard className="card-ongoing-project">
                             <CCardBody className="details-project-body" key={idx}>
                                 <h4 className="ongoing-card-header">
                                     <IconButton aria-label="favourite" disabled size="medium" >
@@ -158,9 +158,9 @@ const OngoingProjectDetails = () => {
                                         Front End Design
                                         <span className="tooltiptext">1000.5</span>
                                     </CButton> */}
-                                    {Array.from(project.subtasks).length>0 && Array.from(project.subtasks).map((task,idx)=>(
-                                        <CButton className="package-button rounded-pill" >
-                                        {task.sub_task}
+                                    {Array.from(project.subtasks).length > 0 && Array.from(project.subtasks).map((task, idx) => (
+                                        <CButton key={idx} type="button" className="package-button rounded-pill">
+                                            {task.sub_task}
                                             <span className="tooltiptext">{task.work_package_index}</span>
                                         </CButton>
                                     ))}
@@ -168,17 +168,17 @@ const OngoingProjectDetails = () => {
 
                                 {/*Project participants */}
                                 <div className="all-da-workers1">
-                                    {project.assignees.length>0 && Array.from(project.assignees).map((assignee,idx)=>(
-                                        <img className="img-fluid worker-image" src={BASE_URL+assignee.profile_pic} />    
+                                    {project.assignees.length > 0 && Array.from(project.assignees).map((assignee, idx) => (
+                                        <img key={idx} className="img-fluid worker-image" src={BASE_URL + assignee.profile_pic} />
                                     ))}
                                 </div>
 
                                 {/*project info in text */}
                                 <div className="information-show row">
                                     <div className="info-show-now col-md-6">
-                                        <h5 className="project-details-points child"><h5 className="info-header-1">Assigned by :</h5>{project.project.pm.first_name+' '+project.project.pm.last_name}</h5>
+                                        <h5 className="project-details-points child"><h5 className="info-header-1">Assigned by :</h5>{project.project.pm.first_name + ' ' + project.project.pm.last_name}</h5>
                                         {/* <h5 className="project-details-points"><h5 className="info-header-1">Work Package : </h5>1000</h5> */}
-                                        <h5 className="project-details-points"><h5 className="info-header-1">Project Manager : </h5>{project.project.pm.first_name+' '+project.project.pm.last_name}</h5>
+                                        <h5 className="project-details-points"><h5 className="info-header-1">Project Manager : </h5>{project.project.pm.first_name + ' ' + project.project.pm.last_name}</h5>
                                     </div>
                                     <div className="info-show-now col-md-6">
                                         {/* <h5 className="project-details-points"><h5 className="info-header-1">Project Details :</h5>Design and develop the app for the seller and buyer module</h5> */}
@@ -315,24 +315,16 @@ const OngoingProjectDetails = () => {
                                     : null
                                 }
                                 <div className="ongoing-action-card-buttons">
-                                    <CButton className="view-ongoing-details" onClick={() => history.push({pathname:'/dashboard/Projects/ongoing-projects/details/'+project.project.id,state:{project:project}})}><CIcon name="cil-list-rich" className="mr-1" />View Details</CButton>
+                                    <CButton className="view-ongoing-details" onClick={() => history.push({ pathname: '/dashboard/Projects/ongoing-projects/details/' + project.project.work_package_number, state: { project: project } })}><CIcon name="cil-list-rich" className="mr-1" />View Details</CButton>
                                     <CButton className="mark-ongoing-completed"><CIcon name="cil-check-alt" className="mr-1" />Mark as Completed</CButton>
                                 </div>
                             </CCardBody>
 
                         </CCard>))}
                         {/**If no projects are there */}
-                        {projects==undefined || projects =='' || projects == null? (
-                        
-                       
-                             
-                        <CAlert className="no-value-show-alert"  color="primary">Currently there are no ongoing projects</CAlert>     
-                      
-                
-              ):null
-              
-              
-              }
+                        {Array.from(projects).length < 1 ? (
+                            <CAlert className="no-value-show-alert" color="primary">Currently there are no ongoing projects</CAlert>
+                        ) : null}
                     </div>
                     {/**Dummy cards for viewing design */}
 
@@ -340,7 +332,7 @@ const OngoingProjectDetails = () => {
 
                 </div>
             </div>
-            
+
         </>
     )
 }
