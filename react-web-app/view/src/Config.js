@@ -1,5 +1,5 @@
 import axios from 'axios';
-const status = 'dev'
+const status = 'prod'
 export const API_URL = status === 'prod' ? 'http://103.123.8.52:7000/' : 'http://localhost:8000/'
 export const TOKEN = "access_token"
 export const USER_ID = "user_id"

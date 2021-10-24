@@ -25,11 +25,7 @@ const SignupSchema = Yup.object().shape({
     .required('Required'),
   email: Yup.string().email('Invalid email').required('Required'),
 });
-const override = css`
-  display: block;
-  margin: 0 auto;
-  border-color: red;
-`;
+
 const Register = () => {
   let history = useHistory()
   const [submitted,setSubmitted]=useState(false)
