@@ -21,6 +21,7 @@ border: none !important;
     font-weight: 600;
     letter-spacing: -0.006em;
     color: #172B4D;
+    text-transform: capitalize;
 
 
 }

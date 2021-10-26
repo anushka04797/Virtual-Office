@@ -20,6 +20,7 @@ margin-bottom: 30px;
     letter-spacing: -0.006em;
     color: #172B4D;
     vertical-align: baseline;
+    text-transform: capitalize;
    
 }
 .fav-button{
