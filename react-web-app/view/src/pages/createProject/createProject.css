@@ -87,6 +87,13 @@
 .cancel-prjct:hover{
     background-color: rgba(9, 30, 66, 0.04);
 }
+.error{
+    font-size: 14px;
+    font-family: inherit;
+    font-weight: 400;
+    margin-top: 5px;
+    color: red;
+}
 @media all and (min-width:992px){
     .project-form-button-holders{
         text-align: center !important;
