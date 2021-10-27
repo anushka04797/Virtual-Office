@@ -1,23 +1,34 @@
 import { CCard, CCardBody, CContainer, CRow, CButton, CModal, CModalHeader, CModalTitle, CModalBody, CForm, CCol, CLabel, CInput } from '@coreui/react';
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
+import { useHistory } from "react-router-dom";
 import CIcon from '@coreui/icons-react';
 import GradeIcon from '@material-ui/icons/Grade';
 import IconButton from '@material-ui/core/IconButton';
 import './evmsView.css';
 
 import { CChart, CChartLine } from '@coreui/react-chartjs';
+import { useSelector,useDispatch } from 'react-redux';
+
 const ViewEvms = () => {
     const [visible, setVisible] = useState(false);
+    const dispatch = useDispatch();
+    let history=useHistory();
     const editEVMSForm = () => {
         setVisible(!visible);
     }
+const evmsList = useSelector(state => state.evmsList.data)
+useEffect(() =>{
+    console.log('evmsList',evmsList)
+},[evmsList])
+
+
     return (
         <>
             {/**display all evms */}
             <CContainer>
                 {/**modal to edit evms */}
                 <CModal alignment="center" show={visible} onClose={editEVMSForm}>
-                    <CModalHeader onDismiss={() => setVisible(!visible)} closeButton>  <CModalTitle className="modal-title">
+                    <CModalHeader onClose={() => setVisible(!visible)} closeButton>  <CModalTitle className="modal-title">
                         <span className="edit-profile-form-header">
                             Edit EVMS Info
                         </span>
@@ -127,12 +138,13 @@ const ViewEvms = () => {
                 <h4 className="dash-header mb-3">EVMS View</h4>
                 <CRow>
                     <div className="col-md-12 col-sm-12 col-xs-12 mt-1">
-                        <CCard className="card-ongoing-project">
+                        {evmsList != undefined && Array.from(evmsList).map((item,idx) =>(
+                        <CCard className="card-ongoing-project" key={idx}>
                             <CCardBody className="details-project-body">
                                 <div className="card-header-portion-ongoing">
                                     <h4 className="ongoing-card-header-1"><IconButton aria-label="favourite" disabled size="medium" color="primary">
                                         <GradeIcon fontSize="inherit" className="fav-button" />
-                                    </IconButton>Virtual Guard</h4>
+                                    </IconButton>{item.project.task_delivery_order.title + ' / ' + item.project.sub_task}</h4>
                                     <div className="action-button-holders--2">
                                         <CButton className="edit-project-on" onClick={() => editEVMSForm()}><CIcon name="cil-pencil" className="mr-1" /> Edit</CButton>
                                         <CButton className="view-ongoing-details" ><CIcon name="cil-list-rich" className="mr-1" />View Details</CButton>
@@ -185,23 +197,24 @@ const ViewEvms = () => {
                                     </div>
                                     {/**Text details */}
                                     <div className="col-lg-5 offset-lg-1 col-md-12 mt-3">
-                                        <h5 className="evms-info-view child"><span className="info-header--evms">work package : </span>1067</h5>
-                                        <h5 className="evms-info-view child"><span className="info-header--evms">earned value: </span>1067</h5>
-                                        <h5 className="evms-info-view child"><span className="info-header--evms">actual cost : </span>1067</h5>
-                                        <h5 className="evms-info-view child"><span className="info-header--evms">planned value : </span>1067</h5>
-                                        <h5 className="evms-info-view child"><span className="info-header--evms">planned hours : </span>1067</h5>
-                                        <h5 className="evms-info-view child"><span className="info-header--evms">estimate at completion : </span>1067</h5>
-                                        <h5 className="evms-info-view child"><span className="info-header--evms">estimation to completion : </span>1067</h5>
-                                        <h5 className="evms-info-view child"><span className="info-header--evms">variance at completion : </span>1067</h5>
+                                        <h5 className="evms-info-view child"><span className="info-header--evms">work package : </span>{item.work_package_number}</h5>
+                                        <h5 className="evms-info-view child"><span className="info-header--evms">earned value: </span>{item.earned_value}</h5>
+                                        <h5 className="evms-info-view child"><span className="info-header--evms">actual cost : </span>{item.actual_cost}</h5>
+                                        <h5 className="evms-info-view child"><span className="info-header--evms">planned value : </span>{item.project.planned_value}</h5>
+                                        <h5 className="evms-info-view child"><span className="info-header--evms">planned hours : </span>{item.project.planned_hours}</h5>
+                                        <h5 className="evms-info-view child"><span className="info-header--evms">estimate at completion : </span>{item.estimate_at_completion}</h5>
+                                        <h5 className="evms-info-view child"><span className="info-header--evms">estimation to completion : </span>{item.estimate_to_completion}</h5>
+                                        <h5 className="evms-info-view child"><span className="info-header--evms">variance at completion : </span>{item.variance_at_completion}</h5>
 
-                                        <h5 className="evms-info-view child"><span className="info-header--evms">budget at completion : </span>1067</h5>
-                                        <h5 className="evms-info-view child"><span className="info-header--evms">date created : </span>12th October,2021</h5>
-                                        <h5 className="evms-info-view child"><span className="info-header--evms">date updated : </span>12th October,2021</h5>
+                                        <h5 className="evms-info-view child"><span className="info-header--evms">budget at completion : </span>{item.budget_at_completion}</h5>
+                                        <h5 className="evms-info-view child"><span className="info-header--evms">date created : </span>{item.date_created}</h5>
+                                        <h5 className="evms-info-view child"><span className="info-header--evms">date updated : </span>{item.date_updated}</h5>
 
                                     </div>
                                 </div>
                             </CCardBody>
                         </CCard>
+                        ))}
                     </div>
                 </CRow>
             </CContainer>

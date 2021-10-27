@@ -13,6 +13,7 @@ import {
 } from './index'
 import './TheLayout.css'
 import { has_group } from '../helper';
+import { fetchEvmsThunk } from '../store/slices/EvmsSlice';
 const TheLayout = () => {
   const dispatch = useDispatch()
   React.useEffect(()=>{
@@ -20,6 +21,7 @@ const TheLayout = () => {
     dispatch(fetchWbsThunk(localStorage.getItem(USER_ID)))
     dispatch(fetchPersonalDetails(localStorage.getItem(USER_ID)))
     if(has_group('pm')) dispatch(fetchProjectsForPMThunk(localStorage.getItem(USER_ID)))
+    if(has_group('pm')) dispatch(fetchEvmsThunk(localStorage.getItem(USER_ID)))
   },[])
   return (
     <div className="c-app c-default-layout">

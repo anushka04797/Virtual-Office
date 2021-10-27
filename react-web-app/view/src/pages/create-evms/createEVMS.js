@@ -113,7 +113,7 @@ formCreateEVMS.setFieldValue('work_package_number',option.data.work_package_numb
       budget_at_completion: ""
 
     },
-validate:true,
+
     validateOnChange: true,
     validateOnBlur: true,
     validate:validate_evms_form,
