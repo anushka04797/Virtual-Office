@@ -44,6 +44,13 @@ const OngoingDetailsView = () => {
         { value: "4", label: "Saif Rahi" },
 
     ];
+    const initialize=()=>{
+        API.get('project/details/'+work_package_number+'/').then((res)=>{
+            console.log('project details',res.data)
+            setProject(res.data.data)
+            setTdo(res.data.data.project.task_delivery_order.title)
+        })
+    }
     useEffect(() => {
         if (location.state != undefined) {
             console.log('project', location.state.project)
@@ -52,14 +59,11 @@ const OngoingDetailsView = () => {
         }
         else {
             //history.goBack()
-
+            initialize()
         }
-        // API.get('project/details/'+work_package_number+'/').then((res)=>{
-        //     console.log('project details',res.data)
-        //     setProject(res.data.data)
-        // })
         console.log('project', project)
     }, [])
+    
     const handle_tdo_title_change = (id) => {
         console.log({ title: tdo })
         API.put('project/change-tdo-title/' + id + '/', { title: tdo }).then((res) => {
@@ -71,6 +75,7 @@ const OngoingDetailsView = () => {
                 // temp.project.task_delivery_order = res.data.data
                 // setProject(temp)
                 dispatch(fetchProjectsThunk(localStorage.getItem(USER_ID)))
+                initialize()
                 swal('Updated', 'Task Delivery Order name has been updated', 'success')
             }
         }).catch(err => {
@@ -130,7 +135,7 @@ const OngoingDetailsView = () => {
     }
     return (
         <>
-            <CContainer>
+            {project!=undefined && <CContainer>
                 {/**Edit ongoing project details starts */}
                 <CModal alignment="center" show={editModal} onClose={editInfoForm}>
                     <CModalHeader onDismiss={() => setEditModal(!editModal)} closeButton>
@@ -144,7 +149,7 @@ const OngoingDetailsView = () => {
                                 <CRow>
                                     {/**Subtask Name*/}
                                     <CCol lg="12" className="mb-2">
-                                        <CLabel htmlFor="subTaskName" className="custom-label-5">Sub Task Name</CLabel>
+                                        <CLabel htmlFor="subTaskName" className="custom-label-5">{project.project.sub_task}</CLabel>
                                         <CInput id="subTaskName" name="subTaskName" type="text" className="custom-forminput-6" />
                                     </CCol>
                                     {/**PM Name */}
@@ -242,7 +247,7 @@ const OngoingDetailsView = () => {
                             <CInput value={tdo} onChange={(event) => setTdo(event.target.value)} className="custom-forminput-6" type="text" />
                         </CForm>
                         <div>
-                            <CButton type="button" variant="ghost" className="confirm-name" onClick={(e) => handle_tdo_title_change(project.project.task_delivery_order.id)}><CIcon name="cil-check-circle" className="mr-1 tick" size="xl" /></CButton>
+                            <CButton disabled={tdo.length>0?false:true} type="button" variant="ghost" className="confirm-name" onClick={(e) => handle_tdo_title_change(project.project.task_delivery_order.id)}><CIcon name="cil-check-circle" className="mr-1 tick" size="xl" /></CButton>
                             <CButton type="button" variant="ghost" className="cancel-name" onClick={(e) => radioHandler(0, 1)}><CIcon name="cil-x-circle" className="mr-1 cross" size="xl" /></CButton>
                         </div>
 
@@ -253,24 +258,22 @@ const OngoingDetailsView = () => {
                 {/**Details card */}
                 <div className="row">
                     <div className="col-md-10 offset-md-1 col-sm-12 col-xs-12 mt-1 mb-2">
-                        <CCard className="card-ongoing-project">
+                        {Array.from(project.subtasks).map((subtask,idx)=>(<CCard key={idx} className="card-ongoing-project">
                             <CCardBody className="details-project-body">
-
-
                                 {/*task percentage portion */}
                                 <div className="ongoing-initial-info row">
                                     <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Sub Task Name</h6>
-                                        <h6 className="project-point-details">Do lungi dance</h6></div>
+                                        <h6 className="project-point-details">{project.project.sub_task}</h6></div>
                                     <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">PM Name</h6>
-                                        <h6 className="project-point-details">The one and only </h6></div>
+                                        <h6 className="project-point-details">{project.project.pm.first_name+' '+project.project.pm.last_name}</h6></div>
                                     <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Work Package Number</h6>
-                                        <h6 className="project-point-details">IDGAF</h6>
+                                        <h6 className="project-point-details">{project.project.work_package_number}</h6>
                                     </div>
                                     <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Task Title</h6>
-                                        <h6 className="project-point-details">Send object in mqtt</h6>
+                                        <h6 className="project-point-details">{subtask.task_title}</h6>
                                     </div>
                                     <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Estimated Person(s)</h6>
-                                        <h6 className="project-point-details">1,bceause why hire more!</h6>
+                                        <h6 className="project-point-details">{subtask.estimated_person}</h6>
                                     </div>
                                     <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Planned Value</h6>
                                         <h6 className="project-point-details">120 </h6>
@@ -287,10 +290,10 @@ const OngoingDetailsView = () => {
                                 <div className="col-md-12 mt-4 mb-2">
                                     <h5 className="projectName mb-3">Asssignee(s)-(6)</h5>
                                     <div className="file-show-ongoing-details row">
-                                        {project != undefined && Array.from(project.assignees).map((item, idx) => (
+                                        {project != undefined && Array.from(subtask.assignees).map((item, idx) => (
                                             <div key={idx} className="col-md-6 col-sm-6 col-lg-3">
                                                 <div className="file-attached-ongoing rounded-pill">
-                                                    <CButton type="button" onClick={() => delete_assignee(item.id)} className="remove-file-ongoing"><img src={"assets/icons/icons8-close-64-blue.png"} className="close-icon-size" /></CButton>{item.first_name + ' ' + item.last_name}
+                                                    <CButton type="button" onClick={() => delete_assignee(item.id)} className="remove-file-ongoing"><img src={"assets/icons/icons8-close-64-blue.png"} className="close-icon-size" /></CButton>{item.assignee.first_name + ' ' + item.assignee.last_name}
                                                 </div>
                                             </div>
                                         ))}
@@ -306,10 +309,10 @@ const OngoingDetailsView = () => {
                                 </div>
                             </CCardBody>
 
-                        </CCard>
+                        </CCard>))}
                     </div>
                 </div>
-            </CContainer>
+            </CContainer>}
         </>
     )
 }
