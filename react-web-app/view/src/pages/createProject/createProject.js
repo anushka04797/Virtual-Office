@@ -6,8 +6,9 @@ import Select from "react-select";
 import { useFormik } from 'formik';
 import { API, USER_ID } from '../../Config';
 import { useDispatch, useSelector } from 'react-redux'
-import { push_item } from '../../store/slices/ProjectsSlice';
+import { push_item } from '../../store/slices/TdoSlice';
 import swal from 'sweetalert'
+import { fetchTdosThunk } from '../../store/slices/TdoSlice';
 
 const CreateNewProject = () => {
   const colourStyles = {
@@ -24,6 +25,7 @@ const CreateNewProject = () => {
   const projects = useSelector(state=>state.projects.pm_projects)
   //tdo list states and functions
   const tdo_list = useSelector(state=>state.projects.tdo_list)
+  const new_tdo_list = useSelector(state=>state.tdo.data)
   const handleTDOChange = (newValue, actionMeta) => {
     console.log(`action: ${actionMeta.action}`);
     if(actionMeta.action == 'select-option'){
@@ -65,7 +67,7 @@ const CreateNewProject = () => {
   function get_sub_tasks(tdo){
     let temp = []
     projects.forEach((project,idx)=>{
-      if(project.task_delivery_order == tdo){
+      if(project.task_delivery_order.title == tdo){
         temp.push({value:project.sub_task,label:project.sub_task})
       }
     })
@@ -98,7 +100,7 @@ const CreateNewProject = () => {
   function get_work_packages(tdo){
     let temp = []
     projects.forEach((project,idx)=>{
-      if(project.task_delivery_order == tdo){
+      if(project.task_delivery_order.title == tdo){
         temp.push({value:project.work_package_number,label:project.work_package_number})
       }
     })
@@ -182,6 +184,7 @@ const CreateNewProject = () => {
   })
   
   useEffect(()=>{
+    dispatch(fetchTdosThunk())
     API.get('auth/assignee/list/').then((res)=>{
       console.log('assignees',res.data.data)
       let temp=[]
@@ -219,7 +222,7 @@ const CreateNewProject = () => {
                           onCreateOption={handleTDOCreate}
                           classNamePrefix="custom-forminput-6"
                           value={selectedTDO}
-                          options={tdo_list}
+                          options={new_tdo_list}
                           // getOptionLabel= {option=>option.task_delivery_order}
                           // getOptionValue = {option=>option.task_delivery_order}
                           styles={colourStyles}

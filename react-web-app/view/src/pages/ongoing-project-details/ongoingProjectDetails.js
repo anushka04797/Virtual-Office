@@ -140,7 +140,7 @@ const OngoingProjectDetails = () => {
                                 <h4 className="ongoing-card-header">
                                     <IconButton aria-label="favourite" disabled size="medium" >
                                         <GradeIcon fontSize="inherit" className="fav-button" />
-                                    </IconButton>{project.project.task_delivery_order.title}
+                                    </IconButton>{String(project.project.task_delivery_order.title).toUpperCase()+' / '+String(project.project.sub_task).toUpperCase()}
                                 </h4>
                                 <hr className="header-underline1" />
 
@@ -160,7 +160,7 @@ const OngoingProjectDetails = () => {
                                     </CButton> */}
                                     {Array.from(project.subtasks).length > 0 && Array.from(project.subtasks).map((task, idx) => (
                                         <CButton key={idx} type="button" className="package-button rounded-pill">
-                                            {task.sub_task}
+                                            {task.task_title}
                                             <span className="tooltiptext">{task.work_package_index}</span>
                                         </CButton>
                                     ))}

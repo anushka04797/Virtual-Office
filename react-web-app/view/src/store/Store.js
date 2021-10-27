@@ -7,6 +7,7 @@ import SidebarSlice from './slices/SideBarSlice'
 import WbsSlice from './slices/WbsSlice'
 import MeetingSlice from "./slices/MeetingSlice"
 import EvmsSlice from './slices/EvmsSlice'
+import TdoSlice from './slices/TdoSlice'
 export default configureStore({
   reducer: {
     drawer: DrawerSlice,
@@ -16,6 +17,7 @@ export default configureStore({
     wbs: WbsSlice,
     profile:ProfileSlice,
     meeting: MeetingSlice,
-    evmsList:EvmsSlice
+    evmsList:EvmsSlice,
+    tdo : TdoSlice
   },
 })

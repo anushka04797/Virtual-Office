@@ -88,7 +88,8 @@ const TheSidebar = () => {
 
         {/**Shared Docs */}
         <CSidebarNavItem to="/dashboard/shared-documents" name="Shared Documents" icon="cil-folder-open" className="vo-navItem"></CSidebarNavItem>
-
+        <CSidebarNavDivider/>
+        <CSidebarNavItem to="/dashboard/profile" name="Logout" icon="cil-user" className="vo-navItem"></CSidebarNavItem>
       </CSidebarNav>
       <CSidebarMinimizer />
     </CSidebar>
