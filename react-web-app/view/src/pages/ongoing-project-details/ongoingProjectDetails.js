@@ -7,11 +7,15 @@ import Select from "react-select";
 import makeAnimated from "react-select/animated";
 import { CIcon } from "@coreui/icons-react";
 import { useHistory } from "react-router-dom";
-import { useSelector } from 'react-redux';
-import { BASE_URL } from '../../Config';
+import { useDispatch, useSelector } from 'react-redux';
+import { BASE_URL, USER_ID } from '../../Config';
+import { API } from '../../Config';
+import swal from 'sweetalert'
+import { fetchProjectsThunk } from '../../store/slices/ProjectsSlice';
 
 const OngoingProjectDetails = () => {
     let history = useHistory();
+    const dispatch=useDispatch()
     const [showTaskForm, setShowTaskForm] = useState(false);
     //const projects=useSelector(state=> state.projects.data.filter((item)=> project.project.status === 0))
     const projects = useSelector(state => {
@@ -44,7 +48,41 @@ const OngoingProjectDetails = () => {
     const animatedComponents = makeAnimated();
     useEffect(() => {
         console.log('projects', projects)
-    }, [projects])
+    }, [])
+    const mark_project_completed = (id) => {
+        swal({
+            title: "Are you sure?",
+            text: "You can change project status later!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willUpdate) => {
+                if (willUpdate) {
+                    API.put('/project/change-status/' + id + "/",{status:1}).then(response => {
+                        if (response.data.success == "True") {
+                            dispatch(fetchProjectsThunk(localStorage.getItem(USER_ID)))
+                            swal("Poof! Project is marked as completed", {
+                                icon: "success",
+                            });
+
+                        }
+                        else if (response.data.success == "False") {
+                            swal("Poof!" + response.data.message, {
+                                icon: "error",
+                            });
+                        }
+
+                    }).catch(error => {
+                        //swal("Failed!",error,"error");
+                    })
+
+                }
+            });
+    }
+    const remaining_hours=(remaining,total)=>{
+        return String(parseFloat(total)-parseFloat(remaining))
+    }
     return (
         <>
             {/**WBS MODAL */}
@@ -147,7 +185,7 @@ const OngoingProjectDetails = () => {
                                 {/*task percentage portion */}
                                 <div>
                                     <h5 className="tasks-done"><span className="tiny-header1">Task Done : </span>5/10 </h5>
-                                    <h6 className="show-amount">200/{parseInt(project.project.planned_hours)} Hrs</h6>
+                                    <h6 className="show-amount">{remaining_hours(project.project.remaining_hours,project.project.planned_hours)}/{parseInt(project.project.planned_hours)} Hrs</h6>
                                     <div className="progress progress-background">
                                         <div className="progress-bar custom-progress1 progress-bar-animated" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" style={{ width: '25%' }}></div>
                                     </div>
@@ -316,7 +354,7 @@ const OngoingProjectDetails = () => {
                                 }
                                 <div className="ongoing-action-card-buttons">
                                     <CButton className="view-ongoing-details" onClick={() => history.push({ pathname: '/dashboard/Projects/ongoing-projects/details/' + project.project.work_package_number, state: { project: project } })}><CIcon name="cil-list-rich" className="mr-1" />View Details</CButton>
-                                    <CButton className="mark-ongoing-completed"><CIcon name="cil-check-alt" className="mr-1" />Mark as Completed</CButton>
+                                    <CButton type="button" onClick={()=>{mark_project_completed(project.project.work_package_number)}} className="mark-ongoing-completed"><CIcon name="cil-check-alt" className="mr-1" />Mark as Completed</CButton>
                                 </div>
                             </CCardBody>
 
