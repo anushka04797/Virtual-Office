@@ -12,6 +12,9 @@ import { BASE_URL } from '../../Config';
 const CompleteProjects = () => {
     let historyTo = useHistory();
     const projects=useSelector(state=> state.projects.data.filter((project)=> project.project.status === 1))
+    const remaining_hours=(remaining,total)=>{
+        return String(parseFloat(total)-parseFloat(remaining))
+    }
     return (
         <>
             <div className="container">
@@ -24,13 +27,13 @@ const CompleteProjects = () => {
                                
                                 <h4 className="ongoing-card-header"><IconButton aria-label="favourite" size="medium" >
                                     <GradeIcon fontSize="inherit" className="fav-button" />
-                                </IconButton>{project.project.task_delivery_order.title}</h4>
+                                </IconButton>{String(project.project.task_delivery_order.title).toUpperCase()+' / '+String(project.project.sub_task).toUpperCase()}</h4>
                                 <hr className="header-underline1" />
 
                                 {/*task percentage portion */}
                                 <div>
                                     <h5 className="tasks-done"><span className="tiny-header1">Task Done : </span>5/10 </h5>
-                                    <h6 className="show-amount">200/{parseInt(project.project.planned_hours)} Hrs</h6>
+                                    <h6 className="show-amount">{remaining_hours(project.project.remaining_hours,project.project.planned_hours)}/{parseInt(project.project.planned_hours)} Hrs</h6>
                                     <div className="progress progress-background">
                                         <div className="progress-bar custom-progress1 progress-bar-animated" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" style={{ width: '25%' }}></div>
                                     </div>
@@ -43,7 +46,7 @@ const CompleteProjects = () => {
                                     </CButton> */}
                                     {Array.from(project.subtasks).length>0 && Array.from(project.subtasks).map((task,idx)=>(
                                         <CButton className="package-button rounded-pill" >
-                                        {task.sub_task}
+                                        {task.task_title}
                                             <span className="tooltiptext">{task.work_package_index}</span>
                                         </CButton>
                                     ))}
@@ -65,7 +68,7 @@ const CompleteProjects = () => {
                                     </div>
                               <div className="info-show-now col-md-6">
                                     {/* <h5 className="project-details-points"><h5 className="info-header-1">Project Details :</h5>Design and develop the app for the seller and buyer module</h5> */}
-                                    <h5 className="project-details-points child"><h5 className="info-header-1">Start Date : </h5>{project.date_created}</h5>
+                                    <h5 className="project-details-points child"><h5 className="info-header-1">Start Date : </h5>{project.project.date_created}</h5>
 
                                     <h5 className="project-details-points"><h5 className="info-header-1">Planned Delivery Date : </h5>{project.project.planned_delivery_date}</h5>
                                     </div>
