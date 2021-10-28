@@ -257,7 +257,7 @@ const OngoingDetailsView = () => {
                 <hr className="header-underline1" />
                 {/**Details card */}
                 <div className="row">
-                    <div className="col-md-10 offset-md-1 col-sm-12 col-xs-12 mt-1 mb-2">
+                    <div className="col-md-12  col-sm-12 col-xs-12 mt-1 mb-2">
                         {Array.from(project.subtasks).map((subtask,idx)=>(<CCard key={idx} className="card-ongoing-project">
                             <CCardBody className="details-project-body">
                                 {/*task percentage portion */}
@@ -291,9 +291,9 @@ const OngoingDetailsView = () => {
                                     <h5 className="projectName mb-3">Asssignee(s)-(6)</h5>
                                     <div className="file-show-ongoing-details row">
                                         {project != undefined && Array.from(subtask.assignees).map((item, idx) => (
-                                            <div key={idx} className="col-md-6 col-sm-6 col-lg-3">
+                                            <div key={idx} className="col-md-6 col-sm-6 col-lg-2">
                                                 <div className="file-attached-ongoing rounded-pill">
-                                                    <CButton type="button" onClick={() => delete_assignee(item.id)} className="remove-file-ongoing"><img src={"assets/icons/icons8-close-64-blue.png"} className="close-icon-size" /></CButton>{item.assignee.first_name + ' ' + item.assignee.last_name}
+                                                    <CButton type="button" onClick={() => delete_assignee(item.id)} className="remove-file-ongoing"><img src={"assets/icons/icons8-close-64-blue.png"} className="close-icon-size"/></CButton>{item.assignee.first_name + ' ' + item.assignee.last_name}
                                                 </div>
                                             </div>
                                         ))}

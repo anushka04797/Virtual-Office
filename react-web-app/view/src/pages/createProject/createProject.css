@@ -94,6 +94,12 @@
     margin-top: 5px;
     color: red;
 }
+/**_____MEDIA QUERY______**/
+@media all and (min-width:300px) and (max-width:601px){
+    .custom-project-card-1{
+        padding:15px 0px;
+    }
+}
 @media all and (min-width:992px){
     .project-form-button-holders{
         text-align: center !important;
