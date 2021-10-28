@@ -139,8 +139,9 @@ margin-bottom: 30px;
     }
     .file-attached-ongoing{
    
-        padding: 5px 8px;
-        
+      padding-top: 5px;
+      padding-bottom: 5px;
+      
         background: #0D47A1;
     /* border-radius: 20px; */
         overflow: visible;
@@ -161,6 +162,7 @@ margin-bottom: 30px;
     
         
     }
+    
     .remove-file-ongoing{
         position: absolute;
         background: transparent;

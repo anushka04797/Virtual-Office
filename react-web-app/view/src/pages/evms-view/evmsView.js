@@ -5,22 +5,71 @@ import CIcon from '@coreui/icons-react';
 import GradeIcon from '@material-ui/icons/Grade';
 import IconButton from '@material-ui/core/IconButton';
 import './evmsView.css';
-
+import { API, BASE_URL, USER_ID } from "../../Config";
 import { CChart, CChartLine } from '@coreui/react-chartjs';
 import { useSelector,useDispatch } from 'react-redux';
+import { useFormik } from 'formik';
 
 const ViewEvms = () => {
     const [visible, setVisible] = useState(false);
+    const[evmsId,setEvmsId]=useState('');
+    const[projectValue,setProjectValue] = useState('');
     const dispatch = useDispatch();
     let history=useHistory();
-    const editEVMSForm = () => {
-        setVisible(!visible);
+    const evmsList = useSelector(state => state.evmsList.data)
+    const validate_evms_update =(values) =>{
+        const errors ={}
+        if(!values.earned_value) errors.earned_value="Earned value is required"
+        if(!values.actual_cost)errors.actual_cost="Actual cost is required"
+        if(!values.estimate_at_completion)errors.estimate_at_completion="Estimate at completion is required"
+        if(!values.estimate_to_completion)errors.estimate_to_completion="Estimate to completion is required"
+        if(!values.variance_at_completion) errors.variance_at_completion="Variance at completion is required"
+        if(!values.budget_at_completion)errors.budget_at_completion="Budget at completion required"
+   return errors;
     }
-const evmsList = useSelector(state => state.evmsList.data)
+    const updateEvms =(values)=>{
+        API.put('evms/update/')
+    }
+    const evms_update_form = useFormik({
+        initialValues:{
+            earned_value:"",
+            actual_cost:"",
+            estimate_at_completion:"",
+            estimate_to_completion:"",
+            variance_at_completion:"",
+            budget_at_completion:"",
+            planned_value:"",
+            planned_hours:""
+ },
+ validateOnChange:true,
+ validate:validate_evms_update,
+ onsubmit:updateEvms
+    })
+ 
+    const editEVMSForm = (item) => {
+        setVisible(!visible);
+        setProjectValue(item?.project.sub_task);
+        setEvmsId(item?.id);
+        evms_update_form.setValues({
+
+            earned_value:item?.earned_value,
+            actual_cost:item?.actual_cost,
+            estimate_at_completion:item?.estimate_at_completion,
+            estimate_to_completion:item?.estimate_to_completion,
+            variance_at_completion:item?.variance_at_completion,
+            budget_at_completion:item?.budget_at_completion,
+            planned_hours:item?.project.planned_hours,
+            planned_value:item?.project.planned_value
+        })
+        
+
+    }
+
 useEffect(() =>{
     console.log('evmsList',evmsList)
 },[evmsList])
 
+{/**EVMS EDIT FORM FUNCTIONALITY */}
 
     return (
         <>
@@ -40,83 +89,83 @@ useEffect(() =>{
 
                                 <CRow>
                                     {/**Project Name */}
-                                    <CCol lg="6" md="6" sm="12" className="mb-2">
+                                    <CCol lg="12" md="12" sm="12" className="mb-2">
                                         <CLabel className="custom-label-5" htmlFor="project">
                                             Project Name
                                         </CLabel>
-                                        <CInput className="custom-forminput-6" name="project" id="project" value="Virtual Guard" readOnly />
+                                        <CInput className="custom-forminput-6" name="project" id="project" value={projectValue} readOnly />
                                     </CCol>
                                     {/**Work package */}
-                                    <CCol lg="6" md="6" sm="12" className="mb-2">
+                                    {/* <CCol lg="6" md="6" sm="12" className="mb-2">
                                         <CLabel className="custom-label-5" htmlFor="wPackage">
                                             Work Package
                                         </CLabel>
                                         <CInput className="custom-forminput-6" name="wPackage" id="wPackage" readOnly />
-                                    </CCol>
+                                    </CCol> */}
                                     {/**Planned Value */}
 
                                     <CCol className="mb-2" g="6" md="6" sm="12">
-                                        <CLabel className="custom-label-5" htmlFor="plannedVal">
+                                        <CLabel className="custom-label-5" htmlFor="planned_value">
                                             Planned Value
                                         </CLabel>
-                                        <CInput className="custom-forminput-6" name="plannedVal" id="plannedVal" />
+                                        <CInput className="custom-forminput-6" name="planned_value" id="planned_value" value={evms_update_form.values.planned_value} onChange={evms_update_form.handleChange} required type="number" min="1" />
                                     </CCol>
                                     {/**Planned hours */}
                                     <CCol className="mb-2" g="6" md="6" sm="12">
-                                        <CLabel className="custom-label-5" htmlFor="plannedHrs">
+                                        <CLabel className="custom-label-5" htmlFor="planned_hours">
                                             Planned Hours
                                         </CLabel>
-                                        <CInput className="custom-forminput-6" name="plannedHrs" id="plannedHrs" />
+                                        <CInput className="custom-forminput-6" name="planned_hours" id="planned_hours"  value={evms_update_form.values.planned_hours} onChange={evms_update_form.handleChange} type="number" min="1" required/>
                                     </CCol>
                                     {/**Earned Value */}
                                     <CCol lg="6" md="6" sm="12" className="mb-2">
-                                        <CLabel className="custom-label-5" htmlFor="earnedValue">
+                                        <CLabel className="custom-label-5" htmlFor="earned_value">
                                             Earned Value
                                         </CLabel>
-                                        <CInput className="custom-forminput-6" name="earnedValue" id="earnedValue" />
+                                        <CInput className="custom-forminput-6" name="earned_value" id="earned_value" value={evms_update_form.values.earned_value} onChange={evms_update_form.handleChange} required  type="number" min="1"/>
 
                                     </CCol>
                                     {/**Actual Cost */}
                                     <CCol lg="6" md="6" sm="12" className="mb-2">
-                                        <CLabel className="custom-label-5" htmlFor="actualCost">
+                                        <CLabel className="custom-label-5" htmlFor="actual_cost">
                                             Actual Cost
                                         </CLabel>
-                                        <CInput className="custom-forminput-6" name="actualCost" id="actualCost" />
+                                        <CInput className="custom-forminput-6" name="actual_cost" id="actual_cost" value={evms_update_form.values.actual_cost} onChange={evms_update_form.handleChange} type="number" min="1" required />
 
                                     </CCol>
                                     {/**estimate at completion */}
                                     <CCol lg="6" md="6" sm="12" className="mb-2">
-                                        <CLabel className="custom-label-5" htmlFor="estAtCompltn">
+                                        <CLabel className="custom-label-5" htmlFor="estimate_at_completion">
                                             Estimate at completion
                                         </CLabel>
-                                        <CInput className="custom-forminput-6" name="estAtCompltn" id="estAtCompltn" />
+                                        <CInput className="custom-forminput-6" name="estimate_at_completion" id="estimate_at_completion" type="number" min="1" value={evms_update_form.values.estimate_at_completion} onChange={evms_update_form.handleChange} required />
 
                                     </CCol>
 
                                     {/**estimate to completion */}
                                     <CCol lg="6" md="6" sm="12" className="mb-2">
-                                        <CLabel className="custom-label-5" htmlFor="estToCompltn">
+                                        <CLabel className="custom-label-5" htmlFor="estimate_to_completion">
                                             Estimate to completion
                                         </CLabel>
-                                        <CInput className="custom-forminput-6" name="estToCompltn" id="estToCompltn" />
+                                        <CInput className="custom-forminput-6" name="estimate_to_completion" id="estimate_to_completion" type="number" min="1" value={evms_update_form.values.estimate_to_completion} onChange={evms_update_form.handleChange} required />
 
                                     </CCol>
                                     {/**variance at completion */}
 
                                     <CCol lg="6" md="6" sm="12" className="mb-2">
-                                        <CLabel className="custom-label-5" htmlFor="varAtCompltn">
+                                        <CLabel className="custom-label-5" htmlFor="variance_at_completion">
                                             Variance at completion
                                         </CLabel>
-                                        <CInput className="custom-forminput-6" name="varAtCompltn" id="varAtCompltn" />
+                                        <CInput className="custom-forminput-6" name="variance_at_completion" id="variance_at_completion"  type="number" min="0" value={evms_update_form.values.variance_at_completion} onChange={evms_update_form.handleChange} required/>
 
                                     </CCol>
                                     {/**budget at completion */}
 
                                     <CCol lg="6" md="6" sm="12" className="mb-2">
-                                        <CLabel className="custom-label-5" htmlFor="budgetAtCompletion">
+                                        <CLabel className="custom-label-5" htmlFor="budget_at_completion">
                                             Budget at completion
                                         </CLabel>
-                                        <CInput className="custom-forminput-6" name="budgetAtCompletion" id="budgetAtCompletion" />
+                                        <CInput className="custom-forminput-6" name="budget_at_completion" id="budget_at_completion" type="number" value={evms_update_form.values.budget_at_completion} onChange={evms_update_form.handleChange} required />
 
                                     </CCol>
                                     {/**submit buttons */}
@@ -146,7 +195,7 @@ useEffect(() =>{
                                         <GradeIcon fontSize="inherit" className="fav-button" />
                                     </IconButton>{item.project.task_delivery_order.title + ' / ' + item.project.sub_task}</h4>
                                     <div className="action-button-holders--2">
-                                        <CButton className="edit-project-on" onClick={() => editEVMSForm()}><CIcon name="cil-pencil" className="mr-1" /> Edit</CButton>
+                                        <CButton className="edit-project-on" onClick={() => editEVMSForm(item)}><CIcon name="cil-pencil" className="mr-1" /> Edit</CButton>
                                         <CButton className="view-ongoing-details" ><CIcon name="cil-list-rich" className="mr-1" />View Details</CButton>
                                     </div>
                                 </div>

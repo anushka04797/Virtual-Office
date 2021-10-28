@@ -80,6 +80,7 @@ export const projectsSlice = createSlice({
         temp.forEach((tdo,idx)=>{
           tdo_temp.push({value:tdo.task_delivery_order.title,label:tdo.task_delivery_order.title})
         })
+        console.log('tod',tdo_temp)
         state.tdo_list= tdo_temp
       }
     },

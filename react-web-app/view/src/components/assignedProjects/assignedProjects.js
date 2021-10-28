@@ -30,7 +30,7 @@ const AssignedProjectsDashboard = () => {
                         </CCard>
                     ))}
                               { /**If no wbs */}
- {wbs==undefined? (
+ {wbs==undefined || wbs == 0? (
                         
                        
                              

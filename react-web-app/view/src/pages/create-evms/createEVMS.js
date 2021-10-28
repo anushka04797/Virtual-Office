@@ -30,6 +30,7 @@ const ProjectEVMS = () => {
       e.push({value:item.id,label:item.task_delivery_order.title+'/'+item.sub_task,data:item})
     })
     return e
+   
   })
   console.log("pM projects", projects);
   const dispatch = useDispatch();
@@ -38,7 +39,7 @@ const ProjectEVMS = () => {
   }, [])
 
 
-  const assigneeList = useSelector(state => state.projects.project)
+
 
   const handleChange = (field, value) => {
     switch (field) {
@@ -70,6 +71,28 @@ formCreateEVMS.setFieldValue('planned_value',option.data.planned_value)
 formCreateEVMS.setFieldValue('work_package_number',option.data.work_package_number)
     // setSelectedProjectEndDate(option.planned_delivery_date)
   }
+
+  const reset_form = () => {
+    formCreateEVMS.resetForm()
+    setProjectValue(null);
+
+
+  }
+  const validate_evms_form=(values) =>{
+    const errors ={}
+    if (!values.project) {
+      errors.project = 'Project Selection is required';
+    } 
+    if(!values.earned_value)errors.earned_value="Earned value is required"
+    if(!values.actual_cost)errors.actual_cost="Actual Cost is required"
+    if(!values.estimate_at_completion)errors.estimate_at_completion="Estimate at completion is required"
+    if(!values.estimate_to_completion)errors.estimate_to_completion="Estimate to completion is required"
+    if(!values.variance_at_completion) errors.variance_at_completion="Variance at completion is required"
+    if(!values.budget_at_completion)errors.budget_at_completion="Budget at completion is required"
+    if(!values.planned_value){errors.planned_value="Planned value is required"} 
+    if(!values.planned_hours)errors.planned_hours="Planned hours is required"
+    return errors
+  }
   const create_evms = async () => {
     console.log('values', JSON.stringify(formCreateEVMS.values))
     API.post('evms/create/', formCreateEVMS.values).then((res) => {
@@ -79,25 +102,6 @@ formCreateEVMS.setFieldValue('work_package_number',option.data.work_package_numb
         swal('Created!', 'Successfuly Created', 'success')
       }
     })
-  }
-  const reset_form = () => {
-    formCreateEVMS.resetForm()
-    setProjectValue(null);
-
-
-  }
-  const validate_evms_form=(values) =>{
-    const errors ={}
-    // if(!values.project)errors.project="Project Selection is required"
-    if(!values.earned_value)errors.earned_value="Earned value is required"
-    if(!values.actual_cost)errors.actual_cost="Actual Cost is required"
-    if(!values.estimate_at_completion)errors.estimate_at_completion="Estimate at completion is required"
-    if(!values.estimate_to_completion)errors.estimate_to_completion="Estimate to completion is required"
-    if(!values.variance_at_completion) errors.variance_at_completion="Variance at completion is required"
-    if(!values.budget_at_completion)errors.budget_at_completion="Budget at completion is required"
-    // if(!values.planned_value)errors.planned_value="Planned value is required"
-    // if(!values.planned_hours)errors.planned_hours="Planned hours is required"
-    return errors
   }
   const formCreateEVMS = useFormik({
     initialValues: {
@@ -119,7 +123,11 @@ formCreateEVMS.setFieldValue('work_package_number',option.data.work_package_numb
     validate:validate_evms_form,
     onSubmit: create_evms
   })
-
+  const handleKeyPress = (event) => {
+    if(event.key === 'Enter'){
+      create_evms(formCreateEVMS.values)
+    }
+  }
   return (
     <>
       <CContainer>
@@ -135,13 +143,13 @@ formCreateEVMS.setFieldValue('work_package_number',option.data.work_package_numb
                   <CRow>
                     {/**Project Name */}
                     <div className="col-lg-12 mb-3">
-                      <CLabel className="custom-label-5" htmlFor="project">
+                      <CLabel className="custom-label-5" htmlFor="projectName">
                         Project *
                       </CLabel>
                       <Select
                         closeMenuOnSelect={true}
-                        aria-labelledby="project"
-                        id="project"
+                        aria-labelledby="projectName"
+                        id="projectName"
                         // getOptionLabel={option => option.task_delivery_order.title + " / " + option.sub_task}
                         // getOptionValue={option => option.id}
                         placeholder="Select a project"
@@ -151,7 +159,7 @@ formCreateEVMS.setFieldValue('work_package_number',option.data.work_package_numb
                         // onChange={(value) => handleChange("projects", value)}
                         onChange={getAssigneeList}
                         classNamePrefix="custom-forminput-6"
-                        required
+                      
                         options={projects}
                         styles={colourStyles}
                       />
@@ -238,7 +246,7 @@ formCreateEVMS.setFieldValue('work_package_number',option.data.work_package_numb
                       <CLabel className="custom-label-5" htmlFor="planned_hours">
                         Planned Hours
                       </CLabel>
-                      <CInput className="custom-forminput-6" name="planned_hours" id="planned_hours" type="number" value={formCreateEVMS.values.planned_hours} onChange={formCreateEVMS.handleChange} />
+                      <CInput className="custom-forminput-6" name="planned_hours" id="planned_hours" type="number" min="1" value={formCreateEVMS.values.planned_hours} onChange={formCreateEVMS.handleChange} />
                       {/**Error show */}
                       {formCreateEVMS.errors.planned_hours && <p className="error">{formCreateEVMS.errors.planned_hours}</p>}
                     </div>
@@ -264,7 +272,7 @@ formCreateEVMS.setFieldValue('work_package_number',option.data.work_package_numb
                     {/**submit buttons */}
                     <div className="col-md-12">
                       <div className="project-form-button-holders mt-3">
-                        <CButton className="create-btn-prjct create-prjct" onClick={formCreateEVMS.handleSubmit}>Create EVMS</CButton>
+                        <CButton className="create-btn-prjct create-prjct" onClick={formCreateEVMS.handleSubmit} >Create EVMS</CButton>
                         <CButton className="create-btn-prjct cancel-prjct" onClick={reset_form}>Cancel</CButton>
                       </div>
                     </div>

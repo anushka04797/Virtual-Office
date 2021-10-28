@@ -172,9 +172,8 @@ const OngoingProjectDetails = () => {
             <div className="container">
                 <h4 className="dash-header">Ongoing Projects({Array.from(projects).length})</h4>
                 <div className="row">
-                    <div className="col-md-10 offset-md-1 col-sm-12 col-xs-12 mt-1">
-                        {projects != undefined && Array.from(projects).map((project, idx) => (
-                        <CCard className="card-ongoing-project">
+                    <div className="col-md-10  col-sm-12 col-xs-12 mt-1">
+                        {projects != undefined && Array.from(projects).map((project, idx) => (<CCard className="card-ongoing-project">
                             <CCardBody className="details-project-body" key={idx}>
                                 <h4 className="ongoing-card-header">
                                     <IconButton aria-label="favourite" disabled size="medium" >
