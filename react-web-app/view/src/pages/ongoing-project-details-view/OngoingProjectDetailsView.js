@@ -328,8 +328,8 @@ const OngoingDetailsView = () => {
                                 </IconButton>
                                 {project != undefined ? project.project.task_delivery_order.title : ''}
                             </h4>
-                            <CButton className="edit-ongoing-project-title" variant='ghost' onClick={(e) => radioHandler(1, 0)}><CIcon name="cil-pencil" className="mr-1 pen-icon" /></CButton>
-                        </div>) : null}
+                            {has_group('pm') && <CButton className="edit-ongoing-project-title" variant='ghost' onClick={(e) => radioHandler(1, 0)}><CIcon name="cil-pencil" className="mr-1 pen-icon" /></CButton>}
+                        </div>) : <></>}
                 {/**header portion */}
 
 
@@ -396,12 +396,12 @@ const OngoingDetailsView = () => {
                                         </div>
                                     </div>
                                     {/**ACTION BUTTONS !!!!!!!!!! */}
-                                    <div className="col-md-12 mt-2 mb-2">
+                                    {has_group('pm') && <div className="col-md-12 mt-2 mb-2">
                                         <div className="project-actions">
                                             <CButton className="edit-project-ongoing-task" onClick={() => editInfoForm(subtask)} ><CIcon name="cil-pencil" className="mr-1" /> Edit </CButton>
                                             <CButton type="button" onClick={() => delete_subtask(project.project.work_package_index)} className="delete-project-2"><CIcon name="cil-trash" className="mr-1" /> Delete</CButton>
                                         </div>
-                                    </div>
+                                    </div>}
                                 </CCardBody>
                             </CCard>))}
                     </div>
