@@ -91,6 +91,12 @@ const Register = () => {
     validate: validateSignUpForm,
     onSubmit: sign_up
   })
+  
+  const handleKeyPress=(event)=>{
+    if(event.key == 'Enter'){
+      sign_up(formSignUp.values)
+    }
+  }
   return (
     <>
       <div className="register-page">
@@ -225,6 +231,7 @@ const Register = () => {
                           value={formSignUp.values.confirm_pass}
                           onChange={formSignUp.handleChange}
                           className="custom-formgroup-2"
+                          onKeyPress={handleKeyPress}
                         />
                         <img className="pwd-container-img"
                           title={isRevealConfPwd ? "Hide password" : "Show password"}

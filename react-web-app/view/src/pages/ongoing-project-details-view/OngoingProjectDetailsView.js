@@ -126,22 +126,27 @@ const OngoingDetailsView = () => {
 
     const handle_tdo_title_change = (id) => {
         console.log({ title: tdo })
-        API.put('project/change-tdo-title/' + id + '/', { title: tdo }).then((res) => {
-            console.log('rs', res.data)
-            if (res.data.success == 'True') {
-                setStatus(0)
-                setTitleStatus(0)
-                // let temp = project
-                // temp.project.task_delivery_order = res.data.data
-                // setProject(temp)
-                dispatch(fetchProjectsThunk(localStorage.getItem(USER_ID)))
-                initialize()
-                swal('Updated', 'Task Delivery Order name has been updated', 'success')
-            }
-        }).catch(err => {
-            console.log(err)
-            swal('Failed', 'Proccess Failed', 'error')
-        })
+        if(tdo.length>0){
+            API.put('project/change-tdo-title/' + id + '/', { title: tdo }).then((res) => {
+                console.log('rs', res.data)
+                if (res.data.success == 'True') {
+                    setStatus(0)
+                    setTitleStatus(0)
+                    // let temp = project
+                    // temp.project.task_delivery_order = res.data.data
+                    // setProject(temp)
+                    dispatch(fetchProjectsThunk(localStorage.getItem(USER_ID)))
+                    initialize()
+                    swal('Updated', 'Task Delivery Order name has been updated', 'success')
+                }
+            }).catch(err => {
+                console.log(err)
+                swal('Failed', 'Proccess Failed', 'error')
+            })
+        }
+        else{
+            swal('Invalid!','Task delivery order name can not be empty','warning')
+        }
     }
     const handleKeyPress=(event)=>{
         if(event.key === 'Enter'){
