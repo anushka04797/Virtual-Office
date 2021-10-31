@@ -19,8 +19,8 @@ const SignupSchema = Yup.object().shape({
     .min(2, 'Too Short!')
     .max(50, 'Too Long!')
     .required('Required'),
-  last_name: Yup.string()
-    .min(2, 'Too Short!')
+  password: Yup.string()
+    .min(8, 'Too Short!')
     .max(50, 'Too Long!')
     .required('Required'),
   email: Yup.string().email('Invalid email').required('Required'),
@@ -38,7 +38,8 @@ const Register = () => {
     const errors = {};
     if (!values.first_name) errors.first_name = "Name is required!"
     if (!values.email) errors.email = "Email is required!"
-    if (!values.password || String(values.password).length<8) errors.password = "Password is required!"
+    if (String(values.password).length<8) errors.password = "Password is too short"
+    if (!values.password) errors.password = "Password is required!"
     if (values.password != values.confirm_pass) errors.confirm_pass = "Confirm your password"
     return errors;
   }
@@ -86,6 +87,7 @@ const Register = () => {
       confirm_pass: ''
     },
     //validationSchema:{SignupSchema},
+    // validationSchema: {SignupSchema},
     validateOnChange: true,
     validateOnBlur: true,
     validate: validateSignUpForm,

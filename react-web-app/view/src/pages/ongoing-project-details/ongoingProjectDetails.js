@@ -12,6 +12,7 @@ import { BASE_URL, USER_ID } from '../../Config';
 import { API } from '../../Config';
 import swal from 'sweetalert'
 import { fetchProjectsThunk } from '../../store/slices/ProjectsSlice';
+import { has_group } from '../../helper';
 
 const OngoingProjectDetails = () => {
     let history = useHistory();
@@ -355,7 +356,7 @@ const OngoingProjectDetails = () => {
                                 }
                                 <div className="ongoing-action-card-buttons">
                                     <CButton className="view-ongoing-details" onClick={() => history.push({ pathname: '/dashboard/Projects/ongoing-projects/details/' + project.project.work_package_number, state: { project: project } })}><CIcon name="cil-list-rich" className="mr-1" />View Details</CButton>
-                                    <CButton type="button" onClick={()=>{mark_project_completed(project.project.work_package_number)}} className="mark-ongoing-completed"><CIcon name="cil-check-alt" className="mr-1" />Mark as Completed</CButton>
+                                    {has_group('pm') && <CButton type="button" onClick={()=>{mark_project_completed(project.project.work_package_number)}} className="mark-ongoing-completed"><CIcon name="cil-check-alt" className="mr-1" />Mark as Completed</CButton>}
                                 </div>
                             </CCardBody>
 
