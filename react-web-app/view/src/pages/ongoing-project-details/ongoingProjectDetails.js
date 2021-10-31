@@ -48,6 +48,7 @@ const OngoingProjectDetails = () => {
     const animatedComponents = makeAnimated();
     useEffect(() => {
         console.log('projects', projects)
+        dispatch(fetchProjectsThunk(localStorage.getItem(USER_ID)))
     }, [])
     const mark_project_completed = (id) => {
         swal({
@@ -173,8 +174,8 @@ const OngoingProjectDetails = () => {
                 <h4 className="dash-header">Ongoing Projects({Array.from(projects).length})</h4>
                 <div className="row">
                     <div className="col-md-10  col-sm-12 col-xs-12 mt-1">
-                        {projects != undefined && Array.from(projects).map((project, idx) => (<CCard className="card-ongoing-project">
-                            <CCardBody className="details-project-body" key={idx}>
+                        {projects != undefined && Array.from(projects).map((project, idx) => (<CCard  key={idx} className="card-ongoing-project">
+                            <CCardBody className="details-project-body">
                                 <h4 className="ongoing-card-header">
                                     <IconButton aria-label="favourite" disabled size="medium" >
                                         <GradeIcon fontSize="inherit" className="fav-button" />

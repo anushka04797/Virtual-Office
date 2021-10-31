@@ -74,15 +74,15 @@ export const projectsSlice = createSlice({
       //state.status = 'succeeded'
       // Add any fetched posts to the array
       state.pm_projects = action.payload
-      if(action.payload.length>0){
-        let temp = action.payload.filter((value, index, array) => array.findIndex((t) => t.task_delivery_order.id === value.task_delivery_order.id) === index); 
-        let tdo_temp=[]
-        temp.forEach((tdo,idx)=>{
-          tdo_temp.push({value:tdo.task_delivery_order.title,label:tdo.task_delivery_order.title})
-        })
-        console.log('tod',tdo_temp)
-        state.tdo_list= tdo_temp
-      }
+      // if(action.payload.length>0){
+      //   let temp = action.payload.filter((value, index, array) => array.findIndex((t) => t.task_delivery_order.id === value.task_delivery_order.id) === index); 
+      //   let tdo_temp=[]
+      //   temp.forEach((tdo,idx)=>{
+      //     tdo_temp.push({value:tdo.task_delivery_order.title,label:tdo.task_delivery_order.title})
+      //   })
+      //   console.log('tod',tdo_temp)
+      //   state.tdo_list= tdo_temp
+      // }
     },
   }
 })
