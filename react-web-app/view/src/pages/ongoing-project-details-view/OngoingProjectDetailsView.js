@@ -143,6 +143,11 @@ const OngoingDetailsView = () => {
             swal('Failed', 'Proccess Failed', 'error')
         })
     }
+    const handleKeyPress=(event)=>{
+        if(event.key === 'Enter'){
+            handle_tdo_title_change(project.project.task_delivery_order.id)
+        }
+    }
     const handleAssigneeChange = (value,actionMeta) => {
         if(actionMeta.action=='select-option'){
             console.log('selected assignee',value)
@@ -328,7 +333,7 @@ const OngoingDetailsView = () => {
                 {status === 1 ? (
                     <div className="card-header-portion-ongoing">
                         <CForm>
-                            <CInput value={tdo} onChange={(event) => setTdo(event.target.value)} className="custom-forminput-6" type="text" />
+                            <CInput onKeyPress={handleKeyPress} value={tdo} onChange={(event) => setTdo(event.target.value)} className="custom-forminput-6" type="text" />
                         </CForm>
                         <div>
                             <CButton disabled={tdo.length > 0 ? false : true} type="button" variant="ghost" className="confirm-name" onClick={(e) => handle_tdo_title_change(project.project.task_delivery_order.id)}><CIcon name="cil-check-circle" className="mr-1 tick" size="xl" /></CButton>
