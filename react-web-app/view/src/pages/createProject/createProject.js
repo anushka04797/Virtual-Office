@@ -39,7 +39,11 @@ const CreateNewProject = () => {
     }
     else if(actionMeta.action == 'clear'){
       setSelectedTDO(null)
+      setSelectedSubTask(null)
+      setWorkPackageNumber(null)
       formCreateProject.setFieldValue('task_delivery_order','')
+      formCreateProject.setFieldValue('sub_task','')
+      formCreateProject.setFieldValue('work_package_number','')
     }
   };
   const handleTDOInputChange = (inputValue, actionMeta) => {
@@ -67,10 +71,13 @@ const CreateNewProject = () => {
   function get_sub_tasks(tdo){
     let temp = []
     projects.forEach((project,idx)=>{
-      if(project.task_delivery_order.title == tdo){
-        temp.push({value:project.sub_task,label:project.sub_task})
-      }
+      project.subtasks.forEach((subtask,idx)=>{
+        if(subtask.task_delivery_order.title == tdo){
+          temp.push({value:subtask.sub_task,label:subtask.sub_task})
+        }
+      })
     })
+    console.log('subtasks',temp)
     return temp.filter((value, index, array) => array.findIndex((t) => t.sub_task === value.sub_task) === index)
   }
   const handleSubTaskChange=(newValue,actionMeta)=>{
@@ -100,9 +107,11 @@ const CreateNewProject = () => {
   function get_work_packages(tdo){
     let temp = []
     projects.forEach((project,idx)=>{
-      if(project.task_delivery_order.title == tdo){
-        temp.push({value:project.work_package_number,label:project.work_package_number})
-      }
+      project.subtasks.forEach((subtask,idx)=>{
+        if(subtask.task_delivery_order.title == tdo){
+          temp.push({value:subtask.work_package_number,label:subtask.work_package_number})
+        }
+      })
     })
     return temp.filter((value, index, array) => array.findIndex((t) => t.work_package_number === value.work_package_number) === index)
   }
@@ -339,14 +348,14 @@ const CreateNewProject = () => {
                         <CLabel className="custom-label-5">
                           Planned hr(s)
                         </CLabel>
-                        <CInput id="planned_hours" name="planned_hours" value={formCreateProject.values.planned_hours} onChange={formCreateProject.handleChange} className="custom-forminput-6"></CInput>
+                        <CInput id="planned_hours" name="planned_hours" value={formCreateProject.values.planned_hours} onChange={(event)=>{formCreateProject.setFieldValue('planned_hours',event.target.value); formCreateProject.setFieldValue('remaining_hours',event.target.value)}} className="custom-forminput-6"></CInput>
                       </div>
                       {/**remaining hours */}
                       <div className="col-lg-4 mb-3">
                         <CLabel className="custom-label-5">
                           Remaining hr(s)
                         </CLabel>
-                        <CInput id="remaining_hours" name="remaining_hours" value={formCreateProject.values.remaining_hours} onChange={formCreateProject.handleChange} className="custom-forminput-6"></CInput>
+                        <CInput id="remaining_hours" name="remaining_hours" value={formCreateProject.values.planned_hours} className="custom-forminput-6" readOnly/>
                       </div>
                       {/**submit buttons */}
                       <div className="col-md-12">
