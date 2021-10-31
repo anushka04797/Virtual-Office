@@ -20,6 +20,7 @@ export const fetchEvmsThunk = createAsyncThunk('evms/fetchEvmsThunk', async (use
     console.log("EVMS for PM", response)
     return response.data
 })
+
 export const evmsSlice = createSlice({
     name: 'evmsList',
     initialState,

@@ -9,6 +9,8 @@ import { API, BASE_URL, USER_ID } from "../../Config";
 import { CChart, CChartLine } from '@coreui/react-chartjs';
 import { useSelector,useDispatch } from 'react-redux';
 import { useFormik } from 'formik';
+import { fetchEvmsThunk } from '../../store/slices/EvmsSlice';
+import swal from 'sweetalert';
 
 const ViewEvms = () => {
     const [visible, setVisible] = useState(false);
@@ -17,21 +19,32 @@ const ViewEvms = () => {
     const dispatch = useDispatch();
     let history=useHistory();
     const evmsList = useSelector(state => state.evmsList.data)
-    const validate_evms_update =(values) =>{
-        const errors ={}
-        if(!values.earned_value) errors.earned_value="Earned value is required"
-        if(!values.actual_cost)errors.actual_cost="Actual cost is required"
-        if(!values.estimate_at_completion)errors.estimate_at_completion="Estimate at completion is required"
-        if(!values.estimate_to_completion)errors.estimate_to_completion="Estimate to completion is required"
-        if(!values.variance_at_completion) errors.variance_at_completion="Variance at completion is required"
-        if(!values.budget_at_completion)errors.budget_at_completion="Budget at completion required"
-   return errors;
-    }
+//     const validate_evms_update =(values) =>{
+//         const errors ={}
+//         if(!values.earned_value) errors.earned_value="Earned value is required"
+//         if(!values.actual_cost)errors.actual_cost="Actual cost is required"
+//         if(!values.estimate_at_completion)errors.estimate_at_completion="Estimate at completion is required"
+//         if(!values.estimate_to_completion)errors.estimate_to_completion="Estimate to completion is required"
+//         if(!values.variance_at_completion) errors.variance_at_completion="Variance at completion is required"
+//         if(!values.budget_at_completion)errors.budget_at_completion="Budget at completion required"
+//    return errors;
+//     }
     const updateEvms =(values)=>{
-        API.put('evms/update/')
+        API.put('evms/update/'+values.id+'/',values).then((res)=>{
+            console.log(res)
+            if(res.status==200 && res.data.success == 'True'){
+                dispatch(fetchEvmsThunk(localStorage.getItem(USER_ID)))
+                setVisible(false)
+                swal('Updated!','EVMS has been updated','success')
+            }
+            else{
+                swal('Error','There was a problem updating','warning')
+            }
+        })
     }
     const evms_update_form = useFormik({
         initialValues:{
+            id:"",
             earned_value:"",
             actual_cost:"",
             estimate_at_completion:"",
@@ -41,9 +54,10 @@ const ViewEvms = () => {
             planned_value:"",
             planned_hours:""
  },
+ validateOnBlur:true,
  validateOnChange:true,
- validate:validate_evms_update,
- onsubmit:updateEvms
+//  validate:validate_evms_update,
+ onSubmit:updateEvms
     })
  
     const editEVMSForm = (item) => {
@@ -51,7 +65,7 @@ const ViewEvms = () => {
         setProjectValue(item?.project.sub_task);
         setEvmsId(item?.id);
         evms_update_form.setValues({
-
+             id:item?.id,
             earned_value:item?.earned_value,
             actual_cost:item?.actual_cost,
             estimate_at_completion:item?.estimate_at_completion,
@@ -115,14 +129,14 @@ useEffect(() =>{
                                         <CLabel className="custom-label-5" htmlFor="planned_hours">
                                             Planned Hours
                                         </CLabel>
-                                        <CInput className="custom-forminput-6" name="planned_hours" id="planned_hours"  value={evms_update_form.values.planned_hours} onChange={evms_update_form.handleChange} type="number" min="1" required/>
+                                        <CInput className="custom-forminput-6" name="planned_hours" id="planned_hours"  value={evms_update_form.values.planned_hours} onChange={evms_update_form.handleChange} type="number" min="0" required/>
                                     </CCol>
                                     {/**Earned Value */}
                                     <CCol lg="6" md="6" sm="12" className="mb-2">
                                         <CLabel className="custom-label-5" htmlFor="earned_value">
                                             Earned Value
                                         </CLabel>
-                                        <CInput className="custom-forminput-6" name="earned_value" id="earned_value" value={evms_update_form.values.earned_value} onChange={evms_update_form.handleChange} required  type="number" min="1"/>
+                                        <CInput className="custom-forminput-6" name="earned_value" id="earned_value" value={evms_update_form.values.earned_value} onChange={evms_update_form.handleChange} required  type="number" min="0"/>
 
                                     </CCol>
                                     {/**Actual Cost */}
@@ -130,7 +144,7 @@ useEffect(() =>{
                                         <CLabel className="custom-label-5" htmlFor="actual_cost">
                                             Actual Cost
                                         </CLabel>
-                                        <CInput className="custom-forminput-6" name="actual_cost" id="actual_cost" value={evms_update_form.values.actual_cost} onChange={evms_update_form.handleChange} type="number" min="1" required />
+                                        <CInput className="custom-forminput-6" name="actual_cost" id="actual_cost" value={evms_update_form.values.actual_cost} onChange={evms_update_form.handleChange} type="number" min="0" required />
 
                                     </CCol>
                                     {/**estimate at completion */}
@@ -156,7 +170,7 @@ useEffect(() =>{
                                         <CLabel className="custom-label-5" htmlFor="variance_at_completion">
                                             Variance at completion
                                         </CLabel>
-                                        <CInput className="custom-forminput-6" name="variance_at_completion" id="variance_at_completion"  type="number" min="0" value={evms_update_form.values.variance_at_completion} onChange={evms_update_form.handleChange} required/>
+                                        <CInput className="custom-forminput-6" name="variance_at_completion" id="variance_at_completion"  type="number" min="0" value={Math.abs(evms_update_form.values.budget_at_completion - evms_update_form.values.estimate_at_completion)} onChange={evms_update_form.handleChange} readOnly />
 
                                     </CCol>
                                     {/**budget at completion */}
@@ -171,7 +185,7 @@ useEffect(() =>{
                                     {/**submit buttons */}
                                     <CCol md="12">
                                         <div className="project-form-button-holders mt-3">
-                                            <CButton className="profile-form-btn update-profile">
+                                            <CButton className="profile-form-btn update-profile" onClick={evms_update_form.handleSubmit}>
                                                 Update Info
                                             </CButton>
                                             <CButton className="profile-form-btn cancel-update" onClick={() => setVisible(!visible)} type="reset">
@@ -253,7 +267,7 @@ useEffect(() =>{
                                         <h5 className="evms-info-view child"><span className="info-header--evms">planned hours : </span>{item.project.planned_hours}</h5>
                                         <h5 className="evms-info-view child"><span className="info-header--evms">estimate at completion : </span>{item.estimate_at_completion}</h5>
                                         <h5 className="evms-info-view child"><span className="info-header--evms">estimation to completion : </span>{item.estimate_to_completion}</h5>
-                                        <h5 className="evms-info-view child"><span className="info-header--evms">variance at completion : </span>{item.variance_at_completion}</h5>
+                                        <h5 className="evms-info-view child"><span className="info-header--evms">variance at completion : </span>{Math.abs(item?.budget_at_completion-item?.estimate_at_completion)}</h5>
 
                                         <h5 className="evms-info-view child"><span className="info-header--evms">budget at completion : </span>{item.budget_at_completion}</h5>
                                         <h5 className="evms-info-view child"><span className="info-header--evms">date created : </span>{item.date_created}</h5>
