@@ -84,6 +84,7 @@ export async function JsonClient(endpoint, { body, ...customConfig } = {}) {
     headers: {
       ...headers,
       "Authorization": `Bearer ${localStorage.getItem(TOKEN)}`,
+      'Content-Type': 'application/json',
       ...customConfig.headers,
     },
   }
@@ -101,7 +102,7 @@ export async function JsonClient(endpoint, { body, ...customConfig } = {}) {
     }
     else{
       localStorage.clear()
-      window.location.href = '/login'
+      window.location.href = '/'
     }
     throw new Error(response.statusText)
   } catch (err) {
