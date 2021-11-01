@@ -60,7 +60,8 @@ const TheSidebar = () => {
         {/**Projects */}
         <CSidebarNavDropdown icon="cib-ghost" name="Projects" className="vo-navItem">
           {has_group('pm') && <CSidebarNavItem to="/dashboard/Projects/create-new-project" name="Create New Project" className="vo-navItem" ></CSidebarNavItem>}
-          <CSidebarNavItem to="/dashboard/Projects/ongoing-projects" name="Ongoing Projects" className="vo-navItem"  ></CSidebarNavItem>
+          {has_group('pm') && <CSidebarNavItem to ="/dashboard/Projects/my-projects" name="My Projects" className="vo-navItem"></CSidebarNavItem>}
+          <CSidebarNavItem to="/dashboard/Projects/assigned-projects" name="Assigned Projects" className="vo-navItem"  ></CSidebarNavItem>
           <CSidebarNavItem to="/dashboard/Projects/completed-projects" name="Completed Projects" className="vo-navItem" ></CSidebarNavItem>
 
 

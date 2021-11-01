@@ -116,6 +116,7 @@ margin-bottom: 30px;
         color:rgb(23,43,77);
         font-weight: 400;
         line-height: 20px;
+        text-transform: capitalize;
     }
     .tiny-header2{
         
