@@ -7,3 +7,15 @@
 .bgOcuh {
     padding-right: 0 !important;
 }
+.wbs-reporter-name{
+    text-transform: capitalize;
+}
+.task-list-show-item{
+font-size: 14px;
+line-height: 20px;
+padding-left:0px;
+
+}
+.task-list-show{
+
+}

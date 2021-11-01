@@ -22,7 +22,7 @@ const AssignedProjectsDashboard = () => {
                     {wbs!=undefined && wbs.slice(0, 3).map((item, idx) => (
                         <CCard className="project-card1">
                             <CCardBody>
-                                <h6 className="id-no1">project id: #{item.project.work_package_number}</h6>
+                                <h6 className="id-no1">#Work Package Number: {item.project.work_package_number}</h6>
                                 <h5 className="card-details1"><span className="p-header-3">Task Title:</span> {item.project.task_title}</h5>
                                 <h5 className="card-details1"><span className="p-header-3">Due Date :</span> {item.project.planned_delivery_date}</h5>
                             </CCardBody>

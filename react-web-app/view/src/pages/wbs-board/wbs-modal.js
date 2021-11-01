@@ -8,7 +8,8 @@ import swal from 'sweetalert';
 const WbsModal = (props) => {
     console.log('props data: ', props.data)
     // const modalData = useSelector(state => state.wbs.data)
-
+const[deliverableView,setDeliverableView] =  useState(true);
+const[hrsWorked,setHrsWorked] = useState(true);
     const wbsStatusArray = [{
         "title": "To Do",
         "status": 1
@@ -52,7 +53,8 @@ const WbsModal = (props) => {
             progress: props.data.progress,
             comments: props.data.comments,
             deliverable: props.data.deliverable,
-            date_updated: ''
+            date_updated: '',
+            actual_work_done:''
         },
         validateOnChange: true,
         validateOnBlur: true,
@@ -111,18 +113,31 @@ const WbsModal = (props) => {
                                         <CInput id="end_date" name="end_date" type="date" className="custom-forminput-5" onChange={formWbsUpdate.handleChange} value={formWbsUpdate.values.end_date}></CInput>
                                     </div>
                                 </CRow>
+                                {/*Actual work today */}
+                                <CRow>
+                                    <div className="col-lg-12 mb-3">
+                                        <CLabel className="custom-label-wbs5">Actual Work Today</CLabel>
+                                        <CInput id="actual_work_done" type="text" name="actual_work_done" className="custom-forminpput-5" onChange={(e) =>{
+                                            formWbsUpdate.setFieldValue('actual_work_done',e.target.value);if(e.target.value == null || e.target.value.length== 0){setHrsWorked(true)} else{setHrsWorked(false)}} 
+                                        }value={formWbsUpdate.values.actual_work_done}></CInput>
+                                    </div>
+                                </CRow>
                                 <CRow>
                                     <div className="col-lg-6 mb-3">
                                         <CLabel className="custom-label-wbs5">
                                             Hours worked
                                         </CLabel>
-                                        <CInput id="hours_worked" name="hours_worked" type="number" className="custom-forminput-5" onChange={formWbsUpdate.handleChange} value={formWbsUpdate.values.hours_worked}></CInput>
+                                        <CInput id="hours_worked" name="hours_worked" type="number" className="custom-forminput-5" onChange={formWbsUpdate.handleChange} value={formWbsUpdate.values.hours_worked} disabled={hrsWorked}></CInput>
                                     </div>
                                     <div className="col-lg-6 mb-3">
                                         <CLabel className="custom-label-wbs5">
                                             Progress(%)
                                         </CLabel>
-                                        <CInput id="progress" name="progress" type="number" className="custom-forminput-5" onChange={formWbsUpdate.handleChange} value={formWbsUpdate.values.progress}></CInput>
+                                        <CInput id="progress" name="progress" type="number" max="100" className="custom-forminput-5" onChange={(e)=>{formWbsUpdate.setFieldValue('progress',e.target.value); if(e.target.value=='100'){setDeliverableView(false);
+                                         formWbsUpdate.setFieldValue('deliverable',formWbsUpdate.values.deliverable)}else{
+                                            setDeliverableView(true);
+                                            formWbsUpdate.setFieldValue('deliverable',"")
+                                        } }} value={formWbsUpdate.values.progress}></CInput>
                                     </div>
                                 </CRow>
                                 <CRow>
@@ -138,7 +153,7 @@ const WbsModal = (props) => {
                                         <CLabel className="custom-label-wbs5">
                                             Deliverable
                                         </CLabel>
-                                        <CInput id="deliverable" name="deliverable" className="custom-forminput-5" onChange={formWbsUpdate.handleChange} value={formWbsUpdate.values.deliverable}></CInput>
+                                        <CInput id="deliverable" name="deliverable" className="custom-forminput-5" onChange={formWbsUpdate.handleChange} value={formWbsUpdate.values.deliverable} disabled={deliverableView} ></CInput>
                                     </div>
                                 </CRow>
                                 <div>
@@ -156,13 +171,21 @@ const WbsModal = (props) => {
                                     Reporter:
                                     <br></br>
                                     {/* Pial Noman */}
-                                    {props.data.reporter?.first_name != undefined && props.data.reporter.first_name + " " + props.data.reporter.last_name}
+                                   <span className="wbs-reporter-name">{props.data.reporter?.first_name != undefined && props.data.reporter.first_name + " " + props.data.reporter.last_name}</span> 
                                 </p>
                                 <p>
                                     Remaining hours:
                                     <br></br>500
                                     {props.data.reporter?.remaining_hours}
                                 </p>
+                                {/**task list show */}
+                                <div>
+                                    <p>Task List:</p>
+                                    <ol className="task-list-show">
+                                        <li className="task-list-show-item">Task 1</li>
+                                        <li className="task-list-show-item">task 2</li>
+                                    </ol>
+                                </div>
                             </div>
                         </div>
                     </CRow>

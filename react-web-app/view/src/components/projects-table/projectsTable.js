@@ -25,7 +25,7 @@ const ProjectsTableDashboard = () => {
                     {projects != undefined && Array.from(projects).slice(0, 3).map((item, idx) => (
                         <CCard className="project-card1" key={idx}>
                             <CCardBody>
-                                <h6 className="id-no1">Work Package Number: {item.project.work_package_number}</h6>
+                                <h6 className="id-no1">#Work Package Number: {item.project.work_package_number}</h6>
                                 <h5 className="card-details1"><span className="p-header-3">Project Name: </span> {item.project.sub_task}</h5>
                                 {/*<h5 className="card-details1"><span className="p-header-3">Lead Name : </span>Pial Noman</h5>*/}
                             </CCardBody>
