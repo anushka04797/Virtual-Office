@@ -1,8 +1,10 @@
-import { CCardBody, CCard, CForm, CButton, CInput, CBadge, CModal, CModalHeader, CModalTitle, CModalBody, CContainer, CRow, CCol, CLabel } from '@coreui/react'
+
 import React, { useEffect, useState } from 'react';
+import { CCardBody, CCard, CForm, CButton, CInput, CBadge, CModal, CModalHeader, CModalTitle, CModalBody, CContainer, CRow, CCol, CLabel } from '@coreui/react'
+
 import GradeIcon from '@material-ui/icons/Grade';
 import IconButton from '@material-ui/core/IconButton';
-import './OngoingProjectDetailsView.css'
+import '../ongoing-project-details-view/OngoingProjectDetailsView.css';
 import CIcon from '@coreui/icons-react';
 import Select from "react-select";
 import Creatable from 'react-select/creatable';
@@ -10,13 +12,12 @@ import { useHistory, useLocation } from 'react-router';
 import { API, BASE_URL, USER_ID } from '../../Config';
 import swal from 'sweetalert';
 import { useDispatch } from 'react-redux'
-import { fetchProjectsThunk } from '../../store/slices/ProjectsSlice';
 import {
     useParams
 } from "react-router-dom";
-import { has_group } from '../../helper';
 import { useFormik } from 'formik';
-const OngoingDetailsView = () => {
+import { fetchProjectsForPMThunk } from '../../store/slices/ProjectsSlice';
+const MyProjectsDetailsView = () =>{
     const { work_package_number } = useParams();
     const dispatch = useDispatch()
     const [status, setStatus] = useState(0);
@@ -83,12 +84,6 @@ const OngoingDetailsView = () => {
         }
         
     }
-    const colourStyles = {
-        // control: (styles, state) => ({ ...styles,height:"35px", fontSize: '14px !important', lineHeight: '1.42857', borderRadius: "8px",borderRadius:".25rem",color:"rgb(133,133,133)",border:state.isFocused ? '2px solid #0065ff' :'inherit'}),
-        option: (provided, state) => ({ ...provided, fontSize: '14px !important' }),
-
-    }
-    
     const initialize = () => {
         API.get('project/details/' + work_package_number + '/').then((res) => {
             if(res.statusText != 'OK'){
@@ -102,6 +97,11 @@ const OngoingDetailsView = () => {
         }).catch(err=>{
             console.log(err)
         })
+    }
+    const colourStyles = {
+        // control: (styles, state) => ({ ...styles,height:"35px", fontSize: '14px !important', lineHeight: '1.42857', borderRadius: "8px",borderRadius:".25rem",color:"rgb(133,133,133)",border:state.isFocused ? '2px solid #0065ff' :'inherit'}),
+        option: (provided, state) => ({ ...provided, fontSize: '14px !important' }),
+
     }
     useEffect(() => {
         API.get('auth/assignee/list/').then((res)=>{
@@ -123,7 +123,6 @@ const OngoingDetailsView = () => {
         }
         console.log('project', project)
     }, [])
-
     const handle_tdo_title_change = (id) => {
         console.log({ title: tdo })
         if(tdo.length>0){
@@ -135,7 +134,7 @@ const OngoingDetailsView = () => {
                     // let temp = project
                     // temp.project.task_delivery_order = res.data.data
                     // setProject(temp)
-                    dispatch(fetchProjectsThunk(localStorage.getItem(USER_ID)))
+                    dispatch(fetchProjectsForPMThunk(localStorage.getItem(USER_ID)))
                     initialize()
                     swal('Updated', 'Task Delivery Order name has been updated', 'success')
                 }
@@ -175,7 +174,7 @@ const OngoingDetailsView = () => {
                 if (willDelete) {
                     API.delete('/project/remove-assignee/' + assignee_id + "/",{data:{project:project_id,assignee:assignee_id}}).then(response => {
                         if (response.data.success == "True") {
-                            dispatch(fetchProjectsThunk(localStorage.getItem(USER_ID)))
+                            dispatch(fetchProjectsForPMThunk(localStorage.getItem(USER_ID)))
                             initialize()
                             swal("Poof! Your selected assignee has been removed!", {
                                 icon: "success",
@@ -207,7 +206,7 @@ const OngoingDetailsView = () => {
                 if (willDelete) {
                     API.delete('/project/subtask/delete/' + work_package_index + "/").then(response => {
                         if (response.data.success == "True") {
-                            dispatch(fetchProjectsThunk(localStorage.getItem(USER_ID)))
+                            dispatch(fetchProjectsForPMThunk(localStorage.getItem(USER_ID)))
                             initialize()
                             swal("Poof! Your selected sub task has been deleted!", {
                                 icon: "success",
@@ -227,10 +226,10 @@ const OngoingDetailsView = () => {
                 }
             });
     }
-    
-    return (
-        <>
-            {project != undefined && <CContainer>
+
+return(
+    <>
+       {project != undefined && <CContainer>
                 {/**Edit ongoing project details starts */}
                 <CModal alignment="center" show={editModal} onClose={editInfoForm}>
                     <CModalHeader onClose={() => setEditModal(!editModal)} closeButton>
@@ -328,7 +327,7 @@ const OngoingDetailsView = () => {
                                 </IconButton>
                                 {project != undefined ? project.project.task_delivery_order.title : ''}
                             </h4>
-                            {has_group('pm') && <CButton className="edit-ongoing-project-title" variant='ghost' onClick={(e) => radioHandler(1, 0)}><CIcon name="cil-pencil" className="mr-1 pen-icon" /></CButton>}
+                           <CButton className="edit-ongoing-project-title" variant='ghost' onClick={(e) => radioHandler(1, 0)}><CIcon name="cil-pencil" className="mr-1 pen-icon" /></CButton>
                         </div>) : <></>}
                 {/**header portion */}
 
@@ -388,7 +387,7 @@ const OngoingDetailsView = () => {
                                             {project != undefined && Array.from(subtask.assignees).map((item, idx) => (
                                                 <div key={idx} className="col-md-4 col-sm-6 col-lg-2">
                                                     <div className="file-attached-ongoing rounded-pill">
-                                                        {has_group('pm') && <CButton type="button" onClick={() => delete_assignee(subtask.id,item.assignee.id)} className="remove-file-ongoing"><img src={"assets/icons/icons8-close-64-blue.png"} className="close-icon-size" /></CButton>}{item.assignee.first_name + ' ' + item.assignee.last_name}
+                                                        <CButton type="button" onClick={() => delete_assignee(subtask.id,item.assignee.id)} className="remove-file-ongoing"><img src={"assets/icons/icons8-close-64-blue.png"} className="close-icon-size" /></CButton>{item.assignee.first_name + ' ' + item.assignee.last_name}
                                                     </div>
                                                 </div>
                                             ))}
@@ -396,18 +395,19 @@ const OngoingDetailsView = () => {
                                         </div>
                                     </div>
                                     {/**ACTION BUTTONS !!!!!!!!!! */}
-                                    {has_group('pm') && <div className="col-md-12 mt-2 mb-2">
+                                   <div className="col-md-12 mt-2 mb-2">
                                         <div className="project-actions">
                                             <CButton className="edit-project-ongoing-task" onClick={() => editInfoForm(subtask)} ><CIcon name="cil-pencil" className="mr-1" /> Edit </CButton>
                                             <CButton type="button" onClick={() => delete_subtask(project.project.work_package_index)} className="delete-project-2"><CIcon name="cil-trash" className="mr-1" /> Delete</CButton>
                                         </div>
-                                    </div>}
+                                    </div>
                                 </CCardBody>
                             </CCard>))}
                     </div>
                 </div>
-            </CContainer>}
-        </>
-    )
+            </CContainer>} 
+    
+    </>
+)
 }
-export default OngoingDetailsView
+export default MyProjectsDetailsView

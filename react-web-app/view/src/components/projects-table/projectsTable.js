@@ -44,7 +44,7 @@ const ProjectsTableDashboard = () => {
               
               }
                 </div>
-                {projects!=undefined && projects.length>3  && <div className="button-holder3"><CButton className="tiny-buttons1" onClick={() => history.push({pathname:'/dashboard/Projects/ongoing-projects'})}>View all</CButton></div>}
+                {projects!=undefined && projects.length>3  && <div className="button-holder3"><CButton className="tiny-buttons1" onClick={() => history.push({pathname:'/dashboard/Projects/assigned-projects'})}>View all</CButton></div>}
              
               
             </div>
