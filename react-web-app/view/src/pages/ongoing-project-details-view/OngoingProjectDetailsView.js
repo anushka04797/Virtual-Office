@@ -23,6 +23,7 @@ const OngoingDetailsView = () => {
     const [project, setProject] = useState()
     const [assignees,setAssignees]=useState([])
     const [assigneeValue,setAssigneeValue]=useState([])
+    const [defaultValue,setDefaultValue]=useState([])
     let location = useLocation()
     let history = useHistory()
     const [titleStatus, setTitleStatus] = useState(1);
@@ -33,27 +34,31 @@ const OngoingDetailsView = () => {
     };
     const [editModal, setEditModal] = useState(false);
     const validateEditForm=(values)=>{
+        console.log('validating values',values)
         const errors={}
         if(!values.sub_task || String(values.sub_task).length<1) errors.task_delivery_order="Task Delivery Order is required"
         return errors
     }
     const edit_project=(values)=>{
         console.log(values)
+        API.put('project/update/'+values.work_package_index+'/',values).then((res)=>{
+            console.log('res',res.data)
+        })
     }
     const editForm=useFormik({
         initialValues: {
             sub_task: "",
             work_package_number: project?.project.work_package_number,
+            work_package_index: '',
             task_title: "",
             estimated_person: "",
-            planned_delivery_date: "",
+            planned_delivery_date: project?.project.planned_delivery_date,
             assignee: [],
             pm: project?.project.pm.id,
             planned_hours: "",
             planned_value: "",
             remaining_hours: "",
-            status:"",
-            date_updated:"",
+            status:project?.project.status,
             sub_task_updated:""
         },
         validateOnBlur:true,
@@ -61,28 +66,42 @@ const OngoingDetailsView = () => {
         validate:validateEditForm,
         onSubmit: edit_project
     })
+    const initialize_default_assignees=(subtask)=>{
+        let dtem=[]
+        let preset_assignees=[]
+        //setDefaultValue([])
+        subtask.assignees.forEach((assignee,idx)=>{
+            dtem.push({value:String(assignee.assignee.id).toString(),label:assignee.assignee.first_name+' '+assignee.assignee.last_name})
+            
+            preset_assignees.push(Number(assignee.assignee.id))
+        })
+        editForm.setFieldValue('assignee',preset_assignees)
+        setDefaultValue(dtem)
+        return preset_assignees
+    }
     const editInfoForm = (subtask) => {
-        console.log(subtask)
         setEditModal(!editModal)
         if(editForm){
+            console.log('assignee in edit form',editForm.values)
             editForm.setValues({
                 sub_task: project?.project.sub_task,
                 work_package_number: project?.project.work_package_number,
+                work_package_index: subtask?.work_package_index,
                 task_title: subtask?.task_title,
                 estimated_person: subtask?Number(subtask.estimated_person):0,
-                planned_delivery_date: "",
-                assignee: [],
+                planned_delivery_date: project?.project.planned_delivery_date,
+                assignee: initialize_default_assignees(subtask),
                 pm: project.project.pm.id,
                 planned_hours: project?.project.planned_hours,
                 planned_value: project?.project.planned_value,
                 remaining_hours: project?.project.remaining_hours,
-                status:"",
-                date_updated:"",
+                status: subtask.status,
                 sub_task_updated:""
             })
         }
         
     }
+    
     const colourStyles = {
         // control: (styles, state) => ({ ...styles,height:"35px", fontSize: '14px !important', lineHeight: '1.42857', borderRadius: "8px",borderRadius:".25rem",color:"rgb(133,133,133)",border:state.isFocused ? '2px solid #0065ff' :'inherit'}),
         option: (provided, state) => ({ ...provided, fontSize: '14px !important' }),
@@ -95,9 +114,9 @@ const OngoingDetailsView = () => {
                 history.push('/dashboard/Projects/ongoing-projects')
             }
             else{
-                console.log('project details', res.data)
                 setProject(res.data.data)
                 setTdo(res.data.data.project.task_delivery_order.title)
+                editForm.setFieldValue('assignee',res.data.ass)
             }
         }).catch(err=>{
             console.log(err)
@@ -105,13 +124,12 @@ const OngoingDetailsView = () => {
     }
     useEffect(() => {
         API.get('auth/assignee/list/').then((res)=>{
-            console.log('assignees',res.data.data)
             let temp=[]
             Array.from(res.data.data).forEach((item,idx)=>{
-              temp.push({value:item.id,label:item.first_name+' '+item.last_name})
+              temp.push({value:item.id.toString(),label:item.first_name+' '+item.last_name})
             })
             setAssignees(temp)
-          })
+        })
         if (location.state != undefined) {
             console.log('project', location.state.project)
             setProject(location.state.project)
@@ -154,13 +172,22 @@ const OngoingDetailsView = () => {
         }
     }
     const handleAssigneeChange = (value,actionMeta) => {
-        if(actionMeta.action=='select-option'){
-            console.log('selected assignee',value)
+        if(actionMeta.action=='select-option' || actionMeta.action == 'remove-value'){
             let temp=[]
             value.forEach((item,idx)=>{
               temp.push(Number(item.value))
             })
+            setDefaultValue(value)
             editForm.setFieldValue('assignee',temp)
+        }
+        else if(actionMeta.action == 'clear'){
+            setDefaultValue(null)
+            editForm.setFieldValue('assignee',[])
+        }
+    }
+    const handleStatusChange=(value,actionMeta)=>{
+        if(actionMeta.action == 'select-option'){
+            editForm.setFieldValue('status',String(value.value).toString())
         }
     }
     const delete_assignee = (project_id,assignee_id) => {
@@ -232,7 +259,7 @@ const OngoingDetailsView = () => {
         <>
             {project != undefined && <CContainer>
                 {/**Edit ongoing project details starts */}
-                <CModal alignment="center" show={editModal} onClose={editInfoForm}>
+                <CModal alignment="center" show={editModal} onClose={()=>{setEditModal(!editModal)}}>
                     <CModalHeader onClose={() => setEditModal(!editModal)} closeButton>
                         <CModalTitle className="modal-title-projects">
                             <span className="edit-profile-form-header">Edit Project Info</span>
@@ -255,7 +282,7 @@ const OngoingDetailsView = () => {
                                     {/**Work Package Number */}
                                     <CCol lg="6" className="mb-2">
                                         <CLabel htmlFor="work_package_number" className="custom-label-5">Work Package Number</CLabel>
-                                        <CInput id="work_package_number" name="work_package_number" type="number" className="custom-forminput-6" min="0" value={editForm.values.work_package_number} onChange={editForm.handleChange}/>
+                                        <CInput readOnly id="work_package_number" name="work_package_number" type="number" className="custom-forminput-6" min="0" value={editForm.values.work_package_number} onChange={editForm.handleChange}/>
                                     </CCol>
                                     {/**Task Title */}
                                     <CCol lg="12" className="mb-2">
@@ -265,13 +292,14 @@ const OngoingDetailsView = () => {
                                     {/**assignees */}
                                     <CCol lg="12" className="mb-2">
                                         <CLabel htmlFor="assignees" className="custom-label-5">Assignee(s)</CLabel>
-                                        <Creatable
+                                        <Select
                                             closeMenuOnSelect={false}
                                             aria-labelledby="assignees"
                                             id="assignees"
                                             placeholder="Select from list or create new"
                                             isClearable
                                             onChange={handleAssigneeChange}
+                                            value={defaultValue}
                                             isMulti
                                             classNamePrefix="custom-forminput-6"
                                             options={assignees}
@@ -301,13 +329,29 @@ const OngoingDetailsView = () => {
                                         <CLabel htmlFor="remaining_hours" className="custom-label-5">Remaining Hours</CLabel>
                                         <CInput id="remaining_hours" name="remaining_hours" type="number" value={editForm.values.remaining_hours} onChange={editForm.handleChange} className="custom-forminput-6" min="0" />
                                     </CCol>
+                                    {/**Planned delivery date */}
+                                    <CCol lg="6" className="mb-2">
+                                        <CLabel htmlFor="planned_hours" className="custom-label-5">Planned Delivery Date</CLabel>
+                                        <CInput id="planned_delivery_date" name="planned_delivery_date" type="date" value={editForm.values.planned_delivery_date} onChange={editForm.handleChange} className="custom-forminput-6"/>
+                                    </CCol>
+                                    {/**status */}
+                                    <CCol lg="6" className="mb-2">
+                                        <CLabel htmlFor="Status" className="custom-label-5">Status</CLabel>
+                                        <Select 
+                                            id="Status"
+                                            name="Status"
+                                            onChange={handleStatusChange}
+                                            className="custom-forminput-6"
+                                            options={[{value:0,label:"On Going"},{value:1,label:"Completed"}]}
+                                        />
+                                    </CCol>
                                     {/**Action buttons */}
                                     <CCol md="12" className="mt-2">
                                         <div className="project-form-button-holders mt-3">
                                             <CButton type="button" className="profile-form-btn update-profile" onClick={editForm.handleSubmit}>
                                                 Update Info
                                             </CButton>
-                                            <CButton className="profile-form-btn cancel-update" onClick={() => editInfoForm(!editModal)} type="reset">
+                                            <CButton className="profile-form-btn cancel-update" onClick={() => setEditModal(!editModal)} type="reset">
                                                 Cancel
                                             </CButton>
                                         </div>

@@ -18,13 +18,25 @@ import CIcon from '@coreui/icons-react'
 import { has_group } from '../helper';
 // sidebar nav config
 import navigation from './_nav'
-
+import { useHistory } from 'react-router';
+import {API} from '../Config'
 const TheSidebar = () => {
   const dispatch = useDispatch()
+  let history=useHistory()
   const show = useSelector(state => state.sidebar.sidebarShow)
   React.useEffect(()=>{
     console.log('has group',has_group('pm'))
   },[])
+  const logout=()=> {
+    API.get('auth/logout/').then((res) => {
+      localStorage.clear()
+      history.push('/')
+    }).catch(err => {
+      localStorage.clear()
+      history.push('/')
+    })
+
+  }
   return (
     <CSidebar colorScheme="light"
       show={show}
@@ -90,7 +102,7 @@ const TheSidebar = () => {
         {/**Shared Docs */}
         <CSidebarNavItem to="/dashboard/shared-documents" name="Shared Documents" icon="cil-folder-open" className="vo-navItem"></CSidebarNavItem>
 
-        <CSidebarNavItem to="/dashboard/profile" name="Logout" icon="cil-account-logout" className="vo-navItem"></CSidebarNavItem>
+        <CSidebarNavItem onClick={logout} name="Logout" icon="cil-account-logout" className="vo-navItem"></CSidebarNavItem>
       </CSidebarNav>
       <CSidebarMinimizer />
     </CSidebar>

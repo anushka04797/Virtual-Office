@@ -73,7 +73,7 @@ const CreateNewProject = () => {
     projects.forEach((project,idx)=>{
       project.subtasks.forEach((subtask,idx)=>{
         if(subtask.task_delivery_order.title == tdo){
-          temp.push({value:subtask.sub_task,label:subtask.sub_task})
+          temp.push({value:subtask.sub_task,label:subtask.sub_task, work_package_number:subtask.work_package_number})
         }
       })
     })
@@ -82,13 +82,29 @@ const CreateNewProject = () => {
   }
   const handleSubTaskChange=(newValue,actionMeta)=>{
     if(actionMeta.action == 'select-option'){
-      console.log('handle sub task change')
+      console.log('sub task',newValue)
       setSelectedSubTask(newValue)
-      formCreateProject.setFieldValue('sub_task',newValue.value)
+      formCreateProject.setValues({
+        task_delivery_order: formCreateProject.values.task_delivery_order,
+        sub_task: newValue.value,
+        work_package_number: newValue.work_package_number,
+        task_title: formCreateProject.values.task_title,
+        estimated_person: formCreateProject.values.estimated_person,
+        planned_delivery_date: formCreateProject.values.planned_delivery_date,
+        assignee: formCreateProject.values.assignees,
+        pm: localStorage.getItem(USER_ID),
+        planned_hours: formCreateProject.values.planned_hours,
+        planned_value: formCreateProject.values.planned_value,
+        remaining_hours: formCreateProject.values.remaining_hours
+      })
+      setWorkPackageNumber({value:newValue.work_package_number, label: newValue.work_package_number})
+      console.log('values',formCreateProject.values)
     }
     else if(actionMeta.action == 'clear'){
       setSelectedSubTask(null)
+      setWorkPackageNumber(null)
       formCreateProject.setFieldValue('sub_task','')
+      formCreateProject.setFieldValue('work_package_number','')
     }
   }
   const handleSubTaskInputChange=(inputValue,actionMeta)=>{
@@ -127,6 +143,7 @@ const CreateNewProject = () => {
       formCreateProject.setFieldValue('work_package_number',String(newValue.value))
     }
     else if(actionMeta.action == 'clear'){
+      setSelectedSubTask(null)
       setWorkPackageNumber(null)
       formCreateProject.setFieldValue('work_package_number','')
     }
@@ -148,6 +165,7 @@ const CreateNewProject = () => {
     }
   }
   const validate_create_project_form = (values) => {
+    console.log('validating values ',values)
     const errors = {}
     if (!values.task_delivery_order) errors.task_delivery_order = "Task Delivery Order is required"
     if (!values.sub_task) errors.sub_task = "Sub Task is required"
@@ -198,7 +216,7 @@ const CreateNewProject = () => {
       console.log('assignees',res.data.data)
       let temp=[]
       Array.from(res.data.data).forEach((item,idx)=>{
-        temp.push({value:item.id,label:item.first_name+' '+item.last_name})
+        temp.push({value:item.id,label:item.first_name+' '+item.last_name,data:item})
       })
       setAssignees(temp)
     })
