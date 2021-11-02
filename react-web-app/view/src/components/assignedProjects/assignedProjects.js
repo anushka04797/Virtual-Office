@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CButton, CCard, CCardBody,CAlert } from '@coreui/react';
+import { CButton, CCard, CCardBody, CAlert } from '@coreui/react';
 import { useDispatch, useSelector } from "react-redux";
 import { useSnackbar } from "notistack";
 import { fetchUserWiseWbsThunk } from '../../store/slices/WbsSlice';
@@ -19,30 +19,30 @@ const AssignedProjectsDashboard = () => {
                 </h3>
 
                 <div className="card-holder1">
-                    {wbs!=undefined && wbs.slice(0, 3).map((item, idx) => (
+                    {wbs != undefined && wbs.slice(0, 3).map((item, idx) => (
                         <CCard className="project-card1">
                             <CCardBody>
-                                <h6 className="id-no1">#Work Package Number: {item.project.work_package_number}</h6>
+                                <h6 className="id-no1">Work Package Number: # {item.project.work_package_number}</h6>
                                 <h5 className="card-details1"><span className="p-header-3">Task Title:</span> {item.project.task_title}</h5>
                                 <h5 className="card-details1"><span className="p-header-3">Due Date :</span> {item.project.planned_delivery_date}</h5>
                             </CCardBody>
 
                         </CCard>
                     ))}
-                              { /**If no wbs */}
- {wbs==undefined || wbs == 0? (
-                        
-                       
-                             
-                        <CAlert className="no-value-show-alert"  color="primary">Currently there are no projects assigned to you</CAlert>     
-                      
-                
-              ):null
-              
-              
-              }
+                    { /**If no wbs */}
+                    {wbs == undefined || wbs == 0 ? (
+
+
+
+                        <CAlert className="no-value-show-alert" color="primary">Currently there are no projects assigned to you</CAlert>
+
+
+                    ) : null
+
+
+                    }
                 </div>
-                {wbs!=undefined && wbs.length>3 && <div className="button-holder3"><CButton className="tiny-buttons1">View all</CButton></div>}
+                {wbs != undefined && wbs.length > 3 && <div className="button-holder3"><CButton className="tiny-buttons1">View all</CButton></div>}
             </div>
 
         </>
