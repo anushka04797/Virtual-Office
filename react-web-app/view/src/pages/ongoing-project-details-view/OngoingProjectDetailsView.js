@@ -42,7 +42,12 @@ const OngoingDetailsView = () => {
     const edit_project=(values)=>{
         console.log(values)
         API.put('project/update/'+values.work_package_index+'/',values).then((res)=>{
-            console.log('res',res.data)
+            console.log(res.data)
+            if(res.status==200 && res.data.success=='True'){
+                setEditModal(false)
+                initialize()
+                swal('Updated!','Task Details is updated','success')
+            }
         })
     }
     const editForm=useFormik({
