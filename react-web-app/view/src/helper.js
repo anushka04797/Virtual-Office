@@ -11,3 +11,8 @@ export const has_group=(group)=>{
     }
     return false
 }
+export function arrayRemoveItem(arr, value) { 
+    return arr.filter(function(ele){ 
+        return ele != value; 
+    });
+}

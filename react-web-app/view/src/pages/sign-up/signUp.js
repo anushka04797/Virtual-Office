@@ -39,7 +39,8 @@ const Register = () => {
     if (!values.first_name) errors.first_name = "Name is required!"
     if (!values.email) errors.email = "Email is required!"
     if (String(values.password).length<8) errors.password = "Password is too short"
-    if (!values.password) errors.password = "Password is required!"
+    if (!values.password) {errors.password = "Password is required!"}
+    else if(values.password != values.confirm_pass) {errors.confirm_pass = "Confirm your password"; errors.password = "Confirm your password"}
     if (values.password != values.confirm_pass) errors.confirm_pass = "Confirm your password"
     return errors;
   }
