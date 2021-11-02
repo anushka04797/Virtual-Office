@@ -40,8 +40,8 @@ const Register = () => {
     if (!values.email) errors.email = "Email is required!"
     if (String(values.password).length<8) errors.password = "Password is too short"
     if (!values.password) {errors.password = "Password is required!"}
-    else if(values.password != values.confirm_pass) {errors.confirm_pass = "Confirm your password"; errors.password = "Confirm your password"}
-    if (values.password != values.confirm_pass) errors.confirm_pass = "Confirm your password"
+    //else if(values.password != values.confirm_pass) {errors.confirm_pass = "Password did not match"; errors.password = "Confirm your password"}
+    if (values.password != values.confirm_pass) errors.confirm_pass = "Password did not match"
     return errors;
   }
   const sign_up = (values) => {
@@ -97,7 +97,7 @@ const Register = () => {
   
   const handleKeyPress=(event)=>{
     if(event.key == 'Enter'){
-      sign_up(formSignUp.values)
+      formSignUp.handleSubmit()
     }
   }
   return (
@@ -236,6 +236,7 @@ const Register = () => {
                           className="custom-formgroup-2"
                           onKeyPress={handleKeyPress}
                         />
+                        {formSignUp.touched.confirm_pass && formSignUp.errors.confirm_pass && <small style={{ color: 'red' }}>{formSignUp.errors.confirm_pass}</small>}
                         <img className="pwd-container-img"
                           title={isRevealConfPwd ? "Hide password" : "Show password"}
                           src={isRevealConfPwd ? hidePwdImg : showPwdImg}
