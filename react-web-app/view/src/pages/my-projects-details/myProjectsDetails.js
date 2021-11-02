@@ -87,7 +87,7 @@ const MyProjectsDetailsView = () =>{
     const initialize = () => {
         API.get('project/details/' + work_package_number + '/').then((res) => {
             if(res.statusText != 'OK'){
-                history.push('/dashboard/Projects/ongoing-projects')
+                history.push('/dashboard/Projects/my-projects')
             }
             else{
                 console.log('project details', res.data)
@@ -364,19 +364,19 @@ return(
                                             <h6 className="project-point-details">{project.project.work_package_number}</h6>
                                         </div>
                                         <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Task Title</h6>
-                                            <h6 className="project-point-details">{subtask.task_title}</h6>
+                                            <h6 className="project-point-details">{project?.project.task_title}</h6>
                                         </div>
                                         <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Estimated Person(s)</h6>
-                                            <h6 className="project-point-details">{subtask.estimated_person}</h6>
+                                            <h6 className="project-point-details">{project.project.estimated_person}</h6>
                                         </div>
                                         <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Planned Value</h6>
-                                            <h6 className="project-point-details">120 </h6>
+                                            <h6 className="project-point-details">{project.project.planned_value} </h6>
                                         </div>
                                         <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Planned Hours</h6>
-                                            <h6 className="project-point-details">120 </h6>
+                                            <h6 className="project-point-details">{project.project.planned_hours} </h6>
                                         </div>
                                         <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Remaining Hours</h6>
-                                            <h6 className="project-point-details">120 </h6>
+                                            <h6 className="project-point-details">{project.project.remaining_hours} </h6>
                                         </div>
                                     </div>
 
@@ -387,7 +387,7 @@ return(
                                             {project != undefined && Array.from(subtask.assignees).map((item, idx) => (
                                                 <div key={idx} className="col-md-4 col-sm-6 col-lg-2">
                                                     <div className="file-attached-ongoing rounded-pill">
-                                                        <CButton type="button" onClick={() => delete_assignee(subtask.id,item.assignee.id)} className="remove-file-ongoing"><img src={"assets/icons/icons8-close-64-blue.png"} className="close-icon-size" /></CButton>{item.assignee.first_name + ' ' + item.assignee.last_name}
+                                                        <CButton type="button" onClick={() => delete_assignee(subtask.id,item.assignee.id)} className="remove-file-ongoing"><img src={"assets/icons/icons8-close-64-blue.svg"} className="close-icon-size" /></CButton>{item.assignee.first_name + ' ' + item.assignee.last_name}
                                                     </div>
                                                 </div>
                                             ))}

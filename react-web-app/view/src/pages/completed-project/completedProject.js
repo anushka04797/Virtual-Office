@@ -21,8 +21,8 @@ const CompleteProjects = () => {
                 <h3 className="dash-header">Completed Projects({projects.length})</h3>
                 <div className="row">
                  
-                <div className="col-md-10 offset-md-1 col-sm-12 col-xs-12 mt-1">
-                        {projects!=undefined && projects.map((project,idx)=>(<CCard className="card-ongoing-project">
+                <div className="col-md-11 col-sm-12 col-xs-12 mt-1">
+                        {projects!=undefined && projects.map((project,idx)=>(<CCard className="card-ongoing-project" key={idx}>
                             <CCardBody className="details-project-body">
                                
                                 <h4 className="ongoing-card-header"><IconButton aria-label="favourite" size="medium" >
@@ -55,7 +55,7 @@ const CompleteProjects = () => {
                                 {/*Project participants */}
                                 <div className="all-da-workers1">
                                     {project.assignees.length>0 && Array.from(project.assignees).map((assignee,idx)=>(
-                                        <img className="img-fluid worker-image" src={BASE_URL+assignee.profile_pic} />    
+                                        <img className="img-fluid worker-image" src={assignee.profile_pic!=null?BASE_URL+assignee.profile_pic:'avatars/user-avatar-default.png'} />    
                                     ))}
                                 </div>
 
@@ -96,7 +96,7 @@ const CompleteProjects = () => {
 
                                 {/*show add task form on click button */}
                                 <div className="ongoing-action-card-buttons">
-                                <CButton className="view-ongoing-details" onClick={() => historyTo.push('/dashboard/Projects/completed-projects/details/1')}><CIcon name="cil-list-rich" className="mr-1" />View Details</CButton>
+                                <CButton className="view-ongoing-details" onClick={() => historyTo.push({ pathname:'/dashboard/Projects/completed-projects/details/'+project.project.work_package_number,state:{project:project}})}><CIcon name="cil-list-rich" className="mr-1" />View Details</CButton>
                                 </div>
                             </CCardBody>
 

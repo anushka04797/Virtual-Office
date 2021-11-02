@@ -10,7 +10,7 @@ import { useHistory, useLocation } from 'react-router';
 import { API, BASE_URL, USER_ID } from '../../Config';
 import swal from 'sweetalert';
 import { useDispatch } from 'react-redux'
-import { fetchProjectsThunk } from '../../store/slices/ProjectsSlice';
+import { fetchProjectsThunk, projectsSlice } from '../../store/slices/ProjectsSlice';
 import {
     useParams
 } from "react-router-dom";
@@ -116,7 +116,7 @@ const OngoingDetailsView = () => {
     const initialize = () => {
         API.get('project/details/' + work_package_number + '/').then((res) => {
             if(res.statusText != 'OK'){
-                history.push('/dashboard/Projects/ongoing-projects')
+                history.push('/dashboard/Projects/assigned-projects')
             }
             else{
                 setProject(res.data.data)
@@ -420,13 +420,13 @@ const OngoingDetailsView = () => {
                                             <h6 className="project-point-details">{subtask.estimated_person}</h6>
                                         </div>
                                         <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Planned Value</h6>
-                                            <h6 className="project-point-details">120 </h6>
+                                            <h6 className="project-point-details">{project.project.planned_value} </h6>
                                         </div>
                                         <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Planned Hours</h6>
-                                            <h6 className="project-point-details">120 </h6>
+                                            <h6 className="project-point-details">{project.project.planned_hours} </h6>
                                         </div>
                                         <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Remaining Hours</h6>
-                                            <h6 className="project-point-details">120 </h6>
+                                            <h6 className="project-point-details">{project.project.remaining_hours} </h6>
                                         </div>
                                     </div>
 
