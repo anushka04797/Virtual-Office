@@ -110,7 +110,7 @@ return(
                                 {/*Project participants */}
                                 <div className="all-da-workers1">
                                     {project.assignees.length > 0 && Array.from(project.assignees).map((assignee, idx) => (
-                                        <img key={idx} className="img-fluid worker-image" src={BASE_URL + assignee.profile_pic} />
+                                        <img key={idx} className="img-fluid worker-image" src={assignee.profile_pic!=null?BASE_URL + assignee.profile_pic:'avatars/user-avatar-default.png'} />
                                     ))}
                                 </div>
 

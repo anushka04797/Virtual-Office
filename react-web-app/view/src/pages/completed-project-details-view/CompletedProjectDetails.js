@@ -1,89 +1,116 @@
-import { CCardBody, CCard, CButton, CBadge, CContainer } from '@coreui/react'
-import React from 'react';
-import GradeIcon from '@material-ui/icons/Grade';
-import IconButton from '@material-ui/core/IconButton';
-import '../ongoing-project-details-view/OngoingProjectDetailsView.css'
-import CIcon from '@coreui/icons-react';
+import { CCardBody, CCard, CButton, CBadge, CContainer } from "@coreui/react";
+import React, { useEffect, useState } from "react";
+import GradeIcon from "@material-ui/icons/Grade";
+import IconButton from "@material-ui/core/IconButton";
+import "../ongoing-project-details-view/OngoingProjectDetailsView.css";
+import CIcon from "@coreui/icons-react";
+import { useHistory, useLocation } from "react-router";
+import { useParams } from "react-router-dom";
+import { useDispatch } from 'react-redux'
+import { API, BASE_URL, USER_ID } from '../../Config';
+const CompletedDetailsView = () => {
+    const { work_package_number } = useParams();
+    const location = useLocation();
 
+  const [project, setProject] = useState();
+  const dispatch = useDispatch()
+  let history = useHistory();
+  
 
-const completedDetailsView=()=>{
-return(
+    API.get("project/details/"+ work_package_number +"/").then((res) => {
+
+        setProject(res.data.data);
+       
+      
+    });
+
+  useEffect(()=>{
+    console.log('project from completed page',project)
+  },[project])
+  return (
     <>
-    
-<CContainer>
-<h3 className="dash-header-1">Project Details</h3>
-<div className="card-header-portion-ongoing">
-<h4 className="ongoing-card-header-1"><IconButton aria-label="favourite" disabled size="medium" color="primary">
-                             <GradeIcon fontSize="inherit" className="fav-button" />
-                         </IconButton>Virtual Guard</h4>
-    </div> 
-     {/**card show */}
-     <hr className="header-underline1" />
-       {/**Details card */}
-       <div className="row">
-       <div className="col-md-10 offset-md-1 col-sm-12 col-xs-12 mt-1 mb-2">
-       <CCard className="card-ongoing-project">
-       <CCardBody className="details-project-body">
-             {/*task percentage portion */}
-             <div className="ongoing-initial-info row">
-                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Sub Task Name</h6>
-                                        <h6 className="project-point-details">Do lungi dance</h6></div>
-                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">PM Name</h6>
-                                        <h6 className="project-point-details">The one and only </h6></div>
-                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Work Package Number</h6>
-                                        <h6 className="project-point-details">IDGAF</h6>
-                                    </div>
-                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Task Title</h6>
-                                        <h6 className="project-point-details">Send object in mqtt</h6>
-                                    </div>
-                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Estimated Person(s)</h6>
-                                        <h6 className="project-point-details">1,bceause why hire more!</h6>
-                                    </div>
-                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Planned Value</h6>
-                                        <h6 className="project-point-details">120 </h6>
-                                    </div>
-                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Planned Hours</h6>
-                                        <h6 className="project-point-details">120 </h6>
-                                    </div>
-                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Remaining Hours</h6>
-                                        <h6 className="project-point-details">120 </h6>
-                                    </div>
-                                </div>
+    {project != undefined &&
+      <CContainer>
+        <h3 className="dash-header-1">Project Details</h3>
+        <div className="card-header-portion-ongoing">
+          <h4 className="ongoing-card-header-1">
+            <IconButton
+              aria-label="favourite"
+              disabled
+              size="medium"
+              color="primary"
+            >
+              <GradeIcon fontSize="inherit" className="fav-button" />
+            </IconButton>
+            {project.project.task_delivery_order.title}
+          </h4>
+        </div>
+        {/**card show */}
+        <hr className="header-underline1" />
+        {/**Details card */}
+        <div className="row">
+          <div className="col-md-11 col-sm-12 col-xs-12 mt-1 mb-2">
+            <CCard className="card-ongoing-project">
+              <CCardBody className="details-project-body">
+                {/*task percentage portion */}
+                <div className="ongoing-initial-info row">
+                  <div className="tasks-done-2 col-lg-4">
+                    <h6 className="tiny-header2">Sub Task Name</h6>
+                    <h6 className="project-point-details">{project.project.sub_task}</h6>
+                  </div>
+                  <div className="tasks-done-2 col-lg-4">
+                    <h6 className="tiny-header2">PM Name</h6>
+                    <h6 className="project-point-details">{project.project.pm.first_name + ' ' + project.project.pm.last_name} </h6>
+                  </div>
+                  <div className="tasks-done-2 col-lg-4">
+                    <h6 className="tiny-header2">Work Package Number</h6>
+                    <h6 className="project-point-details">{project.project.work_package_number}</h6>
+                  </div>
+                  <div className="tasks-done-2 col-lg-4">
+                    <h6 className="tiny-header2">Task Title</h6>
+                    <h6 className="project-point-details">
+                      {project.project.task_title}
+                    </h6>
+                  </div>
+                  <div className="tasks-done-2 col-lg-4">
+                    <h6 className="tiny-header2">Estimated Person(s)</h6>
+                    <h6 className="project-point-details">
+                    {project.project.estimated_person}
+                    </h6>
+                  </div>
+                  <div className="tasks-done-2 col-lg-4">
+                    <h6 className="tiny-header2">Planned Value</h6>
+                    <h6 className="project-point-details">{project.project.planned_value} </h6>
+                  </div>
+                  <div className="tasks-done-2 col-lg-4">
+                    <h6 className="tiny-header2">Planned Hours</h6>
+                    <h6 className="project-point-details">{project.project.planned_hours}</h6>
+                  </div>
+                  <div className="tasks-done-2 col-lg-4">
+                    <h6 className="tiny-header2">Remaining Hours</h6>
+                    <h6 className="project-point-details">{project.project.remaining_hours}</h6>
+                  </div>
+                </div>
 
-                                {/**assignees */}
-                                <div className="col-md-12 mt-4 mb-2">
-                                    <h5 className="projectName mb-3">Asssignee(s)-(6)</h5>
-                                    <div className="file-show-ongoing-details row">
-                                        <div className="col-md-6 col-sm-6 col-lg-3">
-                                            <div className="file-attached-ongoing rounded-pill">KIbria Papel</div>
-                                        </div>
-
-
-
-                                        {/* *extra static buttons,delete code after dynamic implementation */}
-                                        <div className="col-md-6 col-sm-6 col-lg-3">
-                                            <div className="file-attached-ongoing rounded-pill">hassibul Hassan</div>
-                                        </div><div className="col-md-6 col-sm-6 col-lg-3">
-                                            <div className="file-attached-ongoing rounded-pill">Pial noman</div>
-                                        </div><div className="col-md-6 col-sm-6 col-lg-3">
-                                            <div className="file-attached-ongoing rounded-pill">Fahmida Sharmin</div>
-                                        </div><div className="col-md-6 col-sm-6 col-lg-3">
-                                            <div className="file-attached-ongoing rounded-pill">Saif Azad</div>
-                                        </div><div className="col-md-6 col-sm-6 col-lg-3">
-                                            <div className="file-attached-ongoing rounded-pill">Hafij Shobuj</div>
-                                        </div>
-
-                                    </div>
-                                </div>
-       </CCardBody>
-       </CCard>
-       </div>
-       </div>
-
-</CContainer>
-    
+                {/**assignees */}
+                <div className="col-md-12 mt-4 mb-2">
+                  <h5 className="projectName mb-3">Asssignee(s)-({Array.from(project.assignees).length})</h5>
+                  <div className="file-show-ongoing-details row">
+                  {project != undefined && Array.from(project.assignees).map((item, idx) => (
+                    <div className="col-md-6 col-sm-6 col-lg-2" key={idx}>
+                      <div className="file-attached-ongoing rounded-pill">
+                      {item.first_name + ' ' + item.last_name}
+                      </div>
+                    </div>
+                  ))}
+                  </div>
+                </div>
+              </CCardBody>
+            </CCard>
+          </div>
+        </div>
+      </CContainer>}
     </>
-)
-
-}
-export default completedDetailsView;
+  );
+};
+export default CompletedDetailsView;
