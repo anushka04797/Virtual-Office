@@ -184,9 +184,7 @@ margin-bottom: 30px;
         border:transparent!important;
         box-shadow: none !important;
     }
-    .close-icon-size{
-        height: 18px;
-    }
+   
     /**___________ACTION BUTTONS____________**/
     .edit-project-ongoing-task{
         margin-left: auto;

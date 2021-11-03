@@ -82,7 +82,7 @@ const UploadDocuments = () => {
                   <div className="file-attached-ongoing rounded-pill">
                     <CButton className="remove-file-ongoing">
                       <img
-                        src={"assets/icons/icons8-close-64-blue.png"}
+                        src={"assets/icons/icons8-close-64-blue.svg"}
                         className="close-icon-size"
                       />
                     </CButton>
@@ -94,7 +94,7 @@ const UploadDocuments = () => {
                   <div className="file-attached-ongoing rounded-pill">
                     <CButton className="remove-file-ongoing">
                       <img
-                        src={"assets/icons/icons8-close-64-blue.png"}
+                        src={"assets/icons/icons8-close-64-blue.svg"}
                         className="close-icon-size"
                       />
                     </CButton>
