@@ -77,8 +77,9 @@ const CreateNewProject = () => {
         }
       })
     })
+    // temp=temp.filter((value, index, array) => array.findIndex((t) => t.sub_task === value.sub_task) === index)
     console.log('subtasks',temp)
-    return temp.filter((value, index, array) => array.findIndex((t) => t.sub_task === value.sub_task) === index)
+    return temp;
   }
   const handleSubTaskChange=(newValue,actionMeta)=>{
     if(actionMeta.action == 'select-option'){
