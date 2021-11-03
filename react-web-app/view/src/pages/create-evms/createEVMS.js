@@ -14,6 +14,7 @@ import React, { useState } from "react";
 import Select from "react-select";
 import "../createProject/createProject.css";
 import { fetchProjectsThunk,fetchProjectsForPMThunk, fetchProjectsAssigneeThunk, fetchWbsThunk } from '../../store/slices/ProjectsSlice';
+import { fetchEvmsThunk } from "../../store/slices/EvmsSlice";
 import { useDispatch, useSelector } from 'react-redux'
 import { useFormik } from 'formik';
 import { API, USER_ID } from '../../Config';
@@ -27,12 +28,44 @@ const ProjectEVMS = () => {
   const projects = useSelector(state => {
     let e = []
     Array.from(state.projects.pm_projects).forEach((item, idx) => {
-      e.push({ value: item.project.id, label: item.project.task_delivery_order.title + '/' + item.project.sub_task, data: item })
+      // e.push({ value: item.project.id, label: item.project.task_delivery_order.title + '/' + item.project.sub_task, data: item })
+      e.push({data:item})
     })
+    console.log('e',e);
     return e
 
   })
+
   console.log("pM projects", projects);
+
+  const evmsList= useSelector(state =>{
+    let f=[]
+    Array.from(state.evmsList.data).forEach((item,idx) =>{
+      f.push({data:item})
+    })
+    return f
+
+  })
+
+  console.log('existing evms',evmsList)
+  {/**get only the unique values */}
+  // const uniqueProjects = projects.filter(function(o1){
+  //   return !evmsList.some(function(o2){
+  //     return o1.project.id === o2.project.id
+  //   })
+    
+  // })
+ const uniqueProjects = projects.filter(o1 => !evmsList.some(o2 => o1.data.project.id === o2.data.project.id));
+ console.log('unique projects',uniqueProjects)
+ const uniqueArray=[];
+ Array.from(uniqueProjects).forEach((item,idx) =>{
+  uniqueArray.push({value:item.data.project.id,label:item.data.project.task_delivery_order.title+'/'+item.data.project.sub_task,data:item})
+  
+ })
+ console.log('uniqueArray',uniqueArray)
+
+ 
+ 
   const dispatch = useDispatch();
   React.useEffect(() => {
     console.log('pm project list',projects)
@@ -61,15 +94,15 @@ const ProjectEVMS = () => {
 
   const getAssigneeList = (option) => {
     
-    dispatch(fetchProjectsAssigneeThunk(option.data.project.work_package_number))
+    // dispatch(fetchProjectsAssigneeThunk(option.data.project.work_package_number))
     setProjectValue(option)
     console.log('projectValue', option)
 
     formCreateEVMS.setFieldValue('project', option.value)
 
-    formCreateEVMS.setFieldValue('planned_hours', option.data.project.planned_hours)
-    formCreateEVMS.setFieldValue('planned_value', option.data.project.planned_value)
-    formCreateEVMS.setFieldValue('work_package_number', option.data.project.work_package_number)
+    formCreateEVMS.setFieldValue('planned_hours', option.data.data.project.planned_hours)
+    formCreateEVMS.setFieldValue('planned_value', option.data.data.project.planned_value)
+    formCreateEVMS.setFieldValue('work_package_number', option.data.data.project.work_package_number)
     
     // setSelectedProjectEndDate(option.planned_delivery_date)
   }
@@ -152,7 +185,7 @@ const ProjectEVMS = () => {
                         onChange={getAssigneeList}
                         classNamePrefix="custom-forminput-6"
 
-                        options={projects}
+                        options={uniqueArray}
                         styles={colourStyles}
                       />
                       {/**View related TDO details */}
@@ -160,11 +193,11 @@ const ProjectEVMS = () => {
                         (<div className="mt-1">
                           <CAlert color="primary">
                             <small>
-                              <b>Work Package Number:</b> {projectValue.data.project.work_package_number}
+                              <b>Work Package Number:</b> {projectValue.data.data.project.work_package_number}
                               <br />
-                              <b>Estimated Persons: </b> {projectValue.data.project.estimated_person}
+                              <b>Estimated Persons: </b> {projectValue.data.data.project.estimated_person}
                               <br />
-                              <b>Planned Delivery Date: </b> {projectValue.data.project.planned_delivery_date}
+                              <b>Planned Delivery Date: </b> {projectValue.data.data.project.planned_delivery_date}
                               <br />
                               {/* <b>Assignee(s):</b><span> </span> */}
 
