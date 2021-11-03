@@ -14,12 +14,14 @@ import {
 import './TheLayout.css'
 import { has_group } from '../helper';
 import { fetchEvmsThunk } from '../store/slices/EvmsSlice';
+import { fetchMeetingList } from '../store/slices/MeetingSlice';
 const TheLayout = () => {
   const dispatch = useDispatch()
   React.useEffect(()=>{
     dispatch(fetchProjectsThunk(localStorage.getItem(USER_ID)))
     dispatch(fetchWbsThunk(localStorage.getItem(USER_ID)))
     dispatch(fetchPersonalDetails(localStorage.getItem(USER_ID)))
+    dispatch(fetchMeetingList(localStorage.getItem(USER_ID)))
     if(has_group('pm')) dispatch(fetchProjectsForPMThunk(localStorage.getItem(USER_ID)))
     if(has_group('pm')) dispatch(fetchEvmsThunk(localStorage.getItem(USER_ID)))
   },[])

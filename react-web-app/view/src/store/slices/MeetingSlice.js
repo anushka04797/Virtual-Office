@@ -9,7 +9,7 @@ const initialState = {
 
 export const fetchMeetingList = createAsyncThunk('profile/fetchMeetingList', async (user_id) => {
   const response = await JsonClient.get('meetings/list/'+user_id+'/')
-  console.log("wbs/create/", response.data)
+  console.log("meetings list", response.data)
   return response.data
 })
 

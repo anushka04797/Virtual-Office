@@ -1,12 +1,12 @@
 import React from 'react'
-import { CButton, CCard, CCardBody,CAlert } from '@coreui/react';
+import { CButton, CCard, CCardBody, CAlert } from '@coreui/react';
 import { useDispatch, useSelector } from "react-redux";
 import { fetchMeetingList } from "../../store/slices/MeetingSlice";
 import { USER_ID } from "../../Config";
 
 const ScheduleMeetings = () => {
     const dispatch = useDispatch()
-    const meeting = useSelector(state => state.meeting.data);
+    const meeting = useSelector(state => state.meetings.data);
     React.useEffect(() => {
         dispatch(fetchMeetingList(localStorage.getItem(USER_ID)))
     }, [])
@@ -18,7 +18,7 @@ const ScheduleMeetings = () => {
                 </h3>
 
                 <div className="card-holder1 ">
-                    {meeting!=undefined && meeting.slice(0, 3).map((item, idx) => (
+                    {meeting != undefined && meeting.slice(0, 3).map((item, idx) => (
                         <CCard className="project-card1">
                             <CCardBody>
                                 <h6 className="id-no1">meeting id: #{item.room_id}</h6>
@@ -28,20 +28,12 @@ const ScheduleMeetings = () => {
 
                         </CCard>
                     ))}
-                           { /**If no meetings */}
- {meeting==undefined || meeting=='' ? (
-                        
-                       
-                             
-                        <CAlert className="no-value-show-alert"  color="primary">Currently there are no upcoming meetings</CAlert>     
-                      
-                
-              ):null
-              
-              
-              }
+                    { /**If no meetings */}
+                    {meeting == undefined || meeting == '' ? (
+                        <CAlert className="no-value-show-alert" color="primary">Currently there are no upcoming meetings</CAlert>
+                    ) : <></>}
                 </div>
-                {meeting!=undefined && meeting.length>3 && <div className="button-holder3"><CButton className="tiny-buttons1">View all</CButton></div>}
+                {meeting != undefined && meeting.length > 3 && <div className="button-holder3"><CButton className="tiny-buttons1">View all</CButton></div>}
             </div>
 
 

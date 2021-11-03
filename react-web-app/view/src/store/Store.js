@@ -16,7 +16,7 @@ export default configureStore({
     projects: ProjectsSlice,
     wbs: WbsSlice,
     profile:ProfileSlice,
-    meeting: MeetingSlice,
+    meetings: MeetingSlice,
     evmsList:EvmsSlice,
     tdo : TdoSlice
   },
