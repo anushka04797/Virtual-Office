@@ -37,6 +37,12 @@ const OngoingDetailsView = () => {
         console.log('validating values',values)
         const errors={}
         if(!values.sub_task || String(values.sub_task).length<1) errors.task_delivery_order="Task Delivery Order is required"
+       if(!values.sub_task)errors.sub_task="Sub task is required"
+        if(!values.task_title)errors.task_title="Task title is required"
+        if(!values.estimated_person)errors.estimated_person="Estimated person is required"
+        if(!values.planned_value)errors.planned_value="Planned value is required"
+        if(!values.planned_hours)errors.planned_hours="Planned hours is required"
+        
         return errors
     }
     const edit_project=(values)=>{
@@ -278,6 +284,8 @@ const OngoingDetailsView = () => {
                                     <CCol lg="12" className="mb-2">
                                         <CLabel htmlFor="sub_task" className="custom-label-5">Sub Task</CLabel>
                                         <CInput id="sub_task" name="sub_task" type="text" value={editForm.values.sub_task} onChange={editForm.handleChange} className="custom-forminput-6"/>
+                                     {/**validation */}
+                                     {editForm.errors.sub_task && <p className="error">{editForm.errors.sub_task}</p>}
                                     </CCol>
                                     {/**PM Name */}
                                     <CCol lg="6" className="mb-2">
@@ -293,6 +301,8 @@ const OngoingDetailsView = () => {
                                     <CCol lg="12" className="mb-2">
                                         <CLabel htmlFor="task_title" className="custom-label-5">Task Title</CLabel>
                                         <CInput id="task_title" name="task_title" value={editForm.values.task_title} onChange={editForm.handleChange} type="text" className="custom-forminput-6" />
+                                    {/**validation */}
+                                    {editForm.errors.task_title && <p className="error">{editForm.errors.task_title}</p>}
                                     </CCol>
                                     {/**assignees */}
                                     <CCol lg="12" className="mb-2">
@@ -317,17 +327,23 @@ const OngoingDetailsView = () => {
                                     <CCol lg="6" className="mb-2">
                                         <CLabel htmlFor="estimated_person" className="custom-label-5">Estimated Person(s)</CLabel>
                                         <CInput id="estimated_person" name="estimated_person" value={editForm.values.estimated_person} onChange={editForm.handleChange} type="number" className="custom-forminput-6" min="0" />
+                                    {/**validation */}
+                                    {editForm.errors.estimated_person && <p className="error">{editForm.errors.estimated_person}</p>}
                                     </CCol>
 
                                     {/**planned Value */}
                                     <CCol lg="6" className="mb-2">
                                         <CLabel htmlFor="planned_value" className="custom-label-5">Planned Value</CLabel>
                                         <CInput id="planned_value" name="planned_value" type="number" value={editForm.values.planned_value} onChange={editForm.handleChange} className="custom-forminput-6" min="0" />
+                                     {/**validation */}
+                                     {editForm.errors.planned_value && <p className="error">{editForm.errors.planned_value}</p>}
                                     </CCol>
                                     {/**Planned hours */}
                                     <CCol lg="6" className="mb-2">
                                         <CLabel htmlFor="planned_hours" className="custom-label-5">Planned Hours</CLabel>
                                         <CInput id="planned_hours" name="planned_hours" type="number" value={editForm.values.planned_hours} onChange={editForm.handleChange} className="custom-forminput-6" min="0" />
+                                     {/**validation */}
+                                     {editForm.errors.planned_hours && <p className="error">{editForm.errors.planned_hours}</p>}
                                     </CCol>
                                     {/**Remaining hours */}
                                     <CCol lg="6" className="mb-2">

@@ -6,7 +6,7 @@ import GradeIcon from '@material-ui/icons/Grade';
 import IconButton from '@material-ui/core/IconButton';
 import '../ongoing-project-details-view/OngoingProjectDetailsView.css';
 import CIcon from '@coreui/icons-react';
-import Select from "react-select";
+import Select, { defaultTheme } from "react-select";
 import Creatable from 'react-select/creatable';
 import { useHistory, useLocation } from 'react-router';
 import { API, BASE_URL, USER_ID } from '../../Config';
@@ -17,13 +17,14 @@ import {
 } from "react-router-dom";
 import { useFormik } from 'formik';
 import { fetchProjectsForPMThunk } from '../../store/slices/ProjectsSlice';
-const MyProjectsDetailsView = () =>{
+const MyProjectsDetailsView = () => {
     const { work_package_number } = useParams();
     const dispatch = useDispatch()
     const [status, setStatus] = useState(0);
     const [project, setProject] = useState()
-    const [assignees,setAssignees]=useState([])
-    const [assigneeValue,setAssigneeValue]=useState([])
+    const [assignees, setAssignees] = useState([])
+    const [assigneeValue, setAssigneeValue] = useState([]);
+    const [defaultValue, setDefaultValue] = useState([])
     let location = useLocation()
     let history = useHistory()
     const [titleStatus, setTitleStatus] = useState(1);
@@ -33,68 +34,97 @@ const MyProjectsDetailsView = () =>{
         setTitleStatus(titleStatus);
     };
     const [editModal, setEditModal] = useState(false);
-    const validateEditForm=(values)=>{
-        const errors={}
-        if(!values.sub_task || String(values.sub_task).length<1) errors.task_delivery_order="Task Delivery Order is required"
+    const validateEditForm = (values) => {
+        const errors = {}
+        if (!values.sub_task || String(values.sub_task).length < 1) errors.task_delivery_order = "Task Delivery Order is required"
+        if(!values.sub_task)errors.sub_task="Sub task is required"
+        if(!values.task_title)errors.task_title="Task title is required"
+        if(!values.estimated_person)errors.estimated_person="Estimated person is required"
+        if(!values.planned_value)errors.planned_value="Planned value is required"
+        if(!values.planned_hours)errors.planned_hours="Planned hours is required"
         return errors
     }
-    const edit_project=(values)=>{
+    const edit_project = (values) => {
         console.log(values)
+        API.put('project/update/' + values.work_package_index + '/', values).then((res) => {
+            console.log(res.data)
+            if (res.status == 200 && res.data.success == 'True') {
+                setEditModal(false)
+                initialize()
+                swal('Updated!', 'Task Details is updated', 'success')
+            }
+        })
     }
-    const editForm=useFormik({
+    const editInfoForm = (subtask) => {
+        console.log(subtask)
+        setEditModal(!editModal)
+        if (editForm) {
+            console.log('assignee in edit form', editForm.values)
+            editForm.setValues({
+                sub_task: project?.project.sub_task,
+                work_package_number: project?.project.work_package_number,
+                work_package_index: subtask?.work_package_index,
+                task_title: subtask?.task_title,
+                estimated_person: subtask ? Number(subtask.estimated_person) : 0,
+                planned_delivery_date: project?.project.planned_delivery_date,
+                assignee: initialize_default_assignees(subtask),
+                pm: project.project.pm.id,
+                planned_hours: project?.project.planned_hours,
+                planned_value: project?.project.planned_value,
+                remaining_hours: project?.project.remaining_hours,
+                status: subtask.status,
+                sub_task_updated: ""
+            })
+        }
+
+    }
+    const editForm = useFormik({
         initialValues: {
             sub_task: "",
             work_package_number: project?.project.work_package_number,
+            work_package_index: '',
             task_title: "",
             estimated_person: "",
-            planned_delivery_date: "",
+            planned_delivery_date: project?.project.planned_delivery_date,
             assignee: [],
             pm: project?.project.pm.id,
             planned_hours: "",
             planned_value: "",
             remaining_hours: "",
-            status:"",
-            date_updated:"",
-            sub_task_updated:""
+            status: project?.project.status,
+            sub_task_updated: ""
         },
-        validateOnBlur:true,
-        validateOnChange:true,
-        validate:validateEditForm,
+        validateOnBlur: true,
+        validateOnChange: true,
+        validate: validateEditForm,
         onSubmit: edit_project
     })
-    const editInfoForm = (subtask) => {
-        console.log(subtask)
-        setEditModal(!editModal)
-        if(editForm){
-            editForm.setValues({
-                sub_task: project?.project.sub_task,
-                work_package_number: project?.project.work_package_number,
-                task_title: subtask?.task_title,
-                estimated_person: subtask?Number(subtask.estimated_person):0,
-                planned_delivery_date: "",
-                assignee: [],
-                pm: project.project.pm.id,
-                planned_hours: project?.project.planned_hours,
-                planned_value: project?.project.planned_value,
-                remaining_hours: project?.project.remaining_hours,
-                status:"",
-                date_updated:"",
-                sub_task_updated:""
-            })
-        }
-        
+    const initialize_default_assignees = (subtask) => {
+        let dtem = []
+        let preset_assignees = []
+        console.log('subtask from line 77', subtask)
+        subtask?.assignees.forEach((assignee, idx) => {
+            dtem.push({ value: String(assignee.assignee.id).toString(), label: assignee.assignee.first_name + ' ' + assignee.assignee.last_name })
+
+            preset_assignees.push(Number(assignee.assignee.id))
+        })
+        editForm.setFieldValue('assignee', preset_assignees)
+        setDefaultValue(dtem)
+        return preset_assignees
     }
+
     const initialize = () => {
         API.get('project/details/' + work_package_number + '/').then((res) => {
-            if(res.statusText != 'OK'){
+            if (res.statusText != 'OK') {
                 history.push('/dashboard/Projects/my-projects')
             }
-            else{
+            else {
                 console.log('project details', res.data)
                 setProject(res.data.data)
                 setTdo(res.data.data.project.task_delivery_order.title)
+                editForm.setFieldValue('assignee', res.data.ass)
             }
-        }).catch(err=>{
+        }).catch(err => {
             console.log(err)
         })
     }
@@ -104,14 +134,14 @@ const MyProjectsDetailsView = () =>{
 
     }
     useEffect(() => {
-        API.get('auth/assignee/list/').then((res)=>{
-            console.log('assignees',res.data.data)
-            let temp=[]
-            Array.from(res.data.data).forEach((item,idx)=>{
-              temp.push({value:item.id,label:item.first_name+' '+item.last_name})
+        API.get('auth/assignee/list/').then((res) => {
+            console.log('assignees', res.data.data)
+            let temp = []
+            Array.from(res.data.data).forEach((item, idx) => {
+                temp.push({ value: item.id.toString(), label: item.first_name + ' ' + item.last_name })
             })
             setAssignees(temp)
-          })
+        })
         if (location.state != undefined) {
             console.log('project', location.state.project)
             setProject(location.state.project)
@@ -125,7 +155,7 @@ const MyProjectsDetailsView = () =>{
     }, [])
     const handle_tdo_title_change = (id) => {
         console.log({ title: tdo })
-        if(tdo.length>0){
+        if (tdo.length > 0) {
             API.put('project/change-tdo-title/' + id + '/', { title: tdo }).then((res) => {
                 console.log('rs', res.data)
                 if (res.data.success == 'True') {
@@ -143,26 +173,37 @@ const MyProjectsDetailsView = () =>{
                 swal('Failed', 'Proccess Failed', 'error')
             })
         }
-        else{
-            swal('Invalid!','Task delivery order name can not be empty','warning')
+        else {
+            swal('Invalid!', 'Task delivery order name can not be empty', 'warning')
         }
     }
-    const handleKeyPress=(event)=>{
-        if(event.key === 'Enter'){
+    const handleKeyPress = (event) => {
+        if (event.key === 'Enter') {
             handle_tdo_title_change(project.project.task_delivery_order.id)
         }
     }
-    const handleAssigneeChange = (value,actionMeta) => {
-        if(actionMeta.action=='select-option'){
-            console.log('selected assignee',value)
-            let temp=[]
-            value.forEach((item,idx)=>{
-              temp.push(Number(item.value))
+    const handleAssigneeChange = (value, actionMeta) => {
+        if (actionMeta.action == 'select-option' || actionMeta.action == 'remove-value') {
+            console.log('selected assignee', value)
+            let temp = []
+            value.forEach((item, idx) => {
+                temp.push(Number(item.value))
             })
-            editForm.setFieldValue('assignee',temp)
+            setDefaultValue(value)
+            editForm.setFieldValue('assignee', temp)
+        }
+        else if (actionMeta.action == 'clear') {
+            setDefaultValue(null)
+            editForm.setFieldValue('assignee', [])
+        }
+
+    }
+    const handleStatusChange = (value, actionMeta) => {
+        if (actionMeta.action == 'select-option') {
+            editForm.setFieldValue('status', String(value.value).toString())
         }
     }
-    const delete_assignee = (project_id,assignee_id) => {
+    const delete_assignee = (project_id, assignee_id) => {
         swal({
             title: "Are you sure?",
             text: "Once deleted, you will not be able to recover this record!",
@@ -172,7 +213,7 @@ const MyProjectsDetailsView = () =>{
         })
             .then((willDelete) => {
                 if (willDelete) {
-                    API.delete('/project/remove-assignee/' + assignee_id + "/",{data:{project:project_id,assignee:assignee_id}}).then(response => {
+                    API.delete('/project/remove-assignee/' + assignee_id + "/", { data: { project: project_id, assignee: assignee_id } }).then(response => {
                         if (response.data.success == "True") {
                             dispatch(fetchProjectsForPMThunk(localStorage.getItem(USER_ID)))
                             initialize()
@@ -227,11 +268,11 @@ const MyProjectsDetailsView = () =>{
             });
     }
 
-return(
-    <>
-       {project != undefined && <CContainer>
+    return (
+        <>
+            {project != undefined && <CContainer>
                 {/**Edit ongoing project details starts */}
-                <CModal alignment="center" show={editModal} onClose={editInfoForm}>
+                <CModal alignment="center" show={editModal} onClose={() => { setEditModal(!editModal) }}>
                     <CModalHeader onClose={() => setEditModal(!editModal)} closeButton>
                         <CModalTitle className="modal-title-projects">
                             <span className="edit-profile-form-header">Edit Project Info</span>
@@ -244,33 +285,38 @@ return(
                                     {/**Subtask Name*/}
                                     <CCol lg="12" className="mb-2">
                                         <CLabel htmlFor="sub_task" className="custom-label-5">Sub Task</CLabel>
-                                        <CInput id="sub_task" name="sub_task" type="text" value={editForm.values.sub_task} onChange={editForm.handleChange} className="custom-forminput-6"/>
+                                        <CInput id="sub_task" name="sub_task" type="text" value={editForm.values.sub_task} onChange={editForm.handleChange} className="custom-forminput-6" />
+                                        {/**validation */}
+                                        {editForm.errors.sub_task && <p className="error">{editForm.errors.sub_task}</p>}
                                     </CCol>
                                     {/**PM Name */}
                                     <CCol lg="6" className="mb-2">
                                         <CLabel htmlFor="pmName" className="custom-label-5">PM Name</CLabel>
-                                        <CInput value={project.project.pm.first_name+' '+project.project.pm.last_name} id="pmName" name="pmName" type="text" className="custom-forminput-6" readOnly />
+                                        <CInput value={project.project.pm.first_name + ' ' + project.project.pm.last_name} id="pmName" name="pmName" type="text" className="custom-forminput-6" readOnly />
                                     </CCol>
                                     {/**Work Package Number */}
                                     <CCol lg="6" className="mb-2">
                                         <CLabel htmlFor="work_package_number" className="custom-label-5">Work Package Number</CLabel>
-                                        <CInput id="work_package_number" name="work_package_number" type="number" className="custom-forminput-6" min="0" value={editForm.values.work_package_number} onChange={editForm.handleChange}/>
+                                        <CInput id="work_package_number" name="work_package_number" type="number" className="custom-forminput-6" min="0" value={editForm.values.work_package_number} onChange={editForm.handleChange} />
                                     </CCol>
                                     {/**Task Title */}
                                     <CCol lg="12" className="mb-2">
                                         <CLabel htmlFor="task_title" className="custom-label-5">Task Title</CLabel>
                                         <CInput id="task_title" name="task_title" value={editForm.values.task_title} onChange={editForm.handleChange} type="text" className="custom-forminput-6" />
+                                        {/**validation */}
+                                        {editForm.errors.task_title && <p className="error">{editForm.errors.task_title}</p>}
                                     </CCol>
                                     {/**assignees */}
                                     <CCol lg="12" className="mb-2">
                                         <CLabel htmlFor="assignees" className="custom-label-5">Assignee(s)</CLabel>
-                                        <Creatable
+                                        <Select
                                             closeMenuOnSelect={false}
                                             aria-labelledby="assignees"
                                             id="assignees"
                                             placeholder="Select from list or create new"
                                             isClearable
                                             onChange={handleAssigneeChange}
+                                            value={defaultValue}
                                             isMulti
                                             classNamePrefix="custom-forminput-6"
                                             options={assignees}
@@ -283,22 +329,45 @@ return(
                                     <CCol lg="6" className="mb-2">
                                         <CLabel htmlFor="estimated_person" className="custom-label-5">Estimated Person(s)</CLabel>
                                         <CInput id="estimated_person" name="estimated_person" value={editForm.values.estimated_person} onChange={editForm.handleChange} type="number" className="custom-forminput-6" min="0" />
+                                    
+                                        {/**validation */}
+                                        {editForm.errors.estimated_person && <p className="error">{editForm.errors.estimated_person}</p>}
                                     </CCol>
 
                                     {/**planned Value */}
                                     <CCol lg="6" className="mb-2">
                                         <CLabel htmlFor="planned_value" className="custom-label-5">Planned Value</CLabel>
                                         <CInput id="planned_value" name="planned_value" type="number" value={editForm.values.planned_value} onChange={editForm.handleChange} className="custom-forminput-6" min="0" />
+                                        {/**validation */}
+                                        {editForm.errors.planned_value && <p className="error">{editForm.errors.planned_value}</p>}
                                     </CCol>
                                     {/**Planned hours */}
                                     <CCol lg="6" className="mb-2">
                                         <CLabel htmlFor="planned_hours" className="custom-label-5">Planned Hours</CLabel>
                                         <CInput id="planned_hours" name="planned_hours" type="number" value={editForm.values.planned_hours} onChange={editForm.handleChange} className="custom-forminput-6" min="0" />
+                                        {/**validation */}
+                                        {editForm.errors.planned_hours && <p className="error">{editForm.errors.planned_hours}</p>}
                                     </CCol>
                                     {/**Remaining hours */}
                                     <CCol lg="6" className="mb-2">
                                         <CLabel htmlFor="remaining_hours" className="custom-label-5">Remaining Hours</CLabel>
                                         <CInput id="remaining_hours" name="remaining_hours" type="number" value={editForm.values.remaining_hours} onChange={editForm.handleChange} className="custom-forminput-6" min="0" />
+                                    </CCol>
+                                    {/**Planned delivery date */}
+                                    <CCol lg="6" className="mb-2">
+                                        <CLabel htmlFor="planned_hours" className="custom-label-5">Planned Delivery Date</CLabel>
+                                        <CInput id="planned_delivery_date" name="planned_delivery_date" type="date" value={editForm.values.planned_delivery_date} onChange={editForm.handleChange} className="custom-forminput-6" />
+                                    </CCol>
+                                    {/**status */}
+                                    <CCol lg="6" className="mb-2">
+                                        <CLabel htmlFor="Status" className="custom-label-5">Status</CLabel>
+                                        <Select
+                                            id="Status"
+                                            name="Status"
+                                            onChange={handleStatusChange}
+                                            className="custom-forminput-6"
+                                            options={[{ value: 0, label: "On Going" }, { value: 1, label: "Completed" }]}
+                                        />
                                     </CCol>
                                     {/**Action buttons */}
                                     <CCol md="12" className="mt-2">
@@ -327,7 +396,7 @@ return(
                                 </IconButton>
                                 {project != undefined ? project.project.task_delivery_order.title : ''}
                             </h4>
-                           <CButton className="edit-ongoing-project-title" variant='ghost' onClick={(e) => radioHandler(1, 0)}><CIcon name="cil-pencil" className="mr-1 pen-icon" /></CButton>
+                            <CButton className="edit-ongoing-project-title" variant='ghost' onClick={(e) => radioHandler(1, 0)}><CIcon name="cil-pencil" className="mr-1 pen-icon" /></CButton>
                         </div>) : <></>}
                 {/**header portion */}
 
@@ -364,7 +433,7 @@ return(
                                             <h6 className="project-point-details">{project.project.work_package_number}</h6>
                                         </div>
                                         <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Task Title</h6>
-                                            <h6 className="project-point-details">{project?.project.task_title}</h6>
+                                            <h6 className="project-point-details">{subtask.task_title}</h6>
                                         </div>
                                         <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Estimated Person(s)</h6>
                                             <h6 className="project-point-details">{project.project.estimated_person}</h6>
@@ -387,7 +456,7 @@ return(
                                             {project != undefined && Array.from(subtask.assignees).map((item, idx) => (
                                                 <div key={idx} className="col-md-4 col-sm-6 col-lg-2">
                                                     <div className="file-attached-ongoing rounded-pill">
-                                                        <CButton type="button" onClick={() => delete_assignee(subtask.id,item.assignee.id)} className="remove-file-ongoing"><img src={"assets/icons/icons8-close-64-blue.svg"} className="close-icon-size" /></CButton>{item.assignee.first_name + ' ' + item.assignee.last_name}
+                                                        <CButton type="button" onClick={() => delete_assignee(subtask.id, item.assignee.id)} className="remove-file-ongoing"><img src={"assets/icons/icons8-close-64-blue.svg"} className="close-icon-size" /></CButton>{item.assignee.first_name + ' ' + item.assignee.last_name}
                                                     </div>
                                                 </div>
                                             ))}
@@ -395,7 +464,7 @@ return(
                                         </div>
                                     </div>
                                     {/**ACTION BUTTONS !!!!!!!!!! */}
-                                   <div className="col-md-12 mt-2 mb-2">
+                                    <div className="col-md-12 mt-2 mb-2">
                                         <div className="project-actions">
                                             <CButton className="edit-project-ongoing-task" onClick={() => editInfoForm(subtask)} ><CIcon name="cil-pencil" className="mr-1" /> Edit </CButton>
                                             <CButton type="button" onClick={() => delete_subtask(project.project.work_package_index)} className="delete-project-2"><CIcon name="cil-trash" className="mr-1" /> Delete</CButton>
@@ -405,9 +474,9 @@ return(
                             </CCard>))}
                     </div>
                 </div>
-            </CContainer>} 
-    
-    </>
-)
+            </CContainer>}
+
+        </>
+    )
 }
 export default MyProjectsDetailsView
