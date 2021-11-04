@@ -13,7 +13,7 @@ import { BASE_URL } from '../../Config';
 import React, { useState } from "react";
 import Select from "react-select";
 import "../createProject/createProject.css";
-import { fetchProjectsThunk,fetchProjectsForPMThunk, fetchProjectsAssigneeThunk, fetchWbsThunk } from '../../store/slices/ProjectsSlice';
+import { fetchProjectsThunk, fetchProjectsForPMThunk, fetchProjectsAssigneeThunk, fetchWbsThunk } from '../../store/slices/ProjectsSlice';
 import { fetchEvmsThunk } from "../../store/slices/EvmsSlice";
 import { useDispatch, useSelector } from 'react-redux'
 import { useFormik } from 'formik';
@@ -29,46 +29,46 @@ const ProjectEVMS = () => {
     let e = []
     Array.from(state.projects.pm_projects).forEach((item, idx) => {
       // e.push({ value: item.project.id, label: item.project.task_delivery_order.title + '/' + item.project.sub_task, data: item })
-      e.push({data:item})
+      e.push({ data: item })
     })
-    console.log('e',e);
+    console.log('e', e);
     return e
 
   })
 
   console.log("pM projects", projects);
 
-  const evmsList= useSelector(state =>{
-    let f=[]
-    Array.from(state.evmsList.data).forEach((item,idx) =>{
-      f.push({data:item})
+  const evmsList = useSelector(state => {
+    let f = []
+    Array.from(state.evmsList.data).forEach((item, idx) => {
+      f.push({ data: item })
     })
     return f
 
   })
 
-  console.log('existing evms',evmsList)
-  {/**get only the unique values */}
+  console.log('existing evms', evmsList)
+  {/**get only the unique values */ }
   // const uniqueProjects = projects.filter(function(o1){
   //   return !evmsList.some(function(o2){
   //     return o1.project.id === o2.project.id
   //   })
-    
-  // })
- const uniqueProjects = projects.filter(o1 => !evmsList.some(o2 => o1.data.project.id === o2.data.project.id));
- console.log('unique projects',uniqueProjects)
- const uniqueArray=[];
- Array.from(uniqueProjects).forEach((item,idx) =>{
-  uniqueArray.push({value:item.data.project.id,label:item.data.project.task_delivery_order.title+'/'+item.data.project.sub_task,data:item})
-  
- })
- console.log('uniqueArray',uniqueArray)
 
- 
- 
+  // })
+  const uniqueProjects = projects.filter(o1 => !evmsList.some(o2 => o1.data.project.id === o2.data.project.id));
+  console.log('unique projects', uniqueProjects)
+  const uniqueArray = [];
+  Array.from(uniqueProjects).forEach((item, idx) => {
+    uniqueArray.push({ value:item.data.project.id, label: item.data.project.task_delivery_order.title + '/' + item.data.project.sub_task, data: item })
+
+  })
+  console.log('uniqueArray', uniqueArray)
+
+
+
   const dispatch = useDispatch();
   React.useEffect(() => {
-    console.log('pm project list',projects)
+    console.log('pm project list', projects)
   }, [projects])
 
 
@@ -93,17 +93,23 @@ const ProjectEVMS = () => {
 
 
   const getAssigneeList = (option) => {
-    
+
     // dispatch(fetchProjectsAssigneeThunk(option.data.project.work_package_number))
     setProjectValue(option)
+
     console.log('projectValue', option)
+    formCreateEVMS.setValues({
+      project: option.value,
+      planned_hours: option.data.data.project.planned_hours,
+      planned_value: option.data.data.project.planned_value,
+      work_package_number: option.data.data.project.work_package_number
+    })
+    // formCreateEVMS.setValues(project,option.value)
 
-    formCreateEVMS.setFieldValue('project', option.value)
+    // formCreateEVMS.setFieldValue('planned_hours', option.data.data.project.planned_hours)
+    // formCreateEVMS.setFieldValue('planned_value', option.data.data.project.planned_value)
+    // formCreateEVMS.setFieldValue('work_package_number', option.data.data.project.work_package_number)
 
-    formCreateEVMS.setFieldValue('planned_hours', option.data.data.project.planned_hours)
-    formCreateEVMS.setFieldValue('planned_value', option.data.data.project.planned_value)
-    formCreateEVMS.setFieldValue('work_package_number', option.data.data.project.work_package_number)
-    
     // setSelectedProjectEndDate(option.planned_delivery_date)
   }
 
@@ -113,20 +119,20 @@ const ProjectEVMS = () => {
 
 
   }
-  {/**validation stuff */}
-  const validate_evms_form =(values) =>{
-    console.log('validating values',values)
-    const errors  ={}
-    // if(!values.project.pristine)errors.project = "Project Selection is required"
-    if(!values.earned_value)errors.earned_value="Work Package Number is required"
-    if(!values.actual_cost)errors.actual_cost="Actual Cost is required"
-    if(!values.estimate_at_completion) errors.estimate_at_completion="Estimate at completion is required"
-    if(!values.estimate_to_completion)errors.estimate_to_completion="Estimate to completion is required"
-    if(!values.planned_value) errors.planned_value="planned Value is required"
-
-    if(!values.planned_hours)errors.planned_hours="planned hours is required"
-    if(!values.budget_at_completion)errors.budget_at_completion="budget at completion is required"
-  return errors
+  {/**validation stuff */ }
+  const validate_evms_form = (values) => {
+    console.log('validating values', values)
+    const errors = {}
+    if (!values.project) errors.project = "Project Selection is required"
+    if (!values.earned_value) errors.earned_value = "Work Package Number is required"
+    if (!values.actual_cost) errors.actual_cost = "Actual Cost is required"
+    if (!values.estimate_at_completion) errors.estimate_at_completion = "Estimate at completion is required"
+    if (!values.estimate_to_completion) errors.estimate_to_completion = "Estimate to completion is required"
+    if (!values.planned_value) errors.planned_value = "Planned Value is required"
+    if (!values.planned_hours) errors.planned_hours = "Planned hours is required"
+    if(!values.variance_at_completion)errors.variance_at_completion="Variance at completion is required"
+    if (!values.budget_at_completion) errors.budget_at_completion = "Budget at completion is required"
+    return errors
   }
   const create_evms = async () => {
     console.log('values', JSON.stringify(formCreateEVMS.values))
@@ -136,9 +142,9 @@ const ProjectEVMS = () => {
         reset_form()
         swal('Created!', 'Successfuly Created', 'success')
       }
-      else{
-        console.log("error",res)
-        swal('Error!','Problem occured during creating EVMS','warning');
+      else {
+        console.log("error", res)
+        swal('Error!', 'Problem occured during creating EVMS', 'warning');
       }
     })
   }
@@ -152,14 +158,14 @@ const ProjectEVMS = () => {
       estimate_to_completion: "",
       planned_value: "",
       planned_hours: "",
-      variance_at_completion:"",
+      variance_at_completion: "",
       budget_at_completion: ""
 
     },
 
     validateOnChange: true,
     validateOnBlur: true,
-validate:validate_evms_form,
+    validate: validate_evms_form,
     onSubmit: create_evms
   })
   const handleKeyPress = (event) => {
@@ -222,15 +228,10 @@ validate:validate_evms_form,
                         ) :
                         null}
                       {/**Error show */}
-                    {/* {formCreateEVMS.errors.project && <p className="error">{formCreateEVMS.errors.project}</p>} */}
+                      {formCreateEVMS.errors.project && <p className="error">{formCreateEVMS.errors.project}</p>}
                     </div>
                     {/**Work package */}
-                    {/* <div className="col-lg-6 mb-3">
-                      <CLabel className="custom-label-5" htmlFor="wPackage">
-                        Work Package
-                      </CLabel>
-                      <CInput name="wPackage" id="wPackage" type="number" readOnly />
-                    </div> */}
+                 
                     {/**Earned Value */}
                     <div className="col-lg-6 mb-3">
                       <CLabel className="custom-label-5" htmlFor="earned_value">
@@ -240,7 +241,7 @@ validate:validate_evms_form,
 
                       </CInput>
                       {/**Error show */}
-                     {formCreateEVMS.errors.earned_value && <p className="error">{formCreateEVMS.errors.earned_value}</p>} 
+                      {formCreateEVMS.errors.earned_value && <p className="error">{formCreateEVMS.errors.earned_value}</p>}
                     </div>
                     {/**Actual Cost */}
                     <div className="col-lg-6 mb-3">
@@ -249,17 +250,17 @@ validate:validate_evms_form,
                       </CLabel>
                       <CInput className="custom-forminput-6" name="actual_cost" id="actual_cost" type="number" min="0" step="0.1" value={formCreateEVMS.values.actual_cost} onChange={formCreateEVMS.handleChange} required />
                       {/**Error show */}
-                      {formCreateEVMS.errors.actual_cost && <p className="error">{formCreateEVMS.errors.actual_cost}</p>} 
+                      {formCreateEVMS.errors.actual_cost && <p className="error">{formCreateEVMS.errors.actual_cost}</p>}
                     </div>
                     {/**estimate at completion */}
                     <div className="col-lg-6 mb-3">
                       <CLabel className="custom-label-5" htmlFor="estimate_at_completion">
                         Estimate at completion *
                       </CLabel>
-                      <CInput className="custom-forminput-6" name="estimate_at_completion" id="estimate_at_completion" type="number" min="0" step="0.1" value={formCreateEVMS.values.estimate_at_completion} onChange
-                        ={formCreateEVMS.handleChange} required />
+                      <CInput className="custom-forminput-6" name="estimate_at_completion" id="estimate_at_completion" type="number" min="0" step="0.1" value={formCreateEVMS.values.estimate_at_completion} 
+                        onChange={formCreateEVMS.handleChange} required />
                       {/**error show */}
-                      {formCreateEVMS.errors.estimate_at_completion && <p className="error">{formCreateEVMS.errors.estimate_at_completion}</p>} 
+                      {formCreateEVMS.errors.estimate_at_completion && <p className="error">{formCreateEVMS.errors.estimate_at_completion}</p>}
                     </div>
                     {/**estimate to completion */}
                     <div className="col-lg-6 mb-3">
@@ -268,7 +269,7 @@ validate:validate_evms_form,
                       </CLabel>
                       <CInput className="custom-forminput-6" name="estimate_to_completion" id="estimate_to_completion" type="number" min="0" step="0.1" value={formCreateEVMS.values.estimate_to_completion} onChange={formCreateEVMS.handleChange} required />
                       {/**Error show */}
-                      {formCreateEVMS.errors.estimate_to_completion && <p className="error">{formCreateEVMS.errors.estimate_to_completion}</p>} 
+                      {formCreateEVMS.errors.estimate_to_completion && <p className="error">{formCreateEVMS.errors.estimate_to_completion}</p>}
                     </div>
                     {/**Planned Value */}
 
@@ -278,7 +279,7 @@ validate:validate_evms_form,
                       </CLabel>
                       <CInput className="custom-forminput-6" name="planned_value" id="planned_value" type="number" min="0" value={formCreateEVMS.values.planned_value} onChange={formCreateEVMS.handleChange} />
                       {/**Error show */}
-                      {formCreateEVMS.errors.planned_value && <p className="error">{formCreateEVMS.errors.planned_value}</p>} 
+                      {formCreateEVMS.errors.planned_value && <p className="error">{formCreateEVMS.errors.planned_value}</p>}
                     </div>
                     {/**Planned hours */}
                     <div className="col-lg-6 mb-3">
@@ -287,14 +288,14 @@ validate:validate_evms_form,
                       </CLabel>
                       <CInput className="custom-forminput-6" name="planned_hours" id="planned_hours" type="number" min="1" value={formCreateEVMS.values.planned_hours} onChange={formCreateEVMS.handleChange} />
                       {/**Error show */}
-                      {formCreateEVMS.errors.planned_hours && <p className="error">{formCreateEVMS.errors.planned_hours}</p>} 
+                      {formCreateEVMS.errors.planned_hours && <p className="error">{formCreateEVMS.errors.planned_hours}</p>}
                     </div>
                     {/**variance at completion */}
                     <div className="col-lg-6 mb-3">
                       <CLabel className="custom-label-5" htmlFor="variance_at_completion">
                         Variance at completion *
                       </CLabel>
-                      <CInput className="custom-forminput-6" name="variance_at_completion" id="variance_at_completion" type="number" min="0"  value={Math.abs(formCreateEVMS.values.budget_at_completion - formCreateEVMS.values.estimate_at_completion)} onChange={formCreateEVMS.handleChange} readOnly/>
+                      <CInput className="custom-forminput-6" name="variance_at_completion" id="variance_at_completion" type="number" min="0" value={Math.abs(formCreateEVMS.values.budget_at_completion - formCreateEVMS.values.estimate_at_completion)} onChange={formCreateEVMS.handleChange} readOnly />
                       {/**Error show */}
                     </div>
                     {/**budget at completion */}
@@ -302,10 +303,10 @@ validate:validate_evms_form,
                       <CLabel className="custom-label-5" htmlFor="budget_at_completion">
                         Budget at completion *
                       </CLabel>
-                      <CInput className="custom-forminput-6" name="budget_at_completion" id="budget_at_completion" type="number" min="0" step="0.1" value={formCreateEVMS.values.budget_at_completion} onChange={(e)=>{formCreateEVMS.setFieldValue('budget_at_completion',e.target.value); formCreateEVMS.setFieldValue('variance_at_completion',Math.abs(formCreateEVMS.values.budget_at_completion - formCreateEVMS.values.estimate_at_completion))}}required />
+                      <CInput className="custom-forminput-6" name="budget_at_completion" id="budget_at_completion" type="number" min="0" step="0.1" value={formCreateEVMS.values.budget_at_completion} onChange={(e) => {formCreateEVMS.setFieldValue('budget_at_completion', e.target.value); formCreateEVMS.setFieldValue('variance_at_completion', Math.abs(formCreateEVMS.values.budget_at_completion - formCreateEVMS.values.estimate_at_completion))}} required />
 
                       {/**Error show */}
-                      {formCreateEVMS.errors.budget_at_completion && <p className="error">{formCreateEVMS.errors.budget_at_completion}</p>} 
+                      {formCreateEVMS.errors.budget_at_completion && <p className="error">{formCreateEVMS.errors.budget_at_completion}</p>}
                     </div>
                     {/**submit buttons */}
                     <div className="col-md-12">
