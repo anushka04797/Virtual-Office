@@ -7,6 +7,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchWbsThunk } from '../../store/slices/WbsSlice';
 import DateRangeIcon from '@material-ui/icons/DateRange';
 import CIcon from '@coreui/icons-react';
+import { USER_ID } from '../../Config';
+import { API } from '../../Config';
+import swal from 'sweetalert';
 
 const WbsBoard = () => {
     const wbsList = useSelector(state => state.wbs.data)
@@ -88,32 +91,65 @@ const WbsBoard = () => {
     const laneStyle = { backgroundColor: "rgb(243 243 243)" };
     let currentLaneId, currentCardId = '';
 
+    const [modal, setModal] = useState(false);
+    const [modalData, setModalData] = useState(null);
+    const [timeCardListData, setTimeCardListData] = useState([]);
+
     const editWbs = (cardId, metadata, laneId) => {
         // console.log("WBS edit: ", cardId, metadata, laneId);
         currentLaneId = laneId;
         currentCardId = cardId;
         // console.log(data.lanes.find(element => element.id == currentLaneId).cards.find(element => element.id == currentCardId).title)
         const wbsId = (boardData.lanes.find(element => element.id == currentLaneId).cards.find(element => element.id == currentCardId)).id;
+        API.get('wbs/time-card/list/' + wbsId + '/').then((res) => {
+            console.log('time-card list result', res)
+            // if (res.data.length != 0){
+                setTimeCardListData(res.data);
+            // }else {
+            //     setTimeCardListData([]);
+            // }
+            console.log("timeCardListData: ", timeCardListData)
+        })
         setModalData(wbsList.find(element => element.id == wbsId));
         setModal(true);
     }
-
-    const [modal, setModal] = useState(false);
-    const [modalData, setModalData] = useState(null);
 
     const toggle = () => {
         setModalData(null);
         setModal(!modal);
     }
+
     const onWbsUpdate=()=>{
         setModal(false)
-        dispatch(fetchWbsThunk(5))
+        dispatch(fetchWbsThunk(localStorage.getItem(USER_ID)))
         setModalData(null);
     }
+
+    const updateStatus=(cardId, sourceLaneId, targetLaneId, position, cardDetails) => {
+        console.log("DRAG ENDS!!!: ", cardDetails.id)
+        let values;
+        if (cardDetails.laneId == "lane1") {
+            values = {
+                "status": 1
+            }
+        } else if (cardDetails.laneId == "lane2") {
+            values = {
+                "status": 2
+            }
+        }else if (cardDetails.laneId == "lane3") {
+            values = {
+                "status": 3
+            }
+        }
+        API.put('wbs/update/status/' + parseInt(cardDetails.id) + '/', values).then((res) => {
+            console.log('update result', res)
+        })
+    }
+    
     return (
         <>
-            <Board data={boardData} hideCardDeleteIcon onCardClick={editWbs} style={boardStyle} laneStyle={laneStyle} />
-            {modalData!=null && <WbsModal show={modal} onClose={onWbsUpdate} toggle={toggle} data={modalData}></WbsModal>}
+            <Board data={boardData} hideCardDeleteIcon handleDragEnd={updateStatus} onCardClick={editWbs} style={boardStyle} laneStyle={laneStyle} />
+            {modalData!=null && <WbsModal show={modal} onClose={onWbsUpdate} toggle={toggle} data={modalData} timeCardList={timeCardListData}></WbsModal>}
         </>
     )
 

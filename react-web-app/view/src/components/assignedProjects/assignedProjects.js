@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import { CButton, CCard, CCardBody, CAlert } from '@coreui/react';
 import { useDispatch, useSelector } from "react-redux";
 import { useSnackbar } from "notistack";
-import { fetchUserWiseWbsThunk } from '../../store/slices/WbsSlice';
+// import { fetchUserWiseWbsThunk } from '../../store/slices/WbsSlice';
 import { USER_ID } from "../../Config";
 const AssignedProjectsDashboard = () => {
     const dispatch = useDispatch()
     const wbs = useSelector(state => state.wbs.data);
     React.useEffect(() => {
-        dispatch(fetchUserWiseWbsThunk(localStorage.getItem(USER_ID)))
+        // dispatch(fetchUserWiseWbsThunk(localStorage.getItem(USER_ID)))
     }, [])
     return (
         <>

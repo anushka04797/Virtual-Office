@@ -7,8 +7,8 @@ const initialState = {
 }
 
 export const fetchWbsThunk = createAsyncThunk('wbs/fetchWbsThunk', async (user_id) => {
-  const response = await JsonClient.get('wbs/all/' + user_id)
-  console.log("all wbs", response.data)
+  const response = await JsonClient.get('wbs/all/' + user_id+'/')
+  console.log("all wbs", response)
   return response.data
 })
 
@@ -39,11 +39,11 @@ export const wbsSlice = createSlice({
       // Add any fetched posts to the array
       state.data = action.payload
     },
-    [fetchUserWiseWbsThunk.fulfilled]: (state, action) => {
-      state.status = 'succeeded'
-      // Add any fetched posts to the array
-      state.data = action.payload
-    },
+    // [fetchUserWiseWbsThunk.fulfilled]: (state, action) => {
+    //   state.status = 'succeeded'
+    //   // Add any fetched posts to the array
+    //   state.data = action.payload
+    // },
     [fetchWbsThunk.rejected]: (state, action) => {
       state.status = 'failed'
       state.error = action.error.message
