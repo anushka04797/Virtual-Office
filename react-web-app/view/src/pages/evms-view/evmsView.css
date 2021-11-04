@@ -105,6 +105,13 @@
         font-size: 14px;
         line-height:2.28571em; 
     }
+    .error{
+        font-size: 14px;
+        font-family: inherit;
+        font-weight: 400;
+        margin-top: 5px;
+        color: red;
+    }
 /*media query*/
 
 @media all and (min-width:992px){
