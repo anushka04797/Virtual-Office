@@ -2,14 +2,14 @@ import { CContainer, CRow, CCol, CCard, CCardHeader, CCardBody, CForm, CLabel, C
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { form, useFormik } from 'formik';
-import { PUBLIC_API } from '../../Config';
+import { API } from '../../Config';
 import swal from 'sweetalert';
 
 const WbsModal = (props) => {
-    console.log('props data: ', props.data)
+    console.log('props time card list data: ', props.timeCardList)
     // const modalData = useSelector(state => state.wbs.data)
-const[deliverableView,setDeliverableView] =  useState(true);
-const[hrsWorked,setHrsWorked] = useState(true);
+    const [deliverableView, setDeliverableView] = useState(true);
+    const [hrsWorked, setHrsWorked] = useState(true);
     const wbsStatusArray = [{
         "title": "To Do",
         "status": 1
@@ -22,8 +22,8 @@ const[hrsWorked,setHrsWorked] = useState(true);
     }]
 
     const updateWbs = (data) => {
-        console.log("formWbsUpdate:", formWbsUpdate.values)
-        PUBLIC_API.put('wbs/update/' + props.data.id + '/', formWbsUpdate.values).then((res) => {
+        console.log("formWbsUpdate:", data)
+        API.put('wbs/update/' + props.data.id + '/', formWbsUpdate.values).then((res) => {
             console.log('update result', res)
             if (res.status == 200 && res.data.success == 'True') {
                 swal({
@@ -42,8 +42,11 @@ const[hrsWorked,setHrsWorked] = useState(true);
         console.log(errors);
         return errors;
     }
+
     const formWbsUpdate = useFormik({
         initialValues: {
+            project: props.data.project.id,
+            assignee: props.data.assignee.id,
             title: props.data.title,
             status: props.data.status,
             description: props.data.description,
@@ -54,7 +57,7 @@ const[hrsWorked,setHrsWorked] = useState(true);
             comments: props.data.comments,
             deliverable: props.data.deliverable,
             date_updated: '',
-            actual_work_done:''
+            actual_work_done: ''
         },
         validateOnChange: true,
         validateOnBlur: true,
@@ -117,9 +120,10 @@ const[hrsWorked,setHrsWorked] = useState(true);
                                 <CRow>
                                     <div className="col-lg-12 mb-3">
                                         <CLabel className="custom-label-wbs5">Actual Work Today</CLabel>
-                                        <CInput id="actual_work_done" type="text" name="actual_work_done" className="custom-forminpput-5" onChange={(e) =>{
-                                            formWbsUpdate.setFieldValue('actual_work_done',e.target.value);if(e.target.value == null || e.target.value.length== 0){setHrsWorked(true)} else{setHrsWorked(false)}} 
-                                        }value={formWbsUpdate.values.actual_work_done}></CInput>
+                                        <CInput id="actual_work_done" type="text" name="actual_work_done" className="custom-forminpput-5" onChange={(e) => {
+                                            formWbsUpdate.setFieldValue('actual_work_done', e.target.value); if (e.target.value == null || e.target.value.length == 0) { setHrsWorked(true) } else { setHrsWorked(false) }
+                                        }
+                                        } value={formWbsUpdate.values.actual_work_done}></CInput>
                                     </div>
                                 </CRow>
                                 <CRow>
@@ -133,11 +137,15 @@ const[hrsWorked,setHrsWorked] = useState(true);
                                         <CLabel className="custom-label-wbs5">
                                             Progress(%)
                                         </CLabel>
-                                        <CInput id="progress" name="progress" type="number" max="100" className="custom-forminput-5" onChange={(e)=>{formWbsUpdate.setFieldValue('progress',e.target.value); if(e.target.value=='100'){setDeliverableView(false);
-                                         formWbsUpdate.setFieldValue('deliverable',formWbsUpdate.values.deliverable)}else{
-                                            setDeliverableView(true);
-                                            formWbsUpdate.setFieldValue('deliverable',"")
-                                        } }} value={formWbsUpdate.values.progress}></CInput>
+                                        <CInput id="progress" name="progress" type="number" max="100" className="custom-forminput-5" onChange={(e) => {
+                                            formWbsUpdate.setFieldValue('progress', e.target.value); if (e.target.value == '100') {
+                                                setDeliverableView(false);
+                                                formWbsUpdate.setFieldValue('deliverable', formWbsUpdate.values.deliverable)
+                                            } else {
+                                                setDeliverableView(true);
+                                                formWbsUpdate.setFieldValue('deliverable', "")
+                                            }
+                                        }} value={formWbsUpdate.values.progress}></CInput>
                                     </div>
                                 </CRow>
                                 <CRow>
@@ -171,7 +179,7 @@ const[hrsWorked,setHrsWorked] = useState(true);
                                     Reporter:
                                     <br></br>
                                     {/* Pial Noman */}
-                                   <span className="wbs-reporter-name">{props.data.reporter?.first_name != undefined && props.data.reporter.first_name + " " + props.data.reporter.last_name}</span> 
+                                    <span className="wbs-reporter-name">{props.data.reporter?.first_name != undefined && props.data.reporter.first_name + " " + props.data.reporter.last_name}</span>
                                 </p>
                                 <p>
                                     Remaining hours:
@@ -182,8 +190,9 @@ const[hrsWorked,setHrsWorked] = useState(true);
                                 <div>
                                     <p>Task List:</p>
                                     <ol className="task-list-show">
-                                        <li className="task-list-show-item">Task 1</li>
-                                        <li className="task-list-show-item">task 2</li>
+                                        {props.timeCardList?.data != undefined ? (Array.from(props.timeCardList.data).map((item) => (
+                                            <li className="task-list-show-item">{item.actual_work_done}</li>
+                                        ))) : ("No task has been done so far.")}
                                     </ol>
                                 </div>
                             </div>
