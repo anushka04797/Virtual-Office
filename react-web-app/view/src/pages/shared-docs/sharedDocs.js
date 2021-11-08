@@ -13,7 +13,16 @@ import CIcon from "@coreui/icons-react";
 import "./sharedDocs.css";
 import ShowDocuments from "../../components/shared-docs-view-file/viewDocsList";
 import UploadDocuments from "../../components/shared-doc-upload-form/uploadForm";
-const sharedDocuments = () => {
+import { useSelector } from "react-redux";
+
+const SharedDocuments = () => {
+  const projects = useSelector(state=>{
+    let temp = []
+    Array.from(state.projects.data).forEach((project,idx)=>{
+      temp.push({value:project.project.id,label:project.project.sub_task})
+    })
+    return temp
+  })
   return (
     <>
       <CContainer>
@@ -62,4 +71,4 @@ const sharedDocuments = () => {
     </>
   );
 };
-export default sharedDocuments;
+export default SharedDocuments;
