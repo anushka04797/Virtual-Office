@@ -22,7 +22,7 @@ export const timecardSlice = createSlice({
             state.status = 'loading'
         },
         [fetchTimecardThunk.fulfilled]:(state,action) =>{
-            state.status = 'succeeded',
+            state.status = 'succeeded'
             state.data = action.payload
         },
         [fetchTimecardThunk.rejected]:(state,action) =>{
