@@ -19,7 +19,7 @@ const routes = [
 
     {path:'/dashboard/timecards',exact:true,name:'Timecards',component:React.lazy(()=>import('../pages/timecards/timeCard'))},
     {path:'/dashboard/profile',exact:true,name:'Profile',component:React.lazy(()=>import('../pages/profile/profileView'))},
-    {path:'/dashboard/shared-documents',exact:true,name:'Shared Documents',component:React.lazy(()=>import('../pages/shared-docs/sharedDocs'))}
+    {path:'/dashboard/shared-documents',exact:true,name:'Shared Documents',component:React.lazy(()=>import('../pages/shared-docs/SharedDocs'))}
 
 ]
 

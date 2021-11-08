@@ -210,7 +210,7 @@ const OurMeetings = () => {
                                         <div className="mb-3">
                                             <CLabel className="custom-label-5">Meeting Type</CLabel>
                                             <Select
-                                                closeMenuOnSelect={false}
+                                                closeMenuOnSelect={true}
                                                 aria-labelledby="projects"
                                                 id="projects"
                                                 placeholder="Select from list"
@@ -233,7 +233,7 @@ const OurMeetings = () => {
                                                 ))}
                                             </CSelect> */}
                                             <Select
-                                                closeMenuOnSelect={false}
+                                                closeMenuOnSelect={true}
                                                 aria-labelledby="projects"
                                                 id="projects"
                                                 placeholder="Select from list"
@@ -308,6 +308,7 @@ const OurMeetings = () => {
                                                 isValidDate={ valid_date }
                                                 value={formMeeting.values.start_time} 
                                                 input={false}
+                                                updateOnView="time"
                                                 dateFormat="YYYY-MM-DD"
                                                 timeFormat={"h:mm A"}
                                                 // closeOnSelect={true}
