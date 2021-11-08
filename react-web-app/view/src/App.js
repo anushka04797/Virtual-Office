@@ -7,6 +7,7 @@ import ProtectedRoute from './components/protected-route/ProtectedRoute'
 import { ThemeProvider,createTheme } from '@material-ui/core/styles';
 import { PALETTE_MODE } from './Config';
 import AuthVerify from './AuthVerify';
+import "react-datetime/css/react-datetime.css";
 const theme = createTheme({
   palette: {
     mode: PALETTE_MODE,

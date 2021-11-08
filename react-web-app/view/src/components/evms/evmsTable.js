@@ -16,7 +16,6 @@ return(
             <h5 className="card-details2"><span className="p-header-4">CPI:</span> <span className="evmsval">1.5</span> (CPI{'>'}1,within budget.CPI {'<'}1,over budget)</h5>
             <h5 className="card-details2"><span className="p-header-4">SPI :</span><span className="evmsval">1</span>(SPI {'>'}1,within schedule,SPI {'<'}1,behind schedule)</h5>
         </CCardBody>
-    
     </CCard>
     <CCard className="project-card1">
         <CCardBody>
