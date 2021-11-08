@@ -28,6 +28,7 @@ const ViewEvms = () => {
         setEvmsId(item?.id);
         evms_update_form.setValues({
             id: item?.id,
+            project: item?.project.id,
             planned_hours: item?.project.planned_hours,
             planned_value: item?.project.planned_value,
             earned_value: item?.earned_value,
@@ -69,6 +70,7 @@ const ViewEvms = () => {
     const evms_update_form = useFormik({
         initialValues: {
             id: "",
+            project: "",
             planned_value: "",
             planned_hours: "",
             earned_value: "",

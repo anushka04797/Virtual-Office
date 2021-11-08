@@ -55,29 +55,6 @@ const MyProjectsDetailsView = () => {
             }
         })
     }
-    const editInfoForm = (subtask) => {
-        console.log(subtask)
-        setEditModal(!editModal)
-        if (editForm) {
-            console.log('assignee in edit form', editForm.values)
-            editForm.setValues({
-                sub_task: project?.project.sub_task,
-                work_package_number: project?.project.work_package_number,
-                work_package_index: subtask?.work_package_index,
-                task_title: subtask?.task_title,
-                estimated_person: subtask ? Number(subtask.estimated_person) : 0,
-                planned_delivery_date: project?.project.planned_delivery_date,
-                assignee: initialize_default_assignees(subtask),
-                pm: project.project.pm.id,
-                planned_hours: project?.project.planned_hours,
-                planned_value: project?.project.planned_value,
-                remaining_hours: project?.project.remaining_hours,
-                status: subtask.status,
-                sub_task_updated: ""
-            })
-        }
-
-    }
     const editForm = useFormik({
         initialValues: {
             sub_task: "",
@@ -112,6 +89,31 @@ const MyProjectsDetailsView = () => {
         setDefaultValue(dtem)
         return preset_assignees
     }
+    const editInfoForm = (subtask) => {
+        console.log(subtask)
+        setEditModal(!editModal)
+        if (editForm) {
+            console.log('assignee in edit form', editForm.values)
+            editForm.setValues({
+                sub_task: project?.project.sub_task,
+                work_package_number: project?.project.work_package_number,
+                work_package_index: subtask?.work_package_index,
+                task_title: subtask?.task_title,
+                estimated_person: subtask ? Number(subtask.estimated_person) : 0,
+                planned_delivery_date: project?.project.planned_delivery_date,
+                assignee: initialize_default_assignees(subtask),
+                pm: project.project.pm.id,
+                planned_hours: project?.project.planned_hours,
+                planned_value: project?.project.planned_value,
+                remaining_hours: project?.project.remaining_hours,
+                status: subtask.status,
+                sub_task_updated: ""
+            })
+        }
+
+    }
+  
+   
 
     const initialize = () => {
         API.get('project/details/' + work_package_number + '/').then((res) => {
@@ -375,7 +377,7 @@ const MyProjectsDetailsView = () => {
                                             <CButton type="button" className="profile-form-btn update-profile" onClick={editForm.handleSubmit}>
                                                 Update Info
                                             </CButton>
-                                            <CButton className="profile-form-btn cancel-update" onClick={() => editInfoForm(!editModal)} type="reset">
+                                            <CButton className="profile-form-btn cancel-update" onClick={() => setEditModal(!editModal)} type="reset">
                                                 Cancel
                                             </CButton>
                                         </div>

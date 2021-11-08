@@ -16,7 +16,13 @@ import { has_group } from '../../helper';
 
 const OngoingProjectDetails = () => {
     let history = useHistory();
-    const dispatch=useDispatch()
+    const dispatch=useDispatch();
+    const [pmStatus, setPmStatus] = useState(1);
+    const [status, setStatus] = useState(0);
+    const radioHandler = (status, pmStatus) => {
+        setStatus(status);
+        setPmStatus(pmStatus);
+    };
     const [showTaskForm, setShowTaskForm] = useState(false);
     //const projects=useSelector(state=> state.projects.data.filter((item)=> project.project.status === 0))
     const projects = useSelector(state => {
@@ -215,12 +221,29 @@ const OngoingProjectDetails = () => {
 
                                 {/*project info in text */}
                                 <div className="information-show row">
-                                    <div className="info-show-now col-md-6">
+                                    <div className="info-show-now col-lg-6">
                                         <h5 className="project-details-points child"><h5 className="info-header-1">Assigned by :</h5>{project.project.pm.first_name + ' ' + project.project.pm.last_name}</h5>
                                         {/* <h5 className="project-details-points"><h5 className="info-header-1">Work Package : </h5>1000</h5> */}
-                                        <h5 className="project-details-points"><h5 className="info-header-1">Project Manager : </h5>{project.project.pm.first_name + ' ' + project.project.pm.last_name}</h5>
+                                        <h5 className="project-details-points"><h5 className="info-header-1">Project Manager :{status === 0 ?( has_group('pm') && <CButton className="edit-pm-name" variant='ghost'  onClick={(e) => radioHandler(1, 0)}><CIcon name="cil-pencil" className="mr-1 pen-icon-pm" /></CButton>):null} </h5>{status === 0 ? (<span>{project.project.pm.first_name + ' ' + project.project.pm.last_name}</span>
+                                        ) : <></>}
+                                                                      {/**if clicked edit button */}
+                                                                      {status === 1 ? (
+                                                <div className="pm-name-edit-part">
+                                                    <CForm>
+                                                        <CInput className="custom-forminput-6 pm-edit" type="text" value={project.project.sub_task} />
+                                                    </CForm>
+                                                    <div>
+                                                        <CButton type="button" variant="ghost" className="confirm-name-pm" onClick={(e) => radioHandler(0, 1)}><CIcon name="cil-check-circle" className="mr-1 tick" size="xl" /></CButton>
+                                                        <CButton type="button" variant="ghost" className="cancel-name-pm" onClick={(e) => radioHandler(0, 1)}><CIcon name="cil-x-circle" className="mr-1 cross" size="xl" /></CButton>
+                                                    </div>
+                                                </div>
+
+                                            ) : <></>}
+                                        
+                                        
+                                        </h5>
                                     </div>
-                                    <div className="info-show-now col-md-6">
+                                    <div className="info-show-now col-lg-6">
                                         {/* <h5 className="project-details-points"><h5 className="info-header-1">Project Details :</h5>Design and develop the app for the seller and buyer module</h5> */}
                                         <h5 className="project-details-points child"><h5 className="info-header-1">Start Date : </h5>{project.project.date_created}</h5>
 
