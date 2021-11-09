@@ -12,15 +12,19 @@ import { useDispatch, useSelector } from 'react-redux';
 import { BASE_URL, USER_ID } from '../../Config';
 import { API } from '../../Config';
 import swal from 'sweetalert'
+import Select from "react-select";
+import { TenMpOutlined } from '@material-ui/icons';
 const MyProjects = () => {
     let history = useHistory();
     const dispatch = useDispatch();
     const [pmStatus, setPmStatus] = useState(1);
     const [status, setStatus] = useState(0);
+    const [managers, setManagers] = useState([])
     const radioHandler = (status, pmStatus) => {
         setStatus(status);
         setPmStatus(pmStatus);
     };
+
     //const projects=useSelector(state=> state.projects.data.filter((item)=> project.project.status === 0))
     const projects = useSelector(state => {
         let temp = []
@@ -33,12 +37,17 @@ const MyProjects = () => {
         return temp
     })
 
-
-
-
     useEffect(() => {
         console.log('projects', projects)
         dispatch(fetchProjectsForPMThunk(localStorage.getItem(USER_ID)))
+        API.get('project/managers/').then((res) => {
+            console.log('res', res.data.data)
+            let temp = []
+            Array.from(res.data.data).forEach((manager, idx) => {
+                temp.push({ value: manager.id, label: manager.first_name + ' ' + manager.last_name, data: manager })
+            })
+            setManagers(temp)
+        })
     }, [])
     const mark_project_completed = (id) => {
         swal({
@@ -130,14 +139,27 @@ const MyProjects = () => {
                                             {status === 1 ? (
                                                 <div className="pm-name-edit-part">
                                                     <CForm>
-                                                        <CInput className="custom-forminput-6 pm-edit" type="text" value={project.project.sub_task} />
+                                                        {/* <CInput className="custom-forminput-6 pm-edit" type="text" value={project.project.sub_task} /> */}
+                                                        <Select
+                                                            closeMenuOnSelect={true}
+                                                            aria-labelledby="prjctSelect"
+                                                            id="prjctSelect"
+                                                            minHeight="35px"
+                                                            placeholder="Select from list"
+                                                            isClearable={true}
+                                                            isMulti={false}
+                                                            // onChange={handleProjectChange}
+                                                            classNamePrefix="custom-forminput-6"
+                                                            // value={selectedProject}
+                                                            options={managers}
+                                                            // styles={colourStyles}
+                                                        />
                                                     </CForm>
                                                     <div>
                                                         <CButton type="button" variant="ghost" className="confirm-name-pm" onClick={(e) => radioHandler(0, 1)}><CIcon name="cil-check-circle" className="mr-1 tick" size="xl" /></CButton>
                                                         <CButton type="button" variant="ghost" className="cancel-name-pm" onClick={(e) => radioHandler(0, 1)}><CIcon name="cil-x-circle" className="mr-1 cross" size="xl" /></CButton>
                                                     </div>
                                                 </div>
-
                                             ) : <></>}
                                         </h5>
                                     </div>

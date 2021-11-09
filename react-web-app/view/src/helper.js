@@ -13,7 +13,7 @@ export const has_group=(group)=>{
 }
 export function arrayRemoveItem(arr, value) { 
     return arr.filter(function(ele){ 
-        console.log(ele)
+        // console.log(ele)
         return ele != value; 
     });
 }
