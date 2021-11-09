@@ -184,7 +184,7 @@ const CreateNewWBS = () => {
                                                     End date
                                                 </CLabel>
                                                 {/* onChange={setWbsEndDate} */}
-                                                <CInput max="2021-11-04" type="date" id="end_date" name="end_date" value={formCreateWbs.values.end_date} onChange={formCreateWbs.handleChange} className="custom-forminput-6"></CInput>
+                                                <CInput max="" type="date" id="end_date" name="end_date" value={formCreateWbs.values.end_date} onChange={formCreateWbs.handleChange} className="custom-forminput-6"></CInput>
                                                 {formCreateWbs.errors.end_date && <p className="error" style={{fontSize: '14px !important'}}>{formCreateWbs.errors.end_date}</p>}
                                             </div>
                                             {/**Assignees */}

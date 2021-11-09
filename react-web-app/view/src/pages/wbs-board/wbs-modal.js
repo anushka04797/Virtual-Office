@@ -22,7 +22,8 @@ const WbsModal = (props) => {
     }]
 
     const updateWbs = (data) => {
-        console.log("formWbsUpdate:", data)
+        console.log("formWbsUpdate:", data.remaining_hours)
+        data.remaining_hours = props.data.project.remaining_hours - formWbsUpdate.values.hours_worked;
         API.put('wbs/update/' + props.data.id + '/', formWbsUpdate.values).then((res) => {
             console.log('update result', res)
             if (res.status == 200 && res.data.success == 'True') {
@@ -38,8 +39,8 @@ const WbsModal = (props) => {
 
     const validateWbsCreateForm = (values) => {
         const errors = {};
-        if (!values.title) errors.title = "Title is required!"
-        console.log(errors);
+        if (!values.title) errors.title = "Title is required!";
+        if (!values.actual_work_done) errors.actual_work_done = "Actual work done today is required! (250 charracters)";
         return errors;
     }
 
@@ -57,7 +58,8 @@ const WbsModal = (props) => {
             comments: props.data.comments,
             deliverable: props.data.deliverable,
             date_updated: '',
-            actual_work_done: ''
+            actual_work_done: '',
+            remaining_hours: ''
         },
         validateOnChange: true,
         validateOnBlur: true,
@@ -69,7 +71,7 @@ const WbsModal = (props) => {
         <>
             <CModal show={props.show} onClose={props.toggle} size="xl">
                 <CModalHeader closeButton>
-                    {props.data.project && props.data.project.task_delivery_order + " > "}
+                    {props.data.project && props.data.project.task_delivery_order.title + " > "}
                     {props.data.project && <a href="https://www.google.com" target="_blank">{props.data.project.sub_task}</a>}
                 </CModalHeader>
                 <CModalBody>
@@ -82,12 +84,13 @@ const WbsModal = (props) => {
                                             Title
                                         </CLabel>
                                         <CInput id="title" name="title" className="custom-forminput-5" onChange={formWbsUpdate.handleChange} value={formWbsUpdate.values.title} />
+                                        {formWbsUpdate.errors.title && <p className="error" style={{fontSize: '14px !important'}}>{formWbsUpdate.errors.title}</p>}
                                     </div>
                                     <div className="col-lg-3 mb-3">
                                         <CLabel className="custom-label-wbs5">
                                             Status
                                         </CLabel>
-                                        <select className="form-select" onChange={formWbsUpdate.handleChange} value={formWbsUpdate.values.status}>
+                                        <select id="status" name="status" className="form-select" onChange={formWbsUpdate.handleChange} value={formWbsUpdate.values.status}>
                                             {wbsStatusArray.map((item, idx) => (
                                                 <option key={idx} value={item.status}>{item.title}</option>
                                             ))}
@@ -124,6 +127,7 @@ const WbsModal = (props) => {
                                             formWbsUpdate.setFieldValue('actual_work_done', e.target.value); if (e.target.value == null || e.target.value.length == 0) { setHrsWorked(true) } else { setHrsWorked(false) }
                                         }
                                         } value={formWbsUpdate.values.actual_work_done}></CInput>
+                                        {formWbsUpdate.errors.actual_work_done && <p className="error" style={{fontSize: '14px !important'}}>{formWbsUpdate.errors.actual_work_done}</p>}
                                     </div>
                                 </CRow>
                                 <CRow>
@@ -183,15 +187,18 @@ const WbsModal = (props) => {
                                 </p>
                                 <p>
                                     Remaining hours:
-                                    <br></br>500
-                                    {props.data.reporter?.remaining_hours}
+                                    <br></br>
+                                    {props.data.project?.remaining_hours}
                                 </p>
                                 {/**task list show */}
                                 <div>
                                     <p>Task List:</p>
                                     <ol className="task-list-show">
                                         {props.timeCardList?.data != undefined ? (Array.from(props.timeCardList.data).map((item) => (
-                                            <li className="task-list-show-item">{item.actual_work_done}</li>
+                                            <li className="task-list-show-item">
+                                                {item.actual_work_done}
+                                                <p><small> By {item.time_card_assignee.first_name +" "+ item.time_card_assignee.last_name} @ {item.date_updated} </small></p>
+                                            </li>
                                         ))) : ("No task has been done so far.")}
                                     </ol>
                                 </div>
