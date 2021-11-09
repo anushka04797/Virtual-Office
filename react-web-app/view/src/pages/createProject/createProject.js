@@ -165,6 +165,9 @@ const CreateNewProject = () => {
       formCreateProject.setFieldValue('work_package_number',String(inputValue))
     }
   }
+  function isDateBeforeToday(date) {
+    return new Date(date) < new Date(new Date().toDateString());
+  }
   const validate_create_project_form = (values) => {
     console.log('validating values ',values)
     const errors = {}
@@ -172,6 +175,7 @@ const CreateNewProject = () => {
     if (!values.sub_task) errors.sub_task = "Sub Task is required"
     if (!values.work_package_number) errors.work_package_number = "Work Package Number is required"
     if (!values.task_title) errors.task_title = "Task title is required"
+    if (!isDateBeforeToday(values.planned_delivery_date)) errors.planned_delivery_date = "Invalid planned delivery date"
     return errors
   }
   const reset_form=()=>{

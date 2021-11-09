@@ -29,7 +29,7 @@ const UploadDocuments = () => {
     let formData = new FormData()
     formData.append('project', selectedProject.data.project.id)
     formData.append('files', files.length)
-    formData.append('uploaded_by', localStorage.getItem(USER_ID))
+    formData.append('upload_by', localStorage.getItem(USER_ID))
     Array.from(files).forEach((file, idx) => {
       formData.append('file'+(idx+1),file)
     })

@@ -15,7 +15,7 @@ const AssignedProjectsDashboard = () => {
 
             <div className="main-holder-projects">
                 <h3 className="projectsHeader">
-                    Assigned to me
+                    WBS List
                 </h3>
 
                 <div className="card-holder1">
