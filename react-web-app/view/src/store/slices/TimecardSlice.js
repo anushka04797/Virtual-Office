@@ -8,7 +8,7 @@ const initialState ={
     error:''
 }
 export const fetchTimecardThunk =createAsyncThunk('timecard/fetchTimeCardThunk',async(user_id) =>{
-    const response = await JsonClient.get('time-card/list/' +user_id+'/')
+    const response = await JsonClient.get('wbs/user/time-card/list/' +user_id+'/')
     console.log('time card for user',response)
     return response.data
 })

@@ -124,7 +124,7 @@ const ProjectEVMS = () => {
     console.log('validating values', values)
     const errors = {}
     if (!values.project) errors.project = "Project Selection is required"
-    if (!values.earned_value) errors.earned_value = "Earned Value is required"
+    if (!values.earned_value) errors.earned_value = "Work Package Number is required"
     if (!values.actual_cost) errors.actual_cost = "Actual Cost is required"
     if (!values.estimate_at_completion) errors.estimate_at_completion = "Estimate at completion is required"
     if (!values.estimate_to_completion) errors.estimate_to_completion = "Estimate to completion is required"
