@@ -180,6 +180,12 @@ const WbsModal = (props) => {
                         <div className="col-lg-4 mb-3">
                             <div>
                                 <p>
+                                    Assignee:
+                                    <br></br>
+                                    {/* Pial Noman */}
+                                    <span className="wbs-reporter-name">{props.data.assignee?.first_name != undefined && props.data.assignee.first_name + " " + props.data.assignee.last_name}</span>
+                                </p>
+                                <p>
                                     Reporter:
                                     <br></br>
                                     {/* Pial Noman */}
