@@ -1,4 +1,4 @@
-import { CContainer, CRow, CCol, CCard, CCardHeader, CCardBody, CForm, CLabel, CInput, CButton, CModal, CModalBody, CModalHeader, CModalFooter } from '@coreui/react';
+import { CDropdown, CDropdownToggle, CDropdownMenu, CDropdownItem, CContainer, CRow, CCol, CCard, CCardHeader, CCardBody, CForm, CLabel, CInput, CButton, CModal, CModalBody, CModalHeader, CModalFooter } from '@coreui/react';
 import React, { useState, useEffect } from 'react'
 import './Board.css'
 import Board from 'react-trello'
@@ -10,10 +10,13 @@ import CIcon from '@coreui/icons-react';
 import { USER_ID } from '../../Config';
 import { API } from '../../Config';
 import swal from 'sweetalert';
+import Select from "react-select";
 
 const WbsBoard = () => {
-    const wbsList = useSelector(state => state.wbs.data)
-    const dispatch=useDispatch()
+    let wbsList = useSelector(state => state.wbs.data)
+    const tempAssigneList = [];
+    const [wbsAssigneeList, setWbsAssigneeList] = useState([]);
+    const dispatch = useDispatch()
     const [boardData, setBoardData] = useState({
         lanes: [
             {
@@ -36,12 +39,14 @@ const WbsBoard = () => {
             }
         ]
     })
+
     function capitalize(string) {
         if (string != undefined) {
             return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
         }
         return ''
     }
+
     const populate_data = () => {
         console.log('populating data')
         let temp_data = {
@@ -66,42 +71,50 @@ const WbsBoard = () => {
                 }
             ]
         }
-        if(wbsList!=undefined){
+        if (wbsList != undefined) {
             wbsList.forEach(element => {
+                if (!tempAssigneList.find(item => item.value === element.assignee.id)) {
+                    var temp = {
+                        value: element.assignee.id,
+                        label: element.assignee.first_name + " " + element.assignee.last_name
+                    }
+                    tempAssigneList.push(temp)
+                }
                 if (element.status === 1) {
                     // console.log("1st cond", data.lanes[0])
                     temp_data.lanes[0].cards.push({
-                            "id": element.id.toString(), 
-                            "laneId": "lane1", 
-                            "title": element.title, 
-                            "description": element.description +"\n ➤ "+ capitalize(element.assignee.first_name) +" "+capitalize(element.assignee.last_name), 
-                            "label": "★ " + element.end_date 
-                        })
-                    console.log('1', temp_data)
+                        "id": element.id.toString(),
+                        "laneId": "lane1",
+                        "title": element.title,
+                        "description": element.description + "\n ➤ " + capitalize(element.assignee.first_name) + " " + capitalize(element.assignee.last_name),
+                        "label": "★ " + element.end_date
+                    })
+                    // console.log('1', temp_data)
                 }
                 else if (element.status === 2) {
                     // console.log("2nd cond", temp_data.lanes[1])
-                    temp_data.lanes[1].cards.push({ 
-                        "id": element.id.toString(), 
-                        "laneId": "lane2", 
-                        "title": element.title, 
-                        "description": element.description +"\n ➤ "+ capitalize(element.assignee.first_name) +" "+capitalize(element.assignee.last_name), 
-                        "label": "★ " + element.end_date 
+                    temp_data.lanes[1].cards.push({
+                        "id": element.id.toString(),
+                        "laneId": "lane2",
+                        "title": element.title,
+                        "description": element.description + "\n ➤ " + capitalize(element.assignee.first_name) + " " + capitalize(element.assignee.last_name),
+                        "label": "★ " + element.end_date
                     })
-                    console.log('2', temp_data)
+                    // console.log('2', temp_data)
                 }
                 else if (element.status === 3) {
                     // console.log("3rd cond", temp_data.lanes[2])
-                    temp_data.lanes[2].cards.push({ 
-                        "id": element.id.toString(), 
-                        "laneId": "lane3", 
-                        "title": element.title, 
-                        "description": element.description +"\n ➤ "+ capitalize(element.assignee.first_name) +" "+capitalize(element.assignee.last_name), 
-                        "label": "★ " + element.end_date 
+                    temp_data.lanes[2].cards.push({
+                        "id": element.id.toString(),
+                        "laneId": "lane3",
+                        "title": element.title,
+                        "description": element.description + "\n ➤ " + capitalize(element.assignee.first_name) + " " + capitalize(element.assignee.last_name),
+                        "label": "★ " + element.end_date
                     })
-                    console.log('3', temp_data)
+                    // console.log('3', temp_data)
                 }
             })
+            setWbsAssigneeList(tempAssigneList)
         }
         // console.log('temp data', temp_data)
         setBoardData(temp_data)
@@ -128,7 +141,7 @@ const WbsBoard = () => {
         API.get('wbs/time-card/list/' + wbsId + '/').then((res) => {
             console.log('time-card list result', res)
             // if (res.data.length != 0){
-                setTimeCardListData(res.data);
+            setTimeCardListData(res.data);
             // }else {
             //     setTimeCardListData([]);
             // }
@@ -143,13 +156,13 @@ const WbsBoard = () => {
         setModal(!modal);
     }
 
-    const onWbsUpdate=()=>{
+    const onWbsUpdate = () => {
         setModal(false)
         dispatch(fetchWbsThunk(localStorage.getItem(USER_ID)))
         setModalData(null);
     }
 
-    const updateStatus=(cardId, sourceLaneId, targetLaneId, position, cardDetails) => {
+    const updateStatus = (cardId, sourceLaneId, targetLaneId, position, cardDetails) => {
         console.log("DRAG ENDS!!!: ", cardDetails.id)
         let values;
         if (cardDetails.laneId == "lane1") {
@@ -160,7 +173,7 @@ const WbsBoard = () => {
             values = {
                 "status": 2
             }
-        }else if (cardDetails.laneId == "lane3") {
+        } else if (cardDetails.laneId == "lane3") {
             values = {
                 "status": 3
             }
@@ -169,11 +182,28 @@ const WbsBoard = () => {
             console.log('update result', res)
         })
     }
-    
+
+    // filter wbs
+    const filterWbs = (data) => {
+        console.log("fn ran!!!", data.value);
+        var temWbsList = wbsList;
+        wbsList = temWbsList.filter(item => item.assignee.id === data.value)
+        populate_data()
+        // console.log("new list: ", temWbsList.filter(item => item.assignee.id === data.value));
+    }
+
     return (
         <>
+            <CDropdown>
+                <CDropdownToggle color="secondary">Dropdown button</CDropdownToggle>
+                <CDropdownMenu>
+                    {wbsAssigneeList.map((item) => (
+                        <CDropdownItem onClick={filterWbs} >{item.label}</CDropdownItem>
+                    ))}
+                </CDropdownMenu>
+            </CDropdown>
             <Board data={boardData} hideCardDeleteIcon handleDragEnd={updateStatus} onCardClick={editWbs} style={boardStyle} laneStyle={laneStyle} />
-            {modalData!=null && <WbsModal show={modal} onClose={onWbsUpdate} toggle={toggle} data={modalData} timeCardList={timeCardListData}></WbsModal>}
+            {modalData != null && <WbsModal show={modal} onClose={onWbsUpdate} toggle={toggle} data={modalData} timeCardList={timeCardListData}></WbsModal>}
         </>
     )
 
