@@ -184,7 +184,7 @@ const WbsBoard = () => {
     }
 
     // filter wbs
-    const filterWbs = (data) => {
+    function filterWbs (data) {
         console.log("fn ran!!!", data.value);
         var temWbsList = wbsList;
         wbsList = temWbsList.filter(item => item.assignee.id === data.value)
@@ -197,8 +197,8 @@ const WbsBoard = () => {
             <CDropdown>
                 <CDropdownToggle color="secondary">Dropdown button</CDropdownToggle>
                 <CDropdownMenu>
-                    {wbsAssigneeList.map((item) => (
-                        <CDropdownItem onClick={filterWbs} >{item.label}</CDropdownItem>
+                    {wbsAssigneeList.map((item,idx) => (
+                        <CDropdownItem key={idx} onClick={()=>filterWbs(item)} >{item.label}</CDropdownItem>
                     ))}
                 </CDropdownMenu>
             </CDropdown>
