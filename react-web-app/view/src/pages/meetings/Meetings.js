@@ -5,7 +5,7 @@ import './meetings.css';
 import JitsiMeet from '../jitsi/JitsiMeet'
 import { useFormik } from 'formik'
 import { useSelector } from 'react-redux';
-import { API } from '../../Config';
+import { API, USER_ID } from '../../Config';
 import swal from 'sweetalert';
 import Select from 'react-select';
 import Datetime from 'react-datetime';
@@ -134,6 +134,7 @@ const OurMeetings = () => {
             agenda: "",
             comments: "",
             start_time: "",
+            host: localStorage.getItem(USER_ID)
             // end_time: "",
             // duration: "",
         },
@@ -175,12 +176,13 @@ const OurMeetings = () => {
                                     <CCard className="meeting-cards">
                                         <CCardBody>
                                             <div className="d-flex">
-                                                <div className="icon-holder">
+                                                {meeting.medium == 0 && <div className="icon-holder">
                                                     <VideoCallIcon className="videoIcon" />
-                                                </div>
+                                                </div>}
                                                 <div>
-                                                    <h6 className="meeting-id">Meeting ID: #677465</h6>
-                                                    <h5 className="projectName">Virtual Office</h5>
+                                                    <h6 className="meeting-id">Meeting Agenda: {meeting.agenda}</h6>
+                                                    <h6 className="projectName">Type: {meeting.type==0?'Project':'General'} Meeting</h6>
+                                                    {meeting.host != null && <h6 className="projectName">Host: {meeting.host.first_name+' '+meeting.host.last_name}</h6>}
                                                     <div className="join-btn-holder"><CButton className="meeting-join-btn">Join</CButton></div>
                                                 </div>
                                             </div>
