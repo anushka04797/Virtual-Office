@@ -358,7 +358,7 @@ const CreateNewProject = () => {
                         <CLabel className="custom-label-5">
                           Planned Delivery Date
                         </CLabel>
-                        <Datepicker
+                        {/* <DatePicker
                           controls={['date']}
                           showOnClick={false}
                           showOnFocus={false}
@@ -367,8 +367,8 @@ const CreateNewProject = () => {
                           touchUi={true}
                           inputComponent="input"
                           inputProps={props}
-                        />
-                        {/* <CInput id="planned_delivery_date" name="planned_delivery_date" value={formCreateProject.values.planned_delivery_date} onChange={formCreateProject.handleChange} className="custom-forminput-6" type="date" /> */}
+                        /> */}
+                        <CInput id="planned_delivery_date" name="planned_delivery_date" value={formCreateProject.values.planned_delivery_date} onChange={formCreateProject.handleChange} className="custom-forminput-6" type="date" />
                       </div>
                       {/**Planned Value */}
                       <div className="col-lg-4 mb-3">
