@@ -3,8 +3,10 @@ import { CButton, CCard, CCardBody, CAlert } from '@coreui/react';
 import { useDispatch, useSelector } from "react-redux";
 import { fetchMeetingList } from "../../store/slices/MeetingSlice";
 import { USER_ID } from "../../Config";
+import { useHistory } from "react-router-dom";
 
 const ScheduleMeetings = () => {
+    let history = useHistory();
     const dispatch = useDispatch()
     const meeting = useSelector(state => state.meetings.data);
     React.useEffect(() => {
@@ -19,11 +21,13 @@ const ScheduleMeetings = () => {
 
                 <div className="card-holder1 ">
                     {meeting != undefined && meeting.slice(0, 3).map((item, idx) => (
-                        <CCard className="project-card1">
+                        <CCard className="project-card1" key={idx}>
                             <CCardBody>
-                                <h6 className="id-no1">meeting id: #{item.room_id}</h6>
-                                <h5 className="card-details1"><span className="p-header-3">Project Name:</span> {item.project.task_delivery_order}</h5>
-                                <h5 className="card-details1"><span className="p-header-3">Date and Time :</span> {item.start_time}</h5>
+                                {item.room_id != "" &&
+                                <h6 className="id-no1">room id: #{item.room_id}</h6>}
+                                {item.room_id == "" && <h6 className="id-no1">meeting id: #{item.id}</h6>}
+                                {/* <h5 className="card-details1"><span className="p-header-3">Project Name:</span> {item.project.task_delivery_order}</h5> */}
+                                <h5 className="card-details1"><span className="p-header-3">Scheduled Date &amp; Time :</span> {item.start_time}</h5>
                             </CCardBody>
 
                         </CCard>
@@ -33,7 +37,7 @@ const ScheduleMeetings = () => {
                         <CAlert className="no-value-show-alert" color="primary">Currently there are no upcoming meetings</CAlert>
                     ) : <></>}
                 </div>
-                {meeting != undefined && meeting.length > 3 && <div className="button-holder3"><CButton className="tiny-buttons1">View all</CButton></div>}
+                {meeting != undefined  && <div className="button-holder3"><CButton className="tiny-buttons1"  onClick={() => history.push({pathname:'/dashboard/meetings'})}>View all</CButton></div>}
             </div>
 
 

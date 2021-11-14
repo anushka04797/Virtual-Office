@@ -22,3 +22,8 @@
 .c-avatar{
     border-radius: 50%;
 }
+.copyright-text{
+    font-size: 12px;
+    text-align: center;
+    color: #0065ff;
+}

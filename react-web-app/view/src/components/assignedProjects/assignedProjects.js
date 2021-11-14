@@ -2,9 +2,12 @@ import React, { useState } from 'react';
 import { CButton, CCard, CCardBody, CAlert } from '@coreui/react';
 import { useDispatch, useSelector } from "react-redux";
 import { useSnackbar } from "notistack";
+import { useHistory } from "react-router-dom";
+
 // import { fetchUserWiseWbsThunk } from '../../store/slices/WbsSlice';
 import { USER_ID } from "../../Config";
 const AssignedProjectsDashboard = () => {
+    let history = useHistory();
     const dispatch = useDispatch()
     const wbs = useSelector(state => state.wbs.data);
     React.useEffect(() => {
@@ -42,7 +45,7 @@ const AssignedProjectsDashboard = () => {
 
                     }
                 </div>
-                {wbs != undefined && wbs.length > 3 && <div className="button-holder3"><CButton className="tiny-buttons1">View all</CButton></div>}
+                {wbs != undefined  && <div className="button-holder3"><CButton className="tiny-buttons1"  onClick={() => history.push({pathname:'/dashboard/WBS/board'})}>View all</CButton></div>}
             </div>
 
         </>

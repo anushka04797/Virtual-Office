@@ -27,7 +27,7 @@ const ProjectsTableDashboard = () => {
                             <CCardBody>
                                 <h6 className="id-no1">Work Package Number: # {item.project.work_package_number}</h6>
                                 <h5 className="card-details1"><span className="p-header-3">Project Name: </span> {item.project.sub_task}</h5>
-                                {/*<h5 className="card-details1"><span className="p-header-3">Lead Name : </span>Pial Noman</h5>*/}
+                                <h5 className="card-details1"><span className="p-header-3">Planned Delivery Date : </span>{item.project.planned_delivery_date}</h5>
                             </CCardBody>
                         </CCard>
                     ))}
@@ -44,7 +44,7 @@ const ProjectsTableDashboard = () => {
               
               }
                 </div>
-                {projects!=undefined && projects.length>3  && <div className="button-holder3"><CButton className="tiny-buttons1" onClick={() => history.push({pathname:'/dashboard/Projects/assigned-projects'})}>View all</CButton></div>}
+                {projects!=undefined  && <div className="button-holder3"><CButton className="tiny-buttons1" onClick={() => history.push({pathname:'/dashboard/Projects/assigned-projects'})}>View all</CButton></div>}
              
               
             </div>

@@ -35,7 +35,7 @@ const TheLayout = () => {
         <div className="c-body pt-10 custom-color-c-app">
           <TheContent/>
         </div>
-        {/* <TheFooter/> */}
+        <TheFooter/>
       </div>
     </div>
   )

@@ -12,6 +12,7 @@ import {
   CSidebarMinimizer,
   CSidebarNavDropdown,
   CSidebarNavItem,
+  CFooter,
 } from '@coreui/react'
 import { changeState } from '../store/slices/SideBarSlice';
 import CIcon from '@coreui/icons-react'
@@ -103,8 +104,11 @@ const TheSidebar = () => {
         <CSidebarNavItem to="/dashboard/shared-documents" name="Shared Documents" icon="cil-folder-open" className="vo-navItem"></CSidebarNavItem>
 
         <CSidebarNavItem onClick={logout} name="Logout" icon="cil-account-logout" className="vo-navItem"></CSidebarNavItem>
+      
       </CSidebarNav>
+      {/* <span className="copyright-text">&copy; DMA V1.0.0</span> */}
       <CSidebarMinimizer />
+    
     </CSidebar>
   )
 }

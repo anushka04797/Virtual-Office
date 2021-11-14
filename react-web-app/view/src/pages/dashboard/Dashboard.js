@@ -18,6 +18,7 @@ import AssignedToMe from '../../components/assignedProjects/assignedProjects';
 import { useLocation } from 'react-router';
 import { useSnackbar } from 'notistack';
 import { useDispatch } from 'react-redux';
+import { has_group } from '../../helper';
 const loading = (
     <div className="pt-3 text-center">
       <div className="sk-spinner sk-spinner-pulse"></div>
@@ -43,8 +44,8 @@ const Dashboard=()=> {
                 <div className="col-lg-5 offset-lg-1"><ProjectTables/></div>
 
                 <div className="col-lg-5"><AssignedToMe/></div> 
-                
-                <div className="col-lg-5 offset-lg-1"><EvmsShow/></div>
+                {has_group('pm') &&
+                <div className="col-lg-5 offset-lg-1"><EvmsShow/></div>}
                 
                 <div className="col-lg-5"><ScheduledMeetings/></div>
             
