@@ -9,6 +9,8 @@ import {
   CButton,
   CAlert
 } from "@coreui/react";
+import { useHistory } from "react-router-dom";
+
 import { BASE_URL } from '../../Config';
 import React, { useState } from "react";
 import Select from "react-select";
@@ -20,7 +22,7 @@ import { useFormik } from 'formik';
 import { API, USER_ID } from '../../Config';
 import swal from 'sweetalert'
 const ProjectEVMS = () => {
-
+  let history = useHistory();
   const colourStyles = {
     // control: (styles, state) => ({ ...styles,height:"35px", fontSize: '14px !important', lineHeight: '1.42857', borderRadius: "8px",borderRadius:".25rem",color:"rgb(133,133,133)",border:state.isFocused ? '2px solid #0065ff' :'inherit'}),
     option: (provided, state) => ({ ...provided, fontSize: "14px !important" }),
@@ -124,7 +126,7 @@ const ProjectEVMS = () => {
     console.log('validating values', values)
     const errors = {}
     if (!values.project) errors.project = "Project Selection is required"
-    if (!values.earned_value) errors.earned_value = "Work Package Number is required"
+    if (!values.earned_value) errors.earned_value = "Earned Value is required"
     if (!values.actual_cost) errors.actual_cost = "Actual Cost is required"
     if (!values.estimate_at_completion) errors.estimate_at_completion = "Estimate at completion is required"
     if (!values.estimate_to_completion) errors.estimate_to_completion = "Estimate to completion is required"
@@ -176,7 +178,9 @@ const ProjectEVMS = () => {
   return (
     <>
       <CContainer>
+
         <CRow>
+          { uniqueArray.length !=0 ?(
           <div className="col-lg-10 offset-lg-1 col-md-12">
             <CCard className="custom-project-card-1">
               <CCardHeader className="project-header-3">
@@ -321,6 +325,15 @@ const ProjectEVMS = () => {
               </CContainer>
             </CCard>
           </div>
+          ):null}
+          {/**if there are no evms to create */}
+          {uniqueArray.length == 0 ?( <div className="col-lg-10 offset-lg-1 col-md-12">
+          <CAlert className="no-value-show-alert text-center" color="primary">All existing projects' EVMS has been created.
+                        <div><CButton className="evms-from-create" variant="ghost" onClick={() => history.push({ pathname: '/dashboard/EVMS/view' })}>View Details</CButton> of already existing EVMS's</div>
+                       </CAlert>
+          </div>
+          ):null}
+
         </CRow>
       </CContainer>
     </>

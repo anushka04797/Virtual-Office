@@ -530,12 +530,17 @@ color: #FAFBFC;
     .pm-name-edit-part{
         display: flex;
     }
+ .desktop-width{
+     min-width: 250px;
+     max-width: 300px;
+ }
 }
 @media all and (min-width:992px){
     .ongoing-action-card-buttons{
         text-align: right;
       
     }
+  
 }
 @media all and (min-width:1179px){
     .pm-name-edit-part{
@@ -543,5 +548,9 @@ color: #FAFBFC;
     }
     .confirm-name-pm,.cancel-name-pm{
         margin-top:-3px
+    }
+    .desktop-width{
+        min-width: 250px;
+        max-width: 300px;
     }
 }

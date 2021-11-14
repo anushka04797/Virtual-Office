@@ -94,6 +94,17 @@
     margin-top: 5px;
     color: red;
 }
+.evms-from-create{
+    padding-top: 0 !important;
+   
+    text-decoration: 1px solid #0052CC underline;
+    color: #2684ff;
+}
+.evms-from-create:hover,.evms-from-create:focus{
+    color: #0052cc;
+    outline: transparent;
+    border: 0 !important;
+}
 /**_____MEDIA QUERY______**/
 @media all and (min-width:300px) and (max-width:601px){
     .custom-project-card-1{
