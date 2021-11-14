@@ -321,9 +321,9 @@ const UserProfile = () => {
                                                     </div>
                                                     <div className="col-md-6">
                                                         <h5 className="info-header-1">Job title</h5>
-                                                        <h5 className="project-details-points child">
-                                                            Front End Developer{" "}
-                                                        </h5>
+                                                        {profile_details.designation!=null && <h5 className="project-details-points child">
+                                                            {profile_details.designation.name}
+                                                        </h5>}
                                                     </div>
                                                     <div className="col-md-6">
                                                         <h5 className="info-header-1"> Phone</h5>
