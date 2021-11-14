@@ -42,7 +42,7 @@ const OngoingProjectDetails = () => {
         setShowTaskForm(false)
     }
     const colourStyles = {
-        control: styles => ({ ...styles, backgroundColor: 'rgba(238, 232, 250, 0.5)', border: '1px solid #EEE8FA', borderRadius: "8px", minHeight: "60px", boxShadow: "inset 0px 4px 20px rgba(189, 158, 251, 0.1)", fontSize: "16px", lineHeight: "24px" }),
+        control: styles => ({ ...styles, backgroundColor: 'rgba(238, 232, 250, 0.5)', border: '1px solid #EEE8FA', borderRadius: "8px", minHeight: "60px", boxShadow: "inset 0px 4px 20px rgba(189, 158, 251, 0.1)", fontSize: "16px", lineHeight: "24px"}),
     }
     const [visible, setVisible] = useState(false);
     const options = [
@@ -192,7 +192,7 @@ const OngoingProjectDetails = () => {
 
                                 {/*task percentage portion */}
                                 <div>
-                                    <h5 className="tasks-done"><span className="tiny-header1">Task Done : </span>5/10 </h5>
+                                    {/* <h5 className="tasks-done"><span className="tiny-header1">Task Done : </span>5/10 </h5> */}
                                     <h6 className="show-amount">{remaining_hours(project.project.remaining_hours, project.project.planned_hours)}/{parseInt(project.project.planned_hours)} Hrs</h6>
                                     <div className="progress progress-background">
                                         <div className="progress-bar custom-progress1 progress-bar-animated" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" style={{ width: '25%' }}></div>
@@ -224,10 +224,10 @@ const OngoingProjectDetails = () => {
                                     <div className="info-show-now col-lg-6">
                                         <h5 className="project-details-points child"><h5 className="info-header-1">Assigned by :</h5>{project.project.pm.first_name + ' ' + project.project.pm.last_name}</h5>
                                         {/* <h5 className="project-details-points"><h5 className="info-header-1">Work Package : </h5>1000</h5> */}
-                                        <h5 className="project-details-points"><h5 className="info-header-1">Project Manager :{status === 0 ? (has_group('pm') && <CButton className="edit-pm-name" variant='ghost' onClick={(e) => radioHandler(1, 0)}><CIcon name="cil-pencil" className="mr-1 pen-icon-pm" /></CButton>) : null} </h5>{status === 0 ? (<span>{project.project.pm.first_name + ' ' + project.project.pm.last_name}</span>
-                                        ) : <></>}
+                                        <h5 className="project-details-points"><h5 className="info-header-1">Project Manager : </h5>{project.project.pm.first_name + ' ' + project.project.pm.last_name}
+                                        
                                             {/**if clicked edit button */}
-                                            {status === 1 ? (
+                                            {/* {status === 1 ? (
                                                 <div className="pm-name-edit-part">
                                                     <CForm>
                                                         <CInput className="custom-forminput-6 pm-edit" type="text" value={project.project.sub_task} />
@@ -238,7 +238,7 @@ const OngoingProjectDetails = () => {
                                                     </div>
                                                 </div>
 
-                                            ) : <></>}
+                                            ) : <></>} */}
                                         </h5>
                                     </div>
                                     <div className="info-show-now col-lg-6">

@@ -32,7 +32,7 @@ const CompleteProjects = () => {
 
                                 {/*task percentage portion */}
                                 <div>
-                                    <h5 className="tasks-done"><span className="tiny-header1">Task Done : </span>5/10 </h5>
+                                    {/* <h5 className="tasks-done"><span className="tiny-header1">Task Done : </span>5/10 </h5> */}
                                     <h6 className="show-amount">{remaining_hours(project.project.remaining_hours,project.project.planned_hours)}/{parseInt(project.project.planned_hours)} Hrs</h6>
                                     <div className="progress progress-background">
                                         <div className="progress-bar custom-progress1 progress-bar-animated" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" style={{ width: '25%' }}></div>

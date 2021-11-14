@@ -1,7 +1,7 @@
-import { CCard, CCardBody, CContainer, CRow, CButton, CModal, CModalHeader, CModalTitle, CModalBody, CForm, CCol, CLabel, CInput } from '@coreui/react';
+import { CCard, CCardBody, CContainer, CRow, CButton, CModal, CModalHeader, CModalTitle, CModalBody, CForm, CCol, CLabel, CInput, CAlert } from '@coreui/react';
 import React, { useState, useEffect } from 'react';
-import { useHistory } from "react-router-dom";
 import CIcon from '@coreui/icons-react';
+import { useHistory } from "react-router-dom";
 import GradeIcon from '@material-ui/icons/Grade';
 import IconButton from '@material-ui/core/IconButton';
 import './evmsView.css';
@@ -11,7 +11,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useFormik } from 'formik';
 import { fetchEvmsThunk } from '../../store/slices/EvmsSlice';
 import swal from 'sweetalert';
-import { ErrorSharp } from '@material-ui/icons';
 
 const ViewEvms = () => {
     const [visible, setVisible] = useState(false);
@@ -297,6 +296,20 @@ const ViewEvms = () => {
                                 </CCardBody>
                             </CCard>
                         ))}
+                        { /**If no evmsList */}
+                    {evmsList == undefined || evmsList == 0 ? (
+
+
+
+                        <CAlert className="no-value-show-alert text-center" color="primary">Currently there are no EVMS details available.
+                        <div><CButton className="evms-from-details" onClick={() => history.push({ pathname: '/dashboard/EVMS/create' })}>Create a new EVMS</CButton></div>
+                       </CAlert>
+
+
+                    ) : null
+
+
+                    }
                     </div>
                 </CRow>
             </CContainer>

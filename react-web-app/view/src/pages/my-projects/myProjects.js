@@ -13,7 +13,6 @@ import { BASE_URL, USER_ID } from '../../Config';
 import { API } from '../../Config';
 import swal from 'sweetalert'
 import Select from "react-select";
-import { TenMpOutlined } from '@material-ui/icons';
 const MyProjects = () => {
     let history = useHistory();
     const dispatch = useDispatch();
@@ -101,10 +100,10 @@ const MyProjects = () => {
 
                                 {/*task percentage portion */}
                                 <div>
-                                    <h5 className="tasks-done"><span className="tiny-header1">Task Done : </span>5/10 </h5>
+                                    {/* <h5 className="tasks-done"><span className="tiny-header1">Task Done : </span>5/10 </h5> */}
                                     <h6 className="show-amount">{remaining_hours(project.project.remaining_hours, project.project.planned_hours)}/{parseInt(project.project.planned_hours)} Hrs</h6>
                                     <div className="progress progress-background">
-                                        <div className="progress-bar custom-progress1 progress-bar-animated" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" style={{ width: '25%' }}></div>
+                                        <div className="progress-bar custom-progress1 progress-bar-animated" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax={parseInt(project.project.planned_hours)} style={{ width: '25%' }}></div>
                                     </div>
                                 </div>
                                 {/*Project category buttons */}
@@ -138,27 +137,30 @@ const MyProjects = () => {
                                             {/**if clicked edit button */}
                                             {status === 1 ? (
                                                 <div className="pm-name-edit-part">
-                                                    <CForm>
+                                                    <CForm className="desktop-width">
                                                         {/* <CInput className="custom-forminput-6 pm-edit" type="text" value={project.project.sub_task} /> */}
                                                         <Select
                                                             closeMenuOnSelect={true}
                                                             aria-labelledby="prjctSelect"
                                                             id="prjctSelect"
                                                             minHeight="35px"
+
                                                             placeholder="Select from list"
                                                             isClearable={true}
                                                             isMulti={false}
                                                             // onChange={handleProjectChange}
-                                                            classNamePrefix="custom-forminput-6"
+                                                            classNamePrefix="pm-edit"
                                                             // value={selectedProject}
                                                             options={managers}
-                                                            // styles={colourStyles}
+                                                        // styles={colourStyles}
                                                         />
+                                                      
                                                     </CForm>
-                                                    <div>
-                                                        <CButton type="button" variant="ghost" className="confirm-name-pm" onClick={(e) => radioHandler(0, 1)}><CIcon name="cil-check-circle" className="mr-1 tick" size="xl" /></CButton>
-                                                        <CButton type="button" variant="ghost" className="cancel-name-pm" onClick={(e) => radioHandler(0, 1)}><CIcon name="cil-x-circle" className="mr-1 cross" size="xl" /></CButton>
-                                                    </div>
+                                                    <div className="mt-1">
+                                                            <CButton type="button" variant="ghost" className="confirm-name-pm" onClick={(e) => radioHandler(0, 1)}><CIcon name="cil-check-circle" className="mr-1 tick" size="xl" /></CButton>
+                                                            <CButton type="button" variant="ghost" className="cancel-name-pm" onClick={(e) => radioHandler(0, 1)}><CIcon name="cil-x-circle" className="mr-1 cross" size="xl" /></CButton>
+                                                        </div>
+
                                                 </div>
                                             ) : <></>}
                                         </h5>
