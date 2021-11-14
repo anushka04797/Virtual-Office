@@ -9,9 +9,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { push_item } from '../../store/slices/TdoSlice';
 import swal from 'sweetalert'
 import { fetchTdosThunk } from '../../store/slices/TdoSlice';
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-
+import Datetime from 'react-datetime'
+import moment from 'moment'
 const CreateNewProject = () => {
   const colourStyles = {
     // control: (styles, state) => ({ ...styles,height:"35px", fontSize: '14px !important', lineHeight: '1.42857', borderRadius: "8px",borderRadius:".25rem",color:"rgb(133,133,133)",border:state.isFocused ? '2px solid #0065ff' :'inherit'}),
@@ -25,6 +24,7 @@ const CreateNewProject = () => {
   const [assignees, setAssignees] = useState([])
   const profile_details = useSelector(state => state.profile.data)
   const projects = useSelector(state => state.projects.pm_projects)
+  
   //tdo list states and functions
   const tdo_list = useSelector(state => state.projects.tdo_list)
   const new_tdo_list = useSelector(state => state.tdo.data)
@@ -83,6 +83,10 @@ const CreateNewProject = () => {
     console.log('subtasks', temp)
     return temp;
   }
+  const valid_date=(current)=>{
+    let yesterday= moment().subtract( 1, 'day' )
+    return current.isAfter( yesterday );
+}
   const handleSubTaskChange = (newValue, actionMeta) => {
     if (actionMeta.action == 'select-option') {
       console.log('sub task', newValue)
@@ -171,13 +175,14 @@ const CreateNewProject = () => {
     return new Date(date) < new Date(new Date().toDateString());
   }
   const validate_create_project_form = (values) => {
-    console.log('validating values ', values)
+    // console.log('validating values ', values)
     const errors = {}
     if (!values.task_delivery_order) errors.task_delivery_order = "Task Delivery Order is required"
     if (!values.sub_task) errors.sub_task = "Sub Task is required"
     if (!values.work_package_number) errors.work_package_number = "Work Package Number is required"
     if (!values.task_title) errors.task_title = "Task title is required"
-    if (!isDateBeforeToday(values.planned_delivery_date)) errors.planned_delivery_date = "Invalid planned delivery date"
+    if (!values.planned_delivery_date) errors.planned_delivery_date = "Invalid planned delivery date"
+    console.log('validating errors ', errors)
     return errors
   }
   const reset_form = () => {
@@ -187,7 +192,7 @@ const CreateNewProject = () => {
     setWorkPackageNumber(null)
     setAssignees([])
   }
-  const create_project = async () => {
+  const create_project = () => {
     console.log('values', JSON.stringify(formCreateProject.values))
     API.post('project/create/', formCreateProject.values).then((res) => {
       console.log(res)
@@ -358,15 +363,18 @@ const CreateNewProject = () => {
                         <CLabel className="custom-label-5">
                           Planned Delivery Date
                         </CLabel>
-                        {/* <DatePicker
-                          controls={['date']}
-                          showOnClick={false}
-                          showOnFocus={false}
-                          isOpen={openPicker}
-                          onClose={onClose}
-                          touchUi={true}
-                          inputComponent="input"
-                          inputProps={props}
+                        {/* <Datetime
+                          // className = "custom-forminput-6"
+                          isValidDate={valid_date}
+                          value={formCreateProject.values.planned_delivery_date}
+                          input={false}
+                          updateOnView="time"
+                          dateFormat="YYYY-MM-DD"
+                          timeFormat={false}
+                          // closeOnSelect={true}
+                          closeOnTab={true}
+                          // onChange={(e)=>{console.log(e.format())}}
+                          onChange={(e) => { formCreateProject.setFieldValue('planned_delivery_date', e.format()) }}
                         /> */}
                         <CInput id="planned_delivery_date" name="planned_delivery_date" value={formCreateProject.values.planned_delivery_date} onChange={formCreateProject.handleChange} className="custom-forminput-6" type="date" />
                       </div>
