@@ -47,7 +47,7 @@ const WbsBoard = () => {
         return ''
     }
 
-    const populate_data = () => {
+    const populate_data = (data) => {
         console.log('populating data')
         let temp_data = {
             lanes: [
@@ -71,15 +71,15 @@ const WbsBoard = () => {
                 }
             ]
         }
-        if (wbsList != undefined) {
-            wbsList.forEach(element => {
-                if (!tempAssigneList.find(item => item.value === element.assignee.id)) {
-                    var temp = {
-                        value: element.assignee.id,
-                        label: element.assignee.first_name + " " + element.assignee.last_name
-                    }
-                    tempAssigneList.push(temp)
-                }
+        if (data != undefined) {
+            data.forEach(element => {
+                // if (!tempAssigneList.find(item => item.value === element.assignee.id)) {
+                //     var temp = {
+                //         value: element.assignee.id,
+                //         label: element.assignee.first_name + " " + element.assignee.last_name
+                //     }
+                //     tempAssigneList.push(temp)
+                // }
                 if (element.status === 1) {
                     // console.log("1st cond", data.lanes[0])
                     temp_data.lanes[0].cards.push({
@@ -120,8 +120,24 @@ const WbsBoard = () => {
         setBoardData(temp_data)
     }
 
+    function getAssigneeList() {
+        console.log("getAssigneeList wbsList: ", wbsList)
+        if (wbsList != undefined) {
+            wbsList.forEach(element => {
+                if (!tempAssigneList.find(item => item.value === element.assignee.id)) {
+                    var temp = {
+                        value: element.assignee.id,
+                        label: element.assignee.first_name + " " + element.assignee.last_name
+                    }
+                    tempAssigneList.push(temp)
+                }
+            })
+        }
+    }
+
     React.useEffect(() => {
-        populate_data()
+        populate_data(wbsList)
+        getAssigneeList()
     }, [wbsList])
 
     const boardStyle = { backgroundColor: "#fff" };
@@ -184,24 +200,42 @@ const WbsBoard = () => {
     }
 
     // filter wbs
-    function filterWbs (data) {
-        console.log("fn ran!!!", data.value);
+    function filterWbs(newValue, actionMeta) {
+        console.log("fn ran!!!", newValue, actionMeta);
+        setResetAssigneeSelectValue(newValue)
         var temWbsList = wbsList;
-        wbsList = temWbsList.filter(item => item.assignee.id === data.value)
-        populate_data()
-        // console.log("new list: ", temWbsList.filter(item => item.assignee.id === data.value));
+        temWbsList = temWbsList.filter(item => item.assignee.id === newValue.value)
+        populate_data(temWbsList)
+        getAssigneeList()
+        setShowClearBtn(true);
     }
+
+    const [showClearBtn, setShowClearBtn] = useState(false);
+
+    function clearFilter() {
+        setShowClearBtn(false);
+        populate_data(wbsList)
+        getAssigneeList()
+        setResetAssigneeSelectValue(null)
+    }
+
+    const [resetAssigneeSelectValue, setResetAssigneeSelectValue] = useState(null);
 
     return (
         <>
-            <CDropdown>
-                <CDropdownToggle color="secondary">Dropdown button</CDropdownToggle>
-                <CDropdownMenu>
-                    {wbsAssigneeList.map((item,idx) => (
-                        <CDropdownItem key={idx} onClick={()=>filterWbs(item)} >{item.label}</CDropdownItem>
-                    ))}
-                </CDropdownMenu>
-            </CDropdown>
+            <CRow>
+                <div className="col-lg-6 mb-3">
+                    <Select
+                        value={resetAssigneeSelectValue}
+                        placeholder="Filter by assignee"
+                        options={wbsAssigneeList}
+                        onChange={filterWbs}
+                    />
+                </div>
+                <div className="col-lg-6 mb-3">
+                    {showClearBtn == true && <CButton color="primary" type="button" onClick={() => clearFilter()}>clear filter</CButton>}
+                </div>
+            </CRow>
             <Board data={boardData} hideCardDeleteIcon handleDragEnd={updateStatus} onCardClick={editWbs} style={boardStyle} laneStyle={laneStyle} />
             {modalData != null && <WbsModal show={modal} onClose={onWbsUpdate} toggle={toggle} data={modalData} timeCardList={timeCardListData}></WbsModal>}
         </>
