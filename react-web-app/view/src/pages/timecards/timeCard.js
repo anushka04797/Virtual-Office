@@ -12,12 +12,13 @@ import "jspdf-autotable";
 import * as FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
 import { fetchPersonalDetails } from "../../store/slices/ProfileSlice";
+
 const TimeCards = () => {
     const profile_details = useSelector(state => state.profile.data)
     console.log(profile_details)
     const [usersData, setUsersData] = useState([])
-    const[pdfData,setPdfData]=useState([])
-   console.log('userdata',usersData)
+    const [pdfData, setPdfData] = useState([])
+    console.log('userdata', usersData)
     const [assignee, setAssigneeValue] = useState();
 
     const getTimeCards = (values) => {
@@ -40,7 +41,7 @@ const TimeCards = () => {
                     tableData.push({ '#': index + 1, 'TDO': element.data.project.task_delivery_order.title, "Project Name": element.data.project.sub_task, "Task Title": element.data.project.task_title, "Actual Work Done": element.data.actual_work_done, "Hrs Today": element.data.hours_today, "Date Created": element.data.date_created, "Date Updated": element.data.date_updated })
                 }
                 setUsersData(tableData)
-               
+
             })
         }
         else {
@@ -62,9 +63,9 @@ const TimeCards = () => {
                     tableData.push({ '#': index + 1, 'TDO': element.data.project.task_delivery_order.title, "Project Name": element.data.project.sub_task, "Task Title": element.data.project.task_title, "Actual Work Done": element.data.actual_work_done, "Hrs Today": element.data.hours_today, "Date Created": element.data.date_created, "Date Updated": element.data.date_updated })
                 }
                 setUsersData(tableData);
-                console.log('userdata',usersData);
+                console.log('userdata', usersData);
             })
-           
+
         }
 
 
@@ -107,7 +108,7 @@ const TimeCards = () => {
     }
     const validateEditForm = (values) => {
         const errors = {}
-
+       
         if (!values.startDate) errors.startDate = "Start Date selection is required"
         if (!values.todate) errors.todate = "To date selection is required"
         return errors
@@ -152,23 +153,23 @@ const TimeCards = () => {
         doc.setFontSize(15);
 
         const title = "generated Timecard from VO";
-        const headers = [["#", "TDO",
+        const headers = [["TDO",
             "Project Name",
             "Task Title",
             "Actual Work Done",
             "Hrs Today",
             "Date Created",
             "Date Updated"]];
-            const uData = pdfData.map(elt=> [elt.data.project.task_delivery_order.title,elt.data.project.sub_task, elt.data?.project.task_title,elt.data.actual_work_done,elt.data.hours_today,elt.data.date_created,elt.data.date_updated]);
-            let content = {
-                startY: 50,
-                head: headers,
-                body: uData
-              };
-          
-              doc.text(title, marginLeft, 30);
-              doc.autoTable(content);
-              doc.save("Timecard generated from VO.pdf")
+        const uData = pdfData.map(elt => [elt.data.project.task_delivery_order.title, elt.data.project.sub_task, elt.data?.project.task_title, elt.data.actual_work_done, elt.data.hours_today, elt.data.date_created, elt.data.date_updated]);
+        let content = {
+            startY: 50,
+            head: headers,
+            body: uData
+        };
+
+        doc.text(title, marginLeft, 30);
+        doc.autoTable(content);
+        doc.save("Timecard generated from VO.pdf")
     }
     return (
 
@@ -209,7 +210,9 @@ const TimeCards = () => {
                                         options={assigneeList}
                                         styles={colourStyles}
                                     />
+                                    {/* {editForm.errors.assigneeSelectPM && <p className="error mt-1">{editForm.errors.assigneeSelectPM}</p>} */}
                                 </div>
+                                 
                             }
                         </CCol>
                         {/**start date */}
@@ -218,6 +221,8 @@ const TimeCards = () => {
                                 From Date
                             </CLabel>
                             <CInput className="custom-forminput-6" type="date" name="startDate" id="startDate" value={editForm.values.startDate} onChange={editForm.handleChange} />
+                            {/**Error show */}
+                            {editForm.errors.startDate && <p className="error mt-1">{editForm.errors.startDate}</p>}
                         </CCol>
                         {/**END DATE */}
                         <CCol lg="3" md="5">
@@ -226,6 +231,8 @@ const TimeCards = () => {
                                 To Date
                             </CLabel>
                             <CInput className="custom-forminput-6" type="date" name="todate" id="todate" value={editForm.values.todate} onChange={editForm.handleChange} />
+                            {/**Error show */}
+                            {editForm.errors.todate && <p className="error mt-1">{editForm.errors.todate}</p>}
                         </CCol>
                         <CCol lg="2" md="2">
                             <div className="button-holder--3">
@@ -235,10 +242,10 @@ const TimeCards = () => {
 
                         {/**buttons for format of timecard */}
 
-                        {usersData != 0  && <CCol md="12">
+                        {usersData != 0 && <CCol md="12">
                             <h5 className="tiny-header--5 mt-4">Export</h5>
                             <div className="format-buttons mt-2">
-                                <CButton className="file-format-download" onClick={()=>exportPDF()}>PDF</CButton>
+                                <CButton className="file-format-download" onClick={() => exportPDF()}>PDF</CButton>
                                 <CButton className="file-format-download" onClick={() => exportToCSV(usersData, 'Timecard')} >Excel</CButton>
 
                                 {/* <CButton className="file-format-download">Print</CButton> */}
