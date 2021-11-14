@@ -13,6 +13,7 @@ import * as FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
 import { fetchPersonalDetails } from "../../store/slices/ProfileSlice";
 
+
 const TimeCards = () => {
     const profile_details = useSelector(state => state.profile.data)
     console.log(profile_details)
@@ -20,7 +21,8 @@ const TimeCards = () => {
     const [pdfData, setPdfData] = useState([])
     console.log('userdata', usersData)
     const [assignee, setAssigneeValue] = useState();
-
+    const [pdfTitle, setPdfTitle] = useState();
+   
     const getTimeCards = (values) => {
         if (has_group('pm')) {
             console.log('values from timecards', values)
@@ -48,6 +50,7 @@ const TimeCards = () => {
             console.log('values from timecards', values)
             API.get('wbs/user/time-card/list/' + values.assigneeSelect + "/").then((res) => {
                 let temp = []
+                setPdfTitle(profile_details.first_name+ " " +profile_details.last_name);
                 Array.from(res.data.data).forEach((item, idx) => {
                     // temp.push({data:item.date_updated >=values.startDate && item.date_updated <= values.todate})
                     temp.push({ data: item })
@@ -105,10 +108,11 @@ const TimeCards = () => {
         editForm.setValues({
             assigneeSelectPM: option.value
         })
+        setPdfTitle(option.label)
     }
     const validateEditForm = (values) => {
         const errors = {}
-       
+
         if (!values.startDate) errors.startDate = "Start Date selection is required"
         if (!values.todate) errors.todate = "To date selection is required"
         return errors
@@ -152,15 +156,15 @@ const TimeCards = () => {
 
         doc.setFontSize(15);
 
-        const title = "generated Timecard from VO";
-        const headers = [["TDO",
+        const title = "Timecard of"+ " " +pdfTitle;
+        const headers = [["#", "TDO",
             "Project Name",
             "Task Title",
             "Actual Work Done",
             "Hrs Today",
             "Date Created",
             "Date Updated"]];
-        const uData = pdfData.map(elt => [elt.data.project.task_delivery_order.title, elt.data.project.sub_task, elt.data?.project.task_title, elt.data.actual_work_done, elt.data.hours_today, elt.data.date_created, elt.data.date_updated]);
+        const uData = pdfData.map((elt, idx) => [idx + 1, elt.data.project.task_delivery_order.title, elt.data.project.sub_task, elt.data?.project.task_title, elt.data.actual_work_done, elt.data.hours_today, elt.data.date_created, elt.data.date_updated]);
         let content = {
             startY: 50,
             head: headers,
@@ -169,7 +173,7 @@ const TimeCards = () => {
 
         doc.text(title, marginLeft, 30);
         doc.autoTable(content);
-        doc.save("Timecard generated from VO.pdf")
+        doc.save("Timecard of" +" "+ pdfTitle +".pdf")
     }
     return (
 
@@ -212,7 +216,7 @@ const TimeCards = () => {
                                     />
                                     {/* {editForm.errors.assigneeSelectPM && <p className="error mt-1">{editForm.errors.assigneeSelectPM}</p>} */}
                                 </div>
-                                 
+
                             }
                         </CCol>
                         {/**start date */}
@@ -246,7 +250,7 @@ const TimeCards = () => {
                             <h5 className="tiny-header--5 mt-4">Export</h5>
                             <div className="format-buttons mt-2">
                                 <CButton className="file-format-download" onClick={() => exportPDF()}>PDF</CButton>
-                                <CButton className="file-format-download" onClick={() => exportToCSV(usersData, 'Timecard')} >Excel</CButton>
+                                <CButton className="file-format-download" onClick={() => exportToCSV(usersData, 'Timecard of'+ " " +pdfTitle)} >Excel</CButton>
 
                                 {/* <CButton className="file-format-download">Print</CButton> */}
 

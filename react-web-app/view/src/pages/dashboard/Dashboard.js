@@ -44,10 +44,12 @@ const Dashboard=()=> {
                 <div className="col-lg-5 offset-lg-1"><ProjectTables/></div>
 
                 <div className="col-lg-5"><AssignedToMe/></div> 
-                {has_group('pm') &&
-                <div className="col-lg-5 offset-lg-1"><EvmsShow/></div>}
                 
-                <div className="col-lg-5"><ScheduledMeetings/></div>
+                <div className="col-lg-5 offset-lg-1"><ScheduledMeetings/></div>
+                {has_group('pm') &&
+                <div className="col-lg-5 "><EvmsShow/></div>}
+                
+               
             
 
             </CRow>
