@@ -4,15 +4,17 @@ import VideoCallIcon from '@material-ui/icons/VideoCall';
 import './meetings.css';
 import JitsiMeet from '../jitsi/JitsiMeet'
 import { useFormik } from 'formik'
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { API, USER_ID } from '../../Config';
 import swal from 'sweetalert';
 import Select from 'react-select';
 import Datetime from 'react-datetime';
 import moment from 'moment'
+import { fetchMeetingList } from '../../store/slices/MeetingSlice';
 
 const OurMeetings = () => {
     const [meeting, setMeeting] = useState(false)
+    const dispatch = useDispatch()
     // const [roomName,setRoomName]=useState('')
     // const [username,setUserName] = useState('')
     const [password, setPassword] = useState('')
@@ -116,10 +118,11 @@ const OurMeetings = () => {
         //setMeeting(true)
         console.log('values',JSON.stringify(values))
         API.post('meetings/create/', values).then((res) => {
+            console.log('res',res.data)
             formMeeting.handleReset()
             setSelectedParticipants([])
-
-            swal('Created', 'New Meeting created', 'success')
+            dispatch(fetchMeetingList(localStorage.getItem(USER_ID)))
+            swal('Created', '', 'success')
         })
     }
 
@@ -308,9 +311,9 @@ const OurMeetings = () => {
                                             </CLabel>
                                             <Datetime
                                                 isValidDate={ valid_date }
-                                                value={formMeeting.values.start_time} 
+                                                // value={formMeeting.values.start_time} 
                                                 input={false}
-                                                updateOnView="time"
+                                                // updateOnView="date"
                                                 dateFormat="YYYY-MM-DD"
                                                 timeFormat={"h:mm A"}
                                                 // closeOnSelect={true}
