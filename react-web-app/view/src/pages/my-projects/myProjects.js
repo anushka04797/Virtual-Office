@@ -17,21 +17,35 @@ const MyProjects = () => {
     let history = useHistory();
     const dispatch = useDispatch();
     const [pmStatus, setPmStatus] = useState(1);
-    const [status, setStatus] = useState(0);
+    const [status, setStatus] = useState({});
     const [managers, setManagers] = useState([])
-    const radioHandler = (status, pmStatus) => {
-        setStatus(status);
-        setPmStatus(pmStatus);
-    };
-
+    const [currentPM,setPM] = useState()
+    
+    const handlePMChange=(option,actionMeta)=>{
+        setPM(option)
+    }
+    const changePM=(wp)=>{
+        console.log('wp',wp)
+        API.put('project/change-project-manager/',{wp:wp,pm:currentPM.value}).then((res)=>{
+            console.log(res)
+            if(res.status == 200 && res.data.success == 'True'){
+                setStatus({project:null})
+                setPM(null)
+                dispatch(fetchProjectsForPMThunk(localStorage.getItem(USER_ID)))
+                swal('Updated!','Project manager changed successfully','success')
+            }
+        })
+    }
     //const projects=useSelector(state=> state.projects.data.filter((item)=> project.project.status === 0))
     const projects = useSelector(state => {
         let temp = []
         state.projects.pm_projects.forEach((item, idx) => {
             if (item.project.status == 0) {
                 temp.push(item)
+                // temp_statues.push(false)
             }
         })
+        // setStatuses(temp_statues)
         console.log('temp', temp)
         return temp
     })
@@ -44,6 +58,9 @@ const MyProjects = () => {
             let temp = []
             Array.from(res.data.data).forEach((manager, idx) => {
                 temp.push({ value: manager.id, label: manager.first_name + ' ' + manager.last_name, data: manager })
+                if(manager.id == localStorage.getItem(USER_ID)){
+                    setPM({value:manager.id,label:manager.first_name + ' ' + manager.last_name, data: manager})
+                }
             })
             setManagers(temp)
         })
@@ -78,6 +95,17 @@ const MyProjects = () => {
 
                 }
             });
+    }
+    const changePMChangeInputFieldStatus=(idx,action)=>{
+        switch(action){
+            case 'open':
+                setPM({value:projects[idx].project.pm.id,label:projects[idx].project.pm.first_name+' '+projects[idx].project.pm.last_name})
+                setStatus({project:idx}); 
+                break
+            case 'close':
+                setStatus({project:null}); 
+                break
+        }
     }
     const remaining_hours = (remaining, total) => {
         return String(parseFloat(total) - parseFloat(remaining))
@@ -132,10 +160,10 @@ const MyProjects = () => {
                                     <div className="info-show-now col-lg-6">
                                         <h5 className="project-details-points child"><h5 className="info-header-1">Assigned by :</h5>{project.project.pm.first_name + ' ' + project.project.pm.last_name}</h5>
                                         {/* <h5 className="project-details-points"><h5 className="info-header-1">Work Package : </h5>1000</h5> */}
-                                        <h5 className="project-details-points"><h5 className="info-header-1">Project Manager : {status === 0 ? (<CButton className="edit-pm-name" variant='ghost' onClick={(e) => radioHandler(1, 0)}><CIcon name="cil-pencil" className="mr-1 pen-icon-pm" /></CButton>) : null}</h5>{status === 0 ? (<span>{project.project.pm.first_name + ' ' + project.project.pm.last_name}</span>
+                                        <h5 className="project-details-points"><h5 className="info-header-1">Project Manager : {status.project != idx ? (<CButton className="edit-pm-name" variant='ghost' onClick={(e) => changePMChangeInputFieldStatus(idx,'open')}><CIcon name="cil-pencil" className="mr-1 pen-icon-pm" /></CButton>) : null}</h5>{status.project != idx ? (<span>{project.project.pm.first_name + ' ' + project.project.pm.last_name}</span>
                                         ) : <></>}
                                             {/**if clicked edit button */}
-                                            {status === 1 ? (
+                                            {status.project == idx ? (
                                                 <div className="pm-name-edit-part">
                                                     <CForm className="desktop-width">
                                                         {/* <CInput className="custom-forminput-6 pm-edit" type="text" value={project.project.sub_task} /> */}
@@ -144,23 +172,21 @@ const MyProjects = () => {
                                                             aria-labelledby="prjctSelect"
                                                             id="prjctSelect"
                                                             minHeight="35px"
-
                                                             placeholder="Select from list"
                                                             isClearable={true}
                                                             isMulti={false}
-                                                            // onChange={handleProjectChange}
+                                                            onChange={handlePMChange}
                                                             classNamePrefix="pm-edit"
-                                                            // value={selectedProject}
+                                                            value={currentPM}
                                                             options={managers}
                                                         // styles={colourStyles}
                                                         />
                                                       
                                                     </CForm>
                                                     <div className="mt-1">
-                                                            <CButton type="button" variant="ghost" className="confirm-name-pm" onClick={(e) => radioHandler(0, 1)}><CIcon name="cil-check-circle" className="mr-1 tick" size="xl" /></CButton>
-                                                            <CButton type="button" variant="ghost" className="cancel-name-pm" onClick={(e) => radioHandler(0, 1)}><CIcon name="cil-x-circle" className="mr-1 cross" size="xl" /></CButton>
-                                                        </div>
-
+                                                        <CButton type="button" variant="ghost" className="confirm-name-pm" onClick={(e) => changePM(project.project.work_package_number)}><CIcon name="cil-check-circle" className="mr-1 tick" size="xl" /></CButton>
+                                                        <CButton type="button" variant="ghost" className="cancel-name-pm" onClick={(e) => changePMChangeInputFieldStatus(project.project.id,'close')}><CIcon name="cil-x-circle" className="mr-1 cross" size="xl" /></CButton>
+                                                    </div>
                                                 </div>
                                             ) : <></>}
                                         </h5>
@@ -182,7 +208,7 @@ const MyProjects = () => {
                         </CCard>))}
                         {/**If no projects are there */}
                         {Array.from(projects).length < 1 ? (
-                            <CAlert className="no-value-show-alert" color="primary">Currently there are no ongoing projects</CAlert>
+                            <CAlert className="no-value-show-alert" color="primary">Currently there are no projects</CAlert>
                         ) : null}
                     </div>
 

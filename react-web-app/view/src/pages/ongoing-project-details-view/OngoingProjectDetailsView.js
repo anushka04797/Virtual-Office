@@ -453,7 +453,7 @@ const OngoingDetailsView = () => {
                                             {project != undefined && Array.from(subtask.assignees).map((item, idx) => (
                                                 <div key={idx} className="col-md-4 col-sm-6 col-lg-2">
                                                     <div className="file-attached-ongoing rounded-pill">
-                                                        {has_group('pm') && <CButton type="button" onClick={() => delete_assignee(subtask.id,item.assignee.id)} className="remove-file-ongoing"><img src={"assets/icons/icons8-close-64-blue.svg"} className="close-icon-size" /></CButton>}{item.assignee.first_name + ' ' + item.assignee.last_name}
+                                                        {has_group('pm') && localStorage.getItem(USER_ID) == project.pm && <CButton type="button" onClick={() => delete_assignee(subtask.id,item.assignee.id)} className="remove-file-ongoing"><img src={"assets/icons/icons8-close-64-blue.svg"} className="close-icon-size" /></CButton>}{item.assignee.first_name + ' ' + item.assignee.last_name}
                                                     </div>
                                                 </div>
                                             ))}
@@ -461,7 +461,7 @@ const OngoingDetailsView = () => {
                                         </div>
                                     </div>
                                     {/**ACTION BUTTONS !!!!!!!!!! */}
-                                    {has_group('pm') && <div className="col-md-12 mt-2 mb-2">
+                                    {has_group('pm') && localStorage.getItem(USER_ID) == project.pm && <div className="col-md-12 mt-2 mb-2">
                                         <div className="project-actions">
                                             <CButton className="edit-project-ongoing-task" onClick={() => editInfoForm(subtask)} ><CIcon name="cil-pencil" className="mr-1" /> Edit </CButton>
                                             <CButton type="button" onClick={() => delete_subtask(project.project.work_package_index)} className="delete-project-2"><CIcon name="cil-trash" className="mr-1" /> Delete</CButton>
