@@ -11,6 +11,7 @@ import swal from 'sweetalert'
 import { fetchTdosThunk } from '../../store/slices/TdoSlice';
 import Datetime from 'react-datetime'
 import moment from 'moment'
+import { fetchProjectsForPMThunk, fetchProjectsThunk } from '../../store/slices/ProjectsSlice';
 const CreateNewProject = () => {
   const colourStyles = {
     // control: (styles, state) => ({ ...styles,height:"35px", fontSize: '14px !important', lineHeight: '1.42857', borderRadius: "8px",borderRadius:".25rem",color:"rgb(133,133,133)",border:state.isFocused ? '2px solid #0065ff' :'inherit'}),
@@ -22,6 +23,7 @@ const CreateNewProject = () => {
   const [selectedSubTask, setSelectedSubTask] = useState()
   const [work_package_number, setWorkPackageNumber] = useState()
   const [assignees, setAssignees] = useState([])
+  const [selectedAssignees,setSelectedAssignees]=useState([])
   const profile_details = useSelector(state => state.profile.data)
   const projects = useSelector(state => state.projects.pm_projects)
   
@@ -79,7 +81,7 @@ const CreateNewProject = () => {
         }
       })
     })
-    // temp=temp.filter((value, index, array) => array.findIndex((t) => t.sub_task === value.sub_task) === index)
+    temp=temp.filter((value, index, array) => array.findIndex((t) => t.sub_task === value.sub_task) === index)
     console.log('subtasks', temp)
     return temp;
   }
@@ -156,6 +158,7 @@ const CreateNewProject = () => {
     }
   }
   const handleAssigneeChange = (value, actionMeta) => {
+    setSelectedAssignees(value)
     if (actionMeta.action == 'select-option') {
       console.log('selected assignee', value)
       let temp = []
@@ -198,6 +201,9 @@ const CreateNewProject = () => {
       console.log(res)
       if (res.status == 200 && res.data.success == 'True') {
         reset_form()
+        dispatch(fetchProjectsForPMThunk(localStorage.getItem(USER_ID)))
+        dispatch(fetchProjectsThunk(localStorage.getItem(USER_ID)))
+        setSelectedAssignees([])
         swal('Created!', 'Successfuly Created', 'success')
       }
     })
@@ -344,7 +350,7 @@ const CreateNewProject = () => {
                           isMulti={true}
                           onChange={handleAssigneeChange}
                           classNamePrefix="custom-forminput-6"
-                          //value={assignees}
+                          value={selectedAssignees}
                           options={assignees ? assignees : []}
                           // getOptionLabel= {option=>option.first_name+' '+option.last_name}
                           // getOptionValue = {option=>option.id}

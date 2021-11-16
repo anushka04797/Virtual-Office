@@ -113,18 +113,22 @@ const MyProjectsDetailsView = () => {
 
     }
   
-   
-
     const initialize = () => {
         API.get('project/details/' + work_package_number + '/').then((res) => {
+            console.log(res)
             if (res.statusText != 'OK') {
                 history.push('/dashboard/Projects/my-projects')
             }
             else {
                 console.log('project details', res.data)
-                setProject(res.data.data)
+                if(res.data.data.subtasks.length>0){
+                    setProject(res.data.data)
                 setTdo(res.data.data.project.task_delivery_order.title)
                 editForm.setFieldValue('assignee', res.data.ass)
+                }
+                else{
+                    history.push('/dashboard/Projects/my-projects') //redirecting to my project list page
+                }
             }
         }).catch(err => {
             console.log(err)
@@ -469,7 +473,7 @@ const MyProjectsDetailsView = () => {
                                     <div className="col-md-12 mt-2 mb-2">
                                         <div className="project-actions">
                                             <CButton className="edit-project-ongoing-task" onClick={() => editInfoForm(subtask)} ><CIcon name="cil-pencil" className="mr-1" /> Edit </CButton>
-                                            <CButton type="button" onClick={() => delete_subtask(project.project.work_package_index)} className="delete-project-2"><CIcon name="cil-trash" className="mr-1" /> Delete</CButton>
+                                            <CButton type="button" onClick={() => delete_subtask(subtask.work_package_index)} className="delete-project-2"><CIcon name="cil-trash" className="mr-1" /> Delete</CButton>
                                         </div>
                                     </div>
                                 </CCardBody>
