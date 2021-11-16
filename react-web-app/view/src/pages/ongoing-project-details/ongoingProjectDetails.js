@@ -178,7 +178,7 @@ const OngoingProjectDetails = () => {
             </CModal>
             {/*wbs modal ends */}
             <div className="container">
-                <h4 className="dash-header">Ongoing Projects({Array.from(projects).length})</h4>
+                <h4 className="dash-header">Assigned Projects({Array.from(projects).length})</h4>
                 <div className="row">
                     <div className="col-md-11  col-sm-12 col-xs-12 mt-1">
                         {projects != undefined && Array.from(projects).map((project, idx) => (<CCard key={idx} className="card-ongoing-project">
