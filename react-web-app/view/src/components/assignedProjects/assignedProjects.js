@@ -10,6 +10,7 @@ const AssignedProjectsDashboard = () => {
     let history = useHistory();
     const dispatch = useDispatch()
     const wbs = useSelector(state => state.wbs.data);
+    console.log(wbs)
     React.useEffect(() => {
         // dispatch(fetchUserWiseWbsThunk(localStorage.getItem(USER_ID)))
     }, [])
@@ -26,8 +27,9 @@ const AssignedProjectsDashboard = () => {
                         <CCard className="project-card1" key={idx}>
                             <CCardBody>
                                 <h6 className="id-no1">Work Package Number: # {item.project.work_package_number}</h6>
+                                <h5 className="card-details1"><span className="p-header-3">Project Title :</span> {item.project.sub_task}</h5>
                                 <h5 className="card-details1"><span className="p-header-3">Task Title:</span> {item.project.task_title}</h5>
-                                <h5 className="card-details1"><span className="p-header-3">Due Date :</span> {item.project.planned_delivery_date}</h5>
+                               
                             </CCardBody>
 
                         </CCard>
