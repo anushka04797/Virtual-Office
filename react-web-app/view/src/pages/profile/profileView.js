@@ -38,6 +38,7 @@ const UserProfile = () => {
     const [revealNewPwd, setRevealNewPwd] = useState(false);
     const [revealConfPwd, setRevealConfPwd] = useState(false);
     const profile_details = useSelector(state => state.profile.data)
+    console.log(profile_details);
     const inputFile = useRef(null)
     const [image, setImage] = useState()
     const [avatar, setAvatar] = useState(profile_details ? (BASE_URL + profile_details.profile_pic) : "avatars/user-avatar-default.png")
@@ -166,7 +167,7 @@ const UserProfile = () => {
                             <CForm>
                                 <CRow>
                                     {/**First Name */}
-                                    <div className="col-md-6">
+                                    <div className="col-md-6 mb-3">
                                         <CLabel className="custom-label-5" htmlFor="userFName">
                                             First Name
                                         </CLabel>
@@ -180,7 +181,7 @@ const UserProfile = () => {
                                         />
                                     </div>
                                     {/**Last Name */}
-                                    <div className="col-md-6">
+                                    <div className="col-md-6 mb-3">
                                         <CLabel className="custom-label-5" htmlFor="userLName">
                                             Last Name
                                         </CLabel>
@@ -194,7 +195,7 @@ const UserProfile = () => {
                                         />
                                     </div>
                                     {/**Job title */}
-                                    <div className="col-md-12">
+                                    <div className="col-md-12 mb-3">
                                         <CLabel className="custom-label-5" htmlFor="uEmail">
                                             Email
                                         </CLabel>
@@ -219,7 +220,7 @@ const UserProfile = () => {
                     ></CInput>
                   </div> */}
                                     {/**Phone */}
-                                    <div className="col-md-12">
+                                    <div className="col-md-12 mb-3">
                                         <CLabel className="custom-label-5" htmlFor="uPhoneNo">
                                             Phone
                                         </CLabel>
@@ -321,9 +322,9 @@ const UserProfile = () => {
                                                     </div>
                                                     <div className="col-md-6">
                                                         <h5 className="info-header-1">Job title</h5>
-                                                        {profile_details.designation!=null && <h5 className="project-details-points child">
+                                                        {profile_details.designation!=null ?( <h5 className="project-details-points child">
                                                             {profile_details.designation.name}
-                                                        </h5>}
+                                                        </h5>) : <h5 className="project-details-points child"> Not Available</h5>}
                                                     </div>
                                                     <div className="col-md-6">
                                                         <h5 className="info-header-1"> Phone</h5>

@@ -51,6 +51,11 @@ const OurMeetings = () => {
             formMeeting.setFieldValue('type',option.value)
         }
     }
+    const handleMeetingLocationChange =(option,actionMeta)=>{
+        if(actionMeta.action == 'select-option'){
+            formMeeting.setFieldValue('medium',option.value)
+        }
+    }
     const handleProjectChange=(option,actionMeta)=>{
         if(actionMeta.action == 'select-option'){
             console.log(option.data)
@@ -128,7 +133,7 @@ const OurMeetings = () => {
 
     const formMeeting = useFormik({
         initialValues: {
-            medium:"",
+            medium:"-1",
             type: "-1",
             room_id: "",
             room_name: "",
@@ -205,11 +210,20 @@ const OurMeetings = () => {
                                         {/**Project Name */}
                                         <div className="mb-3">
                                             <CLabel className="custom-label-5">Meeting Location</CLabel>
-                                            <CSelect id="medium" name="medium" value={formMeeting.values.medium} onChange={formMeeting.handleChange} aria-label="Default select example" className="custom-forminput-6">
-                                                <option value="-1">-- Select --</option>
-                                                <option value="0">Physical</option>
-                                                <option value="1">Virtual</option>
-                                            </CSelect>
+                                           
+                                            <Select
+                                                closeMenuOnSelect={true}
+                                                aria-labelledby="medium"
+                                                id="medium"
+                                                placeholder="Select from list"
+                                                isClearable
+                                                onChange={handleMeetingLocationChange}
+                                                // value={defaultValue}
+                                                isMulti={false}
+                                                classNamePrefix="custom-forminput-6"
+                                                options={[{value:0,label:"Physical"},{value:1,label:"Virtual"}]}
+                                                // styles={colourStyles}
+                                            />
                                             {formMeeting.touched.medium && formMeeting.errors.medium && <small style={{ color: 'red' }}>{formMeeting.errors.medium}</small>}
                                         </div>
                                         <div className="mb-3">
