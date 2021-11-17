@@ -13,7 +13,7 @@ import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { PUBLIC_FORM_API } from "../../Config";
 import CircularProgress from '@mui/material/CircularProgress';
-
+import { useSnackbar } from "notistack";
 const SignupSchema = Yup.object().shape({
   first_name: Yup.string()
     .min(2, 'Too Short!')
@@ -28,12 +28,13 @@ const SignupSchema = Yup.object().shape({
 
 const Register = () => {
   let history = useHistory()
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const [submitted,setSubmitted]=useState(false)
   const [avatar, setAvatar] = useState()
   const [isRevealPwd, setIsRevealPwd] = useState(false);
   const [isRevealConfPwd, setIsRevealConfPwd] = useState(false);
   const [image, setImage] = useState()
-  const [responseErrors,setResponseErrors]=useState(['1','2'])
+  const [responseErrors,setResponseErrors]=useState({})
   const validateSignUpForm = (values) => {
     const errors = {};
     if (!values.first_name) errors.first_name = "Name is required!"
@@ -58,12 +59,22 @@ const Register = () => {
     }
     PUBLIC_FORM_API.post('auth/register/', formData).then((res) => {
       setSubmitted(false)
-      if (res.data.success == 'True' && res.status == 200) {
+      console.log(res)
+      if (res.data.success == 'True' && res.status == 201) {
         history.push({ pathname: '/login', state: { registration: true } })
       }
-      else{
-        console.log(res.data)
-        setResponseErrors(res.data)
+      else if(res.data.success == 'False' && res.status == 201 && res.data.errors){
+        console.log(res.data.errors)
+        // setResponseErrors(res.data.errors)
+        setResponseErrors(res.data.errors)
+        for (const [key, value] of Object.entries(res.data.errors)) {
+          console.log(`${key}: ${value}`);
+          // enqueueSnackbar(err.response.data.message,{variant:"warning"})
+          for (let index=0;index<value.length;index++) {
+            enqueueSnackbar(value[index],{variant:"warning"})
+          }
+        }
+        
       }
     }).catch(err=>{
       setSubmitted(false)
@@ -176,6 +187,7 @@ const Register = () => {
                         aria-describedby="emailHelp"
                         className="custom-formgroup-2"
                       />
+                      {responseErrors.email!=undefined && <small style={{ color: 'red' }}>{responseErrors.email}</small>}
                       {formSignUp.touched.email && formSignUp.errors.email && <small style={{ color: 'red' }}>{formSignUp.errors.email}</small>}
                     </div>
                     {/**Phone */}
