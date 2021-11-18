@@ -12,8 +12,11 @@ mix-blend-mode: normal;
     color: rgb(107, 119, 140);
 
 }
-.evmsval{
+.good,.good1{
     color: green;
+}
+.bad,.bad1{
+    color: red;
 }
 .star-color{
     color: #939292

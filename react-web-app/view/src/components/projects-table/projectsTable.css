@@ -16,7 +16,7 @@
     box-shadow: 5px 10px 20px rgba(189, 158, 251, 0.1);
     margin-bottom: 20px;
 }
-.project-card1{
+.project-card1,.project-card2{
     margin-bottom:10px;
     background: #FFFFFF;
     border-radius: 3px;
