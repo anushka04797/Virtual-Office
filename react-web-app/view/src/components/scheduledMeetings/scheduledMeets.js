@@ -21,7 +21,7 @@ const ScheduleMeetings = () => {
 
                 <div className="card-holder1 ">
                     {meeting != undefined && meeting.slice(0, 3).map((item, idx) => (
-                        <CCard className="project-card1" key={idx}>
+                        <CCard className="project-card2" key={idx}>
                             <CCardBody>
                                 {item.room_id != "" &&
                                 <h6 className="id-no1">room id: #{item.room_id}</h6>}

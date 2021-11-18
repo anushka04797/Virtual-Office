@@ -3,7 +3,7 @@ import { CButton, CCard, CCardBody, CAlert } from '@coreui/react';
 import { useDispatch, useSelector } from "react-redux";
 import { useSnackbar } from "notistack";
 import { useHistory } from "react-router-dom";
-
+import{WbsModal} from "../../pages/wbs-board/wbs-modal"
 // import { fetchUserWiseWbsThunk } from '../../store/slices/WbsSlice';
 import { USER_ID } from "../../Config";
 const AssignedProjectsDashboard = () => {

@@ -134,7 +134,7 @@ const SignIn = () => {
                       </div>
                       </div>
                       <div className="show-flex">
-                        <div className="rem">
+                        {/* <div className="rem">
                           
                           <CInputCheckbox
                             className="mb-3 custom-check"
@@ -145,7 +145,7 @@ const SignIn = () => {
                             }}
                           />
                           <CLabel htmlFor="remember" className="custom-check-label">Remember me</CLabel>
-                        </div>
+                        </div> */}
 
                         <div className="forgot">
                           <Link className="forgot-link" to="/forgot-password">Forgot Password</Link>
