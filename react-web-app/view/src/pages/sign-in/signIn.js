@@ -73,7 +73,7 @@ const SignIn = () => {
   
   useEffect(()=>{
     if(location.state?.registration){
-      enqueueSnackbar('Registration Succefull, Please verify email to login', { variant: 'info' })
+      enqueueSnackbar('Registration Succefull, please wait for admin approval.', { variant: 'info' })
     }
   },[])
   return (
