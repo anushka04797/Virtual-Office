@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './evmsTable.css';
 import { CButton, CCard, CCardBody, CAlert } from '@coreui/react';
 import { useHistory } from "react-router-dom";
@@ -8,17 +8,17 @@ import { useSelector, useDispatch } from 'react-redux';
 
 const EvmsView = () => {
     let history = useHistory();
-    var evmsVal
+    
     var cpiVal
     const evmsList = useSelector(state => state.evmsList.data)
     console.log('evms from dashboard', evmsList)
     function calculateCPI(ev,ac){
       let val = Math.abs(ev/ac)
-     
- 
+
       return val;
 
 }
+
 
   
    
@@ -33,8 +33,8 @@ const EvmsView = () => {
                         <CCard className="project-card1" key={idx}>
                             <CCardBody>
                                 <h6 className="id-no1">{item.project.task_delivery_order.title} / {item.project.sub_task}</h6>
-                                <h5 className="card-details2"><span className="p-header-4">Cost Performance Index (CPI) :</span><span  className={evmsVal}> {calculateCPI(item.earned_value,item.actual_cost)}</span><small className="ml-1 star-color">*(CPI{'>'}1, within budget.CPI {'<'}1, over budget)</small></h5>
-                                <h5 className="card-details2"><span className="p-header-4">Schedule Performance Index (SPI) :</span><span className={evmsVal}> {calculateCPI(item.earned_value,item.project.planned_value)}</span><small className="ml-1 star-color">*(SPI {'>'}1, within schedule,SPI {'<'}1, behind schedule)</small></h5>
+                                <h5 className="card-details2"><span className="p-header-4">Cost Performance Index (CPI) :</span><span> {calculateCPI(item.earned_value,item.actual_cost)}</span><small className="ml-1 star-color">*(CPI{'>'}1, within budget.CPI {'<'}1, over budget)</small></h5>
+                                <h5 className="card-details2"><span className="p-header-4">Schedule Performance Index (SPI) :</span><span> {calculateCPI(item.earned_value,item.project.planned_value)}</span><small className="ml-1 star-color">*(SPI {'>'}1, within schedule,SPI {'<'}1, behind schedule)</small></h5>
                             </CCardBody>
                         </CCard>
                     ))}
