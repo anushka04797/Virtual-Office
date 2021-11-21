@@ -1,9 +1,9 @@
 import axios from 'axios';
 const status = 'prod'
-export const API_URL = status === 'prod' ? 'http://dma.com.bd:8003/' : 'http://localhost:8000/'
+export const API_URL = status === 'prod' ? 'http://192.168.0.225:8003/' : 'http://localhost:8000/'
 export const TOKEN = "access_token"
 export const USER_ID = "user_id"
-export const BASE_URL = status === 'prod' ? 'http://dma.com.bd:8003' : 'http://localhost:8000'
+export const BASE_URL = status === 'prod' ? 'http://192.168.0.225:8003' : 'http://localhost:8000'
 export const credentials = {
   "GOOGLE_CLIENT_ID": "705019730299-kfb5arnuisah2135tka05uka6h7v901a.apps.googleusercontent.com",
   "FACEBOOK_APP_ID": "788095958681659"
