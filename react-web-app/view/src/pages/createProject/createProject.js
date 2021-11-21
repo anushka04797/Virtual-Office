@@ -185,6 +185,7 @@ const CreateNewProject = () => {
     if (!values.work_package_number) errors.work_package_number = "Work Package Number is required"
     if (!values.task_title) errors.task_title = "Task title is required"
     if (!values.planned_delivery_date) errors.planned_delivery_date = "Invalid planned delivery date"
+    if (isDateBeforeToday(values.planned_delivery_date)) errors.planned_delivery_date = "Invalid planned delivery date"
     console.log('validating errors ', errors)
     return errors
   }
@@ -383,6 +384,7 @@ const CreateNewProject = () => {
                           onChange={(e) => { formCreateProject.setFieldValue('planned_delivery_date', e.format()) }}
                         /> */}
                         <CInput id="planned_delivery_date" name="planned_delivery_date" value={formCreateProject.values.planned_delivery_date} onChange={formCreateProject.handleChange} className="custom-forminput-6" type="date" />
+                        {formCreateProject.errors.planned_delivery_date && <p className="error" style={{ fontSize: '14px !important' }}>{formCreateProject.errors.planned_delivery_date}</p>}
                       </div>
                       {/**Planned Value */}
                       <div className="col-lg-4 mb-3">

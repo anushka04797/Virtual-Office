@@ -204,6 +204,7 @@ const Register = () => {
                         aria-describedby="phoneHelp"
                         className="custom-formgroup-2"
                       />
+                      {responseErrors.phone!=undefined && <small style={{ color: 'red' }}>{responseErrors.phone}</small>}
                     </div>
                     {/**password */}
                     <div className="col-md-6 col-sm-12 mb-3">
