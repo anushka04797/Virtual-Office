@@ -233,10 +233,13 @@ const WbsBoard = () => {
                     />
                 </div>
                 <div className="col-lg-6 mb-3">
-                    {showClearBtn == true && <CButton  type="button" className="clear-filter-wbs" onClick={() => clearFilter()}>clear filter</CButton>}
+                    {showClearBtn == true && <CButton type="button" className="clear-filter-wbs" onClick={() => clearFilter()}>clear filter</CButton>}
                 </div>
+
             </CRow>
-            <Board data={boardData} hideCardDeleteIcon handleDragEnd={updateStatus} onCardClick={editWbs} style={boardStyle} laneStyle={laneStyle} />
+            <CRow>
+                <Board data={boardData} hideCardDeleteIcon handleDragEnd={updateStatus} onCardClick={editWbs} style={boardStyle} laneStyle={laneStyle} />
+            </CRow>
             {modalData != null && <WbsModal show={modal} onClose={onWbsUpdate} toggle={toggle} data={modalData} timeCardList={timeCardListData}></WbsModal>}
         </>
     )
