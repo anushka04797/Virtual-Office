@@ -20,7 +20,7 @@ export default configureStore({
     meetings: MeetingSlice,
     evmsList:EvmsSlice,
     tdo : TdoSlice,
-    timecards:TimecardSlice
+    timecardList:TimecardSlice
 
   },
 })
