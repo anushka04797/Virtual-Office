@@ -20,15 +20,15 @@ import { has_group } from '../helper';
 // sidebar nav config
 import navigation from './_nav'
 import { useHistory } from 'react-router';
-import {API} from '../Config'
+import { API } from '../Config'
 const TheSidebar = () => {
   const dispatch = useDispatch()
-  let history=useHistory()
+  let history = useHistory()
   const show = useSelector(state => state.sidebar.sidebarShow)
-  React.useEffect(()=>{
-    console.log('has group',has_group('pm'))
-  },[])
-  const logout=()=> {
+  React.useEffect(() => {
+    console.log('has group', has_group('pm'))
+  }, [])
+  const logout = () => {
     API.get('auth/logout/').then((res) => {
       localStorage.clear()
       history.push('/')
@@ -73,42 +73,50 @@ const TheSidebar = () => {
         {/**Projects */}
         <CSidebarNavDropdown icon="cib-ghost" name="Projects" className="vo-navItem">
           {has_group('pm') && <CSidebarNavItem to="/dashboard/Projects/create-new-project" name="Create New Project" className="vo-navItem" ></CSidebarNavItem>}
-          {has_group('pm') && <CSidebarNavItem to ="/dashboard/Projects/my-projects" name="My Projects" className="vo-navItem"></CSidebarNavItem>}
+          {has_group('pm') && <CSidebarNavItem to="/dashboard/Projects/my-projects" name="My Projects" className="vo-navItem"></CSidebarNavItem>}
           <CSidebarNavItem to="/dashboard/Projects/assigned-projects" name="Assigned Projects" className="vo-navItem"  ></CSidebarNavItem>
           <CSidebarNavItem to="/dashboard/Projects/completed-projects" name="Completed Projects" className="vo-navItem" ></CSidebarNavItem>
 
 
 
         </CSidebarNavDropdown>
-        {/**Meetings */}
-        <CSidebarNavItem to="/dashboard/meetings" icon="cil-view-module" name="Meetings" className="vo-navItem"></CSidebarNavItem>
-        {/**WBS */}
-        <CSidebarNavDropdown icon="cil-spreadsheet" name="WBS" className="vo-navItem">
+         {/**WBS */}
+         <CSidebarNavDropdown icon="cil-spreadsheet" name="WBS" className="vo-navItem">
           <CSidebarNavItem to="/dashboard/WBS/create-wbs" name="Create WBS" className="vo-navItem"  ></CSidebarNavItem>
           <CSidebarNavItem to="/dashboard/WBS/board" name="Board" className="vo-navItem" ></CSidebarNavItem>
 
         </CSidebarNavDropdown>
-        {/**EVMS */}
+         {/**EVMS */}
         {/* <CSidebarNavItem to="/dashboard/EVMS"name="EVMS" icon="cil-chart-line" className="vo-navItem"></CSidebarNavItem> */}
         {has_group('pm') && <CSidebarNavDropdown icon="cil-chart-line" name="EVMS" className="vo-navItem">
           <CSidebarNavItem to="/dashboard/EVMS/create" name="Create EVMS" className="vo-navItem"  ></CSidebarNavItem>
           <CSidebarNavItem to="/dashboard/EVMS/view" name="View EVMS" className="vo-navItem" ></CSidebarNavItem>
         </CSidebarNavDropdown>}
+
+        {/**Timecards */}
+        {!has_group('pm') &&
+          <CSidebarNavItem to="/dashboard/timecard/generate-timecard" name="Generate Timecard" icon="cil-library" className="vo-navItem"></CSidebarNavItem>}
+        {/**timecards if PM */}
+        {has_group('pm') && <CSidebarNavDropdown icon="cil-library" name="Timecards" className="vo-navItem">
+          <CSidebarNavItem to="/dashboard/timecard/generate-timecard" name="Generate Timecard" className="vo-navItem"  ></CSidebarNavItem>
+          <CSidebarNavItem to="/dashboard/timecard/weekly-timecards" name="Weekly Timecard" className="vo-navItem" ></CSidebarNavItem>
+        </CSidebarNavDropdown>}
+        {/**Meetings */}
+        <CSidebarNavItem to="/dashboard/meetings" icon="cil-view-module" name="Meetings" className="vo-navItem"></CSidebarNavItem>
+        {/**Shared Docs */}
+        <CSidebarNavItem to="/dashboard/shared-documents" name="Shared Documents" icon="cil-folder-open" className="vo-navItem"></CSidebarNavItem>
+       <hr/>
         {/**Profile */}
         <CSidebarNavItem to="/dashboard/profile" name="Profile" icon="cil-user" className="vo-navItem"></CSidebarNavItem>
 
-        {/**Timecards */}
-        <CSidebarNavItem to="/dashboard/timecards" name="Timecards" icon="cil-library" className="vo-navItem"></CSidebarNavItem>
-
-        {/**Shared Docs */}
-        <CSidebarNavItem to="/dashboard/shared-documents" name="Shared Documents" icon="cil-folder-open" className="vo-navItem"></CSidebarNavItem>
-
+       
+        {/**log out */}
         <CSidebarNavItem onClick={logout} name="Logout" icon="cil-account-logout" className="vo-navItem"></CSidebarNavItem>
-      
+
       </CSidebarNav>
       {/* <span className="copyright-text">&copy; DMA V1.0.0</span> */}
       <CSidebarMinimizer />
-    
+
     </CSidebar>
   )
 }

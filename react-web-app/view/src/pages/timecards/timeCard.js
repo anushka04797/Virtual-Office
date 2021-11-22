@@ -22,7 +22,7 @@ const TimeCards = () => {
     console.log('userdata', usersData)
     const [assignee, setAssigneeValue] = useState();
     const [pdfTitle, setPdfTitle] = useState();
-   
+
     const getTimeCards = (values) => {
         if (has_group('pm')) {
             console.log('values from timecards', values)
@@ -50,7 +50,7 @@ const TimeCards = () => {
             console.log('values from timecards', values)
             API.get('wbs/user/time-card/list/' + values.assigneeSelect + "/").then((res) => {
                 let temp = []
-                setPdfTitle(profile_details.first_name+ " " +profile_details.last_name);
+                setPdfTitle(profile_details.first_name + " " + profile_details.last_name);
                 Array.from(res.data.data).forEach((item, idx) => {
                     // temp.push({data:item.date_updated >=values.startDate && item.date_updated <= values.todate})
                     temp.push({ data: item })
@@ -156,7 +156,7 @@ const TimeCards = () => {
 
         doc.setFontSize(15);
 
-        const title = "Timecard of"+ " " +pdfTitle;
+        const title = "Timecard of" + " " + pdfTitle;
         const headers = [["#", "TDO",
             "Project Name",
             "Task Title",
@@ -173,13 +173,13 @@ const TimeCards = () => {
 
         doc.text(title, marginLeft, 30);
         doc.autoTable(content);
-        doc.save("Timecard of" +" "+ pdfTitle +".pdf")
+        doc.save("Timecard of" + " " + pdfTitle + ".pdf")
     }
     return (
 
         <>
             <CContainer>
-                <h3 className="timecards-page-header mb-3">Timecards</h3>
+                <h3 className="timecards-page-header mb-3">Generate Timecards</h3>
 
                 <CForm>
                     <CRow>
@@ -206,6 +206,7 @@ const TimeCards = () => {
                                         aria-labelledby="assigneeSelectPM"
                                         id="assigneeSelectPM"
                                         minHeight="35px"
+
                                         placeholder="Select from list"
                                         isClearable={false}
                                         isMulti={false}
@@ -240,7 +241,7 @@ const TimeCards = () => {
                         </CCol>
                         <CCol lg="2" md="2">
                             <div className="button-holder--3">
-                                <CButton className="generate-card-button" onClick={editForm.handleSubmit}>Go</CButton>
+                                <CButton className="generate-card-button" onClick={editForm.handleSubmit}>Generate Timecard</CButton>
                             </div>
                         </CCol>
 
@@ -250,15 +251,9 @@ const TimeCards = () => {
                             <h5 className="tiny-header--5 mt-4">Export</h5>
                             <div className="format-buttons mt-2">
                                 <CButton className="file-format-download" onClick={() => exportPDF()}>PDF</CButton>
-                                <CButton className="file-format-download" onClick={() => exportToCSV(usersData, 'Timecard of'+ " " +pdfTitle)} >Excel</CButton>
+                                <CButton className="file-format-download" onClick={() => exportToCSV(usersData, 'Timecard of' + " " + pdfTitle)} >Excel</CButton>
 
                                 {/* <CButton className="file-format-download">Print</CButton> */}
-
-
-
-
-
-
                             </div>
                         </CCol>
                         }
