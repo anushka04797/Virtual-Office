@@ -136,7 +136,10 @@ const WbsBoard = () => {
     }
 
     React.useEffect(() => {
-        populate_data(wbsList)
+        // populate_data(wbsList)
+        API.get('wbs/all/'+localStorage.getItem(USER_ID)+'/').then((res)=>{
+            populate_data(res.data.data)
+        })
         getAssigneeList()
     }, [wbsList])
 

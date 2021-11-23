@@ -12,6 +12,7 @@ import { fetchTdosThunk } from '../../store/slices/TdoSlice';
 import Datetime from 'react-datetime'
 import moment from 'moment'
 import { fetchProjectsForPMThunk, fetchProjectsThunk } from '../../store/slices/ProjectsSlice';
+import LinearProgress from '@mui/material/LinearProgress';
 const CreateNewProject = () => {
   const colourStyles = {
     // control: (styles, state) => ({ ...styles,height:"35px", fontSize: '14px !important', lineHeight: '1.42857', borderRadius: "8px",borderRadius:".25rem",color:"rgb(133,133,133)",border:state.isFocused ? '2px solid #0065ff' :'inherit'}),
@@ -139,6 +140,12 @@ const CreateNewProject = () => {
       })
     })
     return temp.filter((value, index, array) => array.findIndex((t) => t.work_package_number === value.work_package_number) === index)
+  }
+  function is_form_submitting(){
+    if(formCreateProject.isSubmitting && !formCreateProject.isValidating){
+      return true
+    }
+    return false
   }
   const handleWorkPackageCreate = (value) => {
     setWorkPackageNumber({ value: value, label: value })
@@ -273,7 +280,7 @@ const CreateNewProject = () => {
                           // getOptionValue = {option=>option.task_delivery_order}
                           styles={colourStyles}
                         />
-                        {formCreateProject.errors.task_delivery_order && <p className="error" style={{ fontSize: '14px !important' }}>{formCreateProject.errors.task_delivery_order}</p>}
+                        {formCreateProject.touched.task_delivery_order && formCreateProject.errors.task_delivery_order && <small style={{ color: 'red' }}>{formCreateProject.errors.task_delivery_order}</small>}
                       </div>
                       {/**Sub task */}
                       <div className="col-lg-6 mb-3">
@@ -296,7 +303,7 @@ const CreateNewProject = () => {
                           getOptionValue={option => option.value}
                           styles={colourStyles}
                         />
-                        {formCreateProject.errors.sub_task && <p className="error" style={{ fontSize: '14px !important' }}>{formCreateProject.errors.sub_task}</p>}
+                        {formCreateProject.touched.sub_task && formCreateProject.errors.sub_task && <small style={{ color: 'red' }}>{formCreateProject.errors.sub_task}</small>}
                         {/* <CInput className="custom-forminput-6" name="sTask"></CInput> */}
                       </div>
                       {/**work package number */}
@@ -320,7 +327,8 @@ const CreateNewProject = () => {
                           getOptionValue={option => option.value}
                           styles={colourStyles}
                         />
-                        {formCreateProject.errors.work_package_number && <p className="error" style={{ fontSize: '14px !important' }}>{formCreateProject.errors.work_package_number}</p>}
+                        {formCreateProject.touched.work_package_number && formCreateProject.errors.work_package_number && <small style={{ color: 'red' }}>{formCreateProject.errors.work_package_number}</small>}
+                        
                       </div>
                       {/**Task title */}
                       <div className="col-lg-12 mb-3">
@@ -328,6 +336,7 @@ const CreateNewProject = () => {
                           Task Title
                         </CLabel>
                         <CInput id="task_title" name="task_title" value={formCreateProject.values.task_title} onChange={formCreateProject.handleChange} className="custom-forminput-6" />
+                        {formCreateProject.touched.task_title && formCreateProject.errors.task_title && <small style={{ color: 'red' }}>{formCreateProject.errors.task_title}</small>}
                       </div>
                       {/**estimated persons */}
                       <div className="col-lg-5 mb-3">
@@ -335,6 +344,7 @@ const CreateNewProject = () => {
                           Estimated Person(s)
                         </CLabel>
                         <CInput id="estimated_person" type="number" name="estimated_person" value={formCreateProject.values.estimated_person} onChange={formCreateProject.handleChange} className="custom-forminput-6"></CInput>
+                        {formCreateProject.touched.estimated_person && formCreateProject.errors.estimated_person && <small style={{ color: 'red' }}>{formCreateProject.errors.estimated_person}</small>}
                       </div>
                       {/**Assignees */}
                       <div className="col-lg-7 mb-3">
@@ -357,6 +367,7 @@ const CreateNewProject = () => {
                           // getOptionValue = {option=>option.id}
                           styles={colourStyles}
                         />
+                        {formCreateProject.touched.assignee && formCreateProject.errors.assignee && <small style={{ color: 'red' }}>{formCreateProject.errors.assignee}</small>}
                       </div>
                       {/**pMs */}
                       <div className="col-lg-6 mb-3">
@@ -384,7 +395,7 @@ const CreateNewProject = () => {
                           onChange={(e) => { formCreateProject.setFieldValue('planned_delivery_date', e.format()) }}
                         /> */}
                         <CInput id="planned_delivery_date" name="planned_delivery_date" value={formCreateProject.values.planned_delivery_date} onChange={formCreateProject.handleChange} className="custom-forminput-6" type="date" />
-                        {formCreateProject.errors.planned_delivery_date && <p className="error" style={{ fontSize: '14px !important' }}>{formCreateProject.errors.planned_delivery_date}</p>}
+                        {formCreateProject.touched.planned_delivery_date && formCreateProject.errors.planned_delivery_date && <small style={{ color: 'red' }}>{formCreateProject.errors.planned_delivery_date}</small>}
                       </div>
                       {/**Planned Value */}
                       <div className="col-lg-4 mb-3">
@@ -392,6 +403,7 @@ const CreateNewProject = () => {
                           Planned Value
                         </CLabel>
                         <CInput id="planned_value" name="planned_value" value={formCreateProject.values.planned_value} onChange={formCreateProject.handleChange} className="custom-forminput-6"></CInput>
+                        {formCreateProject.touched.planned_value && formCreateProject.errors.planned_value && <small style={{ color: 'red' }}>{formCreateProject.errors.planned_value}</small>}
                       </div>
                       {/**planned hours */}
 
@@ -400,6 +412,7 @@ const CreateNewProject = () => {
                           Planned hr(s)
                         </CLabel>
                         <CInput id="planned_hours" name="planned_hours" value={formCreateProject.values.planned_hours} onChange={(event) => { formCreateProject.setFieldValue('planned_hours', event.target.value); formCreateProject.setFieldValue('remaining_hours', event.target.value) }} className="custom-forminput-6"></CInput>
+                        {formCreateProject.touched.planned_hours && formCreateProject.errors.planned_hours && <small style={{ color: 'red' }}>{formCreateProject.errors.planned_hours}</small>}
                       </div>
                       {/**remaining hours */}
                       <div className="col-lg-4 mb-3">
@@ -409,11 +422,11 @@ const CreateNewProject = () => {
                         <CInput id="remaining_hours" name="remaining_hours" value={formCreateProject.values.planned_hours} className="custom-forminput-6" readOnly />
                       </div>
                       {/**submit buttons */}
-                      <div className="col-md-12">
+                      <div className="col-md-12">{is_form_submitting() == true?<LinearProgress/>:
                         <div className="project-form-button-holders mt-3">
                           <CButton type="button" onClick={formCreateProject.handleSubmit} className="create-btn-prjct create-prjct">Create Project</CButton>
                           <CButton type="button" onClick={reset_form} className="create-btn-prjct cancel-prjct">Cancel</CButton>
-                        </div>
+                        </div>}
                       </div>
                     </CRow>
                   </CForm>
