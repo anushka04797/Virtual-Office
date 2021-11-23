@@ -34,7 +34,7 @@ const Dashboard=()=> {
         if(location.state?.from == 'login'){
             enqueueSnackbar('Welcome ',{variant:'success'})
         }
-        //console.log(new Date(JSON.parse(localStorage.getItem('TOKEN')).time).toISOString())
+        //console.log(new Date(JSON.parse(sessionStorage.getItem('TOKEN')).time).toISOString())
     },[])
     return (
         <>

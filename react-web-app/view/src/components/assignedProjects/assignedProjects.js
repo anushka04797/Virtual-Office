@@ -30,12 +30,12 @@ const AssignedProjectsDashboard = () => {
 
     const onWbsUpdate = () => {
         setModal(false)
-        dispatch(fetchWbsThunk(localStorage.getItem(USER_ID)))
+        dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)))
         setModalData(null);
     }
 
     React.useEffect(() => {
-        // dispatch(fetchUserWiseWbsThunk(localStorage.getItem(USER_ID)))
+        // dispatch(fetchUserWiseWbsThunk(sessionStorage.getItem(USER_ID)))
     }, [])
     return (
         <>

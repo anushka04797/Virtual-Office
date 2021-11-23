@@ -58,7 +58,7 @@ const ViewEvms = () => {
         API.put('evms/update/' + values.id + '/', values).then((res) => {
             console.log(res)
             if (res.status == 200 && res.data.success == 'True') {
-                dispatch(fetchEvmsThunk(localStorage.getItem(USER_ID)))
+                dispatch(fetchEvmsThunk(sessionStorage.getItem(USER_ID)))
                 setVisible(false)
                 swal('Updated!', 'EVMS has been updated', 'success')
             }

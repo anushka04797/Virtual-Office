@@ -170,7 +170,7 @@ const MyProjectsDetailsView = () => {
                     // let temp = project
                     // temp.project.task_delivery_order = res.data.data
                     // setProject(temp)
-                    dispatch(fetchProjectsForPMThunk(localStorage.getItem(USER_ID)))
+                    dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)))
                     initialize()
                     swal('Updated', 'Task Delivery Order name has been updated', 'success')
                 }
@@ -221,7 +221,7 @@ const MyProjectsDetailsView = () => {
                 if (willDelete) {
                     API.delete('/project/remove-assignee/' + assignee_id + "/", { data: { project: project_id, assignee: assignee_id } }).then(response => {
                         if (response.data.success == "True") {
-                            dispatch(fetchProjectsForPMThunk(localStorage.getItem(USER_ID)))
+                            dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)))
                             initialize()
                             swal("Poof! Your selected assignee has been removed!", {
                                 icon: "success",
@@ -253,7 +253,7 @@ const MyProjectsDetailsView = () => {
                 if (willDelete) {
                     API.delete('/project/subtask/delete/' + work_package_index + "/").then(response => {
                         if (response.data.success == "True") {
-                            dispatch(fetchProjectsForPMThunk(localStorage.getItem(USER_ID)))
+                            dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)))
                             initialize()
                             swal("Poof! Your selected sub task has been deleted!", {
                                 icon: "success",

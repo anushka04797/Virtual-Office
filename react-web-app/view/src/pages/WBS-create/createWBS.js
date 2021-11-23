@@ -49,7 +49,7 @@ const CreateNewWBS = () => {
                 project: newValue.data.project.id,
                 work_package_number: newValue.data.project.work_package_number,
                 assignee: formCreateWbs.values.assignee,
-                reporter: localStorage.getItem(USER_ID),
+                reporter: sessionStorage.getItem(USER_ID),
                 title: formCreateWbs.values.title,
                 description: formCreateWbs.values.description,
                 start_date: formCreateWbs.values.start_date,
@@ -96,7 +96,7 @@ const CreateNewWBS = () => {
             console.log(res)
             if (res.status == 200 && res.data.success == 'True') {
                 reset_form()
-                dispatch(fetchWbsThunk(localStorage.getItem(USER_ID)))
+                dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)))
                 swal('Created!', 'Successfuly Created', 'success')
             }
         })
@@ -116,7 +116,7 @@ const CreateNewWBS = () => {
             project: "",
             work_package_number: "",
             assignee: [],
-            reporter: localStorage.getItem(USER_ID),
+            reporter: sessionStorage.getItem(USER_ID),
             title: "",
             description: "",
             start_date: "",

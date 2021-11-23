@@ -126,7 +126,7 @@ const OurMeetings = () => {
             console.log('res',res.data)
             formMeeting.handleReset()
             setSelectedParticipants([])
-            dispatch(fetchMeetingList(localStorage.getItem(USER_ID)))
+            dispatch(fetchMeetingList(sessionStorage.getItem(USER_ID)))
             swal('Created', '', 'success')
         })
     }
@@ -142,7 +142,7 @@ const OurMeetings = () => {
             agenda: "",
             comments: "",
             start_time: "",
-            host: localStorage.getItem(USER_ID)
+            host: sessionStorage.getItem(USER_ID)
             // end_time: "",
             // duration: "",
         },

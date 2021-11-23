@@ -19,17 +19,17 @@ import { fetchAllTimecardsPm, fetchAllTimecardsPmThunk, fetchTimecardThunk } fro
 const TheLayout = () => {
   const dispatch = useDispatch()
   React.useEffect(()=>{
-    dispatch(fetchProjectsThunk(localStorage.getItem(USER_ID)))
-    dispatch(fetchWbsThunk(localStorage.getItem(USER_ID)))
-    dispatch(fetchPersonalDetails(localStorage.getItem(USER_ID)))
-    dispatch(fetchMeetingList(localStorage.getItem(USER_ID)))
-  if(!has_group('pm')) dispatch(fetchTimecardThunk(localStorage.getItem(USER_ID)))
+    dispatch(fetchProjectsThunk(sessionStorage.getItem(USER_ID)))
+    dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)))
+    dispatch(fetchPersonalDetails(sessionStorage.getItem(USER_ID)))
+    dispatch(fetchMeetingList(sessionStorage.getItem(USER_ID)))
+  if(!has_group('pm')) dispatch(fetchTimecardThunk(sessionStorage.getItem(USER_ID)))
    if(has_group('pm')){
-    dispatch(fetchTimecardThunk(localStorage.getItem(USER_ID)))
-    dispatch(fetchAllTimecardsPmThunk(localStorage.getItem(USER_ID)))
+    dispatch(fetchTimecardThunk(sessionStorage.getItem(USER_ID)))
+    dispatch(fetchAllTimecardsPmThunk(sessionStorage.getItem(USER_ID)))
    }
-    if(has_group('pm')) dispatch(fetchProjectsForPMThunk(localStorage.getItem(USER_ID)))
-    if(has_group('pm')) dispatch(fetchEvmsThunk(localStorage.getItem(USER_ID)))
+    if(has_group('pm')) dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)))
+    if(has_group('pm')) dispatch(fetchEvmsThunk(sessionStorage.getItem(USER_ID)))
   },[])
   return (
     <div className="c-app c-default-layout">

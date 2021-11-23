@@ -95,7 +95,7 @@ const TimeCards = () => {
     const assigneeList = [];
     if (has_group('pm')) {
 
-        API.get('project/assignees/all/' + localStorage.getItem(USER_ID) + "/").then((res) => {
+        API.get('project/assignees/all/' + sessionStorage.getItem(USER_ID) + "/").then((res) => {
 
             Array.from(res.data.data).forEach((item, idx) => {
                 assigneeList.push({ data: item, value: item.id, label: capitalize(item.first_name) + " " + capitalize(item.last_name) })
@@ -120,7 +120,7 @@ const TimeCards = () => {
     const editForm = useFormik({
         initialValues: {
 
-            assigneeSelect: localStorage.getItem(USER_ID),
+            assigneeSelect: sessionStorage.getItem(USER_ID),
             assigneeSelectPM: "",
             startDate: "",
             todate: ""

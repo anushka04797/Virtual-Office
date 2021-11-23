@@ -30,10 +30,10 @@ const TheSidebar = () => {
   }, [])
   const logout = () => {
     API.get('auth/logout/').then((res) => {
-      localStorage.clear()
+      sessionStorage.clear()
       history.push('/')
     }).catch(err => {
-      localStorage.clear()
+      sessionStorage.clear()
       history.push('/')
     })
 

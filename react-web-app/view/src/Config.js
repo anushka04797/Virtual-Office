@@ -12,7 +12,7 @@ export const API = axios.create({
   baseURL: API_URL,
   timeout: 100000,
   headers: {
-    "Authorization": `Bearer ${localStorage.getItem(TOKEN)}`,
+    "Authorization": `Bearer ${sessionStorage.getItem(TOKEN)}`,
     "Content-Type": "application/json",
    // "Access-Control-Allow-Origin": "*"
   }
@@ -21,14 +21,14 @@ export const FILE_API = axios.create({
   baseURL: API_URL,
   timeout: 100000,
   headers: {
-    "Authorization": `Bearer ${localStorage.getItem(TOKEN)}`,
+    "Authorization": `Bearer ${sessionStorage.getItem(TOKEN)}`,
     "Content-Type": "multipart/form-data",
    // "Access-Control-Allow-Origin": "*"
   }
 })
 API.interceptors.request.use(
   function(config) {
-    const token = localStorage.getItem(TOKEN); 
+    const token = sessionStorage.getItem(TOKEN); 
     if (token) {
       config.headers["Authorization"] = 'Bearer ' + token;
     }
@@ -40,7 +40,7 @@ API.interceptors.request.use(
 );
 FILE_API.interceptors.request.use(
   function(config) {
-    const token = localStorage.getItem(TOKEN); 
+    const token = sessionStorage.getItem(TOKEN); 
     if (token) {
       config.headers["Authorization"] = 'Bearer ' + token;
     }
@@ -67,7 +67,7 @@ export const PUBLIC_FORM_API = axios.create({
 })
 
 export const isLoggedIn=()=>{
-  if(localStorage.getItem(TOKEN)===null){
+  if(sessionStorage.getItem(TOKEN)===null){
     return false;
   }
   return true;
@@ -83,7 +83,7 @@ export async function JsonClient(endpoint, { body, ...customConfig } = {}) {
     ...customConfig,
     headers: {
       ...headers,
-      "Authorization": `Bearer ${localStorage.getItem(TOKEN)}`,
+      "Authorization": `Bearer ${sessionStorage.getItem(TOKEN)}`,
       'Content-Type': 'application/json',
       ...customConfig.headers,
     },
@@ -101,7 +101,7 @@ export async function JsonClient(endpoint, { body, ...customConfig } = {}) {
       return data
     }
     else{
-      localStorage.clear()
+      sessionStorage.clear()
       window.location.href = '/'
     }
     throw new Error(response.statusText)

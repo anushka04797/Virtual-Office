@@ -102,7 +102,7 @@ const CreateNewProject = () => {
         estimated_person: formCreateProject.values.estimated_person,
         planned_delivery_date: formCreateProject.values.planned_delivery_date,
         assignee: formCreateProject.values.assignees,
-        pm: localStorage.getItem(USER_ID),
+        pm: sessionStorage.getItem(USER_ID),
         planned_hours: formCreateProject.values.planned_hours,
         planned_value: formCreateProject.values.planned_value,
         remaining_hours: formCreateProject.values.remaining_hours
@@ -209,8 +209,8 @@ const CreateNewProject = () => {
       console.log(res)
       if (res.status == 200 && res.data.success == 'True') {
         reset_form()
-        dispatch(fetchProjectsForPMThunk(localStorage.getItem(USER_ID)))
-        dispatch(fetchProjectsThunk(localStorage.getItem(USER_ID)))
+        dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)))
+        dispatch(fetchProjectsThunk(sessionStorage.getItem(USER_ID)))
         setSelectedAssignees([])
         swal('Created!', 'Successfuly Created', 'success')
       }
@@ -225,7 +225,7 @@ const CreateNewProject = () => {
       estimated_person: "",
       planned_delivery_date: "",
       assignee: [],
-      pm: localStorage.getItem(USER_ID),
+      pm: sessionStorage.getItem(USER_ID),
       planned_hours: "",
       planned_value: "",
       remaining_hours: ""

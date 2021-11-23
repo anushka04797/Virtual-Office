@@ -55,7 +55,7 @@ const OngoingProjectDetails = () => {
     const animatedComponents = makeAnimated();
     useEffect(() => {
         console.log('projects', projects)
-        dispatch(fetchProjectsThunk(localStorage.getItem(USER_ID)))
+        dispatch(fetchProjectsThunk(sessionStorage.getItem(USER_ID)))
     }, [])
     const mark_project_completed = (id) => {
         swal({
@@ -69,7 +69,7 @@ const OngoingProjectDetails = () => {
                 if (willUpdate) {
                     API.put('/project/change-status/' + id + "/", { status: 1 }).then(response => {
                         if (response.data.success == "True") {
-                            dispatch(fetchProjectsThunk(localStorage.getItem(USER_ID)))
+                            dispatch(fetchProjectsThunk(sessionStorage.getItem(USER_ID)))
                             swal("Poof! Project is marked as completed", {
                                 icon: "success",
                             });
@@ -377,7 +377,7 @@ const OngoingProjectDetails = () => {
                                 }
                                 <div className="ongoing-action-card-buttons">
                                     <CButton className="view-ongoing-details" onClick={() => history.push({ pathname: '/dashboard/Projects/assigned-projects/details/' + project.project.work_package_number, state: { project: project } })}><CIcon name="cil-list-rich" className="mr-1" />View Details</CButton>
-                                    {has_group('pm') && localStorage.getItem(USER_ID) == project.project.pm.id && <CButton type="button" onClick={() => { mark_project_completed(project.project.work_package_number) }} className="mark-ongoing-completed"><CIcon name="cil-check-alt" className="mr-1" />Mark as Completed</CButton>}
+                                    {has_group('pm') && sessionStorage.getItem(USER_ID) == project.project.pm.id && <CButton type="button" onClick={() => { mark_project_completed(project.project.work_package_number) }} className="mark-ongoing-completed"><CIcon name="cil-check-alt" className="mr-1" />Mark as Completed</CButton>}
                                 </div>
                             </CCardBody>
 

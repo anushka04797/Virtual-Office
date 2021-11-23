@@ -137,7 +137,7 @@ const WbsBoard = () => {
 
     React.useEffect(() => {
         // populate_data(wbsList)
-        API.get('wbs/all/'+localStorage.getItem(USER_ID)+'/').then((res)=>{
+        API.get('wbs/all/'+sessionStorage.getItem(USER_ID)+'/').then((res)=>{
             populate_data(res.data.data)
         })
         getAssigneeList()
@@ -177,7 +177,7 @@ const WbsBoard = () => {
 
     const onWbsUpdate = () => {
         setModal(false)
-        dispatch(fetchWbsThunk(localStorage.getItem(USER_ID)))
+        dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)))
         setModalData(null);
     }
 

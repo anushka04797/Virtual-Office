@@ -31,7 +31,7 @@ const MyProjects = () => {
             if(res.status == 200 && res.data.success == 'True'){
                 setStatus({project:null})
                 setPM(null)
-                dispatch(fetchProjectsForPMThunk(localStorage.getItem(USER_ID)))
+                dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)))
                 swal('Updated!','Project manager changed successfully','success')
             }
         })
@@ -52,13 +52,13 @@ const MyProjects = () => {
 
     useEffect(() => {
         console.log('projects', projects)
-        dispatch(fetchProjectsForPMThunk(localStorage.getItem(USER_ID)))
+        dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)))
         API.get('project/managers/').then((res) => {
             console.log('res', res.data.data)
             let temp = []
             Array.from(res.data.data).forEach((manager, idx) => {
                 temp.push({ value: manager.id, label: manager.first_name + ' ' + manager.last_name, data: manager })
-                if(manager.id == localStorage.getItem(USER_ID)){
+                if(manager.id == sessionStorage.getItem(USER_ID)){
                     setPM({value:manager.id,label:manager.first_name + ' ' + manager.last_name, data: manager})
                 }
             })
@@ -77,7 +77,7 @@ const MyProjects = () => {
                 if (willUpdate) {
                     API.put('/project/change-status/' + id + "/", { status: 1 }).then(response => {
                         if (response.data.success == "True") {
-                            dispatch(fetchProjectsForPMThunk(localStorage.getItem(USER_ID)))
+                            dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)))
                             swal("Poof! Project is marked as completed", {
                                 icon: "success",
                             });

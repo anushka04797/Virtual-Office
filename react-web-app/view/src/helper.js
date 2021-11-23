@@ -1,6 +1,6 @@
 export const user_groups=()=>{
     //let temp=[]
-    let groups = localStorage.getItem('groups').split(',')
+    let groups = sessionStorage.getItem('groups').split(',')
     return groups
 }
 

@@ -35,14 +35,14 @@ const SignIn = () => {
     PUBLIC_API.post('auth/login/',formLogin.values).then((res)=>{
       console.log('login response',res.data)
       if(res.status == 200 && res.data.success == 'True'){
-        localStorage.setItem(TOKEN,res.data.token)
+        sessionStorage.setItem(TOKEN,res.data.token)
         let expires_after = new Date()
-        localStorage.setItem('TOKEN', JSON.stringify({
+        sessionStorage.setItem('TOKEN', JSON.stringify({
           time: new Date(expires_after.getFullYear(),expires_after.getMonth(),expires_after.getDate()+2,expires_after.getUTCHours(),expires_after.getMinutes(),expires_after.getSeconds()),
           data: res.data.token
         }));
-        localStorage.setItem('groups',JSON.parse(res.data.groups))
-        localStorage.setItem(USER_ID,res.data.user_id)
+        sessionStorage.setItem('groups',JSON.parse(res.data.groups))
+        sessionStorage.setItem(USER_ID,res.data.user_id)
         history.push({pathname:'/dashboard',state:{from:'login'}})
       }
     }).catch(err=>{
@@ -78,7 +78,7 @@ const SignIn = () => {
   },[])
   return (
     <>
-      {localStorage.getItem(TOKEN)?<Redirect to="/dashboard"/>:<div className="signin-content">
+      {sessionStorage.getItem(TOKEN)?<Redirect to="/dashboard"/>:<div className="signin-content">
         <div className="container">
           <div className="row">
             {/**Form section */}
