@@ -13,6 +13,7 @@ const routes = [
     {path:'/dashboard/Projects/create-new-project',exact:true,name:'Create New Project',component:React.lazy(()=>import('../pages/createProject/createProject'))},
     {path:'/dashboard/EVMS/create',exact:true,name:'EVMS Create',component:React.lazy(()=>import('../pages/create-evms/createEVMS'))},
     {path:'/dashboard/EVMS/view',exact:true,name:'EVMS View',component:React.lazy(()=>import('../pages/evms-view/evmsView'))},
+    {path:'/dashboard/EVMS/details',exact:true,name:'EVMS Details',component:React.lazy(()=>import('../pages/evms-details/evmsDetails'))},
 
     {path:'/dashboard/WBS/create-wbs',exact:true,name:'WBS',component:React.lazy(()=>import('../pages/WBS-create/createWBS'))},
     {path:'/dashboard/WBS/board',exact:true,name:'Board',component:React.lazy(()=>import('../pages/wbs-board/Board'))},

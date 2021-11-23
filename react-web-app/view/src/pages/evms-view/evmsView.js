@@ -20,7 +20,6 @@ const ViewEvms = () => {
     let history = useHistory();
     const evmsList = useSelector(state => state.evmsList.data)
 
-
     const editEVMSForm = (item) => {
         setVisible(!visible);
         setProjectValue(item?.project.sub_task);
@@ -41,6 +40,7 @@ const ViewEvms = () => {
 
 
     }
+
     const validate_evms_update = (values) => {
         const errors = {}
         if (!values.planned_value) errors.planned_value = "Planned Value is required"
@@ -53,6 +53,7 @@ const ViewEvms = () => {
         if (!values.budget_at_completion) errors.budget_at_completion = "Budget at completion required"
         return errors;
     }
+
     const updateEvms = (values) => {
         API.put('evms/update/' + values.id + '/', values).then((res) => {
             console.log(res)
@@ -66,6 +67,7 @@ const ViewEvms = () => {
             }
         })
     }
+
     const evms_update_form = useFormik({
         initialValues: {
             id: "",
@@ -85,8 +87,6 @@ const ViewEvms = () => {
         validate: validate_evms_update,
         onSubmit: updateEvms
     })
-
-
 
     useEffect(() => {
         console.log('evmsList', evmsList)
@@ -109,7 +109,6 @@ const ViewEvms = () => {
                     <CModalBody>
                         <CContainer>
                             <CForm>
-
                                 <CRow>
                                     {/**Project Name */}
                                     <CCol lg="12" md="12" sm="12" className="mb-2">
@@ -126,7 +125,6 @@ const ViewEvms = () => {
                                         <CInput className="custom-forminput-6" name="wPackage" id="wPackage" readOnly />
                                     </CCol> */}
                                     {/**Planned Value */}
-
                                     <CCol className="mb-2" g="6" md="6" sm="12">
                                         <CLabel className="custom-label-5" htmlFor="planned_value">
                                             Planned Value
@@ -228,13 +226,12 @@ const ViewEvms = () => {
                                         </IconButton>{item.project.task_delivery_order.title + ' / ' + item.project.sub_task}</h4>
                                         <div className="action-button-holders--2">
                                             <CButton className="edit-project-on" onClick={() => editEVMSForm(item)}><CIcon name="cil-pencil" className="mr-1" /> Edit</CButton>
-                                            <CButton className="view-ongoing-details" ><CIcon name="cil-list-rich" className="mr-1" />View Details</CButton>
+                                            <CButton className="view-ongoing-details" onClick={() => history.push({ pathname: '/dashboard/EVMS/details/' })} ><CIcon name="cil-list-rich" className="mr-1" />View Details</CButton>
                                         </div>
                                     </div>
                                     <hr className="header-underline1" />
                                     <div className="row">
                                         {/**graph view */}
-
                                         <div className="col-lg-6 col-md-12">
                                             <CChart
                                                 type="line"
@@ -273,8 +270,6 @@ const ViewEvms = () => {
                                             //   'Coding', 'Cycling', 'Running'
                                             // ]}
                                             />
-
-
                                         </div>
                                         {/**Text details */}
                                         <div className="col-lg-5 offset-lg-1 col-md-12 mt-3">
@@ -297,29 +292,16 @@ const ViewEvms = () => {
                             </CCard>
                         ))}
                         { /**If no evmsList */}
-                    {evmsList == undefined || evmsList == 0 ? (
-
-
-
-                        <CAlert className="no-value-show-alert text-center" color="primary">Currently there are no EVMS details available.
-                        <div><CButton className="evms-from-details" onClick={() => history.push({ pathname: '/dashboard/EVMS/create' })}>Create a new EVMS</CButton></div>
-                       </CAlert>
-
-
-                    ) : null
-
-
-                    }
+                        {evmsList == undefined || evmsList == 0 ? (
+                            <CAlert className="no-value-show-alert text-center" color="primary">Currently there are no EVMS details available.
+                                <div><CButton className="evms-from-details" onClick={() => history.push({ pathname: '/dashboard/EVMS/create' })}>Create a new EVMS</CButton></div>
+                            </CAlert>
+                        ) : null
+                        }
                     </div>
                 </CRow>
             </CContainer>
-
-
-
-
         </>
     )
-
-
 }
 export default ViewEvms;
