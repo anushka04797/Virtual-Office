@@ -2,7 +2,7 @@ import { CContainer, CRow, CCol, CCard, CCardHeader, CCardBody, CForm, CLabel, C
 import React, { useState, useRef } from 'react'
 import './createWBS.css'
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchProjectsThunk, fetchProjectsAssigneeThunk, createWbsThunk } from '../../store/slices/ProjectsSlice';
+import { fetchProjectsThunk, fetchProjectsAssigneeThunk, createWbsThunk, fetchWbsThunk } from '../../store/slices/ProjectsSlice';
 import Select from "react-select";
 import { API, USER_ID } from '../../Config';
 import { useFormik } from 'formik';
@@ -37,34 +37,55 @@ const CreateNewWBS = () => {
 
     const [selectedProject, setSelectedProject] = useState(null)
     const [selectedProjectEndDate, setSelectedProjectEndDate] = useState(null)
-
+    const [selectedAssignees, setSelectedAssignees] = useState([])
     const handleProjectChange = (newValue, actionMeta) => {
         console.log(`action: ${actionMeta.action}`);
         console.log("newValue: ", newValue);
         if (actionMeta.action == 'select-option') {
             setSelectedProject(newValue);
             getAssigneeList(newValue);
-            formCreateWbs.setFieldValue('project',newValue.data.project.id)
-            formCreateWbs.setFieldValue('work_package_number',newValue.data.project.work_package_number)
-            let assigneeArray = []
-            newValue.data.assignees.forEach(item => {
-                assigneeArray.push(item.id)
+
+            formCreateWbs.setValues({
+                project: newValue.data.project.id,
+                work_package_number: newValue.data.project.work_package_number,
+                assignee: formCreateWbs.values.assignee,
+                reporter: localStorage.getItem(USER_ID),
+                title: formCreateWbs.values.title,
+                description: formCreateWbs.values.description,
+                start_date: formCreateWbs.values.start_date,
+                end_date: formCreateWbs.values.end_date,
+                hours_worked: formCreateWbs.values.hours_worked,
+                status: formCreateWbs.values.status,
+                progress: formCreateWbs.values.progress,
+                comments: formCreateWbs.values.comments,
+                deliverable: formCreateWbs.values.deliverable
             })
-            formCreateWbs.setFieldValue('assignee',assigneeArray)
         }
         else if (actionMeta.action == 'clear') {
             setSelectedProject(null)
         }
     };
-
+    const handleAssigneeChange = (value, actionMeta) => {
+        let assigneeArray = []
+            value.forEach(item => {
+                assigneeArray.push(item.id)
+            })
+            formCreateWbs.setFieldValue('assignee', assigneeArray)
+    }
     // form validation for WBS create
+    const is_before_start_date = (start_date, end_date) => {
+        console.log('start date', new Date(start_date))
+        console.log('end date', new Date(end_date))
+        return new Date(end_date) < new Date(start_date)
+    }
     const validate_create_wbs_form = (values) => {
         const errors = {}
         if (!values.project) errors.project = "Project is required"
         if (!values.title) errors.title = "Title is required"
         if (!values.start_date) errors.start_date = "Start date is required"
         if (!values.end_date) errors.end_date = "End date is required"
-        if (values.assignee.length<1) errors.assignee = "Assignee is required"
+        if (values.start_date && is_before_start_date(values.start_date, values.end_date)) errors.end_date = "End date can not be past from start date"
+        if (values.assignee.length < 1) errors.assignee = "Assignee is required"
         return errors
     }
 
@@ -75,6 +96,7 @@ const CreateNewWBS = () => {
             console.log(res)
             if (res.status == 200 && res.data.success == 'True') {
                 reset_form()
+                dispatch(fetchWbsThunk(localStorage.getItem(USER_ID)))
                 swal('Created!', 'Successfuly Created', 'success')
             }
         })
@@ -136,7 +158,8 @@ const CreateNewWBS = () => {
                                                     onChange={handleProjectChange}
                                                     ref={selectProjectRef}
                                                 />
-                                                {formCreateWbs.errors.project && <p className="error" style={{fontSize: '14px !important'}}>{formCreateWbs.errors.project}</p>}
+                                                {formCreateWbs.touched.project && formCreateWbs.errors.project && <small style={{ color: 'red' }}>{formCreateWbs.errors.project}</small>}
+
                                             </div>
                                             {selectedProject != null ?
                                                 <div className="col-lg-12 mb-3">
@@ -159,7 +182,7 @@ const CreateNewWBS = () => {
                                                 </CLabel>
                                                 {/* onChange={setWbsTitle} */}
                                                 <CInput id="title" name="title" value={formCreateWbs.values.title} onChange={formCreateWbs.handleChange} className="custom-forminput-6"></CInput>
-                                                {formCreateWbs.errors.title && <p className="error" style={{fontSize: '14px !important'}}>{formCreateWbs.errors.title}</p>}
+                                                {formCreateWbs.touched.title && formCreateWbs.errors.title && <small style={{ color: 'red' }}>{formCreateWbs.errors.title}</small>}
                                             </div>
                                             {/**WBS description */}
                                             <div className="col-lg-12 mb-3">
@@ -176,7 +199,7 @@ const CreateNewWBS = () => {
                                                 </CLabel>
                                                 {/* onChange={setWbsStartDate} */}
                                                 <CInput type="date" id="start_date" name="start_date" value={formCreateWbs.values.start_date} onChange={formCreateWbs.handleChange} className="custom-forminput-6"></CInput>
-                                                {formCreateWbs.errors.start_date && <p className="error" style={{fontSize: '14px !important'}}>{formCreateWbs.errors.start_date}</p>}
+                                                {formCreateWbs.touched.start_date && formCreateWbs.errors.start_date && <small style={{ color: 'red' }}>{formCreateWbs.errors.start_date}</small>}
                                             </div>
                                             {/**End date */}
                                             <div className="col-lg-6 mb-3">
@@ -185,7 +208,8 @@ const CreateNewWBS = () => {
                                                 </CLabel>
                                                 {/* onChange={setWbsEndDate} */}
                                                 <CInput max="" type="date" id="end_date" name="end_date" value={formCreateWbs.values.end_date} onChange={formCreateWbs.handleChange} className="custom-forminput-6"></CInput>
-                                                {formCreateWbs.errors.end_date && <p className="error" style={{fontSize: '14px !important'}}>{formCreateWbs.errors.end_date}</p>}
+                                                {formCreateWbs.touched.end_date && formCreateWbs.errors.end_date && <small style={{ color: 'red' }}>{formCreateWbs.errors.end_date}</small>}
+
                                             </div>
                                             {/**Assignees */}
                                             <div className="col-lg-12 mb-3">
@@ -196,10 +220,11 @@ const CreateNewWBS = () => {
                                                     ref={selectAssigneRef}
                                                     options={assigneeList}
                                                     isMulti
+                                                    onChange={handleAssigneeChange}
                                                     getOptionLabel={option => option.first_name + " " + option.last_name}
                                                     getOptionValue={option => option.id}
                                                 />
-                                                {formCreateWbs.errors.assignee && <p className="error" style={{fontSize: '14px !important'}}>{formCreateWbs.errors.assignee}</p>}
+                                                {formCreateWbs.touched.assignee && formCreateWbs.errors.assignee && <small style={{ color: 'red' }}>{formCreateWbs.errors.assignee}</small>}
                                             </div>
                                             {/**submit buttons */}
                                             <div className="col-md-12">
