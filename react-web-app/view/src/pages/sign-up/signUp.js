@@ -39,6 +39,7 @@ const Register = () => {
     const errors = {};
     if (!values.first_name) errors.first_name = "Name is required!"
     if (!values.email) errors.email = "Email is required!"
+    if (values.phone && !new RegExp('^[0-9]+$').test(values.phone)) errors.phone="Invalid Phone Number"
     if (String(values.password).length<8) errors.password = "Password is too short"
     if (!values.password) {errors.password = "Password is required!"}
     //else if(values.password != values.confirm_pass) {errors.confirm_pass = "Password did not match"; errors.password = "Confirm your password"}
@@ -59,7 +60,6 @@ const Register = () => {
     }
     PUBLIC_FORM_API.post('auth/register/', formData).then((res) => {
       setSubmitted(false)
-      console.log(res)
       if (res.data.success == 'True' && res.status == 201) {
         history.push({ pathname: '/login', state: { registration: true } })
       }
@@ -200,11 +200,12 @@ const Register = () => {
                         id="phone"
                         name="phone"
                         value={formSignUp.values.phone}
-                        onChange={formSignUp.handleChange}
+                        onChange={(event)=>{formSignUp.handleChange(event)}}
                         aria-describedby="phoneHelp"
                         className="custom-formgroup-2"
                       />
-                      {responseErrors.phone!=undefined && <small style={{ color: 'red' }}>{responseErrors.phone}</small>}
+                      {responseErrors.phone!=undefined && !formSignUp.errors.phone && formSignUp.values.phone.length>0 && <small style={{ color: 'red' }}>{responseErrors.phone}</small>}
+                      {formSignUp.touched.phone && formSignUp.errors.phone && <small style={{ color: 'red' }}>{formSignUp.errors.phone}</small>}
                     </div>
                     {/**password */}
                     <div className="col-md-6 col-sm-12 mb-3">
