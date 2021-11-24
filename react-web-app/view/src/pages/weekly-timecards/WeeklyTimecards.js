@@ -18,6 +18,26 @@ const WeeklyTimecards = () => {
         // control: (styles, state) => ({ ...styles,height:"35px", fontSize: '14px !important', lineHeight: '1.42857', borderRadius: "8px",borderRadius:".25rem",color:"rgb(133,133,133)",border:state.isFocused ? '2px solid #0065ff' :'inherit'}),
         option: (provided, state) => ({ ...provided, fontSize: "14px !important" }),
     };
+    
+    let newData = timecardList.reduce(function(acc, curr) {
+        let findIndex = acc.findIndex(function(item) {
+          return item.time_card_assignee.id === curr.time_card_assignee.id
+        })
+      
+        if (findIndex ===-1) {
+          acc.push(curr)
+        } else {
+          acc[findIndex] = (Object.assign({}, acc[findIndex], curr))
+      
+        }
+      
+      
+        return acc;
+      }, [])
+      
+      
+      console.log("newData",newData)
+
     return (
         <>
             <CContainer>
