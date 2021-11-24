@@ -102,7 +102,7 @@ const WbsModal = (props) => {
                                         <CLabel className="custom-label-wbs5">
                                             Descriptions
                                         </CLabel>
-                                        <CTextarea id="description" name="description" className="custom-forminput-5" onChange={formWbsUpdate.handleChange} value={formWbsUpdate.values.description}></CTextarea>
+                                        <CTextarea id="description" name="description" className="custom-forminput-5 text-box-height" onChange={formWbsUpdate.handleChange} value={formWbsUpdate.values.description}></CTextarea>
                                     </div>
                                 </CRow>
                                 <CRow>
@@ -197,7 +197,7 @@ const WbsModal = (props) => {
                                     {props.data.project?.remaining_hours}
                                 </p>
                                 {/**task list show */}
-                                <div>
+                                <div className="task-list">
                                     <p>Task List:</p>
                                     <ol className="task-list-show">
                                         {props.timeCardList?.data != undefined ? (Array.from(props.timeCardList.data).map((item) => (

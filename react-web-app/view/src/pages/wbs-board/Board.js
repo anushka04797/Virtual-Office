@@ -13,7 +13,7 @@ import swal from 'sweetalert';
 import Select from "react-select";
 
 const WbsBoard = () => {
-    let wbsList = useSelector(state => state.wbs.data)
+    const [wbsList,setWbsList] = useState([])
     const tempAssigneList = [];
     const [wbsAssigneeList, setWbsAssigneeList] = useState([]);
     const dispatch = useDispatch()
@@ -46,7 +46,7 @@ const WbsBoard = () => {
         }
         return ''
     }
-
+    const profile = useSelector(state=>state.profile.data)
     const populate_data = (data) => {
         console.log('populating data')
         let temp_data = {
@@ -115,15 +115,16 @@ const WbsBoard = () => {
                 }
             })
             setWbsAssigneeList(tempAssigneList)
+            // setResetAssigneeSelectValue({value:sessionStorage.getItem(USER_ID), label:profile.first_name+' '+profile.last_name})
         }
         // console.log('temp data', temp_data)
         setBoardData(temp_data)
     }
 
-    function getAssigneeList() {
-        console.log("getAssigneeList wbsList: ", wbsList)
-        if (wbsList != undefined) {
-            wbsList.forEach(element => {
+    function getAssigneeList(data) {
+        console.log("getAssigneeList wbsList: ", data)
+        if (data != undefined) {
+            data.forEach(element => {
                 if (!tempAssigneList.find(item => item.value === element.assignee.id)) {
                     var temp = {
                         value: element.assignee.id,
@@ -136,12 +137,20 @@ const WbsBoard = () => {
     }
 
     React.useEffect(() => {
-        // populate_data(wbsList)
         API.get('wbs/all/'+sessionStorage.getItem(USER_ID)+'/').then((res)=>{
-            populate_data(res.data.data)
+            setWbsList(res.data.data)
+            let pre_selected_items=[]
+            Array.from(res.data.data).forEach((item,idx)=>{
+                if(item.assignee.id === profile.id){
+                    pre_selected_items.push(item)
+                }
+            })
+            populate_data(pre_selected_items)
+            getAssigneeList(res.data.data)
+            setResetAssigneeSelectValue({value:sessionStorage.getItem(USER_ID), label:profile.first_name+' '+profile.last_name})
+            // filterWbs({value:sessionStorage.getItem(USER_ID), label:profile.first_name+' '+profile.last_name},{})
         })
-        getAssigneeList()
-    }, [wbsList])
+    }, [])
 
     const boardStyle = { backgroundColor: "#fff" };
     const laneStyle = { backgroundColor: "rgb(243 243 243)" };
@@ -205,11 +214,11 @@ const WbsBoard = () => {
     // filter wbs
     function filterWbs(newValue, actionMeta) {
         console.log("fn ran!!!", newValue, actionMeta);
-        setResetAssigneeSelectValue(newValue)
         var temWbsList = wbsList;
         temWbsList = temWbsList.filter(item => item.assignee.id === newValue.value)
         populate_data(temWbsList)
-        getAssigneeList()
+        getAssigneeList(wbsList)
+        setResetAssigneeSelectValue(newValue)
         setShowClearBtn(true);
     }
 
@@ -218,7 +227,7 @@ const WbsBoard = () => {
     function clearFilter() {
         setShowClearBtn(false);
         populate_data(wbsList)
-        getAssigneeList()
+        getAssigneeList(wbsList)
         setResetAssigneeSelectValue(null)
     }
 
