@@ -16,7 +16,7 @@ const AssignedProjectsDashboard = () => {
     const [modal, setModal] = useState(false);
     const [modalData, setModalData] = useState(null);
     const editWbsModal = (value) => {
-        API.get('wbs/time-card/list/'+value+'/').then((res)=>{
+        API.get('wbs/time-card/list/' + value + '/').then((res) => {
             console.log('time-card list result', res);
             setUpdatedData(res.data);
         })
@@ -49,9 +49,9 @@ const AssignedProjectsDashboard = () => {
                     {wbs != undefined && wbs.slice(0, 3).map((item, idx) => (
                         <CCard className="project-card1" key={idx} onClick={() => editWbsModal(item.id)}>
                             <CCardBody>
-                                <h6 className="id-no1">Project Title : # {item.project.sub_task}</h6>
-                                <h5 className="card-details1"><span className="p-header-3">Task Title:</span> {item.project.task_title}</h5>
-                                <h5 className="card-details1"><span className="p-header-3">Description :</span> {item.description}</h5>
+                                <h5 className="card-details1"><span className="p-header-3">Project: </span> : {item.project.sub_task}</h5>
+                                <h6 className="card-details1"><span className="p-header-3">Task Title:</span> {item.project.task_title}</h6>
+                                <h6 className="card-details1"><span className="p-header-3">End Date :</span> {item.end_date}</h6>
 
                             </CCardBody>
 
