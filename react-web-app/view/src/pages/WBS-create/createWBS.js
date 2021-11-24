@@ -9,15 +9,20 @@ import { useFormik } from 'formik';
 import swal from 'sweetalert'
 
 const CreateNewWBS = () => {
+    const remaining_hours = (remaining, total) => {
+        return String(parseFloat(total) - parseFloat(remaining))
+    }
     const projects = useSelector(state => {
         let temp = []
         Array.from(state.projects.data).forEach((item, idx) => {
-            // console.log('item ' + idx, item)
-            temp.push({
-                value: item.project.id,
-                label: item.project.task_delivery_order.title + ' / ' + item.project.sub_task,
-                data: item
-            })
+            console.log('remaining hours ',remaining_hours(item.project.remaining_hours,item.project.planned_hours))
+            if(parseFloat(item.project.remaining_hours)>0){
+                temp.push({
+                    value: item.project.id,
+                    label: item.project.task_delivery_order.title + ' / ' + item.project.sub_task,
+                    data: item
+                })
+            }
         })
         // console.log("get project list: ", temp)
         return temp
