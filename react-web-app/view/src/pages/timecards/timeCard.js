@@ -185,7 +185,7 @@ const TimeCards = () => {
                     <CRow>
 
                         {/**assignees */}
-                        <CCol lg="4" md="12">
+                        <CCol xl="3" lg="3" md="6">
                             {!has_group('pm') &&
                                 <div>
                                     <CLabel className="custom-label-5" htmlFor="assigneeSelect">
@@ -221,7 +221,7 @@ const TimeCards = () => {
                             }
                         </CCol>
                         {/**start date */}
-                        <CCol lg="3" md="5">
+                        <CCol xl="3" lg="3" md="6">
                             <CLabel className="custom-label-5" htmlFor="startDate">
                                 From Date
                             </CLabel>
@@ -230,7 +230,7 @@ const TimeCards = () => {
                             {editForm.errors.startDate && <p className="error mt-1">{editForm.errors.startDate}</p>}
                         </CCol>
                         {/**END DATE */}
-                        <CCol lg="3" md="5">
+                        <CCol xl="3" lg="3" md="6">
 
                             <CLabel className="custom-label-5" htmlFor="todate">
                                 To Date
@@ -239,7 +239,7 @@ const TimeCards = () => {
                             {/**Error show */}
                             {editForm.errors.todate && <p className="error mt-1">{editForm.errors.todate}</p>}
                         </CCol>
-                        <CCol lg="2" md="2">
+                        <CCol xl="3" lg="3" md="6">
                             <div className="button-holder--3">
                                 <CButton className="generate-card-button" onClick={editForm.handleSubmit}>Generate Timecard</CButton>
                             </div>
