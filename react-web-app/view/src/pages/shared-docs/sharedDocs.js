@@ -16,10 +16,10 @@ import UploadDocuments from "../../components/shared-doc-upload-form/uploadForm"
 import { useSelector } from "react-redux";
 
 const SharedDocuments = () => {
-  const projects = useSelector(state=>{
+  const projects = useSelector(state => {
     let temp = []
-    Array.from(state.projects.data).forEach((project,idx)=>{
-      temp.push({value:project.project.id,label:project.project.sub_task})
+    Array.from(state.projects.data).forEach((project, idx) => {
+      temp.push({ value: project.project.id, label: project.project.sub_task })
     })
     return temp
   })

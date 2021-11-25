@@ -67,7 +67,7 @@ const MyProjectsDetailsView = () => {
             pm: project?.project.pm.id,
             planned_hours: "",
             planned_value: "",
-            remaining_hours: "",
+            remaining_hours: project?.project.remaining_hours,
             status: project?.project.status,
             sub_task_updated: ""
         },
@@ -90,7 +90,7 @@ const MyProjectsDetailsView = () => {
         return preset_assignees
     }
     const editInfoForm = (subtask) => {
-        console.log(subtask)
+        console.log('selected sub task',subtask)
         setEditModal(!editModal)
         if (editForm) {
             console.log('assignee in edit form', editForm.values)
@@ -357,7 +357,7 @@ const MyProjectsDetailsView = () => {
                                     {/**Remaining hours */}
                                     <CCol lg="6" className="mb-2">
                                         <CLabel htmlFor="remaining_hours" className="custom-label-5">Remaining Hours</CLabel>
-                                        <CInput id="remaining_hours" name="remaining_hours" type="number" value={editForm.values.remaining_hours} onChange={editForm.handleChange} className="custom-forminput-6" min="0" />
+                                        <CInput readOnly id="remaining_hours" name="remaining_hours" type="number" value={editForm.values.remaining_hours} onChange={editForm.handleChange} className="custom-forminput-6" min="0" />
                                     </CCol>
                                     {/**Planned delivery date */}
                                     <CCol lg="6" className="mb-2">
@@ -371,6 +371,7 @@ const MyProjectsDetailsView = () => {
                                             id="Status"
                                             name="Status"
                                             onChange={handleStatusChange}
+                                            value={{value: editForm.values.status, label: editForm.values.status==0?'On Going':editForm.values.status==1?'Completed':''}}
                                             className="custom-forminput-6"
                                             options={[{ value: 0, label: "On Going" }, { value: 1, label: "Completed" }]}
                                         />

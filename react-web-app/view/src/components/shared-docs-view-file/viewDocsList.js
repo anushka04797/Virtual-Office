@@ -1,6 +1,7 @@
 import CIcon from '@coreui/icons-react'
 import { CButton, CCol, CRow, CCard, CCardBody } from '@coreui/react'
 import React, { useState } from 'react'
+import { API, USER_ID } from '../../Config'
 
 const ViewFiles = () => {
     const [itemToShow,setItemToShow]=useState(4)
@@ -15,6 +16,11 @@ const ViewFiles = () => {
             setExpanded(false)
         }
     }
+    React.useEffect(()=>{
+        API.get('project/shared/document/list/'+sessionStorage.getItem(USER_ID)+'/').then(res=>{
+            console.log(res)
+        })
+    },[])
     return (
         <>
             <h4 className="project-name">Virtual Office</h4>
