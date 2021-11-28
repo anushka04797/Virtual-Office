@@ -225,7 +225,7 @@ const TimeCards = () => {
                             <CLabel className="custom-label-5" htmlFor="startDate">
                                 From Date
                             </CLabel>
-                            <CInput className="custom-forminput-6" type="date" name="startDate" id="startDate" value={editForm.values.startDate} onChange={editForm.handleChange} />
+                            <CInput className="custom-forminput-6  w-100" type="date" name="startDate" id="startDate" value={editForm.values.startDate} onChange={editForm.handleChange} />
                             {/**Error show */}
                             {editForm.errors.startDate && <p className="error mt-1">{editForm.errors.startDate}</p>}
                         </CCol>
@@ -235,7 +235,7 @@ const TimeCards = () => {
                             <CLabel className="custom-label-5" htmlFor="todate">
                                 To Date
                             </CLabel>
-                            <CInput className="custom-forminput-6" type="date" name="todate" id="todate" value={editForm.values.todate} onChange={editForm.handleChange} />
+                            <CInput className="custom-forminput-6  w-100" type="date" name="todate" id="todate" value={editForm.values.todate} onChange={editForm.handleChange} />
                             {/**Error show */}
                             {editForm.errors.todate && <p className="error mt-1">{editForm.errors.todate}</p>}
                         </CCol>
