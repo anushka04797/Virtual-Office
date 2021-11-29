@@ -2,7 +2,7 @@ import { CContainer, CRow, CCol, CCard, CCardHeader, CCardBody, CForm, CLabel, C
 import React, { useState, useRef } from 'react'
 import './createWBS.css'
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchProjectsThunk, fetchProjectsAssigneeThunk, createWbsThunk, fetchWbsThunk } from '../../store/slices/ProjectsSlice';
+import { fetchProjectsThunk, fetchProjectsAssigneeThunk, createWbsThunk, fetchWbsThunk, fetchProjectsForPMThunk } from '../../store/slices/ProjectsSlice';
 import Select from "react-select";
 import { API, USER_ID } from '../../Config';
 import { useFormik } from 'formik';
@@ -102,6 +102,8 @@ const CreateNewWBS = () => {
             if (res.status == 200 && res.data.success == 'True') {
                 reset_form()
                 dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)))
+                dispatch(fetchProjectsThunk(sessionStorage.getItem(USER_ID)))
+                dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)))
                 swal('Created!', 'Successfuly Created', 'success')
             }
         })
