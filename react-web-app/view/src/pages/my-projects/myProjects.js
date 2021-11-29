@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import { fetchProjectsForPMThunk } from '../../store/slices/ProjectsSlice';
+import { fetchProjectsForPMThunk, fetchProjectsThunk } from '../../store/slices/ProjectsSlice';
 import '../ongoing-project-details/ongoingProjectDetails.css';
-import { CAlert, CCard, CCardBody, CButton, CModal, CModalHeader, CModalBody, CContainer, CForm, CRow, CLabel, CInput, CModalTitle } from '@coreui/react';
+import { CCol, CAlert, CCard, CCardBody, CButton, CModal, CModalHeader, CModalBody, CContainer, CForm, CRow, CLabel, CInput, CModalTitle } from '@coreui/react';
 import GradeIcon from '@material-ui/icons/Grade';
 import IconButton from '@material-ui/core/IconButton';
-
-import makeAnimated from "react-select/animated";
 import { CIcon } from "@coreui/icons-react";
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
@@ -13,26 +11,27 @@ import { BASE_URL, USER_ID } from '../../Config';
 import { API } from '../../Config';
 import swal from 'sweetalert'
 import Select from "react-select";
+import './myProjects.css'
 const MyProjects = () => {
     let history = useHistory();
     const dispatch = useDispatch();
     const [pmStatus, setPmStatus] = useState(1);
     const [status, setStatus] = useState({});
     const [managers, setManagers] = useState([])
-    const [currentPM,setPM] = useState()
-    
-    const handlePMChange=(option,actionMeta)=>{
+    const [currentPM, setPM] = useState()
+
+    const handlePMChange = (option, actionMeta) => {
         setPM(option)
     }
-    const changePM=(wp)=>{
-        console.log('wp',wp)
-        API.put('project/change-project-manager/',{wp:wp,pm:currentPM.value}).then((res)=>{
+    const changePM = (wp) => {
+        console.log('wp', wp)
+        API.put('project/change-project-manager/', { wp: wp, pm: currentPM.value }).then((res) => {
             console.log(res)
-            if(res.status == 200 && res.data.success == 'True'){
-                setStatus({project:null})
+            if (res.status == 200 && res.data.success == 'True') {
+                setStatus({ project: null })
                 setPM(null)
                 dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)))
-                swal('Updated!','Project manager changed successfully','success')
+                swal('Updated!', 'Project manager changed successfully', 'success')
             }
         })
     }
@@ -49,7 +48,8 @@ const MyProjects = () => {
         console.log('temp', temp)
         return temp
     })
-
+    const [show_sub_task_details, setShowSubTaskDetails] = useState(false)
+    const [selectedSubTask, setSelectedSubTask] = useState()
     useEffect(() => {
         console.log('projects', projects)
         dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)))
@@ -58,8 +58,8 @@ const MyProjects = () => {
             let temp = []
             Array.from(res.data.data).forEach((manager, idx) => {
                 temp.push({ value: manager.id, label: manager.first_name + ' ' + manager.last_name, data: manager })
-                if(manager.id == sessionStorage.getItem(USER_ID)){
-                    setPM({value:manager.id,label:manager.first_name + ' ' + manager.last_name, data: manager})
+                if (manager.id == sessionStorage.getItem(USER_ID)) {
+                    setPM({ value: manager.id, label: manager.first_name + ' ' + manager.last_name, data: manager })
                 }
             })
             setManagers(temp)
@@ -78,6 +78,7 @@ const MyProjects = () => {
                     API.put('/project/change-status/' + id + "/", { status: 1 }).then(response => {
                         if (response.data.success == "True") {
                             dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)))
+                            dispatch(fetchProjectsThunk(sessionStorage.getItem(USER_ID)))
                             swal("Poof! Project is marked as completed", {
                                 icon: "success",
                             });
@@ -96,22 +97,129 @@ const MyProjects = () => {
                 }
             });
     }
-    const changePMChangeInputFieldStatus=(idx,action)=>{
-        switch(action){
+    const changePMChangeInputFieldStatus = (idx, action) => {
+        switch (action) {
             case 'open':
-                setPM({value:projects[idx].project.pm.id,label:projects[idx].project.pm.first_name+' '+projects[idx].project.pm.last_name})
-                setStatus({project:idx}); 
+                setPM({ value: projects[idx].project.pm.id, label: projects[idx].project.pm.first_name + ' ' + projects[idx].project.pm.last_name })
+                setStatus({ project: idx });
                 break
             case 'close':
-                setStatus({project:null}); 
+                setStatus({ project: null });
                 break
         }
     }
     const remaining_hours = (remaining, total) => {
         return String(parseFloat(total) - parseFloat(remaining))
     }
+    const delete_assignee = (project_id, assignee_id) => {
+        swal({
+            title: "Are you sure?",
+            text: "Once deleted, you will not be able to recover this record!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    API.delete('/project/remove-assignee/' + assignee_id + "/", { data: { project: project_id, assignee: assignee_id } }).then(response => {
+                        if (response.data.success == "True") {
+                            dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)))
+                            swal("Poof! Your selected assignee has been removed!", {
+                                icon: "success",
+                            });
+
+                        }
+                        else if (response.data.success == "False") {
+                            swal("Poof!" + response.data.message, {
+                                icon: "error",
+                            });
+                        }
+
+                    }).catch(error => {
+                        //swal("Failed!",error,"error");
+                    })
+
+                }
+            });
+    }
     return (
         <>
+            {selectedSubTask && <CModal alignment="center" show={show_sub_task_details} onClose={() => { setShowSubTaskDetails(!show_sub_task_details) }}>
+                <CModalHeader onClose={() => setShowSubTaskDetails(!show_sub_task_details)} closeButton>
+                    <CModalTitle className="modal-title-projects">
+                        <span className="edit-profile-form-header">Subtask Details</span>
+                    </CModalTitle>
+                </CModalHeader>
+                <CModalBody>
+                    <CContainer>
+                        <CForm>
+                            <CRow>
+                                <div className="card-header-portion-ongoing">
+                                    <h4 className="ongoing-card-header-1">
+                                        <IconButton aria-label="favourite" disabled size="medium" color="primary">
+                                            <GradeIcon fontSize="inherit" className="fav-button" />
+                                        </IconButton>
+                                        {selectedSubTask != undefined ? selectedSubTask.task_delivery_order.title : ''}
+                                    </h4>
+                                
+                                </div>
+                                <div className="justify-content-center">
+                                    <div className="col-md-12 col-sm-12 col-xs-12 col-lg-12 mt-1 mb-2">
+                                        <CCard className="card-ongoing-project">
+                                            <CCardBody className="details-project-body">
+                                                <div className="ongoing-initial-info row">
+                                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Sub Task Name</h6>
+                                                        <h6 className="project-point-details">{selectedSubTask.task_title}</h6></div>
+                                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">PM Name</h6>
+                                                        <h6 className="project-point-details">{selectedSubTask.pm.first_name + ' ' + selectedSubTask.pm.last_name}</h6></div>
+                                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Work Package Number</h6>
+                                                        <h6 className="project-point-details">{selectedSubTask.work_package_number}</h6>
+                                                    </div>
+                                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Task Title</h6>
+                                                        <h6 className="project-point-details">{selectedSubTask.task_title}</h6>
+                                                    </div>
+                                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Estimated Person(s)</h6>
+                                                        <h6 className="project-point-details">{selectedSubTask.estimated_person}</h6>
+                                                    </div>
+                                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Planned Value</h6>
+                                                        <h6 className="project-point-details">{selectedSubTask.planned_value} </h6>
+                                                    </div>
+                                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Planned Hours</h6>
+                                                        <h6 className="project-point-details">{selectedSubTask.planned_hours} </h6>
+                                                    </div>
+                                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Remaining Hours</h6>
+                                                        <h6 className="project-point-details">{selectedSubTask.remaining_hours} </h6>
+                                                    </div>
+                                                </div>
+
+                                                <div className="col-md-12 mt-4 mb-2">
+                                                    <h5 className="projectName mb-3">Asssignee(s)-({Array.from(selectedSubTask.assignees).length})</h5>
+                                                    <div className="file-show-ongoing-details row">
+                                                        {selectedSubTask != undefined && Array.from(selectedSubTask.assignees).map((item, idx) => (
+                                                            <div key={idx} className="col-md-4 col-sm-6 col-lg-4">
+                                                                <div className="file-attached-ongoing rounded-pill">
+                                                                    <CButton type="button" onClick={() => delete_assignee(selectedSubTask.id, item.assignee.id)} className="remove-file-ongoing"><img src={"assets/icons/icons8-close-64-blue.svg"} className="close-icon-size" /></CButton>{item.assignee.first_name + ' ' + item.assignee.last_name}
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                                {/* <div className="col-md-12 mt-2 mb-2">
+                                                    <div className="project-actions">
+                                                        <CButton className="edit-project-ongoing-task" onClick={() => editInfoForm(subtask)} ><CIcon name="cil-pencil" className="mr-1" /> Edit </CButton>
+                                                        <CButton type="button" onClick={() => delete_subtask(subtask.work_package_index)} className="delete-project-2"><CIcon name="cil-trash" className="mr-1" /> Delete</CButton>
+                                                    </div>
+                                                </div> */}
+                                            </CCardBody>
+                                        </CCard>
+                                    </div>
+                                </div>
+                            </CRow>
+                        </CForm>
+                    </CContainer>
+                </CModalBody>
+            </CModal>}
+
             {/*_______CARDS FOR LIST BEGIN */}
             <div className="container">
                 <h4 className="dash-header">My Projects ({Array.from(projects).length})</h4>
@@ -141,7 +249,7 @@ const MyProjects = () => {
                                         <span className="tooltiptext">1000.5</span>
                                     </CButton> */}
                                     {Array.from(project.subtasks).length > 0 && Array.from(project.subtasks).map((task, idx) => (
-                                        <CButton key={idx} type="button" className="package-button rounded-pill">
+                                        <CButton key={idx} type="button" className="package-button rounded-pill" onClick={() => { setShowSubTaskDetails(true); setSelectedSubTask(task); console.log('task',task) }}>
                                             {task.task_title}
                                             <span className="tooltiptext">{task.work_package_index}</span>
                                         </CButton>
@@ -160,7 +268,7 @@ const MyProjects = () => {
                                     <div className="info-show-now col-lg-6">
                                         <h5 className="project-details-points child"><h5 className="info-header-1">Assigned by :</h5>{project.project.pm.first_name + ' ' + project.project.pm.last_name}</h5>
                                         {/* <h5 className="project-details-points"><h5 className="info-header-1">Work Package : </h5>1000</h5> */}
-                                        <h5 className="project-details-points"><h5 className="info-header-1">Project Manager : {status.project != idx ? (<CButton className="edit-pm-name" variant='ghost' onClick={(e) => changePMChangeInputFieldStatus(idx,'open')}><CIcon name="cil-pencil" className="mr-1 pen-icon-pm" /></CButton>) : null}</h5>{status.project != idx ? (<span>{project.project.pm.first_name + ' ' + project.project.pm.last_name}</span>
+                                        <h5 className="project-details-points"><h5 className="info-header-1">Project Manager : {status.project != idx ? (<CButton className="edit-pm-name" variant='ghost' onClick={(e) => changePMChangeInputFieldStatus(idx, 'open')}><CIcon name="cil-pencil" className="mr-1 pen-icon-pm" /></CButton>) : null}</h5>{status.project != idx ? (<span>{project.project.pm.first_name + ' ' + project.project.pm.last_name}</span>
                                         ) : <></>}
                                             {/**if clicked edit button */}
                                             {status.project == idx ? (
@@ -181,11 +289,11 @@ const MyProjects = () => {
                                                             options={managers}
                                                         // styles={colourStyles}
                                                         />
-                                                      
+
                                                     </CForm>
                                                     <div className="mt-1">
                                                         <CButton type="button" variant="ghost" className="confirm-name-pm" onClick={(e) => changePM(project.project.work_package_number)}><CIcon name="cil-check-circle" className="mr-1 tick" size="xl" /></CButton>
-                                                        <CButton type="button" variant="ghost" className="cancel-name-pm" onClick={(e) => changePMChangeInputFieldStatus(project.project.id,'close')}><CIcon name="cil-x-circle" className="mr-1 cross" size="xl" /></CButton>
+                                                        <CButton type="button" variant="ghost" className="cancel-name-pm" onClick={(e) => changePMChangeInputFieldStatus(project.project.id, 'close')}><CIcon name="cil-x-circle" className="mr-1 cross" size="xl" /></CButton>
                                                     </div>
                                                 </div>
                                             ) : <></>}

@@ -192,6 +192,7 @@ const CreateNewProject = () => {
     if (!values.work_package_number) errors.work_package_number = "Work Package Number is required"
     if (!values.task_title) errors.task_title = "Task title is required"
     if (!values.planned_delivery_date) errors.planned_delivery_date = "Invalid planned delivery date"
+    if (!values.estimated_person || parseFloat(values.estimated_person) < 0) errors.estimated_person = "Invalid estimated person number"
     if (isDateBeforeToday(values.planned_delivery_date)) errors.planned_delivery_date = "Invalid planned delivery date"
     console.log('validating errors ', errors)
     return errors

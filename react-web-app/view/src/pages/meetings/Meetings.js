@@ -82,6 +82,7 @@ const OurMeetings = () => {
                 agenda: formMeeting.values.agenda,
                 comments: formMeeting.values.comments,
                 start_time: formMeeting.values.start_time,
+                host: formMeeting.values.host
             })
             setSelectedParticipants(temp)
             
