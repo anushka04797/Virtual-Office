@@ -1,39 +1,112 @@
-import { CCard, CCardBody, CButton, CModal, CModalHeader, CModalBody, CContainer, CForm, CRow, CAlert} from '@coreui/react';
+import { CCard, CModalTitle, CCardBody, CButton, CModal, CModalHeader, CModalBody, CContainer, CForm, CRow, CAlert } from '@coreui/react';
 import GradeIcon from '@material-ui/icons/Grade';
 import '../ongoing-project-details/ongoingProjectDetails.css'
 import IconButton from '@material-ui/core/IconButton';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
-import { useHistory } from "react-router-dom";  
-import React from 'react';
+import { useHistory } from "react-router-dom";
+import React, { useState } from 'react';
 import { CIcon } from "@coreui/icons-react";
 import { useSelector } from 'react-redux';
 import { BASE_URL } from '../../Config';
-
+import '../my-projects/myProjects.css'
+import SubTaskDetailsModal from '../../components/subtask-details-modal/SubTaskDetailsModal';
 const CompleteProjects = () => {
     let historyTo = useHistory();
-    const projects=useSelector(state=> state.projects.data.filter((project)=> project.project.status === 1))
-    const remaining_hours=(remaining,total)=>{
-        return String(parseFloat(total)-parseFloat(remaining))
+    const projects = useSelector(state => state.projects.data.filter((project) => project.project.status === 1))
+    const remaining_hours = (remaining, total) => {
+        return String(parseFloat(total) - parseFloat(remaining))
     }
+    const [show_sub_task_details, setShowSubTaskDetails] = useState(false)
+    const [selectedSubTask, setSelectedSubTask] = useState()
     return (
         <>
+            {selectedSubTask && <CModal alignment="center" show={show_sub_task_details} onClose={() => { setShowSubTaskDetails(!show_sub_task_details) }}>
+                <CModalHeader onClose={() => setShowSubTaskDetails(!show_sub_task_details)} closeButton>
+                    <CModalTitle className="modal-title-projects">
+                        <span className="edit-profile-form-header">Subtask Details</span>
+                    </CModalTitle>
+                </CModalHeader>
+                <CModalBody>
+                    <CContainer>
+                        <CForm>
+                            <CRow>
+                                <div className="card-header-portion-ongoing">
+                                    <h4 className="ongoing-card-header-1">
+                                        <IconButton aria-label="favourite" disabled size="medium" color="primary">
+                                            <GradeIcon fontSize="inherit" className="fav-button" />
+                                        </IconButton>
+                                        {selectedSubTask != undefined ? selectedSubTask.task_delivery_order.title : ''}
+                                    </h4>
+
+                                </div>
+                                <div className="row justify-content-center">
+                                    <div className="col-md-12 col-sm-12 col-xs-12 col-lg-12 mt-1 mb-2">
+                                        <CCard className="card-ongoing-project">
+                                            <CCardBody className="details-project-body">
+                                                <div className="ongoing-initial-info row">
+                                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Sub Task Name</h6>
+                                                        <h6 className="project-point-details">{selectedSubTask.task_title}</h6></div>
+                                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">PM Name</h6>
+                                                        <h6 className="project-point-details">{selectedSubTask.pm.first_name + ' ' + selectedSubTask.pm.last_name}</h6></div>
+                                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Work Package Number</h6>
+                                                        <h6 className="project-point-details">{selectedSubTask.work_package_number}</h6>
+                                                    </div>
+                                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Task Title</h6>
+                                                        <h6 className="project-point-details">{selectedSubTask.task_title}</h6>
+                                                    </div>
+                                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Estimated Person(s)</h6>
+                                                        <h6 className="project-point-details">{selectedSubTask.estimated_person}</h6>
+                                                    </div>
+                                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Planned Value</h6>
+                                                        <h6 className="project-point-details">{selectedSubTask.planned_value} </h6>
+                                                    </div>
+                                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Planned Hours</h6>
+                                                        <h6 className="project-point-details">{selectedSubTask.planned_hours} </h6>
+                                                    </div>
+                                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Remaining Hours</h6>
+                                                        <h6 className="project-point-details">{selectedSubTask.remaining_hours} </h6>
+                                                    </div>
+                                                </div>
+
+                                                <div className="col-md-12 mt-4 mb-2">
+                                                    <h5 className="projectName mb-3">Asssignee(s)-({Array.from(selectedSubTask.assignees).length})</h5>
+                                                    <div className="file-show-ongoing-details row">
+                                                        {selectedSubTask != undefined && Array.from(selectedSubTask.assignees).map((item, idx) => (
+                                                            <div key={idx} className="col-md-4 col-sm-6 col-lg-4">
+                                                                <div className="file-attached-ongoing rounded-pill">
+                                                                    {item.assignee.first_name + ' ' + item.assignee.last_name}
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            </CCardBody>
+                                        </CCard>
+                                    </div>
+                                </div>
+                            </CRow>
+                        </CForm>
+                    </CContainer>
+                </CModalBody>
+            </CModal>}
+            {/* <SubTaskDetailsModal show={show_sub_task_details} onPressClose={setShowSubTaskDetails} selectedSubTask={selectedSubTask}/> */}
             <div className="container">
                 <h3 className="dash-header">Completed Projects({projects.length})</h3>
                 <div className="row">
-                 
-                <div className="col-md-11 col-sm-12 col-xs-12 mt-1">
-                        {projects!=undefined && projects.map((project,idx)=>(<CCard className="card-ongoing-project" key={idx}>
+
+                    <div className="col-md-11 col-sm-12 col-xs-12 mt-1">
+                        {projects != undefined && projects.map((project, idx) => (<CCard className="card-ongoing-project" key={idx}>
                             <CCardBody className="details-project-body">
-                               
+
                                 <h4 className="ongoing-card-header"><IconButton aria-label="favourite" size="medium" >
                                     <GradeIcon fontSize="inherit" className="fav-button" />
-                                </IconButton>{String(project.project.task_delivery_order.title).toUpperCase()+' / '+String(project.project.sub_task).toUpperCase()}</h4>
+                                </IconButton>{String(project.project.task_delivery_order.title).toUpperCase() + ' / ' + String(project.project.sub_task).toUpperCase()}</h4>
                                 <hr className="header-underline1" />
 
                                 {/*task percentage portion */}
                                 <div>
                                     {/* <h5 className="tasks-done"><span className="tiny-header1">Task Done : </span>5/10 </h5> */}
-                                    <h6 className="show-amount">{remaining_hours(project.project.remaining_hours,project.project.planned_hours)}/{parseInt(project.project.planned_hours)} Hrs</h6>
+                                    <h6 className="show-amount">{remaining_hours(project.project.remaining_hours, project.project.planned_hours)}/{parseInt(project.project.planned_hours)} Hrs</h6>
                                     <div className="progress progress-background">
                                         <div className="progress-bar custom-progress1 progress-bar-animated" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" style={{ width: '25%' }}></div>
                                     </div>
@@ -44,9 +117,9 @@ const CompleteProjects = () => {
                                         Front End Design
                                         <span className="tooltiptext">1000.5</span>
                                     </CButton> */}
-                                    {Array.from(project.subtasks).length>0 && Array.from(project.subtasks).map((task,idx)=>(
-                                        <CButton className="package-button rounded-pill" >
-                                        {task.task_title}
+                                    {Array.from(project.subtasks).length > 0 && Array.from(project.subtasks).map((task, idx) => (
+                                        <CButton className="package-button rounded-pill" type="button" onClick={() => { setShowSubTaskDetails(true); setSelectedSubTask(task); console.log('task', task) }}>
+                                            {task.task_title}
                                             <span className="tooltiptext">{task.work_package_index}</span>
                                         </CButton>
                                     ))}
@@ -54,36 +127,36 @@ const CompleteProjects = () => {
 
                                 {/*Project participants */}
                                 <div className="all-da-workers1">
-                                    {project.assignees.length>0 && Array.from(project.assignees).map((assignee,idx)=>(
-                                        <img className="img-fluid worker-image" src={assignee.profile_pic!=null?BASE_URL+assignee.profile_pic:'avatars/user-avatar-default.png'} />    
+                                    {project.assignees.length > 0 && Array.from(project.assignees).map((assignee, idx) => (
+                                        <img className="img-fluid worker-image" src={assignee.profile_pic != null ? BASE_URL + assignee.profile_pic : 'avatars/user-avatar-default.png'} />
                                     ))}
                                 </div>
 
                                 {/*project info in text */}
                                 <div className="information-show row">
-                                    <div className="info-show-now col-md-6"> 
-                                        <h5 className="project-details-points child"><h5 className="info-header-1">Assigned by :</h5>{project.project.pm.first_name+' '+project.project.pm.last_name}</h5>
-                                    {/* <h5 className="project-details-points"><h5 className="info-header-1">Work Package : </h5>1000</h5> */}
-                                    <h5 className="project-details-points"><h5 className="info-header-1">Project Manager : </h5>{project.project.pm.first_name+' '+project.project.pm.last_name}</h5>
+                                    <div className="info-show-now col-md-6">
+                                        <h5 className="project-details-points child"><h5 className="info-header-1">Assigned by :</h5>{project.project.pm.first_name + ' ' + project.project.pm.last_name}</h5>
+                                        {/* <h5 className="project-details-points"><h5 className="info-header-1">Work Package : </h5>1000</h5> */}
+                                        <h5 className="project-details-points"><h5 className="info-header-1">Project Manager : </h5>{project.project.pm.first_name + ' ' + project.project.pm.last_name}</h5>
                                     </div>
-                              <div className="info-show-now col-md-6">
-                                    {/* <h5 className="project-details-points"><h5 className="info-header-1">Project Details :</h5>Design and develop the app for the seller and buyer module</h5> */}
-                                    <h5 className="project-details-points child"><h5 className="info-header-1">Start Date : </h5>{project.project.date_created}</h5>
+                                    <div className="info-show-now col-md-6">
+                                        {/* <h5 className="project-details-points"><h5 className="info-header-1">Project Details :</h5>Design and develop the app for the seller and buyer module</h5> */}
+                                        <h5 className="project-details-points child"><h5 className="info-header-1">Start Date : </h5>{project.project.date_created}</h5>
 
-                                    <h5 className="project-details-points"><h5 className="info-header-1">Planned Delivery Date : </h5>{project.project.planned_delivery_date}</h5>
+                                        <h5 className="project-details-points"><h5 className="info-header-1">Planned Delivery Date : </h5>{project.project.planned_delivery_date}</h5>
                                     </div>
                                 </div>
 
                                 {/**file uploads and view */}
-                               {/*  <div className="file-show">
+                                {/*  <div className="file-show">
                                     <h5 className="files-view">Files :</h5>
                                     <h5 className="file-attached"><CButton className="remove-file"><img src={"assets/icons/close-btn.svg"} /></CButton>somefile.file</h5> */}
 
 
-                                    {/**extra static buttons,delete code after dynamic implementation */}
-                                    {/* <h5 className="file-attached"><CButton className="remove-file"><img src={"assets/icons/close-btn.svg"} /></CButton>somefiledjfkdjkfjdkjfkdjkfjkdjfk.file</h5> */}
-                                    {/*upload file nibutton */}
-                                    {/* <IconButton aria-label="upload" className="upload-file-button1">
+                                {/**extra static buttons,delete code after dynamic implementation */}
+                                {/* <h5 className="file-attached"><CButton className="remove-file"><img src={"assets/icons/close-btn.svg"} /></CButton>somefiledjfkdjkfjdkjfkdjkfjkdjfk.file</h5> */}
+                                {/*upload file nibutton */}
+                                {/* <IconButton aria-label="upload" className="upload-file-button1">
                                         <AddCircleIcon className="ad-file-icon" />
                                     </IconButton>
                                 </div> */}
@@ -96,23 +169,23 @@ const CompleteProjects = () => {
 
                                 {/*show add task form on click button */}
                                 <div className="ongoing-action-card-buttons">
-                                <CButton className="view-ongoing-details" onClick={() => historyTo.push({ pathname:'/dashboard/Projects/completed-projects/details/'+project.project.work_package_number,state:{project:project}})}><CIcon name="cil-list-rich" className="mr-1" />View Details</CButton>
+                                    <CButton className="view-ongoing-details" onClick={() => historyTo.push({ pathname: '/dashboard/Projects/completed-projects/details/' + project.project.work_package_number, state: { project: project } })}><CIcon name="cil-list-rich" className="mr-1" />View Details</CButton>
                                 </div>
                             </CCardBody>
 
                         </CCard>))}
                         {/**If no projects are there */}
-                        {projects==''? (
-                        
-                       
-                             
-                              <CAlert className="no-value-show-alert"  color="primary">Currently there are no completed projects</CAlert>     
-                            
-                      
-                    ):null
-                    
-                    
-                    }
+                        {projects == '' ? (
+
+
+
+                            <CAlert className="no-value-show-alert" color="primary">Currently there are no completed projects</CAlert>
+
+
+                        ) : null
+
+
+                        }
                     </div>
                 </div>
             </div>

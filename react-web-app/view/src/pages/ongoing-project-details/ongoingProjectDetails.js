@@ -13,7 +13,7 @@ import { API } from '../../Config';
 import swal from 'sweetalert'
 import { fetchProjectsThunk } from '../../store/slices/ProjectsSlice';
 import { has_group } from '../../helper';
-
+import '../my-projects/myProjects.css'
 const OngoingProjectDetails = () => {
     let history = useHistory();
     const dispatch = useDispatch();
@@ -88,95 +88,88 @@ const OngoingProjectDetails = () => {
                 }
             });
     }
+    const [show_sub_task_details, setShowSubTaskDetails] = useState(false)
+    const [selectedSubTask,setSelectedSubTask]=useState()
     const worked_hours = (remaining, total) => {
         return String(parseFloat(total) - parseFloat(remaining))
     }
     return (
         <>
-            {/**WBS MODAL */}
-            <CModal alignment="center" visible={visible} onClose={() => setVisible(false)} className="wbs-modal">
-                <CModalHeader className="wbs-modal-header" closeButton>
-                    <CModalTitle className="modal-title"><span className="bold-part1">Wireframe</span> <span className="light-part1">(50/100 Hrs)</span></CModalTitle>
+            {selectedSubTask && <CModal alignment="center" show={show_sub_task_details} onClose={() => { setShowSubTaskDetails(!show_sub_task_details) }}>
+                <CModalHeader onClose={() => setShowSubTaskDetails(!show_sub_task_details)} closeButton>
+                    <CModalTitle className="modal-title-projects">
+                        <span className="edit-profile-form-header">Subtask Details</span>
+                    </CModalTitle>
                 </CModalHeader>
-                <CModalBody className="wbs-modal-body">
+                <CModalBody>
                     <CContainer>
-                        <h6 className="task-name1">Seller &amp; Buyer module wireframe design with prototype</h6>
                         <CForm>
                             <CRow>
-                                {/**Start date */}
-
-                                <div className="col-md-6 mb-3">
-                                    <CLabel
-                                        htmlFor="startDate"
-                                        className="custom-label2"
-                                    >Task Start Date</CLabel>
-                                    <CInput type="date" id="startDate" className="custom-formgroup2" />
+                                <div className="card-header-portion-ongoing">
+                                    <h4 className="ongoing-card-header-1">
+                                        <IconButton aria-label="favourite" disabled size="medium" color="primary">
+                                            <GradeIcon fontSize="inherit" className="fav-button" />
+                                        </IconButton>
+                                        {selectedSubTask != undefined ? selectedSubTask.task_delivery_order.title : ''}
+                                    </h4>
+                                
                                 </div>
-                                {/*task end date */}
+                                <div className="row justify-content-center">
+                                    <div className="col-md-12 col-sm-12 col-xs-12 col-lg-12 mt-1 mb-2">
+                                        <CCard className="card-ongoing-project">
+                                            <CCardBody className="details-project-body">
+                                                <div className="ongoing-initial-info row">
+                                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Sub Task Name</h6>
+                                                        <h6 className="project-point-details">{selectedSubTask.task_title}</h6></div>
+                                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">PM Name</h6>
+                                                        <h6 className="project-point-details">{selectedSubTask.pm.first_name + ' ' + selectedSubTask.pm.last_name}</h6></div>
+                                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Work Package Number</h6>
+                                                        <h6 className="project-point-details">{selectedSubTask.work_package_number}</h6>
+                                                    </div>
+                                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Task Title</h6>
+                                                        <h6 className="project-point-details">{selectedSubTask.task_title}</h6>
+                                                    </div>
+                                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Estimated Person(s)</h6>
+                                                        <h6 className="project-point-details">{selectedSubTask.estimated_person}</h6>
+                                                    </div>
+                                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Planned Value</h6>
+                                                        <h6 className="project-point-details">{selectedSubTask.planned_value} </h6>
+                                                    </div>
+                                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Planned Hours</h6>
+                                                        <h6 className="project-point-details">{selectedSubTask.planned_hours} </h6>
+                                                    </div>
+                                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Remaining Hours</h6>
+                                                        <h6 className="project-point-details">{selectedSubTask.remaining_hours} </h6>
+                                                    </div>
+                                                </div>
 
-                                <div className="col-md-6 mb-3">
-                                    <CLabel
-                                        htmlFor="endDate"
-                                        className="custom-label2"
-                                    >Task end Date</CLabel>
-                                    <CInput type="date" id="endDate" className="custom-formgroup2" />
-                                </div>
-
-                                {/*estimated person */}
-                                <div className="col-md-6 mb-3">
-                                    <CLabel
-                                        htmlFor="estimatedPerons"
-                                        className="custom-label2"
-                                    >Estimated Persons</CLabel>
-                                    <CInput type="number" id="estimatedPerons" className="custom-formgroup2" />
-                                </div>
-                                {/*labor hours */}
-                                <div className="col-md-6 mb-3">
-                                    <CLabel
-                                        htmlFor="laborHours"
-                                        className="custom-label2"
-                                    >Labour Hours</CLabel>
-                                    <CInput type="number" id="laborHours" className="custom-formgroup2" />
-                                </div>
-
-                                {/*participants */}
-                                <div className="col-md-12 mb-3">
-                                    <CLabel htmlFor="participants" className="custom-label2">
-                                        Assignees
-                                    </CLabel>
-                                    <Select
-                                        closeMenuOnSelect={false}
-                                        components={animatedComponents}
-                                        name="participants"
-                                        isMulti
-                                        options={options}
-                                        styles={colourStyles}
-
-                                    />
-                                </div>
-                                {/*already assigned*/}
-                                <div className="col-md-12 mb-3">
-                                    <div className="file-show add-dude">
-                                        <h5 className="added-images"><CButton className="remove-dude"><img src={"assets/icons/close-icon-red.png"} /></CButton> <img className="img-fluid added-worker-image" src={"assets/thumbnails/defaultuser1.png"} /></h5>
-                                        {/**dummy data,remove it when dynamic */}
-                                        <h5 className="added-images"><CButton className="remove-dude"><img src={"assets/icons/close-icon-red.png"} /></CButton> <img className="img-fluid added-worker-image" src={"assets/thumbnails/defaultuser2.png"} /></h5>
-                                        <h5 className="added-images"><CButton className="remove-dude"><img src={"assets/icons/close-icon-red.png"} /></CButton> <img className="img-fluid added-worker-image" src={"assets/thumbnails/defaultuser3.png"} /></h5>
-                                        <h5 className="added-images"><CButton className="remove-dude"><img src={"assets/icons/close-icon-red.png"} /></CButton> <img className="img-fluid added-worker-image" src={"assets/thumbnails/defaultuser4.png"} /></h5>
-                                        <h5 className="added-images"><CButton className="remove-dude"><img src={"assets/icons/close-icon-red.png"} /></CButton> <img className="img-fluid added-worker-image" src={"assets/thumbnails/defaultuser1.png"} /></h5>
-
+                                                <div className="col-md-12 mt-4 mb-2">
+                                                    <h5 className="projectName mb-3">Asssignee(s)-({Array.from(selectedSubTask.assignees).length})</h5>
+                                                    <div className="file-show-ongoing-details row">
+                                                        {selectedSubTask != undefined && Array.from(selectedSubTask.assignees).map((item, idx) => (
+                                                            <div key={idx} className="col-md-4 col-sm-6 col-lg-4">
+                                                                <div className="file-attached-ongoing rounded-pill">
+                                                                    {item.assignee.first_name + ' ' + item.assignee.last_name}
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                                {/* <div className="col-md-12 mt-2 mb-2">
+                                                    <div className="project-actions">
+                                                        <CButton className="edit-project-ongoing-task" onClick={() => editInfoForm(subtask)} ><CIcon name="cil-pencil" className="mr-1" /> Edit </CButton>
+                                                        <CButton type="button" onClick={() => delete_subtask(subtask.work_package_index)} className="delete-project-2"><CIcon name="cil-trash" className="mr-1" /> Delete</CButton>
+                                                    </div>
+                                                </div> */}
+                                            </CCardBody>
+                                        </CCard>
                                     </div>
-                                </div>
-
-                                {/**submit button */}
-                                <div className="col-md-12 mb-3">
-                                    <CButton type="submit" className="create-wbs-button">Create WBS</CButton>
                                 </div>
                             </CRow>
                         </CForm>
                     </CContainer>
                 </CModalBody>
-            </CModal>
-            {/*wbs modal ends */}
+            </CModal>}
             <div className="container">
                 <h4 className="dash-header">Assigned Projects({Array.from(projects).length})</h4>
                 <div className="row">
@@ -205,7 +198,7 @@ const OngoingProjectDetails = () => {
                                         <span className="tooltiptext">1000.5</span>
                                     </CButton> */}
                                     {Array.from(project.subtasks).length > 0 && Array.from(project.subtasks).map((task, idx) => (
-                                        <CButton key={idx} type="button" className="package-button rounded-pill">
+                                        <CButton key={idx} type="button" className="package-button rounded-pill" onClick={() => { setShowSubTaskDetails(true); setSelectedSubTask(task); console.log('task',task) }}>
                                             {task.task_title}
                                             <span className="tooltiptext">{task.work_package_index}</span>
                                         </CButton>

@@ -137,6 +137,7 @@ const WbsBoard = () => {
     }
 
     React.useEffect(() => {
+        dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)))
         API.get('wbs/all/'+sessionStorage.getItem(USER_ID)+'/').then((res)=>{
             setWbsList(res.data.data)
             let pre_selected_items=[]
@@ -170,6 +171,7 @@ const WbsBoard = () => {
             console.log('time-card list result', res)
             // if (res.data.length != 0){
             setTimeCardListData(res.data);
+            dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)))
             // }else {
             //     setTimeCardListData([]);
             // }
@@ -208,6 +210,7 @@ const WbsBoard = () => {
         }
         API.put('wbs/update/status/' + parseInt(cardDetails.id) + '/', values).then((res) => {
             console.log('update result', res)
+            dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)))
         })
     }
 

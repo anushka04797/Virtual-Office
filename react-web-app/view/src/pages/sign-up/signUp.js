@@ -39,6 +39,7 @@ const Register = () => {
     const errors = {};
     if (!values.first_name) errors.first_name = "Name is required!"
     if (!values.email) errors.email = "Email is required!"
+    if (!values.phone) errors.phone = "Phone number is required!"
     if (values.phone && !new RegExp('^[0-9]+$').test(values.phone)) errors.phone="Invalid Phone Number"
     if (String(values.password).length<8) errors.password = "Password is too short"
     if (!values.password) {errors.password = "Password is required!"}
@@ -199,6 +200,7 @@ const Register = () => {
                         type="tel"
                         id="phone"
                         name="phone"
+                        placeholder="01XXX XXX XXX"
                         value={formSignUp.values.phone}
                         onChange={(event)=>{formSignUp.handleChange(event)}}
                         aria-describedby="phoneHelp"
