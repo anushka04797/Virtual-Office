@@ -17,7 +17,7 @@ import * as XLSX from 'xlsx';
 const WeeklyTimecards = () => {
     const [tableData, setTabledata] = useState([]);
     let newArray = [];
-    var defaultName="all";
+    var defaultName = "all";
     const [filterData, setFilterData] = useState([])
     const [assignee, setAssigneeValue] = useState();
     const [assigneeList, setAssigneeList] = useState([])
@@ -26,7 +26,7 @@ const WeeklyTimecards = () => {
     const [pdfData, setPdfData] = useState([])
     const dispatch = useDispatch();
     const [pdfTitle, setPdfTitle] = useState();
-    
+
     // const time_card_list_fetched = useSelector(state=>state.timecardList.status)
     // const timecardList = useSelector(state => state.timecardList.pm_timecards);
 
@@ -35,33 +35,34 @@ const WeeklyTimecards = () => {
         option: (provided, state) => ({ ...provided, fontSize: "14px !important" }),
     };
     React.useEffect(() => {
-        setPdfTitle(defaultName);
+       
         // console.log(time_card_list_fetched)
         API.get('project/assignees/all/' + sessionStorage.getItem(USER_ID) + "/").then((res) => {
-            let assignees = [];
+            // let assignees = [];
             Array.from(res.data.data).forEach((item, idx) => {
-                assignees.push({ data: item, value: item.id, label: capitalize(item.first_name) + " " + capitalize(item.last_name) })
+                assigneeList.push({ data: item, value: item.id, label: capitalize(item.first_name) + " " + capitalize(item.last_name) })
             })
             console.log("assigneeList", assigneeList)
-            setAssigneeList(assignees);
+            // setAssigneeList(assignees);
         });
         API.get('wbs/pm-wise/all-time-card/list/' + sessionStorage.getItem(USER_ID) + '/').then((res) => {
+            if (res.data.data[0] != undefined) {
+                res.data.data[0].forEach((item, idx) => {
+                    var newItem = { id: idx, project: [], time_card_assignee: item.time_card_assignee, actual_work_done: [], hours_today: [], date_created: [], date_updated: [] };
+                    res.data.data[0].forEach(innerItem => {
+                        if (innerItem.time_card_assignee.id == item.time_card_assignee.id) {
+                            newItem.project = newItem.project.concat(innerItem.project);
+                            newItem.time_card_assignee = innerItem.time_card_assignee;
+                            newItem.actual_work_done = newItem.actual_work_done.concat(innerItem.actual_work_done);
+                            newItem.hours_today = newItem.hours_today.concat(parseInt(innerItem.hours_today));
+                            newItem.date_created = newItem.date_created.concat(innerItem.date_created);
+                            newItem.date_updated = newItem.date_updated.concat(innerItem.date_updated);
 
-            res.data.data[0].forEach((item, idx) => {
-                var newItem = { id: idx, project: [], time_card_assignee: item.time_card_assignee, actual_work_done: [], hours_today: [], date_created: [], date_updated: [] };
-                res.data.data[0].forEach(innerItem => {
-                    if (innerItem.time_card_assignee.id == item.time_card_assignee.id) {
-                        newItem.project = newItem.project.concat(innerItem.project);
-                        newItem.time_card_assignee = innerItem.time_card_assignee;
-                        newItem.actual_work_done = newItem.actual_work_done.concat(innerItem.actual_work_done);
-                        newItem.hours_today = newItem.hours_today.concat(parseInt(innerItem.hours_today));
-                        newItem.date_created = newItem.date_created.concat(innerItem.date_created);
-                        newItem.date_updated = newItem.date_updated.concat(innerItem.date_updated);
-
-                    }
+                        }
+                    });
+                    newArray.push(newItem);
                 });
-                newArray.push(newItem);
-            });
+            }
             console.log('new array', newArray)
             for (let i = 0; i < newArray.length; i++) {
                 let key = newArray[i].time_card_assignee.id;
@@ -77,9 +78,10 @@ const WeeklyTimecards = () => {
             console.log("unique effect", newArray);
             setFilterData(newArray);
             setPdfData(newArray);
+            setPdfTitle(defaultName);
             {/**let's populate the damn table,shall we?**/ }
             if (newArray.length != 0 || newArray != undefined) {
-              
+
                 let temp_array = tableData
                 for (let index = 0; index < newArray.length; index++) {
                     const element = newArray[index];
@@ -126,13 +128,13 @@ const WeeklyTimecards = () => {
     }, [])
     {/**set value of form field*/ }
     const getAssigneeList = (option) => {
-       
+
         setAssigneeValue(option)
         editForm.setValues({
             assigneeSelect: option.value
         })
-            
-     
+
+
     }
     {/**validate form */ }
 
@@ -145,13 +147,13 @@ const WeeklyTimecards = () => {
         setPdfData(singleUserData);
         {/*populate the damned table again */ }
         if (singleUserData.length != 0 || singleUserData != undefined) {
-           
+
             let temp_array1 = [];
-            
+
             for (let index = 0; index < singleUserData.length; index++) {
                 const element2 = singleUserData[index];
-                setPdfTitle(element2.time_card_assignee.first_name+' '+ element2.time_card_assignee.last_name);
-               
+                setPdfTitle(element2.time_card_assignee.first_name + ' ' + element2.time_card_assignee.last_name);
+
                 {/**concat all projects */ }
                 var projectName;
                 let projectList = [];
@@ -185,7 +187,7 @@ const WeeklyTimecards = () => {
             }
             setTabledata(temp_array1)
             setUserData(temp_array1)
-            console.log("table data for speicifc user",tableData)
+            console.log("table data for speicifc user", tableData)
         }
 
     }
@@ -198,7 +200,7 @@ const WeeklyTimecards = () => {
 
 
         },
-        
+
         validateOnBlur: true,
         validateOnChange: true,
 
@@ -225,38 +227,72 @@ const WeeklyTimecards = () => {
         FileSaver.saveAs(data, fileName + fileExtension);
     }
 
-/**export fetched data to pdf */
-const exportPDF = () => {
-    const unit = "pt";
-    const size = "A4"; // Use A1, A2, A3 or A4
-    const orientation = "portrait"; // portrait or landscape
+    /**export fetched data to pdf */
+    const exportPDF = () => {
+        const unit = "pt";
+        const size = "A4"; // Use A1, A2, A3 or A4
+        const orientation = "portrait"; // portrait or landscape
 
-    const marginLeft = 40;
-    const doc = new jsPDF(orientation, unit, size);
+        const marginLeft = 40;
+        const doc = new jsPDF(orientation, unit, size);
 
-    doc.setFontSize(15);
+        doc.setFontSize(15);
 
-    const title = "Timecard of" + " " + pdfTitle;
-    const headers = [["#", "Employee Name",
-    "Project Name",
-    "Task Title",
-    "Actual Work Done",
-    "Total Hr(s)"]];
-    console.log("pdfData",pdfData)
-    const uData = pdfData.map((elt,idx) => 
-    
-    
-    [idx+1,elt.project.sub_task,elt.project.sub_task,elt.project.sub_task])
-   let content={
-       startY:50,
-       head:headers,
-       body:uData
-   };
-   doc.text(title, marginLeft, 30);
-   doc.autoTable(content);
-   doc.save("Timecard of" + " " + pdfTitle + ".pdf")
+        const title = "Timecard of" + " " + pdfTitle;
+        const headers = [["#", "Employee Name",
+            "Project Name",
+            "Task Title",
+            "Actual Work Done",
+            "Total Hr(s)"]];
+        console.log("pdfData", pdfData)
+        let actualData = [];
+        for (let j = 0; j < pdfData.length; j++) {
+            let element3 = pdfData[j];
+            var assigneeName = element3.time_card_assignee.first_name + ' ' + element3.time_card_assignee.last_name;
+            {/**Again fetch project Name */ }
+            let projectList = [];
+            var projectName;
+            Array.from(element3.project).map((item) => {
+                projectList.push(item.sub_task)
 
-}
+            })
+            projectName = projectList.join(",")
+            {/**Again fetch task title */ }
+            let taskTitle = [];
+            var taskTitles;
+            Array.from(element3.project).map((item) => {
+                taskTitle.push(item.task_title)
+            })
+            taskTitles = taskTitle.join(",")
+            {/**Concat all actual work */ }
+            let actualList = [];
+            var actualWork;
+            Array.from(element3.actual_work_done).map((item) => {
+                actualList.push(item)
+
+
+            })
+            actualWork = actualList.join(",")
+            {/**calculate total hours */ }
+
+            var totalHrs = element3.hours_today.reduce((total, currentVal) => total = total + currentVal, 0)
+
+            {/**remodified data for pdf array pushing */ }
+            actualData.push({ "name": assigneeName, "project": projectName, "task_title": taskTitles, "actual_work": actualWork, "total_hrs": totalHrs });
+        }
+        console.log('actual data for pdf', actualData);
+        const uData = actualData.map((elt, idx) =>
+            [idx + 1, elt.name, elt.project, elt.task_title, elt.actual_work, elt.total_hrs])
+        let content = {
+            startY: 50,
+            head: headers,
+            body: uData
+        };
+        doc.text(title, marginLeft, 30);
+        doc.autoTable(content);
+        doc.save("Timecard of" + " " + pdfTitle + ".pdf")
+
+    }
 
     return (
         <>
