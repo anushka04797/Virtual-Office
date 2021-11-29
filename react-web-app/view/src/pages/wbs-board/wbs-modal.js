@@ -2,14 +2,17 @@ import { CContainer, CRow, CCol, CCard, CCardHeader, CCardBody, CForm, CLabel, C
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { form, useFormik } from 'formik';
-import { API } from '../../Config';
+import { API, USER_ID } from '../../Config';
 import swal from 'sweetalert';
+import { fetchProjectsForPMThunk, fetchProjectsThunk } from '../../store/slices/ProjectsSlice';
+import { fetchWbsThunk } from '../../store/slices/WbsSlice';
 
 const WbsModal = (props) => {
     console.log('props time card list data: ', props.timeCardList)
     // const modalData = useSelector(state => state.wbs.data)
     const [deliverableView, setDeliverableView] = useState(true);
     const [hrsWorked, setHrsWorked] = useState(true);
+    const dispatch = useDispatch()
     const wbsStatusArray = [{
         "title": "To Do",
         "status": 1
@@ -27,6 +30,9 @@ const WbsModal = (props) => {
         API.put('wbs/update/' + props.data.id + '/', formWbsUpdate.values).then((res) => {
             console.log('update result', res)
             if (res.status == 200 && res.data.success == 'True') {
+                dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)))
+                dispatch(fetchProjectsThunk(sessionStorage.getItem(USER_ID)))
+                dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)))
                 swal({
                     title: "Good job!",
                     text: res.data.message,

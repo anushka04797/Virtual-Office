@@ -11,6 +11,7 @@ import { BASE_URL, USER_ID } from '../../Config';
 import { API } from '../../Config';
 import swal from 'sweetalert'
 import Select from "react-select";
+import LinearWithValueLabel from '../../components/linear-progress-bar/linear-progress-bar';
 import './myProjects.css'
 const MyProjects = () => {
     let history = useHistory();
@@ -142,6 +143,10 @@ const MyProjects = () => {
                 }
             });
     }
+    function calculate_progress_in_percentage(total_hours,remaining_hours){
+        let worked_hours= parseFloat(total_hours)-parseFloat(remaining_hours)
+        return (100 * worked_hours)/parseFloat(total_hours)
+    }
     return (
         <>
             {selectedSubTask && <CModal alignment="center" show={show_sub_task_details} onClose={() => { setShowSubTaskDetails(!show_sub_task_details) }}>
@@ -238,9 +243,10 @@ const MyProjects = () => {
                                 <div>
                                     {/* <h5 className="tasks-done"><span className="tiny-header1">Task Done : </span>5/10 </h5> */}
                                     <h6 className="show-amount">{remaining_hours(project.project.remaining_hours, project.project.planned_hours)}/{parseInt(project.project.planned_hours)} Hrs</h6>
-                                    <div className="progress progress-background">
-                                        <div className="progress-bar custom-progress1 progress-bar-animated" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax={parseInt(project.project.planned_hours)} style={{ width: '25%' }}></div>
-                                    </div>
+                                    <LinearWithValueLabel progress={()=>calculate_progress_in_percentage(project.project.planned_hours,project.project.remaining_hours)}/>
+                                    {/* <div className="progress progress-background">
+                                        <div className="progress-bar custom-progress1 progress-bar-animated" role="progressbar" aria-valuenow="5" aria-valuemin="0" aria-valuemax={parseInt(project.project.planned_hours)} style={{ width: '100%' }}></div>
+                                    </div> */}
                                 </div>
                                 {/*Project category buttons */}
                                 <div className="all-da-buttons-1">
@@ -319,8 +325,6 @@ const MyProjects = () => {
                             <CAlert className="no-value-show-alert" color="primary">Currently there are no projects</CAlert>
                         ) : null}
                     </div>
-
-
                 </div>
             </div>
 

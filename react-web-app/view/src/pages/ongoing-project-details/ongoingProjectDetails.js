@@ -14,6 +14,7 @@ import swal from 'sweetalert'
 import { fetchProjectsThunk } from '../../store/slices/ProjectsSlice';
 import { has_group } from '../../helper';
 import '../my-projects/myProjects.css'
+import LinearWithValueLabel from '../../components/linear-progress-bar/linear-progress-bar';
 const OngoingProjectDetails = () => {
     let history = useHistory();
     const dispatch = useDispatch();
@@ -92,6 +93,10 @@ const OngoingProjectDetails = () => {
     const [selectedSubTask,setSelectedSubTask]=useState()
     const worked_hours = (remaining, total) => {
         return String(parseFloat(total) - parseFloat(remaining))
+    }
+    function calculate_progress_in_percentage(total_hours,remaining_hours){
+        let worked_hours= parseFloat(total_hours)-parseFloat(remaining_hours)
+        return (100 * worked_hours)/parseFloat(total_hours)
     }
     return (
         <>
@@ -187,9 +192,10 @@ const OngoingProjectDetails = () => {
                                 <div>
                                     {/* <h5 className="tasks-done"><span className="tiny-header1">Task Done : </span>5/10 </h5> */}
                                     <h6 className="show-amount">{worked_hours(project.project.remaining_hours, project.project.planned_hours)}/{parseInt(project.project.planned_hours)} Hrs</h6>
-                                    <div className="progress progress-background">
+                                    <LinearWithValueLabel progress={calculate_progress_in_percentage(project.project.planned_hours, project.project.remaining_hours)}/>
+                                    {/* <div className="progress progress-background">
                                         <div className="progress-bar custom-progress1 progress-bar-animated" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" style={{ width: '25%' }}></div>
-                                    </div>
+                                    </div> */}
                                 </div>
                                 {/*Project category buttons */}
                                 <div className="all-da-buttons-1">
