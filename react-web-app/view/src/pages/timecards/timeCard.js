@@ -22,9 +22,28 @@ const TimeCards = () => {
     console.log('userdata', usersData)
     const [assignee, setAssigneeValue] = useState();
     const [pdfTitle, setPdfTitle] = useState();
+    const assigneeList = [];
+        {/**fetch all assignees for PM */ }
+    if (has_group('pm')) {
+
+        API.get('project/assignees/all/' + sessionStorage.getItem(USER_ID) + "/").then((res) => {
+if(res.data.data.length > 0){
+            Array.from(res.data.data).forEach((item, idx) => {
+
+                assigneeList.push({ data: item, value: item.id, label: capitalize(item.first_name) + " " + capitalize(item.last_name) })
+            })
+            console.log(assigneeList)
+        }
+        else {
+            assigneeList.push({data:profile_details,value:profile_details.id,label:capitalize(profile_details.first_name)+" "+capitalize(profile_details.last_name)})
+        }
+        })
+       
+    }
 
     const getTimeCards = (values) => {
         if (has_group('pm')) {
+            
             console.log('values from timecards', values)
             API.get('wbs/user/time-card/list/' + values.assigneeSelectPM + "/").then((res) => {
                 let temp = []
@@ -45,6 +64,31 @@ const TimeCards = () => {
                 setUsersData(tableData)
 
             })
+        
+        
+    //    if (assigneeList.length== 0){
+    //         console.log('values from timecards', values)
+    //         API.get('wbs/user/time-card/list/' + values.assigneeSelect + "/").then((res) => {
+    //             let temp = []
+    //             setPdfTitle(profile_details.first_name + " " + profile_details.last_name);
+    //             Array.from(res.data.data).forEach((item, idx) => {
+    //                 // temp.push({data:item.date_updated >=values.startDate && item.date_updated <= values.todate})
+    //                 temp.push({ data: item })
+    //             })
+
+    //             let filteredData = [];
+    //             filteredData = temp.filter(p => p.data.date_updated >= values.startDate && p.data.date_updated <= values.todate)
+    //             console.log('timecard for id', filteredData)
+    //             setPdfData(filteredData)
+    //             var tableData = [];
+    //             for (let index = 0; index < filteredData.length; index++) {
+    //                 const element = filteredData[index];
+    //                 tableData.push({ '#': index + 1, 'TDO': element.data.project.task_delivery_order.title, "Project Name": element.data.project.sub_task, "Task Title": element.data.project.task_title, "Actual Work Done": element.data.actual_work_done, "Hrs Today": element.data.hours_today, "Date Created": element.data.date_created, "Date Updated": element.data.date_updated })
+    //             }
+    //             setUsersData(tableData);
+    //             console.log('userdata', usersData);
+    //         })
+    //     }
         }
         else {
             console.log('values from timecards', values)
@@ -92,17 +136,7 @@ const TimeCards = () => {
         return ''
     }
     {/**fetch all assignees for PM */ }
-    const assigneeList = [];
-    if (has_group('pm')) {
-
-        API.get('project/assignees/all/' + sessionStorage.getItem(USER_ID) + "/").then((res) => {
-
-            Array.from(res.data.data).forEach((item, idx) => {
-                assigneeList.push({ data: item, value: item.id, label: capitalize(item.first_name) + " " + capitalize(item.last_name) })
-            })
-            console.log(assigneeList)
-        })
-    }
+ 
     const getAssigneeList = (option) => {
         setAssigneeValue(option)
         editForm.setValues({
@@ -197,6 +231,7 @@ const TimeCards = () => {
                             }
                             {/**IF PM */}
                             {has_group('pm') &&
+                                
                                 <div>
                                     <CLabel className="custom-label-5" htmlFor="assigneeSelectPM">
                                         Select Employee
@@ -217,8 +252,22 @@ const TimeCards = () => {
                                     />
                                     {/* {editForm.errors.assigneeSelectPM && <p className="error mt-1">{editForm.errors.assigneeSelectPM}</p>} */}
                                 </div>
+                              
+
 
                             }
+                              {/**If PM but no assignee list **/}
+                              {/* {has_group('pm')&& (assigneeList.length == 0) &&
+                                <div>
+                                    <CLabel className="custom-label-5" htmlFor="assigneeSelect">
+                                        Select Employee
+                                    </CLabel>
+                                    <CInput name="assigneeSelect" type="text" value={capitalize(profile_details.first_name) + ' ' + capitalize(profile_details.last_name)} onChange={editForm.handleChange} readOnly />
+
+                                </div>
+                               
+                            } */}
+
                         </CCol>
                         {/**start date */}
                         <CCol xl="3" lg="3" md="6">
