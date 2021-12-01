@@ -101,7 +101,7 @@
   height: 38px !important;
 }
 .custom-formgroup-2:active,.custom-formgroup-2:focus{
-  border:2px solid #0065ff;
+  border:2px solid #0065ff !important;
   box-shadow: none !important;
 }
 .sign-holder{
