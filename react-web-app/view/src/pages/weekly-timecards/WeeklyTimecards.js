@@ -3,7 +3,6 @@ import "../timecards/timeCards.css";
 import { useFormik } from "formik";
 import { BASE_URL, USER_ID } from '../../Config';
 import { API } from '../../Config';
-import { has_group } from '../../helper';
 import { CCol, CButton, CContainer, CForm, CRow, CLabel, CDataTable } from '@coreui/react';
 import Select from "react-select";
 import { useDispatch, useSelector } from 'react-redux';
@@ -39,10 +38,11 @@ const WeeklyTimecards = () => {
         // console.log(time_card_list_fetched)
         API.get('project/assignees/all/' + sessionStorage.getItem(USER_ID) + "/").then((res) => {
             // let assignees = [];
+            let temp=[]
             Array.from(res.data.data).forEach((item, idx) => {
-                assigneeList.push({ data: item, value: item.id, label: capitalize(item.first_name) + " " + capitalize(item.last_name) })
+                temp.push({ data: item, value: item.id, label: capitalize(item.first_name) + " " + capitalize(item.last_name) })
             })
-            console.log("assigneeList", assigneeList)
+            setAssigneeList(temp)
             // setAssigneeList(assignees);
         });
         API.get('wbs/pm-wise/all-time-card/list/' + sessionStorage.getItem(USER_ID) + '/').then((res) => {
@@ -195,10 +195,7 @@ const WeeklyTimecards = () => {
     {/*initialize form */ }
     const editForm = useFormik({
         initialValues: {
-
             assigneeSelect: "",
-
-
         },
 
         validateOnBlur: true,

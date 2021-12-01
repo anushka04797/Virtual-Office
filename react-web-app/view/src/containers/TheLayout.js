@@ -12,7 +12,7 @@ import {
   TheHeader
 } from './index'
 import './TheLayout.css'
-import { has_group } from '../helper';
+import { has_permission } from '../helper';
 import { fetchEvmsThunk } from '../store/slices/EvmsSlice';
 import { fetchMeetingList } from '../store/slices/MeetingSlice';
 import { fetchAllTimecardsPm, fetchAllTimecardsPmThunk, fetchTimecardThunk } from '../store/slices/TimecardSlice';
@@ -23,13 +23,13 @@ const TheLayout = () => {
     dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)))
     dispatch(fetchPersonalDetails(sessionStorage.getItem(USER_ID)))
     dispatch(fetchMeetingList(sessionStorage.getItem(USER_ID)))
-  if(!has_group('pm')) dispatch(fetchTimecardThunk(sessionStorage.getItem(USER_ID)))
-   if(has_group('pm')){
     dispatch(fetchTimecardThunk(sessionStorage.getItem(USER_ID)))
     dispatch(fetchAllTimecardsPmThunk(sessionStorage.getItem(USER_ID)))
-   }
-    if(has_group('pm')) dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)))
-    if(has_group('pm')) dispatch(fetchEvmsThunk(sessionStorage.getItem(USER_ID)))
+    if(has_permission('projects.add_projects')){
+      console.log('is PM')
+      dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)))
+      dispatch(fetchEvmsThunk(sessionStorage.getItem(USER_ID)))
+    } 
   },[])
   return (
     <div className="c-app c-default-layout">
