@@ -18,7 +18,7 @@ import AssignedToMe from '../../components/assignedProjects/assignedProjects';
 import { useLocation } from 'react-router';
 import { useSnackbar } from 'notistack';
 import { useDispatch } from 'react-redux';
-import { has_group } from '../../helper';
+import { has_permission } from '../../helper';
 const loading = (
     <div className="pt-3 text-center">
       <div className="sk-spinner sk-spinner-pulse"></div>
@@ -46,7 +46,7 @@ const Dashboard=()=> {
                 <div className="col-lg-5"><AssignedToMe/></div> 
                 
                 <div className="col-lg-5 offset-lg-1"><ScheduledMeetings/></div>
-                {has_group('pm') &&
+                {has_permission('evms.view_evms') &&
                 <div className="col-lg-5 "><EvmsShow/></div>}
                 
                

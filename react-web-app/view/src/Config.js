@@ -1,8 +1,9 @@
 import axios from 'axios';
-const status = 'prod'
+const status = 'dev'
 export const API_URL = status === 'prod' ? 'http://192.168.0.225:8003/' : 'http://localhost:8000/'
 export const TOKEN = "access_token"
 export const USER_ID = "user_id"
+export const PERMISSIONS = "user_permissions"
 export const BASE_URL = status === 'prod' ? 'http://192.168.0.225:8003' : 'http://localhost:8000'
 export const credentials = {
   "GOOGLE_CLIENT_ID": "705019730299-kfb5arnuisah2135tka05uka6h7v901a.apps.googleusercontent.com",
@@ -97,10 +98,12 @@ export async function JsonClient(endpoint, { body, ...customConfig } = {}) {
   try {
     const response = await window.fetch(API_URL+endpoint, config)
     data = await response.json()
+    
     if (response.ok) {
       return data
     }
     else{
+      console.log('endpoint',endpoint,'error_code',response.ok)
       sessionStorage.clear()
       window.location.href = '/'
     }

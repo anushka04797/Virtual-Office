@@ -3,22 +3,17 @@ import { useSelector, useDispatch } from 'react-redux';
 import './TheSidebar.css'
 
 import {
-  CCreateElement,
   CSidebar,
   CSidebarBrand,
   CSidebarNav,
-  CSidebarNavDivider,
-  CSidebarNavTitle,
   CSidebarMinimizer,
   CSidebarNavDropdown,
   CSidebarNavItem,
-  CFooter,
 } from '@coreui/react'
 import { changeState } from '../store/slices/SideBarSlice';
 import CIcon from '@coreui/icons-react'
-import { has_group } from '../helper';
+import { has_permission } from '../helper';
 // sidebar nav config
-import navigation from './_nav'
 import { useHistory } from 'react-router';
 import { API } from '../Config'
 const TheSidebar = () => {
@@ -26,7 +21,7 @@ const TheSidebar = () => {
   let history = useHistory()
   const show = useSelector(state => state.sidebar.sidebarShow)
   React.useEffect(() => {
-    console.log('has group', has_group('pm'))
+    
   }, [])
   const logout = () => {
     API.get('auth/logout/').then((res) => {
@@ -72,8 +67,8 @@ const TheSidebar = () => {
         <CSidebarNavItem to="/dashboard" icon="cil-speedometer" name="Dashboard" className="vo-navItem"></CSidebarNavItem>
         {/**Projects */}
         <CSidebarNavDropdown icon="cib-ghost" name="Projects" className="vo-navItem">
-          {has_group('pm') && <CSidebarNavItem to="/dashboard/Projects/create-new-project" name="Create New Project" className="vo-navItem" ></CSidebarNavItem>}
-          {has_group('pm') && <CSidebarNavItem to="/dashboard/Projects/my-projects" name="My Projects" className="vo-navItem"></CSidebarNavItem>}
+          {has_permission('projects.add_projects') && <CSidebarNavItem to="/dashboard/Projects/create-new-project" name="Create New Project" className="vo-navItem" ></CSidebarNavItem>}
+          {has_permission('projects.add_projects') && <CSidebarNavItem to="/dashboard/Projects/my-projects" name="My Projects" className="vo-navItem"></CSidebarNavItem>}
           <CSidebarNavItem to="/dashboard/Projects/assigned-projects" name="Assigned Projects" className="vo-navItem"  ></CSidebarNavItem>
           <CSidebarNavItem to="/dashboard/Projects/completed-projects" name="Completed Projects" className="vo-navItem" ></CSidebarNavItem>
 
@@ -88,16 +83,15 @@ const TheSidebar = () => {
         </CSidebarNavDropdown>
          {/**EVMS */}
         {/* <CSidebarNavItem to="/dashboard/EVMS"name="EVMS" icon="cil-chart-line" className="vo-navItem"></CSidebarNavItem> */}
-        {has_group('pm') && <CSidebarNavDropdown icon="cil-chart-line" name="EVMS" className="vo-navItem">
+        {has_permission('evms.view_evms') && <CSidebarNavDropdown icon="cil-chart-line" name="EVMS" className="vo-navItem">
           <CSidebarNavItem to="/dashboard/EVMS/create" name="Create EVMS" className="vo-navItem"  ></CSidebarNavItem>
           <CSidebarNavItem to="/dashboard/EVMS/view" name="View EVMS" className="vo-navItem" ></CSidebarNavItem>
         </CSidebarNavDropdown>}
 
         {/**Timecards */}
-        {!has_group('pm') &&
-          <CSidebarNavItem to="/dashboard/timecard/generate-timecard" name="Generate Timecard" icon="cil-library" className="vo-navItem"></CSidebarNavItem>}
+          {!has_permission('projects.add_projects') &&<CSidebarNavItem to="/dashboard/timecard/generate-timecard" name="Generate Timecard" icon="cil-library" className="vo-navItem"></CSidebarNavItem>}
         {/**timecards if PM */}
-        {has_group('pm') && <CSidebarNavDropdown icon="cil-library" name="Timecards" className="vo-navItem">
+        {has_permission('wbs.view_timecard') && <CSidebarNavDropdown icon="cil-library" name="Timecards" className="vo-navItem">
           <CSidebarNavItem to="/dashboard/timecard/generate-timecard" name="Generate Timecard" className="vo-navItem"  ></CSidebarNavItem>
           <CSidebarNavItem to="/dashboard/timecard/weekly-timecards" name="Weekly Timecard" className="vo-navItem" ></CSidebarNavItem>
         </CSidebarNavDropdown>}

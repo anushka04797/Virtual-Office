@@ -5,7 +5,7 @@ import Select from "react-select";
 import { useDispatch, useSelector } from 'react-redux';
 import { BASE_URL, USER_ID } from '../../Config';
 import { API } from '../../Config';
-import { has_group } from '../../helper';
+import { has_permission } from '../../helper';
 import { useFormik } from "formik";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
@@ -22,28 +22,12 @@ const TimeCards = () => {
     console.log('userdata', usersData)
     const [assignee, setAssigneeValue] = useState();
     const [pdfTitle, setPdfTitle] = useState();
-    const assigneeList = [];
-        {/**fetch all assignees for PM */ }
-    if (has_group('pm')) {
-
-        API.get('project/assignees/all/' + sessionStorage.getItem(USER_ID) + "/").then((res) => {
-if(res.data.data.length > 0){
-            Array.from(res.data.data).forEach((item, idx) => {
-
-                assigneeList.push({ data: item, value: item.id, label: capitalize(item.first_name) + " " + capitalize(item.last_name) })
-            })
-            console.log(assigneeList)
-        }
-        else {
-            assigneeList.push({data:profile_details,value:profile_details.id,label:capitalize(profile_details.first_name)+" "+capitalize(profile_details.last_name)})
-        }
-        })
-       
-    }
+    const [assigneeList,setAssigneeList] = useState([]);
+    {/**fetch all assignees for PM */ }
+    
 
     const getTimeCards = (values) => {
-        if (has_group('pm')) {
-            
+        if (has_permission('projects.add_projects') && has_permission('wbs.change_timecard') && has_permission('wbs.add_timecard')) {
             console.log('values from timecards', values)
             API.get('wbs/user/time-card/list/' + values.assigneeSelectPM + "/").then((res) => {
                 let temp = []
@@ -64,31 +48,6 @@ if(res.data.data.length > 0){
                 setUsersData(tableData)
 
             })
-        
-        
-    //    if (assigneeList.length== 0){
-    //         console.log('values from timecards', values)
-    //         API.get('wbs/user/time-card/list/' + values.assigneeSelect + "/").then((res) => {
-    //             let temp = []
-    //             setPdfTitle(profile_details.first_name + " " + profile_details.last_name);
-    //             Array.from(res.data.data).forEach((item, idx) => {
-    //                 // temp.push({data:item.date_updated >=values.startDate && item.date_updated <= values.todate})
-    //                 temp.push({ data: item })
-    //             })
-
-    //             let filteredData = [];
-    //             filteredData = temp.filter(p => p.data.date_updated >= values.startDate && p.data.date_updated <= values.todate)
-    //             console.log('timecard for id', filteredData)
-    //             setPdfData(filteredData)
-    //             var tableData = [];
-    //             for (let index = 0; index < filteredData.length; index++) {
-    //                 const element = filteredData[index];
-    //                 tableData.push({ '#': index + 1, 'TDO': element.data.project.task_delivery_order.title, "Project Name": element.data.project.sub_task, "Task Title": element.data.project.task_title, "Actual Work Done": element.data.actual_work_done, "Hrs Today": element.data.hours_today, "Date Created": element.data.date_created, "Date Updated": element.data.date_updated })
-    //             }
-    //             setUsersData(tableData);
-    //             console.log('userdata', usersData);
-    //         })
-    //     }
         }
         else {
             console.log('values from timecards', values)
@@ -117,18 +76,7 @@ if(res.data.data.length > 0){
 
 
     }
-    //     const projects = useSelector(state => state.projects.pm_projects)
-
-    //  console.log("pM projects", projects);
-    //  var singleProject=[];
-    //  Array.from(projects).forEach((item,idx)=>{
-    //      singleProject.push({data:item.assignees})
-    //  })
-    // console.log(singleProject)
-    // for(let i=0;i < singleProject.length;i++){
-    //     const name = singleProject[i].data;
-    //     console.log('name',name);
-    // }
+    
     function capitalize(string) {
         if (string != undefined) {
             return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
@@ -136,7 +84,24 @@ if(res.data.data.length > 0){
         return ''
     }
     {/**fetch all assignees for PM */ }
- 
+    
+    React.useEffect(()=>{
+        if (has_permission('projects.change_projectassignee') || has_permission('projects.add_projectassignee')) {
+            API.get('project/assignees/all/' + sessionStorage.getItem(USER_ID) + "/").then((res) => {
+                let temp=[]
+                if (res.data.data.length > 0) {
+                    Array.from(res.data.data).forEach((item, idx) => {
+                        temp.push({ data: item, value: item.id, label: capitalize(item.first_name) + " " + capitalize(item.last_name) })
+                    })
+                }
+                else {
+                    temp.push({ data: profile_details, value: profile_details.id, label: capitalize(profile_details.first_name) + " " + capitalize(profile_details.last_name) })
+                }
+                setAssigneeList(temp)
+            })
+    
+        }
+    },[])
     const getAssigneeList = (option) => {
         setAssigneeValue(option)
         editForm.setValues({
@@ -153,12 +118,10 @@ if(res.data.data.length > 0){
     }
     const editForm = useFormik({
         initialValues: {
-
             assigneeSelect: sessionStorage.getItem(USER_ID),
             assigneeSelectPM: "",
             startDate: "",
             todate: ""
-
         },
         validateOnBlur: true,
         validateOnChange: true,
@@ -209,8 +172,8 @@ if(res.data.data.length > 0){
         doc.autoTable(content);
         doc.save("Timecard of" + " " + pdfTitle + ".pdf")
     }
-    return (
 
+    return (
         <>
             <CContainer>
                 <h3 className="timecards-page-header mb-3">Generate Timecards</h3>
@@ -220,7 +183,7 @@ if(res.data.data.length > 0){
 
                         {/**assignees */}
                         <CCol xl="3" lg="3" md="6">
-                            {!has_group('pm') &&
+                            {!has_permission('projects.add_projects') &&
                                 <div>
                                     <CLabel className="custom-label-5" htmlFor="assigneeSelect">
                                         Select Employee
@@ -230,34 +193,33 @@ if(res.data.data.length > 0){
                                 </div>
                             }
                             {/**IF PM */}
-                            {has_group('pm') &&
-                                
-                                <div>
-                                    <CLabel className="custom-label-5" htmlFor="assigneeSelectPM">
-                                        Select Employee
-                                    </CLabel>
-                                    <Select
-                                        closeMenuOnSelect={true}
-                                        aria-labelledby="assigneeSelectPM"
-                                        id="assigneeSelectPM"
-                                        minHeight="35px"
+                            {has_permission('projects.add_projects') &&
+        <div>
+            <CLabel className="custom-label-5" htmlFor="assigneeSelectPM">
+                Select Employee
+            </CLabel>
+            <Select
+                closeMenuOnSelect={true}
+                aria-labelledby="assigneeSelectPM"
+                id="assigneeSelectPM"
+                minHeight="35px"
 
-                                        placeholder="Select from list"
-                                        isClearable={false}
-                                        isMulti={false}
-                                        onChange={getAssigneeList}
-                                        classNamePrefix="custom-forminput-6"
-                                        options={assigneeList}
-                                        styles={colourStyles}
-                                    />
-                                    {/* {editForm.errors.assigneeSelectPM && <p className="error mt-1">{editForm.errors.assigneeSelectPM}</p>} */}
-                                </div>
-                              
+                placeholder="Select from list"
+                isClearable={false}
+                isMulti={false}
+                onChange={getAssigneeList}
+                classNamePrefix="custom-forminput-6"
+                options={assigneeList}
+                styles={colourStyles}
+            />
+            {/* {editForm.errors.assigneeSelectPM && <p className="error mt-1">{editForm.errors.assigneeSelectPM}</p>} */}
+        </div>
 
 
-                            }
-                              {/**If PM but no assignee list **/}
-                              {/* {has_group('pm')&& (assigneeList.length == 0) &&
+
+    }
+    {/**If PM but no assignee list **/ }
+    {/* {has_group('pm')&& (assigneeList.length == 0) &&
                                 <div>
                                     <CLabel className="custom-label-5" htmlFor="assigneeSelect">
                                         Select Employee
@@ -268,81 +230,82 @@ if(res.data.data.length > 0){
                                
                             } */}
 
-                        </CCol>
-                        {/**start date */}
-                        <CCol xl="3" lg="3" md="6">
+                        </CCol >
+    {/**start date */ }
+    < CCol xl = "3" lg = "3" md = "6" >
                             <CLabel className="custom-label-5" htmlFor="startDate">
                                 From Date
                             </CLabel>
                             <CInput className="custom-forminput-6  w-100" type="date" name="startDate" id="startDate" value={editForm.values.startDate} onChange={editForm.handleChange} />
-                            {/**Error show */}
-                            {editForm.errors.startDate && <p className="error mt-1">{editForm.errors.startDate}</p>}
-                        </CCol>
-                        {/**END DATE */}
-                        <CCol xl="3" lg="3" md="6">
+{/**Error show */ }
+{ editForm.errors.startDate && <p className="error mt-1">{editForm.errors.startDate}</p> }
+                        </CCol >
+    {/**END DATE */ }
+    < CCol xl = "3" lg = "3" md = "6" >
 
                             <CLabel className="custom-label-5" htmlFor="todate">
                                 To Date
                             </CLabel>
                             <CInput className="custom-forminput-6  w-100" type="date" name="todate" id="todate" value={editForm.values.todate} onChange={editForm.handleChange} />
-                            {/**Error show */}
-                            {editForm.errors.todate && <p className="error mt-1">{editForm.errors.todate}</p>}
-                        </CCol>
-                        <CCol xl="3" lg="3" md="6">
-                            <div className="button-holder--3">
-                                <CButton className="generate-card-button" onClick={editForm.handleSubmit}>Generate Timecard</CButton>
-                            </div>
-                        </CCol>
+{/**Error show */ }
+{ editForm.errors.todate && <p className="error mt-1">{editForm.errors.todate}</p> }
+                        </CCol >
+    <CCol xl="3" lg="3" md="6">
+        <div className="button-holder--3">
+            <CButton className="generate-card-button" onClick={editForm.handleSubmit}>Generate Timecard</CButton>
+        </div>
+    </CCol>
 
-                        {/**buttons for format of timecard */}
+{/**buttons for format of timecard */ }
 
-                        {usersData != 0 && <CCol md="12">
-                            <h5 className="tiny-header--5 mt-4">Export</h5>
-                            <div className="format-buttons mt-2">
-                                <CButton className="file-format-download" onClick={() => exportPDF()}>PDF</CButton>
-                                <CButton className="file-format-download" onClick={() => exportToCSV(usersData, 'Timecard of' + " " + pdfTitle)} >Excel</CButton>
+{
+    usersData != 0 && <CCol md="12">
+        <h5 className="tiny-header--5 mt-4">Export</h5>
+        <div className="format-buttons mt-2">
+            <CButton className="file-format-download" onClick={() => exportPDF()}>PDF</CButton>
+            <CButton className="file-format-download" onClick={() => exportToCSV(usersData, 'Timecard of' + " " + pdfTitle)} >Excel</CButton>
 
-                                {/* <CButton className="file-format-download">Print</CButton> */}
-                            </div>
-                        </CCol>
-                        }
-                        {/**table for displaying all the entries */}
-                        <CCol md="12">
-                            <div className="mt-4">
-                                <CDataTable items={usersData} fields={[
-                                    {
-                                        key: "#",
-                                        _style: { width: "5%" },
-                                        _classes: "font-weight-bold",
-                                    },
-                                    'TDO',
-                                    'Project Name',
-                                    'Task Title',
-                                    'Actual Work Done',
-                                    'Hrs Today',
-                                    'Date Created',
-                                    'Date Updated'
+            {/* <CButton className="file-format-download">Print</CButton> */}
+        </div>
+    </CCol>
+}
+{/**table for displaying all the entries */ }
+<CCol md="12">
+    <div className="mt-4">
+        <CDataTable items={usersData} fields={[
+            {
+                key: "#",
+                _style: { width: "5%" },
+                _classes: "font-weight-bold",
+            },
+            'TDO',
+            'Project Name',
+            'Task Title',
+            'Actual Work Done',
+            'Hrs Today',
+            'Date Created',
+            'Date Updated'
 
-                                ]}
-                                    primary
-                                    hover
-                                    striped
-                                    bordered
-                                    sorter
-                                    columnFilter
+        ]}
+            primary
+            hover
+            striped
+            bordered
+            sorter
+            columnFilter
 
-                                    size="sm"
-                                    itemsPerPage={10}
-                                    pagination
-                                >
+            size="sm"
+            itemsPerPage={10}
+            pagination
+        >
 
-                                </CDataTable>
-                            </div>
-                        </CCol>
-                    </CRow>
-                </CForm>
+        </CDataTable>
+    </div>
+</CCol>
+                    </CRow >
+                </CForm >
 
-            </CContainer>
+            </CContainer >
 
 
 

@@ -27,7 +27,8 @@ const CreateNewProject = () => {
   const [selectedAssignees,setSelectedAssignees]=useState([])
   const profile_details = useSelector(state => state.profile.data)
   const projects = useSelector(state => state.projects.pm_projects)
-  
+  const [work_package_numbers,setWorkPackageNumbers]=useState([])
+  const [existing_sub_tasks,setExistingSubTasks]=useState([])
   //tdo list states and functions
   const tdo_list = useSelector(state => state.projects.tdo_list)
   const new_tdo_list = useSelector(state => state.tdo.data)
@@ -118,9 +119,11 @@ const CreateNewProject = () => {
     }
   }
   const handleSubTaskInputChange = (inputValue, actionMeta) => {
-    // if(actionMeta.action=='set-value'){
-    //   formCreateProject.setFieldValue('sub_task',inputValue)
-    // }
+    if(actionMeta.action=='set-value'){
+      // if(existing_sub_tasks.includes(inputValue)){
+      //   formCreateProject.setFieldError('sub_task','This sub task name already exists')
+      // }
+    }
   }
   const handleSubTaskCreate = (inputValue) => {
     formCreateProject.setFieldValue('sub_task', inputValue)
@@ -164,6 +167,7 @@ const CreateNewProject = () => {
       formCreateProject.setFieldValue('work_package_number', '')
     }
   }
+  
   const handleAssigneeChange = (value, actionMeta) => {
     setSelectedAssignees(value)
     if (actionMeta.action == 'select-option') {
@@ -184,17 +188,36 @@ const CreateNewProject = () => {
   function isDateBeforeToday(date) {
     return new Date(date) < new Date(new Date().toDateString());
   }
+  const is_wp_subtask_valid=(sub_task,wp)=>{
+    API.get('project/check-subtask-work-package-number-is-valid/'+sub_task+'/'+wp+'/').then((res)=>{
+      console.log(res.data)
+      if(existing_sub_tasks.includes(sub_task) && work_package_numbers.includes(wp)){
+        return {wp:true,sub_task:true}
+      }
+      else if( res.data.wp_found == true && res.data.sub_task_found == false){
+        return {wp:false,sub_task:true}
+      }
+      else if(work_package_numbers.includes(wp) && res.data.sub_task_found == true){
+        return {wp:true,sub_task:false}
+      }
+    })
+    
+  }
   const validate_create_project_form = (values) => {
-    // console.log('validating values ', values)
+    console.log('validating values ', values)
+    console.log('WP list ', is_wp_subtask_valid(values.sub_task,values.work_package_number))
     const errors = {}
     if (!values.task_delivery_order) errors.task_delivery_order = "Task Delivery Order is required"
     if (!values.sub_task) errors.sub_task = "Sub Task is required"
     if (!values.work_package_number) errors.work_package_number = "Work Package Number is required"
+    // if (values.sub_task && values.work_package_number && is_wp_subtask_valid(values.sub_task,values.work_package_number)) errors.work_package_number="This work package number already exists"
     if (!values.task_title) errors.task_title = "Task title is required"
     if (!values.planned_delivery_date) errors.planned_delivery_date = "Invalid planned delivery date"
+    // if (work_package_numbers.includes(values.work_package_number)) errors.work_package_number = "This work package number already exists"
+    // if (existing_sub_tasks.includes(values.sub_task)) errors.sub_task = "This Sub task name already exists"
     if (!values.estimated_person || parseFloat(values.estimated_person) < 0) errors.estimated_person = "Invalid estimated person number"
     if (isDateBeforeToday(values.planned_delivery_date)) errors.planned_delivery_date = "Invalid planned delivery date"
-    console.log('validating errors ', errors)
+    // console.log('validating errors ', errors)
     return errors
   }
   const reset_form = () => {
@@ -204,18 +227,19 @@ const CreateNewProject = () => {
     setWorkPackageNumber(null)
     setAssignees([])
   }
-  const create_project = () => {
+  const create_project = (values) => {
     console.log('values', JSON.stringify(formCreateProject.values))
-    API.post('project/create/', formCreateProject.values).then((res) => {
-      console.log(res)
-      if (res.status == 200 && res.data.success == 'True') {
-        reset_form()
-        dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)))
-        dispatch(fetchProjectsThunk(sessionStorage.getItem(USER_ID)))
-        setSelectedAssignees([])
-        swal('Created!', 'Successfuly Created', 'success')
-      }
-    })
+      API.post('project/create/', formCreateProject.values).then((res) => {
+        console.log(res)
+        if (res.status == 200 && res.data.success == 'True') {
+          reset_form()
+          dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)))
+          dispatch(fetchProjectsThunk(sessionStorage.getItem(USER_ID)))
+          setSelectedAssignees([])
+          swal('Created!', 'Successfuly Created', 'success')
+        }
+      })
+    
   }
   const formCreateProject = useFormik({
     initialValues: {
@@ -236,7 +260,7 @@ const CreateNewProject = () => {
     validate: validate_create_project_form,
     onSubmit: create_project
   })
-
+  
   useEffect(() => {
     dispatch(fetchTdosThunk())
     API.get('auth/assignee/list/').then((res) => {
@@ -246,6 +270,19 @@ const CreateNewProject = () => {
         temp.push({ value: item.id, label: item.first_name + ' ' + item.last_name, data: item })
       })
       setAssignees(temp)
+    })
+    API.get('project/work-package-numbers/').then((res) => {
+      console.log('WP list', res.data.wp)
+      let temp = []
+      Array.from(res.data.wp).forEach((item, idx) => {
+        temp.push(item)
+      })
+      setWorkPackageNumbers(temp)
+      temp=[]
+      Array.from(res.data.sub_tasks).forEach((item, idx) => {
+        temp.push(item)
+      })
+      setExistingSubTasks(temp)
     })
   }, [])
   return (
@@ -329,7 +366,7 @@ const CreateNewProject = () => {
                           styles={colourStyles}
                         />
                         {formCreateProject.touched.work_package_number && formCreateProject.errors.work_package_number && <small style={{ color: 'red' }}>{formCreateProject.errors.work_package_number}</small>}
-                        
+                        {/* {formCreateProject.touched.work_package_number_exists && formCreateProject.errors.work_package_number_exists && <small style={{ color: 'red' }}>{formCreateProject.errors.work_package_number_exists}</small>} */}
                       </div>
                       {/**Task title */}
                       <div className="col-lg-12 mb-3">

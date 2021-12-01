@@ -12,7 +12,7 @@ import {
 import hidePwdImg from '../../assets/icons/Showpass-show.svg';
 import showPwdImg from '../../assets/icons/Hide.svg';
 import { Link,Redirect,useHistory } from "react-router-dom";
-import { PUBLIC_API, TOKEN, USER_ID } from "../../Config";
+import { API, PERMISSIONS, PUBLIC_API, TOKEN, USER_ID } from "../../Config";
 import { useFormik } from "formik";
 import { useLocation } from "react-router";
 import { useSnackbar } from "notistack";
@@ -41,9 +41,13 @@ const SignIn = () => {
           time: new Date(expires_after.getFullYear(),expires_after.getMonth(),expires_after.getDate()+2,expires_after.getUTCHours(),expires_after.getMinutes(),expires_after.getSeconds()),
           data: res.data.token
         }));
-        sessionStorage.setItem('groups',JSON.parse(res.data.groups))
+        // sessionStorage.setItem('groups',JSON.parse(res.data.groups))
         sessionStorage.setItem(USER_ID,res.data.user_id)
-        history.push({pathname:'/dashboard',state:{from:'login'}})
+        API.get('auth/permissions/all/').then((res)=>{
+          console.log('permissions',res.data.data)
+          sessionStorage.setItem(PERMISSIONS,res.data.data)
+          history.push({pathname:'/dashboard',state:{from:'login'}})
+        })
       }
     }).catch(err=>{
       console.log(err)
