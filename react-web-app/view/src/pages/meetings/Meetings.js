@@ -51,9 +51,9 @@ const OurMeetings = () => {
             formMeeting.setFieldValue('type',option.value)
         }
     }
-    const handleMeetingLocationChange =(option,actionMeta)=>{
+    const handleMeetingLocationChange =(option1,actionMeta)=>{
         if(actionMeta.action == 'select-option'){
-            formMeeting.setFieldValue('medium',option.value)
+            formMeeting.setFieldValue('medium',option1.value)
         }
     }
     const handleProjectChange=(option,actionMeta)=>{
@@ -114,13 +114,17 @@ const OurMeetings = () => {
     }
     const validateMeetForm = (values) => {
         const errors = {};
-        if (!values.room_name) errors.room_name = "Room Name is required!";
+        if ((values.medium == '1') && (!values.room_name)) {errors.room_name = "Room Name is required!";}
         if ((values.type == '0') && (!values.project)) {errors.project = "Project is required"}
         // if ((values.type == '1') && (!values.participants)) {errors.participants = "Participants are required is required"}
         // if (!values.project) errors.project = "project name is required!";
         return errors;
     }
     const createRoom = (values) => {
+        if(values.medium == '0'){
+            values.room_name = "N/A"
+        }
+
         //setMeeting(true)
         console.log('values',JSON.stringify(values))
         API.post('meetings/create/', values).then((res) => {
@@ -190,7 +194,7 @@ const OurMeetings = () => {
                                                 </div>}
                                                 <div>
                                                     <h6 className="meeting-id">Meeting Agenda: {meeting.agenda}</h6>
-                                                    <h6 className="projectName">Type: {meeting.type==0?'Project':'General'} Meeting</h6>
+                                                   <h6 className="projectName">Room name : {meeting.room_name}</h6>
                                                     {meeting.host != null && <h6 className="projectName">Host: {meeting.host.first_name+' '+meeting.host.last_name}</h6>}
                                                     <div className="join-btn-holder"><CButton className="meeting-join-btn">Join</CButton></div>
                                                 </div>
@@ -210,7 +214,7 @@ const OurMeetings = () => {
                                     <CForm>
                                         {/**Project Name */}
                                         <div className="mb-3">
-                                            <CLabel className="custom-label-5">Meeting Location</CLabel>
+                                            <CLabel className="custom-label-5" htmlFor ="medium">Meeting Location</CLabel>
                                            
                                             <Select
                                                 closeMenuOnSelect={true}
@@ -285,6 +289,7 @@ const OurMeetings = () => {
                                             <CTextarea id="agenda" name="agenda" value={formMeeting.values.agenda} onChange={formMeeting.handleChange} className="custom-forminput-6" />
                                         </div>
                                         {/*room name*/}
+                                        {formMeeting.values.medium == '1' &&
                                         <div className="mb-3">
                                             <CLabel
                                                 htmlFor="roomItem"
@@ -300,6 +305,7 @@ const OurMeetings = () => {
                                             />
                                             {formMeeting.errors.room_name && formMeeting.touched.room_name && <p className="error">Room Name invalid</p>}
                                         </div>
+                                        }
                                         <div className="mb-3">
                                             <CLabel className="custom-label-5" htmlFor="participants">Participants</CLabel>
                                             <Select
