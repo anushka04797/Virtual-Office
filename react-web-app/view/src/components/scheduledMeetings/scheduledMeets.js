@@ -26,7 +26,8 @@ const ScheduleMeetings = () => {
                                 {item.room_id != "" &&
                                 <h6 className="id-no1">room id: #{item.room_id}</h6>}
                                 {item.room_id == "" && <h6 className="id-no1">meeting id: #{item.id}</h6>}
-                                {/* <h5 className="card-details1"><span className="p-header-3">Project Name:</span> {item.project.task_delivery_order}</h5> */}
+                                <h5 className="card-details1"><span className="p-header-3">Agenda:</span> {item.agenda}</h5>
+                                <h5 className="card-details1"><span className="p-header-3">Location:</span> {item.medium == 0 ? 'Physical' :'Virtual'}</h5>
                                 <h5 className="card-details1"><span className="p-header-3">Scheduled Date &amp; Time :</span> {item.start_time}</h5>
                             </CCardBody>
 
