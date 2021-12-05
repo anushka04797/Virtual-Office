@@ -8,13 +8,16 @@ text-align: left;
 letter-spacing: -0.01em;
 margin-bottom: 30px;
 }
+.remove-acc-bg{
+    border-color: transparent !important;
+}
 .card-ongoing-project{
 /* background: #FFFFFF; */
 border-radius: 3px;
     box-shadow: rgb(9 30 66 / 25%) 0px 1px 1px, rgb(9 30 66 / 13%) 0px 0px 1px 1px;
 border: none !important;
 }
-.ongoing-card-header{
+.ongoing-accordion-header{
     font-size: 1.14286em;
     font-style: inherit;
     line-height: 1.25;
@@ -22,6 +25,7 @@ border: none !important;
     letter-spacing: -0.006em;
     color: #172B4D;
     text-transform: capitalize;
+    font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,'Fira Sans','Droid Sans','Helvetica Neue',sans-serif !important;
 
 
 }
