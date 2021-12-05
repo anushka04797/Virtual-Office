@@ -1,7 +1,7 @@
 import React from 'react';
 import { HashRouter, Route, Switch,Redirect } from 'react-router-dom';
 import '@coreui/coreui/dist/css/coreui.min.css'
-import 'bootstrap/dist/css/bootstrap.min.css'
+
 import './App.css';
 import ProtectedRoute from './components/protected-route/ProtectedRoute'
 import { ThemeProvider,createTheme } from '@material-ui/core/styles';
@@ -17,7 +17,7 @@ const theme = createTheme({
     // }
   },
   typography: {
-    "fontFamily": `"Poppins", sans-serif`,
+    "fontFamily": `-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,'Fira Sans','Droid Sans','Helvetica Neue',sans-serif`,
   
    },
   
