@@ -308,25 +308,25 @@ const UserProfile = () => {
 
                                                 {/**info show */}
                                                 <div className="row justify-content-center">
-                                                    <div className="col-md-6">
+                                                    <div className="col-md-6 col-lg-4">
                                                         <h5 className="info-header-1">Full Name</h5>
                                                         <h5 className="project-details-points child">
                                                             {capitalize(profile_details.first_name) + ' ' + capitalize(profile_details.last_name)}{" "}
                                                         </h5>
                                                     </div>
-                                                    <div className="col-md-6">
+                                                    <div className="col-md-6 col-lg-4">
                                                         <h5 className="info-header-1"> Email</h5>
                                                         <h5 className="project-details-points child">
                                                             {profile_details.email}
                                                         </h5>
                                                     </div>
-                                                    <div className="col-md-6">
+                                                    {/* <div className="col-md-6">
                                                         <h5 className="info-header-1">Job title</h5>
                                                         {profile_details.designation!=null ?( <h5 className="project-details-points child">
                                                             {profile_details.designation.name}
                                                         </h5>) : <h5 className="project-details-points child"> Not Available</h5>}
-                                                    </div>
-                                                    <div className="col-md-6">
+                                                    </div> */}
+                                                    <div className="col-md-6 col-lg-4">
                                                         <h5 className="info-header-1"> Phone</h5>
                                                         <h5 className="project-details-points child">
                                                             {profile_details.phone}
