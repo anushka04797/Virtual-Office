@@ -8,6 +8,7 @@ import { SnackbarProvider } from 'notistack';
 import reportWebVitals from './reportWebVitals';
 import store from './store/Store'
 import { Provider } from 'react-redux'
+import 'bootstrap/dist/css/bootstrap.min.css';
 React.icons = icons
 ReactDOM.render(
   <Provider store={store}>

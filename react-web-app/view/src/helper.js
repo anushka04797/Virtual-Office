@@ -15,6 +15,8 @@ export const has_group=(group)=>{
 }
 export const has_permission=(permission)=>{
     let permissions = sessionStorage.getItem(PERMISSIONS).split(',')
+    console.log('permission',permission);
+    console.log('include',permissions.includes(permission));
     return permissions.includes(permission)
 }
 export function arrayRemoveItem(arr, value) { 
