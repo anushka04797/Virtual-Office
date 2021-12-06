@@ -12,6 +12,9 @@ margin-bottom: 30px;
 .card-header-portion-ongoing{
     display: flex;
 }
+.remove-acc-bg{
+    border-color: transparent !important;
+}
 .ongoing-card-header-1{
     font-size: 1.14286em;
     font-style: inherit;

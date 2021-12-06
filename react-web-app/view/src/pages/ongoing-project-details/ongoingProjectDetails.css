@@ -29,6 +29,7 @@ border: none !important;
 
 
 }
+
 .fav-button{
 color: #FBCA91;
 }
@@ -515,7 +516,7 @@ color: #FAFBFC;
     order: 2;
     margin-right: 40px;
 } */
-
+/*m____ MEDIA QUERY_____*/
 @media all and (min-width:300px) and (max-width:480px){
     /* hr.header-underline1{
         width: 200px;
@@ -529,6 +530,10 @@ color: #FAFBFC;
 .confirm-name-pm{
     margin-left: 2px;
 }
+.fix-action-btn-alignment{
+display:block;
+
+}
 }
 @media all and (min-width:481px) and (max-width:992px){
     .pm-name-edit-part{
@@ -538,13 +543,19 @@ color: #FAFBFC;
      min-width: 250px;
      max-width: 300px;
  }
+ .fix-action-btn-alignment{
+    display:block;
+    
+    }
 }
 @media all and (min-width:992px){
     .ongoing-action-card-buttons{
         text-align: right;
       
     }
-  
+  .fix-action-btn-alignment{
+    float: right !important;
+  }
 }
 @media all and (min-width:1179px){
     .pm-name-edit-part{

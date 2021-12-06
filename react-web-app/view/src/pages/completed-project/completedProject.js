@@ -8,7 +8,15 @@ import React, { useState } from 'react';
 import { CIcon } from "@coreui/icons-react";
 import { useSelector } from 'react-redux';
 import { BASE_URL } from '../../Config';
-import '../my-projects/myProjects.css'
+import '../my-projects/myProjects.css';
+import {
+    Accordion,
+    AccordionItem,
+    AccordionItemHeading,
+    AccordionItemButton,
+    AccordionItemPanel,
+} from 'react-accessible-accordion';
+import 'react-accessible-accordion/dist/fancy-example.css';
 import SubTaskDetailsModal from '../../components/subtask-details-modal/SubTaskDetailsModal';
 import LinearWithValueLabel from '../../components/linear-progress-bar/linear-progress-bar';
 const CompleteProjects = () => {
@@ -19,9 +27,9 @@ const CompleteProjects = () => {
     }
     const [show_sub_task_details, setShowSubTaskDetails] = useState(false)
     const [selectedSubTask, setSelectedSubTask] = useState()
-    function calculate_progress_in_percentage(total_hours,remaining_hours){
-        let worked_hours= parseFloat(total_hours)-parseFloat(remaining_hours)
-        return (100 * worked_hours)/parseFloat(total_hours)
+    function calculate_progress_in_percentage(total_hours, remaining_hours) {
+        let worked_hours = parseFloat(total_hours) - parseFloat(remaining_hours)
+        return (100 * worked_hours) / parseFloat(total_hours)
     }
     return (
         <>
@@ -100,86 +108,64 @@ const CompleteProjects = () => {
                 <div className="row">
 
                     <div className="col-md-11 col-sm-12 col-xs-12 mt-1">
-                        {projects != undefined && projects.map((project, idx) => (<CCard className="card-ongoing-project" key={idx}>
-                            <CCardBody className="details-project-body">
+                        {projects != undefined && <Accordion allowMultipleExpanded={false} className="remove-acc-bg" allowZeroExpanded>
+                            {projects.map((project, idx) => (
+                                <AccordionItem key={idx} className="card-ongoing-project">
+                                    <AccordionItemHeading className="ongoing-accordion-header">
+                                        <AccordionItemButton>
+                                            <IconButton aria-label="favourite" disabled size="medium" >
+                                                <GradeIcon fontSize="inherit" className="fav-button" />
 
-                                <h4 className="ongoing-card-header"><IconButton aria-label="favourite" size="medium" >
-                                    <GradeIcon fontSize="inherit" className="fav-button" />
-                                </IconButton>{String(project.project.task_delivery_order.title).toUpperCase() + ' / ' + String(project.project.sub_task).toUpperCase()}</h4>
-                                <hr className="header-underline1" />
+                                            </IconButton>{String(project.project.task_delivery_order.title).toUpperCase() + ' / ' + String(project.project.sub_task).toUpperCase()}
 
-                                {/*task percentage portion */}
-                                <div>
-                                    {/* <h5 className="tasks-done"><span className="tiny-header1">Task Done : </span>5/10 </h5> */}
-                                    <h6 className="show-amount">{remaining_hours(project.project.remaining_hours, project.project.planned_hours)}/{parseInt(project.project.planned_hours)} Hrs</h6>
-                                    <LinearWithValueLabel progress={calculate_progress_in_percentage(project.project.planned_hours,project.project.remaining_hours)}/>
-                                    {/* <div className="progress progress-background">
-                                        <div className="progress-bar custom-progress1 progress-bar-animated" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" style={{ width: '25%' }}></div>
-                                    </div> */}
-                                </div>
-                                {/*Project category buttons */}
-                                <div className="all-da-buttons-1">
-                                    {/* <CButton className="package-button lilac" shape="rounded-pill" onClick={() => setVisible(!visible)}>
-                                        Front End Design
-                                        <span className="tooltiptext">1000.5</span>
-                                    </CButton> */}
-                                    {Array.from(project.subtasks).length > 0 && Array.from(project.subtasks).map((task, idx) => (
-                                        <CButton className="package-button rounded-pill" type="button" onClick={() => { setShowSubTaskDetails(true); setSelectedSubTask(task); console.log('task', task) }}>
-                                            {task.task_title}
-                                            <span className="tooltiptext">{task.work_package_index}</span>
-                                        </CButton>
-                                    ))}
-                                </div>
+                                            <span className="fix-action-btn-alignment">
+                                            <CButton className="view-ongoing-details" onClick={() => historyTo.push({ pathname: '/dashboard/Projects/completed-projects/details/' + project.project.work_package_number, state: { project: project } })}><CIcon name="cil-list-rich" className="mr-1" />View Details</CButton>
+                                            </span>
+                                        </AccordionItemButton>
+                                    </AccordionItemHeading>
+                                    <AccordionItemPanel>
+                                        {/*task percentage portion */}
+                                        <div>
+                                            <h6 className="show-amount">{remaining_hours(project.project.remaining_hours, project.project.planned_hours)}/{parseInt(project.project.planned_hours)} Hrs</h6>
+                                            <LinearWithValueLabel progress={calculate_progress_in_percentage(project.project.planned_hours, project.project.remaining_hours)} />
+                                        </div>
 
-                                {/*Project participants */}
-                                <div className="all-da-workers1">
-                                    {project.assignees.length > 0 && Array.from(project.assignees).map((assignee, idx) => (
-                                        <img className="img-fluid worker-image" src={assignee.profile_pic != null ? BASE_URL + assignee.profile_pic : 'avatars/user-avatar-default.png'} />
-                                    ))}
-                                </div>
+                                        {/*Project category buttons */}
+                                        <div className="all-da-buttons-1">
+                                            {Array.from(project.subtasks).length > 0 && Array.from(project.subtasks).map((task, idx) => (
+                                                <CButton className="package-button rounded-pill" type="button" onClick={() => { setShowSubTaskDetails(true); setSelectedSubTask(task); console.log('task', task) }}>
+                                                    {task.task_title}
+                                                    <span className="tooltiptext">{task.work_package_index}</span>
+                                                </CButton>
+                                            ))}
+                                        </div>
+                                        {/*Project participants */}
+                                        <div className="all-da-workers1">
+                                            {project.assignees.length > 0 && Array.from(project.assignees).map((assignee, idx) => (
+                                                <img className="img-fluid worker-image" src={assignee.profile_pic != null ? BASE_URL + assignee.profile_pic : 'avatars/user-avatar-default.png'} />
+                                            ))}
+                                        </div>
+                                        {/*project info in text */}
+                                        <div className="information-show row">
+                                            <div className="info-show-now col-md-6">
+                                                <h5 className="project-details-points child"><h5 className="info-header-1">Assigned by :</h5>{project.project.pm.first_name + ' ' + project.project.pm.last_name}</h5>
+                                                <h5 className="project-details-points"><h5 className="info-header-1">Project Manager : </h5>{project.project.pm.first_name + ' ' + project.project.pm.last_name}</h5>
+                                            </div>
+                                            <div className="info-show-now col-md-6">
+                                                <h5 className="project-details-points child"><h5 className="info-header-1">Start Date : </h5>{project.project.date_created}</h5>
 
-                                {/*project info in text */}
-                                <div className="information-show row">
-                                    <div className="info-show-now col-md-6">
-                                        <h5 className="project-details-points child"><h5 className="info-header-1">Assigned by :</h5>{project.project.pm.first_name + ' ' + project.project.pm.last_name}</h5>
-                                        {/* <h5 className="project-details-points"><h5 className="info-header-1">Work Package : </h5>1000</h5> */}
-                                        <h5 className="project-details-points"><h5 className="info-header-1">Project Manager : </h5>{project.project.pm.first_name + ' ' + project.project.pm.last_name}</h5>
-                                    </div>
-                                    <div className="info-show-now col-md-6">
-                                        {/* <h5 className="project-details-points"><h5 className="info-header-1">Project Details :</h5>Design and develop the app for the seller and buyer module</h5> */}
-                                        <h5 className="project-details-points child"><h5 className="info-header-1">Start Date : </h5>{project.project.date_created}</h5>
+                                                <h5 className="project-details-points"><h5 className="info-header-1">Planned Delivery Date : </h5>{project.project.planned_delivery_date}</h5>
+                                            </div>
+                                        </div>
 
-                                        <h5 className="project-details-points"><h5 className="info-header-1">Planned Delivery Date : </h5>{project.project.planned_delivery_date}</h5>
-                                    </div>
-                                </div>
+                                    </AccordionItemPanel>
+                                </AccordionItem>
+                            ))}
 
-                                {/**file uploads and view */}
-                                {/*  <div className="file-show">
-                                    <h5 className="files-view">Files :</h5>
-                                    <h5 className="file-attached"><CButton className="remove-file"><img src={"assets/icons/close-btn.svg"} /></CButton>somefile.file</h5> */}
+                        </Accordion>
+                        }
 
-
-                                {/**extra static buttons,delete code after dynamic implementation */}
-                                {/* <h5 className="file-attached"><CButton className="remove-file"><img src={"assets/icons/close-btn.svg"} /></CButton>somefiledjfkdjkfjdkjfkdjkfjkdjfk.file</h5> */}
-                                {/*upload file nibutton */}
-                                {/* <IconButton aria-label="upload" className="upload-file-button1">
-                                        <AddCircleIcon className="ad-file-icon" />
-                                    </IconButton>
-                                </div> */}
-
-                                {/*add new task option */}
-
-                                {/* <div className="new-task-add">
-                                    <CButton className="task-add-btn-1" onClick={toggleTaskForm}>+ Add New Task</CButton>
-                                </div> */}
-
-                                {/*show add task form on click button */}
-                                <div className="ongoing-action-card-buttons">
-                                    <CButton className="view-ongoing-details" onClick={() => historyTo.push({ pathname: '/dashboard/Projects/completed-projects/details/' + project.project.work_package_number, state: { project: project } })}><CIcon name="cil-list-rich" className="mr-1" />View Details</CButton>
-                                </div>
-                            </CCardBody>
-
-                        </CCard>))}
+                        
                         {/**If no projects are there */}
                         {projects == '' ? (
 
