@@ -11,6 +11,14 @@ import { BASE_URL, USER_ID } from '../../Config';
 import { API } from '../../Config';
 import swal from 'sweetalert'
 import Select from "react-select";
+import {
+    Accordion,
+    AccordionItem,
+    AccordionItemHeading,
+    AccordionItemButton,
+    AccordionItemPanel,
+} from 'react-accessible-accordion';
+import 'react-accessible-accordion/dist/fancy-example.css';
 import LinearWithValueLabel from '../../components/linear-progress-bar/linear-progress-bar';
 import './myProjects.css'
 const MyProjects = () => {
@@ -143,9 +151,9 @@ const MyProjects = () => {
                 }
             });
     }
-    function calculate_progress_in_percentage(total_hours,remaining_hours){
-        let worked_hours= parseFloat(total_hours)-parseFloat(remaining_hours)
-        return (100 * worked_hours)/parseFloat(total_hours)
+    function calculate_progress_in_percentage(total_hours, remaining_hours) {
+        let worked_hours = parseFloat(total_hours) - parseFloat(remaining_hours)
+        return (100 * worked_hours) / parseFloat(total_hours)
     }
     return (
         <>
@@ -166,7 +174,7 @@ const MyProjects = () => {
                                         </IconButton>
                                         {selectedSubTask != undefined ? selectedSubTask.task_delivery_order.title : ''}
                                     </h4>
-                                
+
                                 </div>
                                 <div className="justify-content-center">
                                     <div className="col-md-12 col-sm-12 col-xs-12 col-lg-12 mt-1 mb-2">
@@ -229,55 +237,55 @@ const MyProjects = () => {
             <div className="container">
                 <h4 className="dash-header">My Projects ({Array.from(projects).length})</h4>
                 <div className="row">
-                    <div className="col-md-11  col-sm-12 col-xs-12 mt-1">
-                        {projects != undefined && Array.from(projects).map((project, idx) => (<CCard key={idx} className="card-ongoing-project">
-                            <CCardBody className="details-project-body">
-                                <h4 className="ongoing-card-header">
-                                    <IconButton aria-label="favourite" disabled size="medium" >
-                                        <GradeIcon fontSize="inherit" className="fav-button" />
-                                    </IconButton>{String(project.project.task_delivery_order.title).toUpperCase() + ' / ' + String(project.project.sub_task).toUpperCase()}
-                                </h4>
-                                <hr className="header-underline1" />
+                    <div className="col-md-12 col-lg-11 col-sm-12 col-xs-12 mt-1">
+                        {projects != undefined &&
+                            <Accordion allowMultipleExpanded={false} className="remove-acc-bg  mb-3" allowZeroExpanded>
+                                {Array.from(projects).map((project, idx) => (
+                                    <AccordionItem key={idx} className="card-ongoing-project">
+                                        <AccordionItemHeading className="ongoing-accordion-header">
+                                            <AccordionItemButton>
 
-                                {/*task percentage portion */}
+                                                <IconButton aria-label="favourite" disabled size="medium" >
+                                                    <GradeIcon fontSize="inherit" className="fav-button" />
+                                                </IconButton>{String(project.project.task_delivery_order.title).toUpperCase() + ' / ' + String(project.project.sub_task).toUpperCase()}
+                                                {/**action buttons */}
+                                                <span className="fix-action-btn-alignment">
+                                                    <CButton className="view-ongoing-details" onClick={() => history.push({ pathname: '/dashboard/Projects/my-projects/details/' + project.project.work_package_number, state: { project: project } })}><CIcon name="cil-list-rich" className="mr-1" />View Details</CButton>
+                                                    <CButton type="button" onClick={() => { mark_project_completed(project.project.work_package_number) }} className="mark-ongoing-completed"><CIcon name="cil-check-alt" className="mr-1" />Mark as Completed</CButton>
+                                                </span>
+                                            </AccordionItemButton>
+                                        </AccordionItemHeading>
+                                        <AccordionItemPanel>
+                                        {/* <hr className="header-underline1" /> */}
+                                         {/*task percentage portion */}
                                 <div>
-                                    {/* <h5 className="tasks-done"><span className="tiny-header1">Task Done : </span>5/10 </h5> */}
-                                    <h6 className="show-amount">{remaining_hours(project.project.remaining_hours, project.project.planned_hours)}/{parseInt(project.project.planned_hours)} Hrs</h6>
-                                    <LinearWithValueLabel progress={()=>calculate_progress_in_percentage(project.project.planned_hours,project.project.remaining_hours)}/>
-                                    {/* <div className="progress progress-background">
-                                        <div className="progress-bar custom-progress1 progress-bar-animated" role="progressbar" aria-valuenow="5" aria-valuemin="0" aria-valuemax={parseInt(project.project.planned_hours)} style={{ width: '100%' }}></div>
-                                    </div> */}
-                                </div>
-                                {/*Project category buttons */}
-                                <div className="all-da-buttons-1">
-                                    {/* <CButton className="package-button lilac" shape="rounded-pill" onClick={() => setVisible(!visible)}>
-                                        Front End Design
-                                        <span className="tooltiptext">1000.5</span>
-                                    </CButton> */}
-                                    {Array.from(project.subtasks).length > 0 && Array.from(project.subtasks).map((task, idx) => (
+                                <h6 className="show-amount">{remaining_hours(project.project.remaining_hours, project.project.planned_hours)}/{parseInt(project.project.planned_hours)} Hrs</h6>
+                                <LinearWithValueLabel progress={()=>calculate_progress_in_percentage(project.project.planned_hours,project.project.remaining_hours)}/>
+                                    </div> 
+                                      {/*Project category buttons */}
+                                      <div className="all-da-buttons-1">
+                                      {Array.from(project.subtasks).length > 0 && Array.from(project.subtasks).map((task, idx) => (
                                         <CButton key={idx} type="button" className="package-button rounded-pill" onClick={() => { setShowSubTaskDetails(true); setSelectedSubTask(task); console.log('task',task) }}>
                                             {task.task_title}
                                             <span className="tooltiptext">{task.work_package_index}</span>
                                         </CButton>
-                                    ))}
-                                </div>
-
-                                {/*Project participants */}
+                                    ))} 
+                                      </div>
+                                       {/*Project participants */}
                                 <div className="all-da-workers1">
                                     {project.assignees.length > 0 && Array.from(project.assignees).map((assignee, idx) => (
                                         <img key={idx} className="img-fluid worker-image" src={assignee.profile_pic != null ? BASE_URL + assignee.profile_pic : 'avatars/user-avatar-default.png'} />
                                     ))}
                                 </div>
-
                                 {/*project info in text */}
                                 <div className="information-show row">
-                                    <div className="info-show-now col-lg-6">
-                                        <h5 className="project-details-points child"><h5 className="info-header-1">Assigned by :</h5>{project.project.pm.first_name + ' ' + project.project.pm.last_name}</h5>
-                                        {/* <h5 className="project-details-points"><h5 className="info-header-1">Work Package : </h5>1000</h5> */}
-                                        <h5 className="project-details-points"><h5 className="info-header-1">Project Manager : {status.project != idx ? (<CButton className="edit-pm-name" variant='ghost' onClick={(e) => changePMChangeInputFieldStatus(idx, 'open')}><CIcon name="cil-pencil" className="mr-1 pen-icon-pm" /></CButton>) : null}</h5>{status.project != idx ? (<span>{project.project.pm.first_name + ' ' + project.project.pm.last_name}</span>
+                                <div className="info-show-now col-lg-6">
+                                <h5 className="project-details-points child"><h5 className="info-header-1">Assigned by :</h5>{project.project.pm.first_name + ' ' + project.project.pm.last_name}</h5>
+                                <h5 className="project-details-points"><h5 className="info-header-1">Project Manager : {status.project != idx ? (<CButton className="edit-pm-name" variant='ghost' onClick={(e) => changePMChangeInputFieldStatus(idx, 'open')}><CIcon name="cil-pencil" className="mr-1 pen-icon-pm" /></CButton>) : null}</h5>{status.project != idx ? (<span>{project.project.pm.first_name + ' ' + project.project.pm.last_name}</span>
                                         ) : <></>}
                                             {/**if clicked edit button */}
-                                            {status.project == idx ? (
+                                          {/**if clicked edit button */}
+                                          {status.project == idx ? (
                                                 <div className="pm-name-edit-part">
                                                     <CForm className="desktop-width">
                                                         {/* <CInput className="custom-forminput-6 pm-edit" type="text" value={project.project.sub_task} /> */}
@@ -303,23 +311,21 @@ const MyProjects = () => {
                                                     </div>
                                                 </div>
                                             ) : <></>}
-                                        </h5>
-                                    </div>
-                                    <div className="info-show-now col-lg-6">
+                                        </h5>     
+                                </div>
+                                <div className="info-show-now col-lg-6">
                                         {/* <h5 className="project-details-points"><h5 className="info-header-1">Project Details :</h5>Design and develop the app for the seller and buyer module</h5> */}
                                         <h5 className="project-details-points child"><h5 className="info-header-1">Start Date : </h5>{project.project.date_created}</h5>
 
                                         <h5 className="project-details-points"><h5 className="info-header-1">Planned Delivery Date : </h5>{project.project.planned_delivery_date}</h5>
                                     </div>
                                 </div>
+                                        </AccordionItemPanel>
+                                    </AccordionItem>
+                                ))}
+                            </Accordion>
+}
 
-                                <div className="ongoing-action-card-buttons">
-                                    <CButton className="view-ongoing-details" onClick={() => history.push({ pathname: '/dashboard/Projects/my-projects/details/' + project.project.work_package_number, state: { project: project } })}><CIcon name="cil-list-rich" className="mr-1" />View Details</CButton>
-                                    <CButton type="button" onClick={() => { mark_project_completed(project.project.work_package_number) }} className="mark-ongoing-completed"><CIcon name="cil-check-alt" className="mr-1" />Mark as Completed</CButton>
-                                </div>
-                            </CCardBody>
-
-                        </CCard>))}
                         {/**If no projects are there */}
                         {Array.from(projects).length < 1 ? (
                             <CAlert className="no-value-show-alert" color="primary">Currently there are no projects</CAlert>
