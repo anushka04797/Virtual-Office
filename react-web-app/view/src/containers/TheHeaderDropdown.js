@@ -17,7 +17,7 @@ const TheHeaderDropdown = () => {
   const profile_details = useSelector(state=>state.profile.data)
   function logout() {
     API.get('auth/logout/').then((res) => {
-      sessionStorage.clear()
+      window.sessionStorage.clear();
       history.push('/')
     }).catch(err => {
       sessionStorage.clear()

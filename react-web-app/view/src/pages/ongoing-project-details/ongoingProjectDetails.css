@@ -510,7 +510,22 @@ color: #FAFBFC;
     background-color: #2da160;
     color: #FAFBFC;
 }
-
+.export-project-list{
+    font-style: normal;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 18px;
+    padding: 5px 10px ;
+    margin-right: 10px;
+    border-color: transparent;
+  
+    background-color: #26A69A;
+    color: #FFFFFF;
+}
+.export-project-list:hover{
+    color: #FFFFFF;  
+    background-color: #00838F;
+}
 /* .child{
     margin-left: auto;
     order: 2;
@@ -534,6 +549,19 @@ color: #FAFBFC;
 display:block;
 
 }
+.export-project-list{
+    display: block !important;
+}
+}
+@media all  and (min-width:482px) and (max-width:600px){
+    .export-project-list{
+        display: block !important;
+    }
+}
+@media all and (min-width:601px) and (max-width:992px){
+    .export-project-list{
+       float: right ;
+    }  
 }
 @media all and (min-width:481px) and (max-width:992px){
     .pm-name-edit-part{
@@ -556,6 +584,9 @@ display:block;
   .fix-action-btn-alignment{
     float: right !important;
   }
+  .export-project-list{
+    float: right ;
+ }  
 }
 @media all and (min-width:1179px){
     .pm-name-edit-part{

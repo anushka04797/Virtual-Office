@@ -14,6 +14,8 @@ import swal from 'sweetalert'
 import { fetchProjectsThunk } from '../../store/slices/ProjectsSlice';
 import { has_permission } from '../../helper';
 import '../my-projects/myProjects.css';
+import * as FileSaver from 'file-saver';
+import * as XLSX from 'xlsx';
 import {
     Accordion,
     AccordionItem,
@@ -26,6 +28,8 @@ import LinearWithValueLabel from '../../components/linear-progress-bar/linear-pr
 const OngoingProjectDetails = () => {
     let history = useHistory();
     const dispatch = useDispatch();
+    const [xlData, setXlData] = useState([]);
+    const [projectData, setProjectData] = useState([]);
     const [pmStatus, setPmStatus] = useState(1);
     const [status, setStatus] = useState(0);
     const radioHandler = (status, pmStatus) => {
@@ -41,9 +45,13 @@ const OngoingProjectDetails = () => {
                 temp.push(item)
             }
         })
+
         console.log('temp', temp)
-        return temp
+
+        return temp;
+
     })
+
     const toggleTaskForm = () => {
         setShowTaskForm(!showTaskForm);
     };
@@ -57,9 +65,10 @@ const OngoingProjectDetails = () => {
 
     const animatedComponents = makeAnimated();
     useEffect(() => {
-        console.log('projects', projects)
+        console.log('projects', projects);
         dispatch(fetchProjectsThunk(sessionStorage.getItem(USER_ID)))
     }, [])
+    console.log('projectData',projectData);
     const mark_project_completed = (id) => {
         swal({
             title: "Are you sure?",
@@ -99,6 +108,20 @@ const OngoingProjectDetails = () => {
     function calculate_progress_in_percentage(total_hours, remaining_hours) {
         let worked_hours = parseFloat(total_hours) - parseFloat(remaining_hours)
         return (100 * worked_hours) / parseFloat(total_hours)
+    }
+
+
+    {/**export in excel */ }
+    const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+    const fileExtension = '.xlsx';
+    const fileName = 'Assigned project List';
+    const exportToCSV = () => {
+
+        const ws = XLSX.utils.json_to_sheet(xlData);
+        const wb = { Sheets: { 'data': ws }, SheetNames: ['data'] };
+        const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+        const data = new Blob([excelBuffer], { type: fileType });
+        FileSaver.saveAs(data, fileName + fileExtension);
     }
     return (
         <>
@@ -178,9 +201,10 @@ const OngoingProjectDetails = () => {
                 </CModalBody>
             </CModal>}
             <div className="container">
-                <h4 className="dash-header">Assigned Projects({Array.from(projects).length})</h4>
+
                 <div className="row">
                     <div className="col-md-12 col-lg-11 col-sm-12 col-xs-12 mt-1 mb-3">
+                        <h4 className="dash-header">Assigned Projects({Array.from(projects).length}) <CButton className="export-project-list" onClick={() => exportToCSV()}>Export to excel</CButton></h4>
                         {projects != undefined &&
 
                             <Accordion allowMultipleExpanded={false} className="remove-acc-bg" allowZeroExpanded>
@@ -200,41 +224,41 @@ const OngoingProjectDetails = () => {
                                             </AccordionItemButton>
                                         </AccordionItemHeading>
                                         <AccordionItemPanel>
-                                        {/* <hr className="header-underline1" /> */}
-                                        {/*task percentage portion */}
-                                        <div>
-                                            <h6 className="show-amount">{worked_hours(project.project.remaining_hours, project.project.planned_hours)}/{parseInt(project.project.planned_hours)} Hrs</h6>
-                                            <LinearWithValueLabel progress={calculate_progress_in_percentage(project.project.planned_hours, project.project.remaining_hours)} />
-                                        </div>
-                                        {/*Project category buttons */}
-                                        <div className="all-da-buttons-1">
-
-                                            {Array.from(project.subtasks).length > 0 && Array.from(project.subtasks).map((task, idx) => (
-                                                <CButton key={idx} type="button" className="package-button rounded-pill" onClick={() => { setShowSubTaskDetails(true); setSelectedSubTask(task); console.log('task', task) }}>
-                                                    {task.task_title}
-                                                    <span className="tooltiptext">{task.work_package_index}</span>
-                                                </CButton>
-                                            ))}
-                                        </div>
-                                        {/*Project participants */}
-                                        <div className="all-da-workers1">
-                                            {project.assignees.length > 0 && Array.from(project.assignees).map((assignee, idx) => (
-                                                <img key={idx} className="img-fluid worker-image" src={assignee.profile_pic != null ? BASE_URL + assignee.profile_pic : 'avatars/user-avatar-default.png'} />
-                                            ))}
-                                        </div>
-                                        {/*project info in text */}
-                                        <div className="information-show row">
-                                            <div className="info-show-now col-lg-6">
-                                                <h5 className="project-details-points child"><h5 className="info-header-1">Assigned by :</h5>{project.project.pm.first_name + ' ' + project.project.pm.last_name}</h5>
-                                                <h5 className="project-details-points"><h5 className="info-header-1">Project Manager : </h5>{project.project.pm.first_name + ' ' + project.project.pm.last_name}    </h5>
+                                            {/* <hr className="header-underline1" /> */}
+                                            {/*task percentage portion */}
+                                            <div>
+                                                <h6 className="show-amount">{worked_hours(project.project.remaining_hours, project.project.planned_hours)}/{parseInt(project.project.planned_hours)} Hrs</h6>
+                                                <LinearWithValueLabel progress={calculate_progress_in_percentage(project.project.planned_hours, project.project.remaining_hours)} />
                                             </div>
-                                            <div className="info-show-now col-lg-6">
-                                                {/* <h5 className="project-details-points"><h5 className="info-header-1">Project Details :</h5>Design and develop the app for the seller and buyer module</h5> */}
-                                                <h5 className="project-details-points child"><h5 className="info-header-1">Start Date : </h5>{project.project.date_created}</h5>
+                                            {/*Project category buttons */}
+                                            <div className="all-da-buttons-1">
 
-                                                <h5 className="project-details-points"><h5 className="info-header-1">Planned Delivery Date : </h5>{project.project.planned_delivery_date}</h5>
+                                                {Array.from(project.subtasks).length > 0 && Array.from(project.subtasks).map((task, idx) => (
+                                                    <CButton key={idx} type="button" className="package-button rounded-pill" onClick={() => { setShowSubTaskDetails(true); setSelectedSubTask(task); console.log('task', task) }}>
+                                                        {task.task_title}
+                                                        <span className="tooltiptext">{task.work_package_index}</span>
+                                                    </CButton>
+                                                ))}
                                             </div>
-                                        </div>
+                                            {/*Project participants */}
+                                            <div className="all-da-workers1">
+                                                {project.assignees.length > 0 && Array.from(project.assignees).map((assignee, idx) => (
+                                                    <img key={idx} className="img-fluid worker-image" src={assignee.profile_pic != null ? BASE_URL + assignee.profile_pic : 'avatars/user-avatar-default.png'} />
+                                                ))}
+                                            </div>
+                                            {/*project info in text */}
+                                            <div className="information-show row">
+                                                <div className="info-show-now col-lg-6">
+                                                    <h5 className="project-details-points child"><h5 className="info-header-1">Assigned by :</h5>{project.project.pm.first_name + ' ' + project.project.pm.last_name}</h5>
+                                                    <h5 className="project-details-points"><h5 className="info-header-1">Project Manager : </h5>{project.project.pm.first_name + ' ' + project.project.pm.last_name}    </h5>
+                                                </div>
+                                                <div className="info-show-now col-lg-6">
+                                                    {/* <h5 className="project-details-points"><h5 className="info-header-1">Project Details :</h5>Design and develop the app for the seller and buyer module</h5> */}
+                                                    <h5 className="project-details-points child"><h5 className="info-header-1">Start Date : </h5>{project.project.date_created}</h5>
+
+                                                    <h5 className="project-details-points"><h5 className="info-header-1">Planned Delivery Date : </h5>{project.project.planned_delivery_date}</h5>
+                                                </div>
+                                            </div>
                                         </AccordionItemPanel>
                                     </AccordionItem>
                                 ))}
