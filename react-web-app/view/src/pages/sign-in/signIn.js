@@ -16,6 +16,7 @@ import { API, PERMISSIONS, PUBLIC_API, TOKEN, USER_ID } from "../../Config";
 import { useFormik } from "formik";
 import { useLocation } from "react-router";
 import { useSnackbar } from "notistack";
+import swal from "sweetalert";
 const SignIn = () => {
   let history = useHistory();
   let location = useLocation()
@@ -45,8 +46,14 @@ const SignIn = () => {
         sessionStorage.setItem(USER_ID,res.data.user_id)
         API.get('auth/permissions/all/').then((res)=>{
           console.log('permissions',res.data.data)
-          sessionStorage.setItem(PERMISSIONS,res.data.data)
-          history.push({pathname:'/dashboard',state:{from:'login'}})
+          if(Array.from(res.data.data).length>0){
+            sessionStorage.setItem(PERMISSIONS,res.data.data)
+            history.push({pathname:'/dashboard',state:{from:'login'}})
+          }
+          else{
+            sessionStorage.clear()
+            swal('No Permissions','Please contact your admin','error')
+          }
         })
       }
     }).catch(err=>{
