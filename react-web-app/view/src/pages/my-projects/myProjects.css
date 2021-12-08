@@ -187,6 +187,22 @@ margin-bottom: 30px;
         border:transparent!important;
         box-shadow: none !important;
     }
+    .export-project-list{
+        font-style: normal;
+        font-weight: 600;
+        font-size: 12px;
+        line-height: 18px;
+        padding: 5px 10px ;
+        margin-right: 10px;
+        border-color: transparent;
+      
+        background-color: #26A69A;
+        color: #FFFFFF;
+    }
+    .export-project-list:hover{
+        color: #FFFFFF;  
+        background-color: #00838F;
+    }
    
     /**___________ACTION BUTTONS____________**/
     .edit-project-ongoing-task{
@@ -294,6 +310,22 @@ margin-bottom: 30px;
 
 
     /**MEDIA QUERY**/
+    @media all and (min-width:300px) and (max-width:480px){
+        .export-project-list{
+            display: block !important;
+        }
+    }
+    @media all  and (min-width:482px) and (max-width:600px){
+        .export-project-list{
+            display: block !important;
+        }
+    }
+    @media all and (min-width:481px) and (max-width:992px){
+        .fix-action-btn-alignment{
+            display:block;
+            
+            }
+    }
     @media all and (min-width:992px){
         .project-actions{
             text-align: right;
@@ -308,4 +340,10 @@ margin-bottom: 30px;
         .cancel-update{
             margin-left: 10px;
         }
+        .fix-action-btn-alignment{
+            float: right !important;
+          }
+          .export-project-list{
+            float: right ;
+         }  
     }

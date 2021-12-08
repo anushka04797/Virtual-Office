@@ -1,6 +1,6 @@
 import React from 'react'
 import { CSidebar,CBadge,CNavItem,CSidebarBrand,CSidebarNav, CSidebarToggler,CNavTitle,CNavGroup } from '@coreui/react'
-import { CIcon } from '@coreui/icons-react';
+import CIcon from '@coreui/icons-react';
 const SideBar = () => {
     return (
         <>
