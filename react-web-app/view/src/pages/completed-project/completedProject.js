@@ -5,7 +5,7 @@ import IconButton from '@material-ui/core/IconButton';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import { useHistory } from "react-router-dom";
 import React, { useState } from 'react';
-import { CIcon } from "@coreui/icons-react";
+import CIcon from "@coreui/icons-react";
 import { useSelector } from 'react-redux';
 import { BASE_URL } from '../../Config';
 import '../my-projects/myProjects.css';
@@ -19,6 +19,8 @@ import {
 import 'react-accessible-accordion/dist/fancy-example.css';
 import SubTaskDetailsModal from '../../components/subtask-details-modal/SubTaskDetailsModal';
 import LinearWithValueLabel from '../../components/linear-progress-bar/linear-progress-bar';
+import * as FileSaver from 'file-saver';
+import * as XLSX from 'xlsx';
 const CompleteProjects = () => {
     let historyTo = useHistory();
     const projects = useSelector(state => state.projects.data.filter((project) => project.project.status === 1))
@@ -31,6 +33,37 @@ const CompleteProjects = () => {
         let worked_hours = parseFloat(total_hours) - parseFloat(remaining_hours)
         return (100 * worked_hours) / parseFloat(total_hours)
     }
+     {/**export in excel */ }
+     const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+     const fileExtension = '.xlsx';
+     const fileName = 'Completed project(s) List';
+     const xlData = [];
+     const exportToCSV = () => {
+         for (let i = 0; i < projects.length; i++) {
+ 
+ 
+             const item = projects[i];
+             let subTaskNames = [];
+             var subTaskName;
+             Array.from(item.subtasks).map((el) => {
+                 subTaskNames.push(el.task_title)
+             })
+             subTaskName = subTaskNames.join(",");
+             let assigneNames = [];
+             var assigneName;
+             Array.from(item.assignees).map((el) => {
+                 assigneNames.push(el.first_name + ' ' + el.last_name)
+             })
+             assigneName = assigneNames.join(",");
+             xlData.push({ 'Sl. No': i + 1, 'TDO': item.project.task_delivery_order.title, 'Work Package Number': item.project.work_package_number, 'Work Package Index': item.project.work_package_index, 'Project Name': item.project.sub_task, 'Subtasks': subTaskName, 'Assignee(s)': assigneName, 'Planned Value': item.project.planned_value, 'Planned Hours': item.project.planned_hours, 'Planned Delivery Date': item.project.planned_delivery_date })
+         }
+         const ws = XLSX.utils.json_to_sheet(xlData);
+         const wb = { Sheets: { 'data': ws }, SheetNames: ['data'] };
+         const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+         const data = new Blob([excelBuffer], { type: fileType });
+         FileSaver.saveAs(data, fileName + fileExtension);
+     }
+ 
     return (
         <>
             {selectedSubTask && <CModal alignment="center" show={show_sub_task_details} onClose={() => { setShowSubTaskDetails(!show_sub_task_details) }}>
@@ -104,10 +137,11 @@ const CompleteProjects = () => {
             </CModal>}
             {/* <SubTaskDetailsModal show={show_sub_task_details} onPressClose={setShowSubTaskDetails} selectedSubTask={selectedSubTask}/> */}
             <div className="container">
-                <h3 className="dash-header">Completed Projects({projects.length})</h3>
+               
                 <div className="row">
 
                     <div className="col-md-11 col-sm-12 col-xs-12 mt-1">
+                    <h3 className="dash-header">Completed Projects({projects.length}) <CButton className="export-project-list" onClick={() => exportToCSV()}>Export to excel</CButton></h3>
                         {projects != undefined && <Accordion allowMultipleExpanded={false} className="remove-acc-bg" allowZeroExpanded>
                             {projects.map((project, idx) => (
                                 <AccordionItem key={idx} className="card-ongoing-project">

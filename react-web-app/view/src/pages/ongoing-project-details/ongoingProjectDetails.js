@@ -5,7 +5,7 @@ import GradeIcon from '@material-ui/icons/Grade';
 import IconButton from '@material-ui/core/IconButton';
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
-import { CIcon } from "@coreui/icons-react";
+import CIcon from "@coreui/icons-react";
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import { BASE_URL, USER_ID } from '../../Config';
@@ -16,6 +16,7 @@ import { has_permission } from '../../helper';
 import '../my-projects/myProjects.css';
 import * as FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
+
 import {
     Accordion,
     AccordionItem,
@@ -28,8 +29,8 @@ import LinearWithValueLabel from '../../components/linear-progress-bar/linear-pr
 const OngoingProjectDetails = () => {
     let history = useHistory();
     const dispatch = useDispatch();
-    const [xlData, setXlData] = useState([]);
-    const [projectData, setProjectData] = useState([]);
+
+
     const [pmStatus, setPmStatus] = useState(1);
     const [status, setStatus] = useState(0);
     const radioHandler = (status, pmStatus) => {
@@ -68,7 +69,7 @@ const OngoingProjectDetails = () => {
         console.log('projects', projects);
         dispatch(fetchProjectsThunk(sessionStorage.getItem(USER_ID)))
     }, [])
-    console.log('projectData',projectData);
+
     const mark_project_completed = (id) => {
         swal({
             title: "Are you sure?",
@@ -115,8 +116,26 @@ const OngoingProjectDetails = () => {
     const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
     const fileExtension = '.xlsx';
     const fileName = 'Assigned project List';
+    const xlData = [];
     const exportToCSV = () => {
+        for (let i = 0; i < projects.length; i++) {
 
+
+            const item = projects[i];
+            let subTaskNames = [];
+            var subTaskName;
+            Array.from(item.subtasks).map((el) => {
+                subTaskNames.push(el.task_title)
+            })
+            subTaskName = subTaskNames.join(",");
+            let assigneNames = [];
+            var assigneName;
+            Array.from(item.assignees).map((el) => {
+                assigneNames.push(el.first_name + ' ' + el.last_name)
+            })
+            assigneName = assigneNames.join(",");
+            xlData.push({ 'Sl. No': i + 1, 'TDO': item.project.task_delivery_order.title, 'Work Package Number': item.project.work_package_number, 'Work Package Index': item.project.work_package_index, 'Project Name': item.project.sub_task, 'Subtasks': subTaskName, 'Assignee(s)': assigneName, 'Planned Value': item.project.planned_value, 'Planned Hours': item.project.planned_hours, 'Planned Delivery Date': item.project.planned_delivery_date })
+        }
         const ws = XLSX.utils.json_to_sheet(xlData);
         const wb = { Sheets: { 'data': ws }, SheetNames: ['data'] };
         const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });

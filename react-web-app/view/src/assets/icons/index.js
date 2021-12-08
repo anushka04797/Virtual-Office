@@ -33,7 +33,7 @@ import {
   cibGooglePay,
   cibCcAmex,cilBadge,cilControl,
   cibGhost,
-  
+  cisFileXls
 
 } from '@coreui/icons'
 import {
@@ -303,6 +303,7 @@ cilCamera,
   cilChartLine,
   cilCheckAlt,
   cilPen,
-  cilArrowThickToTop
+  cilArrowThickToTop,
+
   
 })
