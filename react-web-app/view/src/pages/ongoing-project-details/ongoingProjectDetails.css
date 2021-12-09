@@ -8,13 +8,16 @@ text-align: left;
 letter-spacing: -0.01em;
 margin-bottom: 30px;
 }
+.remove-acc-bg{
+    border-color: transparent !important;
+}
 .card-ongoing-project{
 /* background: #FFFFFF; */
 border-radius: 3px;
     box-shadow: rgb(9 30 66 / 25%) 0px 1px 1px, rgb(9 30 66 / 13%) 0px 0px 1px 1px;
 border: none !important;
 }
-.ongoing-card-header{
+.ongoing-accordion-header{
     font-size: 1.14286em;
     font-style: inherit;
     line-height: 1.25;
@@ -22,9 +25,11 @@ border: none !important;
     letter-spacing: -0.006em;
     color: #172B4D;
     text-transform: capitalize;
+    font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,'Fira Sans','Droid Sans','Helvetica Neue',sans-serif !important;
 
 
 }
+
 .fav-button{
 color: #FBCA91;
 }
@@ -505,13 +510,28 @@ color: #FAFBFC;
     background-color: #2da160;
     color: #FAFBFC;
 }
-
+.export-project-list{
+    font-style: normal;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 18px;
+    padding: 5px 10px ;
+    margin-right: 10px;
+    border-color: transparent;
+  
+    background-color: #26A69A;
+    color: #FFFFFF;
+}
+.export-project-list:hover{
+    color: #FFFFFF;  
+    background-color: #00838F;
+}
 /* .child{
     margin-left: auto;
     order: 2;
     margin-right: 40px;
 } */
-
+/*m____ MEDIA QUERY_____*/
 @media all and (min-width:300px) and (max-width:480px){
     /* hr.header-underline1{
         width: 200px;
@@ -525,6 +545,23 @@ color: #FAFBFC;
 .confirm-name-pm{
     margin-left: 2px;
 }
+.fix-action-btn-alignment{
+display:block;
+
+}
+.export-project-list{
+    display: block !important;
+}
+}
+@media all  and (min-width:482px) and (max-width:600px){
+    .export-project-list{
+        display: block !important;
+    }
+}
+@media all and (min-width:601px) and (max-width:992px){
+    .export-project-list{
+       float: right ;
+    }  
 }
 @media all and (min-width:481px) and (max-width:992px){
     .pm-name-edit-part{
@@ -534,13 +571,22 @@ color: #FAFBFC;
      min-width: 250px;
      max-width: 300px;
  }
+ .fix-action-btn-alignment{
+    display:block;
+    
+    }
 }
 @media all and (min-width:992px){
     .ongoing-action-card-buttons{
         text-align: right;
       
     }
-  
+  .fix-action-btn-alignment{
+    float: right !important;
+  }
+  .export-project-list{
+    float: right ;
+ }  
 }
 @media all and (min-width:1179px){
     .pm-name-edit-part{

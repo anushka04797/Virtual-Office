@@ -5,17 +5,17 @@
     
 }
 .special:focus,.special.active{
-    background: -webkit-linear-gradient(140deg, #0052cc 25%, #393ed8 100%);
-    background: -moz-linear-gradient(140deg, #0052cc 25%, #393ed8 100%);
-    background: -ms-linear-gradient(140deg, #0052cc 25%, #393ed8 100%);
-    background: -o-linear-gradient(140deg, #0052cc 25%, #393ed8 100%);
-    background: linear-gradient(140deg, #0052cc 25%, #393ed8 100%);
-    color: white !important;
+    background: -webkit-linear-gradient(140deg, #E0E0E0 25%, #E0E0E0 100%);
+    background: -moz-linear-gradient(140deg, #E0E0E0 25%, #E0E0E0 100%);
+    background: -ms-linear-gradient(140deg, #E0E0E0 25%, #E0E0E0 100%);
+    background: -o-linear-gradient(140deg, #E0E0E0 25%, #E0E0E0 100%);
+    background: linear-gradient(140deg, #E0E0E0 25%, #E0E0E0 100%);
+    color: #0065ff !important;
    
 }
-.edit-profile-form-header{
+/* .edit-profile-form-header{
 
-}
+} */
 .card-view-profile{
     border-radius: 3px;
     box-shadow: rgb(9 30 66 / 25%) 0px 1px 1px, rgb(9 30 66 / 13%) 0px 0px 1px 1px;
@@ -68,7 +68,7 @@ border: none !important;
     background-color: #1976D2;
 
 }
-.project-details-points{
+.profile-details-points{
     font-size: 14px;
     overflow-wrap: break-word;
     word-break: break-word;
@@ -76,7 +76,17 @@ border: none !important;
     font-weight: 400;
     line-height:20px;
 margin-bottom: 20px;
+text-transform: capitalize;
 /* display: flex; */
+}
+.profile-details-points-email{
+    font-size: 14px;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    color:rgb(23,43,77);
+    font-weight: 400;
+    line-height:20px;
+margin-bottom: 20px;
 }
 .info-header-1{
     font-weight: 500;

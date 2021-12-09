@@ -94,8 +94,7 @@ const CreateNewProject = () => {
         }
       })
     })
-    temp = temp.filter((value, index, array) => array.findIndex((t) => t.sub_task === value.sub_task) === index)
-    // console.log('subtasks', temp)
+    temp=temp.filter((value, index, array) => array.findIndex((t) => t.work_package_number === value.work_package_number) === index)
     return temp;
   }
 
