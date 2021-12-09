@@ -1,4 +1,4 @@
-import { CContainer, CRow, CCard, CCardHeader, CCardBody, CForm, CLabel, CInput, CButton } from '@coreui/react';
+import { CContainer, CRow, CCard, CCardHeader, CCardBody, CForm, CLabel, CInput, CButton, CTextarea, CSelect } from '@coreui/react';
 import { React, useState, useEffect } from 'react';
 import './createProject.css';
 import CreatableSelect from 'react-select/creatable';
@@ -13,6 +13,7 @@ import Datetime from 'react-datetime'
 import moment from 'moment'
 import { fetchProjectsForPMThunk, fetchProjectsThunk } from '../../store/slices/ProjectsSlice';
 import LinearProgress from '@mui/material/LinearProgress';
+import { arrayRemoveItem } from '../../helper';
 const CreateNewProject = () => {
   const colourStyles = {
     // control: (styles, state) => ({ ...styles,height:"35px", fontSize: '14px !important', lineHeight: '1.42857', borderRadius: "8px",borderRadius:".25rem",color:"rgb(133,133,133)",border:state.isFocused ? '2px solid #0065ff' :'inherit'}),
@@ -24,24 +25,26 @@ const CreateNewProject = () => {
   const [selectedSubTask, setSelectedSubTask] = useState()
   const [work_package_number, setWorkPackageNumber] = useState()
   const [assignees, setAssignees] = useState([])
-  const [selectedAssignees,setSelectedAssignees]=useState([])
+  const [selectedAssignees, setSelectedAssignees] = useState([])
+  const [selectedAssigneesEP, setSelectedAssigneesEP] = useState([])
   const profile_details = useSelector(state => state.profile.data)
   const projects = useSelector(state => state.projects.pm_projects)
-  const [work_package_numbers,setWorkPackageNumbers]=useState([])
-  const [existing_sub_tasks,setExistingSubTasks]=useState([])
+  const [work_package_numbers, setWorkPackageNumbers] = useState([])
+  const [existing_sub_tasks, setExistingSubTasks] = useState([])
   //tdo list states and functions
   const tdo_list = useSelector(state => state.projects.tdo_list)
   const new_tdo_list = useSelector(state => state.tdo.data)
+
   const handleTDOChange = (newValue, actionMeta) => {
-    console.log(`action: ${actionMeta.action}`);
+    // console.log(`action: ${actionMeta.action}`);
     if (actionMeta.action == 'select-option') {
       formCreateProject.setFieldValue('task_delivery_order', newValue.value)
       setSelectedTDO(newValue)
       setSubTaskList(get_sub_tasks(newValue.value))
       setWorkPackages(get_work_packages(newValue.value))
-      console.group('Value Changed', newValue.value);
-      console.log('form values', formCreateProject.values)
-      console.groupEnd();
+      // console.group('Value Changed', newValue.value);
+      // console.log('form values', formCreateProject.values)
+      // console.groupEnd();
     }
     else if (actionMeta.action == 'clear') {
       setSelectedTDO(null)
@@ -52,8 +55,14 @@ const CreateNewProject = () => {
       formCreateProject.setFieldValue('work_package_number', '')
     }
   };
+
+  const handleTdoDetailsChange = (event) => {
+    console.log("TDO details: ", event.target.value);
+    formCreateProject.setFieldValue('tdo_details', event.target.value)
+  }
+
   const handleTDOInputChange = (inputValue, actionMeta) => {
-    console.log(`action: ${actionMeta.action}`);
+    // console.log(`action: ${actionMeta.action}`);
     // if(inputValue.length>0){
     //   formCreateProject.setFieldValue('task_delivery_order',inputValue)
     //   dispatch(push_item({value:inputValue,label:inputValue}))
@@ -63,17 +72,19 @@ const CreateNewProject = () => {
     // }
     console.groupEnd();
   };
+
   const handleTDOCreate = (inputValue) => {
     formCreateProject.setFieldValue('task_delivery_order', inputValue)
     dispatch(push_item({ value: inputValue, label: inputValue }))
     setSubTaskList(get_sub_tasks(inputValue))
     setWorkPackages(get_work_packages(inputValue))
     setSelectedTDO({ value: inputValue, label: inputValue })
-    console.group('setting value', inputValue)
+    // console.group('setting value', inputValue)
   }
 
   //sub task list states and functions
   const [sub_task_list, setSubTaskList] = useState([])
+
   function get_sub_tasks(tdo) {
     let temp = []
     projects.forEach((project, idx) => {
@@ -83,20 +94,23 @@ const CreateNewProject = () => {
         }
       })
     })
-    temp=temp.filter((value, index, array) => array.findIndex((t) => t.sub_task === value.sub_task) === index)
-    console.log('subtasks', temp)
+    temp = temp.filter((value, index, array) => array.findIndex((t) => t.sub_task === value.sub_task) === index)
+    // console.log('subtasks', temp)
     return temp;
   }
-  const valid_date=(current)=>{
-    let yesterday= moment().subtract( 1, 'day' )
-    return current.isAfter( yesterday );
-}
+
+  const valid_date = (current) => {
+    let yesterday = moment().subtract(1, 'day')
+    return current.isAfter(yesterday);
+  }
+
   const handleSubTaskChange = (newValue, actionMeta) => {
     if (actionMeta.action == 'select-option') {
-      console.log('sub task', newValue)
+      // console.log('sub task', newValue)
       setSelectedSubTask(newValue)
       formCreateProject.setValues({
         task_delivery_order: formCreateProject.values.task_delivery_order,
+        tdo_details: formCreateProject.values.tdo_details,
         sub_task: newValue.value,
         work_package_number: newValue.work_package_number,
         task_title: formCreateProject.values.task_title,
@@ -106,10 +120,10 @@ const CreateNewProject = () => {
         pm: sessionStorage.getItem(USER_ID),
         planned_hours: formCreateProject.values.planned_hours,
         planned_value: formCreateProject.values.planned_value,
-        remaining_hours: formCreateProject.values.remaining_hours
+        remaining_hours: formCreateProject.values.planned_hours
       })
       setWorkPackageNumber({ value: newValue.work_package_number, label: newValue.work_package_number })
-      console.log('values', formCreateProject.values)
+      // console.log('values', formCreateProject.values)
     }
     else if (actionMeta.action == 'clear') {
       setSelectedSubTask(null)
@@ -118,21 +132,25 @@ const CreateNewProject = () => {
       formCreateProject.setFieldValue('work_package_number', '')
     }
   }
+
   const handleSubTaskInputChange = (inputValue, actionMeta) => {
-    if(actionMeta.action=='set-value'){
+    if (actionMeta.action == 'set-value') {
       // if(existing_sub_tasks.includes(inputValue)){
       //   formCreateProject.setFieldError('sub_task','This sub task name already exists')
       // }
     }
   }
+
   const handleSubTaskCreate = (inputValue) => {
     formCreateProject.setFieldValue('sub_task', inputValue)
     setSubTaskList([...sub_task_list, { value: inputValue, label: inputValue }])
     setWorkPackages(get_work_packages(inputValue))
     setSelectedSubTask({ value: inputValue, label: inputValue })
-    console.group('setting value', inputValue)
+    // console.group('setting value', inputValue)
   }
+
   const [work_packages, setWorkPackages] = useState([])
+
   function get_work_packages(tdo) {
     let temp = []
     projects.forEach((project, idx) => {
@@ -144,20 +162,23 @@ const CreateNewProject = () => {
     })
     return temp.filter((value, index, array) => array.findIndex((t) => t.work_package_number === value.work_package_number) === index)
   }
-  function is_form_submitting(){
-    if(formCreateProject.isSubmitting && !formCreateProject.isValidating){
+
+  function is_form_submitting() {
+    if (formCreateProject.isSubmitting && !formCreateProject.isValidating) {
       return true
     }
     return false
   }
+
   const handleWorkPackageCreate = (value) => {
     setWorkPackageNumber({ value: value, label: value })
     setWorkPackages([...work_packages, { value: value, label: value }])
     formCreateProject.setFieldValue('work_package_number', String(value))
   }
+
   const handleWorkPackageNumberChange = (newValue, actionMeta) => {
     if (actionMeta.action == 'select-option') {
-      console.log('selected work package', newValue)
+      // console.log('selected work package', newValue)
       setWorkPackageNumber(newValue)
       formCreateProject.setFieldValue('work_package_number', String(newValue.value))
     }
@@ -167,45 +188,90 @@ const CreateNewProject = () => {
       formCreateProject.setFieldValue('work_package_number', '')
     }
   }
-  
+
+  const [total_working_days, setTotalWorkingDays] = useState(0)
+
   const handleAssigneeChange = (value, actionMeta) => {
     setSelectedAssignees(value)
-    if (actionMeta.action == 'select-option') {
-      console.log('selected assignee', value)
-      let temp = []
-      value.forEach((item, idx) => {
-        temp.push(Number(item.value))
-      })
-      formCreateProject.setFieldValue('assignee', temp)
+    // if (actionMeta.action == 'select-option') {
+    let single_planned_value = 0;
+    if (value.data.slc_details != null) {
+      single_planned_value = parseInt(value.data.slc_details.hourly_rate) * parseInt(total_working_days)
     }
+    let temp = []
+    // // value.forEach((item, idx) => {
+    temp.push(value.data.id)
+    // })
+    formCreateProject.setValues({
+      task_delivery_order: formCreateProject.values.task_delivery_order,
+      tdo_details: formCreateProject.values.tdo_details,
+      sub_task: formCreateProject.values.sub_task,
+      work_package_number: formCreateProject.values.work_package_number,
+      task_title: formCreateProject.values.task_title,
+      estimated_person: formCreateProject.values.estimated_person,
+      planned_delivery_date: formCreateProject.values.planned_delivery_date,
+      assignee: temp,
+      pm: sessionStorage.getItem(USER_ID),
+      planned_hours: formCreateProject.values.planned_hours,
+      planned_value: parseFloat(formCreateProject.values.planned_value) + parseFloat(single_planned_value),
+      remaining_hours: formCreateProject.values.planned_hours
+    })
+    // }
     console.log(value, actionMeta.action)
   }
+
+  const handleEPChange = (event) => {
+    console.log(selectedAssignees)
+    setSelectedAssigneesEP(event.target.value)
+    let temp = []
+    temp.push(parseInt(event.target.value))
+    if (total_working_days > 0) {
+      formCreateProject.setValues({
+        task_delivery_order: formCreateProject.values.task_delivery_order,
+        tdo_details: formCreateProject.values.tdo_details,
+        sub_task: formCreateProject.values.sub_task,
+        work_package_number: formCreateProject.values.work_package_number,
+        task_title: formCreateProject.values.task_title,
+        estimated_person: temp,
+        planned_delivery_date: formCreateProject.values.planned_delivery_date,
+        assignee: formCreateProject.values.assignee,
+        pm: sessionStorage.getItem(USER_ID),
+        planned_hours: ((total_working_days * 8) * event.target.value).toFixed(1),
+        planned_value: formCreateProject.values.planned_value,
+        remaining_hours: formCreateProject.values.planned_hours
+      })
+    }
+  }
+
   const handleWorkPackageInputChange = (inputValue, actionMeta) => {
     if (actionMeta.action == 'input-change') {
       formCreateProject.setFieldValue('work_package_number', String(inputValue))
     }
   }
+
   function isDateBeforeToday(date) {
     return new Date(date) < new Date(new Date().toDateString());
   }
-  const is_wp_subtask_valid=(sub_task,wp)=>{
-    API.get('project/check-subtask-work-package-number-is-valid/'+sub_task+'/'+wp+'/').then((res)=>{
-      console.log(res.data)
-      if(existing_sub_tasks.includes(sub_task) && work_package_numbers.includes(wp)){
-        return {wp:true,sub_task:true}
+
+  const is_wp_subtask_valid = (sub_task, wp) => {
+    API.get('project/check-subtask-work-package-number-is-valid/' + sub_task + '/' + wp + '/').then((res) => {
+      // console.log(res.data)
+      if (existing_sub_tasks.includes(sub_task) && work_package_numbers.includes(wp)) {
+        return { wp: true, sub_task: true }
       }
-      else if( res.data.wp_found == true && res.data.sub_task_found == false){
-        return {wp:false,sub_task:true}
+      else if (res.data.wp_found == true && res.data.sub_task_found == false) {
+        return { wp: false, sub_task: true }
       }
-      else if(work_package_numbers.includes(wp) && res.data.sub_task_found == true){
-        return {wp:true,sub_task:false}
+      else if (work_package_numbers.includes(wp) && res.data.sub_task_found == true) {
+        return { wp: true, sub_task: false }
       }
     })
-    
+
   }
+
   const validate_create_project_form = (values) => {
-    console.log('validating values ', values)
-    console.log('WP list ', is_wp_subtask_valid(values.sub_task,values.work_package_number))
+    // console.log('validating values ', values)
+    // console.log('WP list ', is_wp_subtask_valid(values.sub_task, values.work_package_number))
     const errors = {}
     if (!values.task_delivery_order) errors.task_delivery_order = "Task Delivery Order is required"
     if (!values.sub_task) errors.sub_task = "Sub Task is required"
@@ -220,47 +286,60 @@ const CreateNewProject = () => {
     // console.log('validating errors ', errors)
     return errors
   }
+
   const reset_form = () => {
     formCreateProject.resetForm()
     setSelectedSubTask(null)
     setSelectedTDO(null)
     setWorkPackageNumber(null)
     setAssignees([])
+    setInputList([])
+    setSelectedAssigneesEP(0)
+    setSelectedAssignees(null)
   }
+
   const create_project = (values) => {
     console.log('values', JSON.stringify(formCreateProject.values))
-      API.post('project/create/', formCreateProject.values).then((res) => {
-        console.log(res)
-        if (res.status == 200 && res.data.success == 'True') {
-          reset_form()
-          dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)))
-          dispatch(fetchProjectsThunk(sessionStorage.getItem(USER_ID)))
-          setSelectedAssignees([])
-          swal('Created!', 'Successfuly Created', 'success')
-        }
-      })
-    
+    API.post('project/create/', formCreateProject.values).then((res) => {
+      // console.log(res)
+      if (res.status == 200 && res.data.success == 'True') {
+        reset_form()
+        dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)))
+        dispatch(fetchProjectsThunk(sessionStorage.getItem(USER_ID)))
+        setSelectedAssignees([])
+        swal('Created!', 'Successfuly Created', 'success')
+      }
+    })
   }
+
   const formCreateProject = useFormik({
     initialValues: {
       task_delivery_order: "",
+      tdo_details: "",
       sub_task: "",
       work_package_number: "",
       task_title: "",
-      estimated_person: "",
+      estimated_person: null,
       planned_delivery_date: "",
+      start_date: "",
       assignee: [],
       pm: sessionStorage.getItem(USER_ID),
-      planned_hours: "",
-      planned_value: "",
-      remaining_hours: ""
+      planned_hours: 0,
+      planned_value: 0,
+      remaining_hours: 0
     },
     validateOnChange: true,
     validateOnBlur: true,
     validate: validate_create_project_form,
     onSubmit: create_project
   })
-  
+
+  function handlePlannedDeliveryDateChange(event) {
+    formCreateProject.handleChange(event);
+    //  testMthd2(event.target.value)
+    dateRange(formCreateProject.values.start_date, event.target.value)
+  }
+
   useEffect(() => {
     dispatch(fetchTdosThunk())
     API.get('auth/assignee/list/').then((res) => {
@@ -278,13 +357,173 @@ const CreateNewProject = () => {
         temp.push(item)
       })
       setWorkPackageNumbers(temp)
-      temp=[]
+      temp = []
       Array.from(res.data.sub_tasks).forEach((item, idx) => {
         temp.push(item)
       })
       setExistingSubTasks(temp)
     })
   }, [])
+
+  function dateRange(startDate, endDate) {
+    // console.log("dateRange", startDate, endDate)
+    var start = startDate.split('-');
+    var end = endDate.split('-');
+    var startYear = parseInt(start[0]);
+    var endYear = parseInt(end[0]);
+    var dates = [];
+    for (var i = startYear; i <= endYear; i++) {
+      var endMonth = i != endYear ? 11 : parseInt(end[1]) - 1;
+      var startMon = i === startYear ? parseInt(start[1]) - 1 : 0;
+      for (var j = startMon; j <= endMonth; j = j > 12 ? j % 12 || 11 : j + 1) {
+        var month = j + 1;
+        var displayMonth = month < 10 ? '0' + month : month;
+        dates.push([i, displayMonth, '01'].join('-'));
+      }
+    }
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ];
+    let temp_data = []
+    let total_working_days = 0
+    API.get('organizations/calender/all/').then((res) => {
+      console.log("value", res.data)
+      dates.forEach((date, idx) => {
+        month = monthNames[new Date(date).getMonth()]
+
+        res.data.data.forEach((item, idx) => {
+          console.log(item.Year)
+          if (item.Year == new Date(date).getFullYear()) {
+            total_working_days += item[month]
+            console.log('total_working_days', total_working_days)
+          }
+        })
+      })
+      setTotalWorkingDays(total_working_days)
+    })
+  }
+
+  const [inputList, setInputList] = useState([]);
+
+  // handle input change
+  const handleInputChange = (e, index, type) => {
+    if (type === 'assignee') {
+      let idx = e.target.value;
+
+      let single_planned_value = 0;
+      let selected_assignee = {}
+      assignees.forEach((item, idx) => {
+        if (item.data.id == e.target.value) {
+          selected_assignee = item
+        }
+      })
+
+      console.log('selected_assignee', selected_assignee)
+      single_planned_value = parseInt(selected_assignee.data.slc_details.hourly_rate) * parseInt(total_working_days)
+      //pushing assignee
+      let temp = selectedAssignees
+      temp.push(idx)
+      temp = [...new Set(temp)]
+      setSelectedAssignees(temp)
+      //end pushing assignee
+      console.log('assignees', selectedAssignees)
+      formCreateProject.setValues({
+        task_delivery_order: formCreateProject.values.task_delivery_order,
+        tdo_details: formCreateProject.values.tdo_details,
+        sub_task: formCreateProject.values.sub_task,
+        work_package_number: formCreateProject.values.work_package_number,
+        task_title: formCreateProject.values.task_title,
+        estimated_person: formCreateProject.values.estimated_person,
+        planned_delivery_date: formCreateProject.values.planned_delivery_date,
+        assignee: selectedAssignees,
+        pm: sessionStorage.getItem(USER_ID),
+        planned_hours: formCreateProject.values.planned_hours,
+        planned_value: parseFloat(formCreateProject.values.planned_value) + parseFloat(single_planned_value),
+        remaining_hours: formCreateProject.values.planned_hours
+      })
+      const { name, value } = e.target;
+      const list = [...inputList];
+      list[index][name] = value;
+      setInputList(list);
+    }
+    if (type === 'ep') {
+      //puhsing ep
+      let temp = selectedAssigneesEP
+      temp.push(e.target.value)
+      setSelectedAssigneesEP(temp)
+
+      if (total_working_days > 0) {
+        formCreateProject.setValues({
+          task_delivery_order: formCreateProject.values.task_delivery_order,
+          tdo_details: formCreateProject.values.tdo_details,
+          sub_task: formCreateProject.values.sub_task,
+          work_package_number: formCreateProject.values.work_package_number,
+          task_title: formCreateProject.values.task_title,
+          estimated_person: selectedAssigneesEP,
+          planned_delivery_date: formCreateProject.values.planned_delivery_date,
+          assignee: formCreateProject.values.assignee,
+          pm: sessionStorage.getItem(USER_ID),
+          planned_hours: parseFloat(formCreateProject.values.planned_hours) + parseFloat(((total_working_days * 8) * e.target.value).toFixed(1)),
+          planned_value: formCreateProject.values.planned_value,
+          remaining_hours: formCreateProject.values.planned_hours
+        })
+      }
+      const { name, value } = e.target;
+      const list = [...inputList];
+      list[index][name] = value;
+      setInputList(list);
+    }
+
+  };
+
+  // handle click event of the Remove button
+  const handleRemoveClick = index => {
+    const list = [...inputList];
+    list.splice(index, 1);
+    setInputList(list);
+  };
+  function populate_planned_value_and_hours(inputList){
+    let total_planned_value=0
+    let total_planned_hours=0
+    let assignees=[]
+    let assignee_eps=[]
+    console.log('inputs',inputList)
+    Array.from(inputList).forEach((item,idx)=>{
+      assignees.push(item.assignee.data.id)
+      assignee_eps.push(item.estimated_person)
+      total_planned_value+=parseFloat(item.assignee.data.slc_details.hourly_rate) * 8 * parseFloat(total_working_days)
+      total_planned_hours+= parseFloat(item.estimated_person) * 8 * parseFloat(total_working_days)
+    })
+    formCreateProject.setValues({
+      task_delivery_order: formCreateProject.values.task_delivery_order,
+      tdo_details: formCreateProject.values.tdo_details,
+      sub_task: formCreateProject.values.sub_task,
+      work_package_number: formCreateProject.values.work_package_number,
+      task_title: formCreateProject.values.task_title,
+      estimated_person: assignee_eps,
+      planned_delivery_date: formCreateProject.values.planned_delivery_date,
+      assignee: assignees,
+      pm: sessionStorage.getItem(USER_ID),
+      planned_hours: total_planned_hours,
+      planned_value: total_planned_value,
+      remaining_hours: total_planned_hours
+    })
+  }
+  // handle click event of the Add button
+  const handleAddClick = () => {
+    populate_planned_value_and_hours([...inputList, { assignee: selectedAssignees, estimated_person: selectedAssigneesEP }])
+    setInputList([...inputList, { assignee: selectedAssignees, estimated_person: selectedAssigneesEP }]);
+    setSelectedAssignees(null)
+    setSelectedAssigneesEP(null)
+    console.log("inputList", inputList)
+  };
+  function removeAssignee(item){
+    populate_planned_value_and_hours(arrayRemoveItem(inputList,item))
+    setInputList(arrayRemoveItem(inputList,item))
+  }
+  // React.useEffect(()=>{
+  //   populate_planned_value_and_hours()
+  // },[inputList])
   return (
     <>
       <CContainer>
@@ -319,6 +558,13 @@ const CreateNewProject = () => {
                           styles={colourStyles}
                         />
                         {formCreateProject.touched.task_delivery_order && formCreateProject.errors.task_delivery_order && <small style={{ color: 'red' }}>{formCreateProject.errors.task_delivery_order}</small>}
+                      </div>
+                      {/**task delivery order details */}
+                      <div className="col-lg-12 mb-3">
+                        <CLabel className="custom-label-5" htmlFor="tdo" aria-labelledby="tdo">
+                          Task Delivery Order Details
+                        </CLabel>
+                        <CTextarea id="tdo_details" name="tdo_details" value={formCreateProject.values.tdo_details} onChange={handleTdoDetailsChange} rows="6" placeholder="Enter details..."></CTextarea>
                       </div>
                       {/**Sub task */}
                       <div className="col-lg-6 mb-3">
@@ -376,43 +622,13 @@ const CreateNewProject = () => {
                         <CInput id="task_title" name="task_title" value={formCreateProject.values.task_title} onChange={formCreateProject.handleChange} className="custom-forminput-6" />
                         {formCreateProject.touched.task_title && formCreateProject.errors.task_title && <small style={{ color: 'red' }}>{formCreateProject.errors.task_title}</small>}
                       </div>
-                      {/**estimated persons */}
-                      <div className="col-lg-5 mb-3">
-                        <CLabel className="custom-label-5">
-                          Estimated Person(s)
-                        </CLabel>
-                        <CInput id="estimated_person" type="number" name="estimated_person" value={formCreateProject.values.estimated_person} onChange={formCreateProject.handleChange} className="custom-forminput-6"></CInput>
-                        {formCreateProject.touched.estimated_person && formCreateProject.errors.estimated_person && <small style={{ color: 'red' }}>{formCreateProject.errors.estimated_person}</small>}
-                      </div>
-                      {/**Assignees */}
-                      <div className="col-lg-7 mb-3">
-                        <CLabel className="custom-label-5" htmlFor="workerBees" aria-labelledby="workerBees">
-                          Assignee(s)
-                        </CLabel>
-                        <Select
-                          closeMenuOnSelect={false}
-                          aria-labelledby="workerBees"
-                          id="workerBees"
-                          minHeight="35px"
-                          placeholder="Select from list"
-                          isClearable={true}
-                          isMulti={true}
-                          onChange={handleAssigneeChange}
-                          classNamePrefix="custom-forminput-6"
-                          value={selectedAssignees}
-                          options={assignees ? assignees : []}
-                          // getOptionLabel= {option=>option.first_name+' '+option.last_name}
-                          // getOptionValue = {option=>option.id}
-                          styles={colourStyles}
-                        />
-                        {formCreateProject.touched.assignee && formCreateProject.errors.assignee && <small style={{ color: 'red' }}>{formCreateProject.errors.assignee}</small>}
-                      </div>
-                      {/**pMs */}
+                      {/**start date */}
                       <div className="col-lg-6 mb-3">
                         <CLabel className="custom-label-5">
-                          PM(s)
+                          Start Date
                         </CLabel>
-                        <CInput className="custom-forminput-6" value={profile_details.first_name + ' ' + profile_details.last_name} readOnly />
+                        <CInput id="start_date" name="start_date" value={formCreateProject.values.start_date} onChange={(event) => { formCreateProject.handleChange(event) }} className="custom-forminput-6" type="date" />
+                        {formCreateProject.touched.start_date && formCreateProject.errors.start_date && <small style={{ color: 'red' }}>{formCreateProject.errors.start_date}</small>}
                       </div>
                       {/**Planned delivery date */}
                       <div className="col-lg-6 mb-3">
@@ -432,16 +648,76 @@ const CreateNewProject = () => {
                           // onChange={(e)=>{console.log(e.format())}}
                           onChange={(e) => { formCreateProject.setFieldValue('planned_delivery_date', e.format()) }}
                         /> */}
-                        <CInput id="planned_delivery_date" name="planned_delivery_date" value={formCreateProject.values.planned_delivery_date} onChange={formCreateProject.handleChange} className="custom-forminput-6" type="date" />
+                        <CInput id="planned_delivery_date" name="planned_delivery_date" value={formCreateProject.values.planned_delivery_date} onChange={(event) => handlePlannedDeliveryDateChange(event)} className="custom-forminput-6" type="date" />
                         {formCreateProject.touched.planned_delivery_date && formCreateProject.errors.planned_delivery_date && <small style={{ color: 'red' }}>{formCreateProject.errors.planned_delivery_date}</small>}
+                      </div>
+                      <div className="col-lg-12 mb-3">
+                        <div className="evms-div pr-3 pl-3">
+                          <div className="row">
+                            <ul className="m-3">
+                              {inputList.map((item) => (
+                                <li>
+                                  {item.assignee.data.first_name + " " + item.assignee.data.last_name + " → " + item.estimated_person + " EP"}
+                                  <CButton type="button" onClick={()=>removeAssignee(item)} className="remove-file-ongoing"><img src={"assets/icons/icons8-close-64-blue.svg"} className="close-icon-size" /></CButton>
+                                  </li>
+                              ))}
+                            </ul>
+                            {/* {inputList.map((x, i) => {
+                        return (
+                          <> */}
+                            <div className="col-lg-4 mb-3">
+                              <CLabel className="custom-label-5" htmlFor="workerBees" aria-labelledby="workerBees">
+                                Assignee
+                              </CLabel>
+                              <Select
+                                closeMenuOnSelect={true}
+                                aria-labelledby="workerBees"
+                                id="workerBees"
+                                minHeight="35px"
+                                placeholder="Select from list"
+                                isClearable={false}
+                                isMulti={false}
+                                onChange={(v, i) => { setSelectedAssignees(v) }}
+                                classNamePrefix="custom-forminput-6"
+                                value={selectedAssignees}
+                                options={assignees ? assignees : []}
+                                // getOptionLabel= {option=>option.first_name+' '+option.last_name}
+                                // getOptionValue = {option=>option.id}
+                                styles={colourStyles} />
+                              {/* onChange={(e) => { handleInputChange(e, i, 'assignee') }} */}
+                              {/* <select className="custom-forminput-6 d-block" onChange={(e) => {setSelectedAssignees(e.target.value)}}>
+                                <option value="-1">Select assignee</option>
+                                {assignees.length > 0 && assignees.map(item => (
+                                  <option value={item.data.id}>{item.data.first_name + ' ' + item.data.last_name}</option>
+                                ))}
+                              </select> */}
+                              {formCreateProject.touched.assignee && formCreateProject.errors.assignee && <small style={{ color: 'red' }}>{formCreateProject.errors.assignee}</small>}
+                            </div>
+                            <div className="col-lg-3 mb-3">
+                              <CLabel className="custom-label-5">
+                                Estimated Person(s)
+                              </CLabel>
+                              {/* onChange={(e) => { handleInputChange(e, i, 'ep') }} */}
+                              <CInput id="estimated_person" type="number" name="estimated_person" min="0" max="1" step="0.1" onChange={(e) => { setSelectedAssigneesEP(e.target.value) }} className="custom-forminput-6"></CInput>
+                            </div>
+                            <div className="col-lg-3 mb-3">
+                              {/* {inputList.length !== 1 && <CButton color="info" className="ar-btn mr10" onClick={() => handleRemoveClick(i)}>Remove</CButton>}
+                              &nbsp; */}
+                              <CButton color="info" className="ar-btn" onClick={handleAddClick}>+ Add</CButton>
+                            </div>
+                            {/* </>
+                        );
+                      })} */}
+                          </div>
+                        </div>
                       </div>
                       {/**Planned Value */}
                       <div className="col-lg-4 mb-3">
                         <CLabel className="custom-label-5">
                           Planned Value
                         </CLabel>
-                        <CInput id="planned_value" name="planned_value" value={formCreateProject.values.planned_value} onChange={formCreateProject.handleChange} className="custom-forminput-6"></CInput>
-                        {formCreateProject.touched.planned_value && formCreateProject.errors.planned_value && <small style={{ color: 'red' }}>{formCreateProject.errors.planned_value}</small>}
+                        <CInput id="planned_value" name="planned_value" readOnly value={formCreateProject.values.planned_value} className="custom-forminput-6"></CInput>
+                        {/* {formCreateProject.touched.planned_value && formCreateProject.errors.planned_value && <small style={{ color: 'red' }}>{formCreateProject.errors.planned_value}</small>} */}
                       </div>
                       {/**planned hours */}
 
@@ -449,8 +725,8 @@ const CreateNewProject = () => {
                         <CLabel className="custom-label-5">
                           Planned hr(s)
                         </CLabel>
-                        <CInput id="planned_hours" name="planned_hours" value={formCreateProject.values.planned_hours} onChange={(event) => { formCreateProject.setFieldValue('planned_hours', event.target.value); formCreateProject.setFieldValue('remaining_hours', event.target.value) }} className="custom-forminput-6"></CInput>
-                        {formCreateProject.touched.planned_hours && formCreateProject.errors.planned_hours && <small style={{ color: 'red' }}>{formCreateProject.errors.planned_hours}</small>}
+                        <CInput id="planned_hours" name="planned_hours" readOnly value={formCreateProject.values.planned_hours} onChange={(event) => { formCreateProject.setFieldValue('planned_hours', event.target.value); formCreateProject.setFieldValue('remaining_hours', event.target.value) }} className="custom-forminput-6"></CInput>
+                        {/* {formCreateProject.touched.planned_hours && formCreateProject.errors.planned_hours && <small style={{ color: 'red' }}>{formCreateProject.errors.planned_hours}</small>} */}
                       </div>
                       {/**remaining hours */}
                       <div className="col-lg-4 mb-3">
@@ -459,8 +735,15 @@ const CreateNewProject = () => {
                         </CLabel>
                         <CInput id="remaining_hours" name="remaining_hours" value={formCreateProject.values.planned_hours} className="custom-forminput-6" readOnly />
                       </div>
+                      {/**pMs */}
+                      <div className="col-lg-12 mb-3">
+                        <CLabel className="custom-label-5">
+                          Project Manager(s)
+                        </CLabel>
+                        <CInput className="custom-forminput-6" value={profile_details.first_name + ' ' + profile_details.last_name} readOnly />
+                      </div>
                       {/**submit buttons */}
-                      <div className="col-md-12">{is_form_submitting() == true?<LinearProgress/>:
+                      <div className="col-md-12">{is_form_submitting() == true ? <LinearProgress /> :
                         <div className="project-form-button-holders mt-3">
                           <CButton type="button" onClick={formCreateProject.handleSubmit} className="create-btn-prjct create-prjct">Create Project</CButton>
                           <CButton type="button" onClick={reset_form} className="create-btn-prjct cancel-prjct">Cancel</CButton>

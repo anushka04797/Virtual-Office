@@ -105,6 +105,34 @@
     outline: transparent;
     border: 0 !important;
 }
+
+.ar-btn {
+    margin-top: 30px;
+}
+
+.evms-div {
+    border: 1px solid gray;
+    border-radius: 5px;
+}
+
+.remove-file-ongoing{
+    background: transparent;
+    color: white;
+    border-color: transparent;
+}
+
+.remove-file-ongoing:hover,.remove-file-ongoing .active,.remove-file-ongoing:focus{
+    background: transparent !important;
+   box-shadow: none !important;
+    border-color: transparent !important;
+    outline:none !important;
+}
+
+.remove-file-ongoing:focus {
+    outline: 0 !important;
+    border:transparent!important;
+    box-shadow: none !important;
+}
 /**_____MEDIA QUERY______**/
 @media all and (min-width:300px) and (max-width:601px){
     .custom-project-card-1{
