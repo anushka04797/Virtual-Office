@@ -14,6 +14,9 @@ import * as Yup from 'yup'
 import { PUBLIC_FORM_API } from "../../Config";
 import CircularProgress from '@mui/material/CircularProgress';
 import { useSnackbar } from "notistack";
+import PhoneInput from 'react-phone-input-2'
+import 'react-phone-input-2/lib/style.css'
+
 const SignupSchema = Yup.object().shape({
   first_name: Yup.string()
     .min(2, 'Too Short!')
@@ -28,6 +31,7 @@ const SignupSchema = Yup.object().shape({
 
 const Register = () => {
   let history = useHistory()
+  const [value, setValue] = useState()
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const [submitted,setSubmitted]=useState(false)
   const [avatar, setAvatar] = useState()
@@ -196,7 +200,7 @@ const Register = () => {
                       <CLabel htmlFor="phone" className="custom-label-2">
                         Phone
                       </CLabel>
-                      <CInput
+                      {/* <CInput
                         type="tel"
                         id="phone"
                         name="phone"
@@ -205,6 +209,44 @@ const Register = () => {
                         onChange={(event)=>{formSignUp.handleChange(event)}}
                         aria-describedby="phoneHelp"
                         className="custom-formgroup-2"
+                      /> */}
+                      {/* <PhoneInput flags={flags} value={value} onChange={setValue}/> */}
+                      <PhoneInput
+                        // isValid={(value, country) => {
+                        //   console.log('value',value.length)
+                        //   let error_text=''
+                        //   switch(country.iso2){
+                        //     case 'bd':
+                        //       if(value.length<11 || value.length>13){
+                        //         // console.log('value',value)
+                        //         error_text= 'Invalid value: '+value+', '+country.name;
+                        //       }
+                        //       break
+                        //   }
+                        //   return error_text
+                        // }}
+                        isValid={(value, country) => {
+                          if (country.iso2=='bd' && value.length!=13) {
+                            return 'Invalid value: '+value+', '+country.name;
+                          }
+                          else if (country.iso2=='us' && value.length!=11) {
+                            return 'Invalid value: '+value+', '+country.name;
+                          } else {
+                            return true;
+                          }
+                        }}
+                        inputProps={{
+                          name: 'phone',
+                          required: true,
+                          autoFocus: false
+                        }}
+                        onlyCountries={['bd', 'us']}
+                        inputClass="w-100 custom-formgroup-2"
+                        countryCodeEditable={false}
+                        // inputStyle="width:100% !important;"
+                        country={'bd'}
+                        value={formSignUp.values.phone}
+                        onChange={phone => {formSignUp.setFieldValue('phone',phone)}}
                       />
                       {responseErrors.phone!=undefined && !formSignUp.errors.phone && formSignUp.values.phone.length>0 && <small style={{ color: 'red' }}>{responseErrors.phone}</small>}
                       {formSignUp.touched.phone && formSignUp.errors.phone && <small style={{ color: 'red' }}>{formSignUp.errors.phone}</small>}

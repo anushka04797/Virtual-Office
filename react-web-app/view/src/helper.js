@@ -14,11 +14,12 @@ export const has_group = (group) => {
     }
     return false
 }
-export const has_permission = (permission) => {
-    let permissions = sessionStorage.getItem(PERMISSIONS).split(',')
-    console.log('permission', permission);
-    console.log('include', permissions.includes(permission));
-    return permissions.includes(permission)
+export const has_permission=(permission)=>{
+    if(sessionStorage.getItem(PERMISSIONS)!=null){
+        let permissions = sessionStorage.getItem(PERMISSIONS).split(',')
+        return permissions.includes(permission)
+    }
+    return false
 }
 export function arrayRemoveItem(arr, value) {
     return arr.filter(function (ele) {
