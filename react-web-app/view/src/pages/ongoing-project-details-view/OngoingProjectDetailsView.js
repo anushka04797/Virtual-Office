@@ -16,6 +16,8 @@ import {
 } from "react-router-dom";
 import { has_permission } from '../../helper';
 import { useFormik } from 'formik';
+import * as FileSaver from 'file-saver';
+import * as XLSX from 'xlsx';
 const OngoingDetailsView = () => {
     const { work_package_number } = useParams();
     const dispatch = useDispatch()
@@ -265,7 +267,36 @@ const OngoingDetailsView = () => {
                 }
             });
     }
-    
+     {/**export in excel */ }
+     const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+     const fileExtension = '.xlsx';
+     var fileName;
+     const xlData = [];
+    const exportToCSV = () => {
+        
+        for (let i = 0; i < project.subtasks.length; i++) {
+
+
+            const item = project.subtasks[i];
+         fileName='Details of'+''+item.sub_task;
+         
+            let assigneNames = [];
+            var assigneName;
+            Array.from(item.assignees).map((el) => {
+                assigneNames.push(el.assignee.first_name + ' ' + el.assignee.last_name)
+            })
+            assigneName = assigneNames.join(",");
+
+            xlData.push({'Sl. No': i+1,'TDO':item.task_delivery_order.title,'Project Name':item.sub_task,'Work Package Number':item.work_package_number,'Work Package Index':item.work_package_index,'Project Manager':item.pm.first_name+''+item.pm.last_name,'Task Title':item.task_title,'Estimated Persons':item.estimated_person,'Planned Value':project.project.planned_value,'Planned Hours':project.project.planned_hours,'Planned Delivery Date':project.project.planned_delivery_date,'Assignee(s)':assigneName})
+           
+        }
+        const ws = XLSX.utils.json_to_sheet(xlData);
+        const wb = { Sheets: { 'data': ws }, SheetNames: ['data'] };
+        const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+        const data = new Blob([excelBuffer], { type: fileType });
+        FileSaver.saveAs(data, fileName + fileExtension);
+    }
+    console.log('ongoind details',project)
     return (
         <>
             {project != undefined && <CContainer>
@@ -297,6 +328,7 @@ const OngoingDetailsView = () => {
                                         <CLabel htmlFor="work_package_number" className="custom-label-5">Work Package Number</CLabel>
                                         <CInput readOnly id="work_package_number" name="work_package_number" type="number" className="custom-forminput-6" min="0" value={editForm.values.work_package_number} onChange={editForm.handleChange}/>
                                     </CCol>
+                                 
                                     {/**Task Title */}
                                     <CCol lg="12" className="mb-2">
                                         <CLabel htmlFor="task_title" className="custom-label-5">Task Title</CLabel>
@@ -383,7 +415,8 @@ const OngoingDetailsView = () => {
                     </CModalBody>
                 </CModal>
                 {/**Edit ongoing project details ends */}
-                <h3 className="dash-header-1">Project Details</h3>
+                
+                <h3 className="dash-header-1">Project Details <CButton className="export-project-list" onClick={() => exportToCSV()}>Export to excel</CButton></h3>
                 {status === 0 ?
                     (
                         <div className="card-header-portion-ongoing">
@@ -428,6 +461,9 @@ const OngoingDetailsView = () => {
                                             <h6 className="project-point-details">{project.project.pm.first_name + ' ' + project.project.pm.last_name}</h6></div>
                                         <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Work Package Number</h6>
                                             <h6 className="project-point-details">{project.project.work_package_number}</h6>
+                                        </div>
+                                        <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Work Package Index</h6>
+                                            <h6 className="project-point-details">{project.project.work_package_index}</h6>
                                         </div>
                                         <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Task Title</h6>
                                             <h6 className="project-point-details">{subtask.task_title}</h6>
