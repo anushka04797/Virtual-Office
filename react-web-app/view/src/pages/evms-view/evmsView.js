@@ -129,7 +129,7 @@ const ViewEvms = () => {
                                         <CLabel className="custom-label-5" htmlFor="planned_value">
                                             Planned Value
                                         </CLabel>
-                                        <CInput className="custom-forminput-6" name="planned_value" id="planned_value" value={evms_update_form.values.planned_value} onChange={evms_update_form.handleChange} type="number" min="1" required />
+                                        <CInput className="custom-forminput-6" name="planned_value" id="planned_value" value={evms_update_form.values.planned_value} onChange={evms_update_form.handleChange} type="number" min="1" required readOnly />
                                         {/**Error validation */}
                                         {evms_update_form.errors.planned_value && <p className="error">{evms_update_form.errors.planned_value}</p>}
                                     </CCol>
@@ -138,7 +138,7 @@ const ViewEvms = () => {
                                         <CLabel className="custom-label-5" htmlFor="planned_hours">
                                             Planned Hours
                                         </CLabel>
-                                        <CInput className="custom-forminput-6" name="planned_hours" id="planned_hours" value={evms_update_form.values.planned_hours} onChange={evms_update_form.handleChange} type="number" min="0" required />
+                                        <CInput className="custom-forminput-6" name="planned_hours" id="planned_hours" value={evms_update_form.values.planned_hours} onChange={evms_update_form.handleChange} type="number" min="0" required readOnly />
                                         {/**Error validation */}
                                         {evms_update_form.errors.planned_hours && <p className="error">{evms_update_form.errors.planned_hours}</p>}
                                     </CCol>

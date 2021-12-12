@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { CContainer, CRow, CCol, CCard, CCardHeader, CCardBody, CForm, CLabel, CInput, CButton, CSelect, CTextarea, CAlert } from '@coreui/react';
 // import { LineChart, Line, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from 'recharts';
 import { CChart } from '@coreui/react-chartjs';
-
+import "./evmsDetails.css";
 const EvmsDetails = () => {
     const data = [];
     const line = {
@@ -65,7 +65,7 @@ const EvmsDetails = () => {
     return (
         <>
             <div className="mb-3">
-                <CButton color="primary">Create EVMS</CButton>
+                <CButton className="create-evms-btn">Create EVMS</CButton>
             </div>
             <CChart type="line" labels={line.labels} datasets={line.datasets} options={options} />
         </>

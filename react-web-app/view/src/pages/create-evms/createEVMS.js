@@ -76,21 +76,21 @@ const ProjectEVMS = () => {
 
 
 
-  const handleChange = (field, value) => {
-    switch (field) {
-      case "projects":
+  // const handleChange = (field, value) => {
+  //   switch (field) {
+  //     case "projects":
 
-        setProjectValue(value);
+  //       setProjectValue(value);
 
 
-        break;
-      // case "workPackage":
-      //   setPackageValue(value);
-      //   break;
-      default:
-        break;
-    }
-  };
+  //       break;
+  //     case "workPackage":
+  //       setPackageValue(value);
+  //       break;
+  //     default:
+  //       break;
+  //   }
+  // };
   const [projectValue, setProjectValue] = useState();
 
 
@@ -180,7 +180,7 @@ const ProjectEVMS = () => {
       <CContainer>
 
         <CRow>
-          { uniqueArray.length !=0 ?(
+          { (uniqueArray.length !=0 || evmsList.length == 0) ?(
           <div className="col-lg-10 offset-lg-1 col-md-12">
             <CCard className="custom-project-card-1">
               <CCardHeader className="project-header-3">
@@ -281,7 +281,7 @@ const ProjectEVMS = () => {
                       <CLabel className="custom-label-5" htmlFor="planned_value">
                         Planned Value
                       </CLabel>
-                      <CInput className="custom-forminput-6" name="planned_value" id="planned_value" type="number" min="0" value={formCreateEVMS.values.planned_value} onChange={formCreateEVMS.handleChange} />
+                      <CInput className="custom-forminput-6" name="planned_value" id="planned_value" type="number" min="0" value={formCreateEVMS.values.planned_value} onChange={formCreateEVMS.handleChange} readOnly />
                       {/**Error show */}
                       {formCreateEVMS.errors.planned_value && <p className="error">{formCreateEVMS.errors.planned_value}</p>}
                     </div>
@@ -290,7 +290,7 @@ const ProjectEVMS = () => {
                       <CLabel className="custom-label-5" htmlFor="planned_hours">
                         Planned Hours
                       </CLabel>
-                      <CInput className="custom-forminput-6" name="planned_hours" id="planned_hours" type="number" min="1" value={formCreateEVMS.values.planned_hours} onChange={formCreateEVMS.handleChange} />
+                      <CInput className="custom-forminput-6" name="planned_hours" id="planned_hours" type="number" min="1" value={formCreateEVMS.values.planned_hours} onChange={formCreateEVMS.handleChange} readOnly />
                       {/**Error show */}
                       {formCreateEVMS.errors.planned_hours && <p className="error">{formCreateEVMS.errors.planned_hours}</p>}
                     </div>
@@ -327,7 +327,7 @@ const ProjectEVMS = () => {
           </div>
           ):null}
           {/**if there are no evms to create */}
-          {uniqueArray.length == 0 ?( <div className="col-lg-10 offset-lg-1 col-md-12">
+          {(uniqueArray.length == 0 && evmsList.length != 0)?( <div className="col-lg-10 offset-lg-1 col-md-12">
           <CAlert className="no-value-show-alert text-center" color="primary">All existing projects' EVMS has been created.
                         <div><CButton className="evms-from-create" variant="ghost" onClick={() => history.push({ pathname: '/dashboard/EVMS/view' })}>View Details</CButton> of already existing EVMS's</div>
                        </CAlert>
