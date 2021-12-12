@@ -23,7 +23,7 @@ export const has_permission=(permission)=>{
 }
 export function arrayRemoveItem(arr, value) {
     return arr.filter(function (ele) {
-        // console.log(ele)
+        console.log('ele',ele,'value',value)
         return ele != value;
     });
 }
