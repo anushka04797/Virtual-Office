@@ -8,7 +8,7 @@ import { fetchProjectsForPMThunk, fetchProjectsThunk } from '../../store/slices/
 import { fetchWbsThunk } from '../../store/slices/WbsSlice';
 
 const WbsModal = (props) => {
-    console.log('props time card list data: ', props.timeCardList)
+    console.log('props wbs modal: ', props)
     // const modalData = useSelector(state => state.wbs.data)
     const [deliverableView, setDeliverableView] = useState(true);
     const [hrsWorked, setHrsWorked] = useState(true);
@@ -77,22 +77,23 @@ const WbsModal = (props) => {
         <>
             <CModal show={props.show} onClose={props.toggle} size="xl">
                 <CModalHeader closeButton>
-                    {props.data.project && props.data.project.task_delivery_order.title + " > "}
-                    {props.data.project && <a href="https://www.google.com" target="_blank">{props.data.project.sub_task}</a>}
+                    {props.data.project && props.data.project.task_delivery_order.title + " / "}
+                    {props.data.project && props.data.project.sub_task + " / "}
+                    {props.data.project && props.data.project.task_title}
                 </CModalHeader>
                 <CModalBody>
                     <CRow>
                         <div className="col-lg-8 mb-3 border-right">
                             <CForm>
                                 <CRow>
-                                    <div className="col-lg-9 mb-3">
+                                    <div className="col-lg-12 mb-3">
                                         <CLabel className="custom-label-wbs5">
                                             Title
                                         </CLabel>
                                         <CInput id="title" name="title" className="custom-forminput-5" onChange={formWbsUpdate.handleChange} value={formWbsUpdate.values.title} />
                                         {formWbsUpdate.errors.title && <p className="error" style={{fontSize: '14px !important'}}>{formWbsUpdate.errors.title}</p>}
                                     </div>
-                                    <div className="col-lg-3 mb-3">
+                                    {/* <div className="col-lg-3 mb-3">
                                         <CLabel className="custom-label-wbs5">
                                             Status
                                         </CLabel>
@@ -101,7 +102,7 @@ const WbsModal = (props) => {
                                                 <option key={idx} value={item.status}>{item.title}</option>
                                             ))}
                                         </select>
-                                    </div>
+                                    </div> */}
                                 </CRow>
                                 <CRow>
                                     <div className="col-lg-12 mb-3">
@@ -208,7 +209,7 @@ const WbsModal = (props) => {
                                     <ol className="task-list-show">
                                         {props.timeCardList?.data != undefined ? (Array.from(props.timeCardList.data).map((item) => (
                                             <li className="task-list-show-item">
-                                                {item.actual_work_done}
+                                                {item.actual_work_done +" ➤ "+ item.hours_today +" hr(s)"}
                                                 <p><small> By {item.time_card_assignee.first_name +" "+ item.time_card_assignee.last_name} @ {item.date_updated} </small></p>
                                             </li>
                                         ))) : ("No task has been done so far.")}
