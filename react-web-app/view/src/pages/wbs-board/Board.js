@@ -136,22 +136,7 @@ const WbsBoard = () => {
         }
     }
 
-    React.useEffect(() => {
-        dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)))
-        API.get('wbs/all/'+sessionStorage.getItem(USER_ID)+'/').then((res)=>{
-            setWbsList(res.data.data)
-            let pre_selected_items=[]
-            Array.from(res.data.data).forEach((item,idx)=>{
-                if(item.assignee.id === profile.id){
-                    pre_selected_items.push(item)
-                }
-            })
-            populate_data(pre_selected_items)
-            getAssigneeList(res.data.data)
-            setResetAssigneeSelectValue({value:sessionStorage.getItem(USER_ID), label:profile.first_name+' '+profile.last_name})
-            // filterWbs({value:sessionStorage.getItem(USER_ID), label:profile.first_name+' '+profile.last_name},{})
-        })
-    }, [])
+    
 
     const boardStyle = { backgroundColor: "#fff" };
     const laneStyle = { backgroundColor: "rgb(243 243 243)" };
@@ -215,7 +200,7 @@ const WbsBoard = () => {
     }
 
     // filter wbs
-    function filterWbs(newValue, actionMeta) {
+    const filterWbs=(newValue, actionMeta)=>{
         console.log("fn ran!!!", newValue, actionMeta);
         var temWbsList = wbsList;
         temWbsList = temWbsList.filter(item => item.assignee.id === newValue.value)
@@ -226,16 +211,28 @@ const WbsBoard = () => {
     }
 
     const [showClearBtn, setShowClearBtn] = useState(false);
-
+    const [resetAssigneeSelectValue, setResetAssigneeSelectValue] = useState()
     function clearFilter() {
         setShowClearBtn(false);
         populate_data(wbsList)
         getAssigneeList(wbsList)
         setResetAssigneeSelectValue(null)
     }
-
-    const [resetAssigneeSelectValue, setResetAssigneeSelectValue] = useState(null);
-
+    React.useEffect(() => {
+        // dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)))
+        API.get('wbs/all/'+sessionStorage.getItem(USER_ID)+'/').then((res)=>{
+            setWbsList(res.data.data)
+            let pre_selected_items=[]
+            Array.from(res.data.data).forEach((item,idx)=>{
+                if(item.assignee.id === profile.id){
+                    pre_selected_items.push(item)
+                }
+            })
+            populate_data(pre_selected_items)
+            getAssigneeList(res.data.data)
+            setResetAssigneeSelectValue({value:sessionStorage.getItem(USER_ID), label:profile.first_name+' '+profile.last_name})
+        })
+    }, [profile])
     return (
         <>
             <CRow>
@@ -248,7 +245,8 @@ const WbsBoard = () => {
                     />
                 </div>
                 <div className="col-lg-6 mb-3">
-                    {showClearBtn == true && <CButton type="button" className="clear-filter-wbs" onClick={() => clearFilter()}>clear filter</CButton>}
+                {/* showClearBtn == true && */}
+                    {<CButton type="button" className="clear-filter-wbs" onClick={() => clearFilter()}>clear filter</CButton>}
                 </div>
 
             </CRow>
