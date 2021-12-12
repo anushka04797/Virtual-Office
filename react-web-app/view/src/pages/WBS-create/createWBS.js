@@ -15,8 +15,8 @@ const CreateNewWBS = () => {
     const projects = useSelector(state => {
         let temp = []
         Array.from(state.projects.data).forEach((item, idx) => {
-            console.log('remaining hours ',remaining_hours(item.project.remaining_hours,item.project.planned_hours))
-            if(parseFloat(item.project.remaining_hours)>0){
+            console.log('remaining hours ', remaining_hours(item.project.remaining_hours, item.project.planned_hours))
+            if (parseFloat(item.project.remaining_hours) > 0) {
                 temp.push({
                     value: item.project.id,
                     label: item.project.task_delivery_order.title + ' / ' + item.project.sub_task,
@@ -29,6 +29,13 @@ const CreateNewWBS = () => {
     })
 
     const [assigneeList, setAssigneeList] = useState([])
+    const [taskList, setTaskList] = useState([])
+
+    const getTaskList = (option) => {
+        console.log("task list###########: ", option)
+        setTaskList(option);
+    }
+
     const dispatch = useDispatch()
     const selectProjectRef = useRef();
     const selectAssigneRef = useRef();
@@ -49,9 +56,9 @@ const CreateNewWBS = () => {
         if (actionMeta.action == 'select-option') {
             setSelectedProject(newValue);
             getAssigneeList(newValue);
-
+            getTaskList(newValue.data.subtasks);
             formCreateWbs.setValues({
-                project: newValue.data.project.id,
+                project: '',
                 work_package_number: newValue.data.project.work_package_number,
                 assignee: formCreateWbs.values.assignee,
                 reporter: sessionStorage.getItem(USER_ID),
@@ -72,10 +79,10 @@ const CreateNewWBS = () => {
     };
     const handleAssigneeChange = (value, actionMeta) => {
         let assigneeArray = []
-            value.forEach(item => {
-                assigneeArray.push(item.id)
-            })
-            formCreateWbs.setFieldValue('assignee', assigneeArray)
+        value.forEach(item => {
+            assigneeArray.push(item.id)
+        })
+        formCreateWbs.setFieldValue('assignee', assigneeArray)
     }
     // form validation for WBS create
     const is_before_start_date = (start_date, end_date) => {
@@ -114,6 +121,7 @@ const CreateNewWBS = () => {
         formCreateWbs.resetForm()
         selectProjectRef.current.select.clearValue();
         selectAssigneRef.current.select.clearValue();
+        selectTaskTitleRef.current.select.clearValue();
         setAssigneeList([])
     }
 
@@ -139,6 +147,33 @@ const CreateNewWBS = () => {
         validate: validate_create_wbs_form,
         onSubmit: create_wbs
     })
+    
+    const [selectedtask, setSelectedTask] = useState(null);
+    const selectTaskTitleRef = useRef();
+
+    const handleTaskTitleChange = (newValue, actionMeta) => {
+        console.log("newValue newValue:", newValue)
+        if (actionMeta.action == 'select-option') {
+            setSelectedTask(newValue);
+            formCreateWbs.setValues({
+                project: newValue.id,
+                work_package_number: formCreateWbs.values.work_package_number,
+                assignee: formCreateWbs.values.assignee,
+                reporter: sessionStorage.getItem(USER_ID),
+                title: formCreateWbs.values.title,
+                description: formCreateWbs.values.description,
+                start_date: formCreateWbs.values.start_date,
+                end_date: formCreateWbs.values.end_date,
+                hours_worked: formCreateWbs.values.hours_worked,
+                status: formCreateWbs.values.status,
+                progress: formCreateWbs.values.progress,
+                comments: formCreateWbs.values.comments,
+                deliverable: formCreateWbs.values.deliverable
+            })
+        } else if (actionMeta.action == 'clear') {
+            setSelectedTask(null)
+        }
+    }
 
     return (
         <>
@@ -182,6 +217,21 @@ const CreateNewWBS = () => {
                                                 </div> :
                                                 <></>
                                             }
+                                            {/**task title */}
+                                            <div className="col-lg-12 mb-3">
+                                                <CLabel className="custom-label-wbs5">
+                                                    Task Title
+                                                </CLabel>
+                                                <Select
+                                                    id="task_title"
+                                                    options={taskList}
+                                                    getOptionLabel={option => option.task_title}
+                                                    getOptionValue={option => option.id}
+                                                    onChange={handleTaskTitleChange}
+                                                    ref={selectTaskTitleRef}
+                                                />
+                                                {formCreateWbs.touched.task_title && formCreateWbs.errors.task_title && <small style={{ color: 'red' }}>{formCreateWbs.errors.task_title}</small>}
+                                            </div>
                                             {/**wbs title */}
                                             <div className="col-lg-12 mb-3">
                                                 <CLabel className="custom-label-wbs5">
