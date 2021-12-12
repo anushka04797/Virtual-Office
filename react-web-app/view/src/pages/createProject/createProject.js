@@ -114,6 +114,7 @@ const CreateNewProject = () => {
         work_package_number: newValue.work_package_number,
         task_title: formCreateProject.values.task_title,
         estimated_person: formCreateProject.values.estimated_person,
+        start_date: formCreateProject.values.start_date,
         planned_delivery_date: formCreateProject.values.planned_delivery_date,
         assignee: formCreateProject.values.assignees,
         pm: sessionStorage.getItem(USER_ID),
@@ -208,6 +209,7 @@ const CreateNewProject = () => {
       work_package_number: formCreateProject.values.work_package_number,
       task_title: formCreateProject.values.task_title,
       estimated_person: formCreateProject.values.estimated_person,
+      start_date: formCreateProject.values.start_date,
       planned_delivery_date: formCreateProject.values.planned_delivery_date,
       assignee: temp,
       pm: sessionStorage.getItem(USER_ID),
@@ -232,6 +234,7 @@ const CreateNewProject = () => {
         work_package_number: formCreateProject.values.work_package_number,
         task_title: formCreateProject.values.task_title,
         estimated_person: temp,
+        start_date: formCreateProject.values.start_date,
         planned_delivery_date: formCreateProject.values.planned_delivery_date,
         assignee: formCreateProject.values.assignee,
         pm: sessionStorage.getItem(USER_ID),
@@ -433,6 +436,7 @@ const CreateNewProject = () => {
         work_package_number: formCreateProject.values.work_package_number,
         task_title: formCreateProject.values.task_title,
         estimated_person: formCreateProject.values.estimated_person,
+        start_date: formCreateProject.values.start_date,
         planned_delivery_date: formCreateProject.values.planned_delivery_date,
         assignee: selectedAssignees,
         pm: sessionStorage.getItem(USER_ID),
@@ -459,6 +463,7 @@ const CreateNewProject = () => {
           work_package_number: formCreateProject.values.work_package_number,
           task_title: formCreateProject.values.task_title,
           estimated_person: selectedAssigneesEP,
+          start_date: formCreateProject.values.start_date,
           planned_delivery_date: formCreateProject.values.planned_delivery_date,
           assignee: formCreateProject.values.assignee,
           pm: sessionStorage.getItem(USER_ID),
@@ -500,6 +505,7 @@ const CreateNewProject = () => {
       work_package_number: formCreateProject.values.work_package_number,
       task_title: formCreateProject.values.task_title,
       estimated_person: assignee_eps,
+      start_date: formCreateProject.values.start_date,
       planned_delivery_date: formCreateProject.values.planned_delivery_date,
       assignee: assignees,
       pm: sessionStorage.getItem(USER_ID),
@@ -513,7 +519,7 @@ const CreateNewProject = () => {
     populate_planned_value_and_hours([...inputList, { assignee: selectedAssignees, estimated_person: selectedAssigneesEP }])
     setInputList([...inputList, { assignee: selectedAssignees, estimated_person: selectedAssigneesEP }]);
     setSelectedAssignees(null)
-    setSelectedAssigneesEP(null)
+    setSelectedAssigneesEP(0)
     console.log("inputList", inputList)
   };
   function removeAssignee(item){
