@@ -189,7 +189,7 @@ const MyProjects = () => {
      }
     return (
         <>
-            {selectedSubTask && <CModal alignment="center" show={show_sub_task_details} onClose={() => { setShowSubTaskDetails(!show_sub_task_details) }}>
+            {selectedSubTask && <CModal size="lg"  alignment="center" show={show_sub_task_details} onClose={() => { setShowSubTaskDetails(!show_sub_task_details)}}>
                 <CModalHeader onClose={() => setShowSubTaskDetails(!show_sub_task_details)} closeButton>
                     <CModalTitle className="modal-title-projects">
                         <span className="edit-profile-form-header">Subtask Details</span>
@@ -227,10 +227,10 @@ const MyProjects = () => {
                                                         <h6 className="project-point-details">{selectedSubTask.estimated_person}</h6>
                                                     </div>
                                                     <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Planned Value</h6>
-                                                        <h6 className="project-point-details">{selectedSubTask.planned_value} </h6>
+                                                        <h6 className="project-point-details">{selectedSubTask.assignees[0].project.planned_value} </h6>
                                                     </div>
                                                     <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Planned Hours</h6>
-                                                        <h6 className="project-point-details">{selectedSubTask.planned_hours} </h6>
+                                                        <h6 className="project-point-details">{selectedSubTask.assignees[0].project.planned_hours} </h6>
                                                     </div>
                                                     <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Remaining Hours</h6>
                                                         <h6 className="project-point-details">{selectedSubTask.remaining_hours} </h6>
@@ -298,10 +298,12 @@ const MyProjects = () => {
                                       {/*Project category buttons */}
                                       <div className="all-da-buttons-1">
                                       {Array.from(project.subtasks).length > 0 && Array.from(project.subtasks).map((task, idx) => (
+                                          
                                         <CButton key={idx} type="button" className="package-button rounded-pill" onClick={() => { setShowSubTaskDetails(true); setSelectedSubTask(task); console.log('task',task) }}>
                                             {task.task_title}
                                             <span className="tooltiptext">{task.work_package_index}</span>
                                         </CButton>
+                                       
                                     ))} 
                                       </div>
                                        {/*Project participants */}
