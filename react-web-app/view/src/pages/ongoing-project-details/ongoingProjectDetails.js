@@ -144,7 +144,7 @@ const OngoingProjectDetails = () => {
     }
     return (
         <>
-            {selectedSubTask && <CModal alignment="center" show={show_sub_task_details} onClose={() => { setShowSubTaskDetails(!show_sub_task_details) }}>
+            {selectedSubTask && <CModal size="lg" alignment="center" show={show_sub_task_details} onClose={() => { setShowSubTaskDetails(!show_sub_task_details) }}>
                 <CModalHeader onClose={() => setShowSubTaskDetails(!show_sub_task_details)} closeButton>
                     <CModalTitle className="modal-title-projects">
                         <span className="edit-profile-form-header">Subtask Details</span>
@@ -182,10 +182,10 @@ const OngoingProjectDetails = () => {
                                                         <h6 className="project-point-details">{selectedSubTask.estimated_person}</h6>
                                                     </div>
                                                     <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Planned Value</h6>
-                                                        <h6 className="project-point-details">{selectedSubTask.planned_value} </h6>
+                                                        <h6 className="project-point-details">{selectedSubTask.assignees[0].project.planned_value} </h6>
                                                     </div>
                                                     <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Planned Hours</h6>
-                                                        <h6 className="project-point-details">{selectedSubTask.planned_hours} </h6>
+                                                        <h6 className="project-point-details">{selectedSubTask.assignees[0].project.planned_hours} </h6>
                                                     </div>
                                                     <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Remaining Hours</h6>
                                                         <h6 className="project-point-details">{selectedSubTask.remaining_hours} </h6>

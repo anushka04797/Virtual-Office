@@ -19,15 +19,21 @@ const CompletedDetailsView = () => {
   let history = useHistory();
 
 
-  API.get("project/details/" + work_package_number + "/").then((res) => {
-
-    setProject(res.data.data);
-
-
-  });
+ 
   console.log('project from completed page', project)
 
   useEffect(() => {
+    API.get("project/details/"+ work_package_number +"/").then((res) => {
+      if(res.statusText != 'OK'){
+        history.push('/dashboard/Projects/completed-projects')
+    }
+    else{
+      setProject(res.data.data);
+    }
+    
+  
+  
+    });
     // console.log('project from completed page', project)
   }, [project])
    {/**export in excel */ }
