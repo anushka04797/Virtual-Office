@@ -16,7 +16,7 @@ import { has_permission } from '../../helper';
 import '../my-projects/myProjects.css';
 import * as FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
-
+import { capitalize } from '../../helper';
 import {
     Accordion,
     AccordionItem,
@@ -262,7 +262,10 @@ const OngoingProjectDetails = () => {
                                             {/*Project participants */}
                                             <div className="all-da-workers1">
                                                 {project.assignees.length > 0 && Array.from(project.assignees).map((assignee, idx) => (
-                                                    <img key={idx} className="img-fluid worker-image" src={assignee.profile_pic != null ? BASE_URL + assignee.profile_pic : 'avatars/user-avatar-default.png'} />
+                                                     <div className="assignee-name-list">
+                                                     <img key={idx} className="img-fluid worker-image" src={assignee.profile_pic != null ? BASE_URL + assignee.profile_pic : 'avatars/user-avatar-default.png'} />
+                                                     <span className="tooltiptext1">{capitalize(assignee.first_name + ' ' + assignee.last_name)}</span>
+                                                 </div>
                                                 ))}
                                             </div>
                                             {/*project info in text */}

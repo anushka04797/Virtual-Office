@@ -21,30 +21,33 @@ const ForgotPass = () => {
                         <h3 className="forgot-header">Forgot Password</h3>
                             <div className="forgot-form-holder">
                                 <CForm>
-                                    <div className="mb-3">
-                                        <CLabel
+                                    <div className="mb-3 text-center">
+                                        {/* <CLabel
                                             htmlFor="exampleInputEmail1"
                                             className="custom-label-forgot"
                                         >
                                             Email
-                                        </CLabel>
-                                        <CInput
+                                        </CLabel> */}
+                                        {/* <CInput
                                             type="email"
                                             id="exampleInputEmail1"
                                             aria-describedby="emailHelp"
                                             className="custom-formgroup-forgot"
-                                        />
+                                        /> */}
+                                        <h4 className="contact-admin-text">Hey There !</h4>
+Kindly contact with the admin to reset your password
+
                                         {/* <CFormText id="emailHelp">
       We'll never share your email with anyone else.
     </CFormText> */}
                                     </div>
 
                                     {/**submit button */}
-                                    <div className="submit-holder-pass">
+                                    {/* <div className="submit-holder-pass">
                                         <CButton type="submit" className="submit-button-forgot">
                                             Send
                                         </CButton>
-                                    </div>
+                                    </div> */}
                                     {/**redirect to other pages */}
                                     <h5 className="dum-text mt-3">Here by mistake?</h5>
                                     <div className="redirect-to-pages mt-2">

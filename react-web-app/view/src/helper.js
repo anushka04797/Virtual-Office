@@ -32,3 +32,9 @@ export const getBuildDate = (epoch) => {
     const buildDate = moment(epoch).format("DD-MM-YYY HH:MM");
     return buildDate;
 };
+export function capitalize(string) {
+    if (string != undefined) {
+        return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+    }
+    return ''
+}

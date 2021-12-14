@@ -235,7 +235,7 @@ const CreateNewWBS = () => {
                                             {/**wbs title */}
                                             <div className="col-lg-12 mb-3">
                                                 <CLabel className="custom-label-wbs5">
-                                                    Title
+                                                   WBS Title
                                                 </CLabel>
                                                 {/* onChange={setWbsTitle} */}
                                                 <CInput id="title" name="title" value={formCreateWbs.values.title} onChange={formCreateWbs.handleChange} className="custom-forminput-6"></CInput>

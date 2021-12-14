@@ -1,7 +1,7 @@
 import { CDropdown, CDropdownToggle, CDropdownMenu, CDropdownItem, CContainer, CRow, CCol, CCard, CCardHeader, CCardBody, CForm, CLabel, CInput, CButton, CModal, CModalBody, CModalHeader, CModalFooter } from '@coreui/react';
 import React, { useState, useEffect } from 'react'
 import './Board.css'
-import Board from 'react-trello'
+import Board, { Lane } from 'react-trello'
 import WbsModal from './wbs-modal';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchWbsThunk } from '../../store/slices/WbsSlice';
@@ -13,6 +13,7 @@ import swal from 'sweetalert';
 import Select from "react-select";
 
 const WbsBoard = () => {
+
     const [wbsList,setWbsList] = useState([])
     const tempAssigneList = [];
     const [wbsAssigneeList, setWbsAssigneeList] = useState([]);
@@ -184,6 +185,7 @@ const WbsBoard = () => {
             values = {
                 "status": 1
             }
+          
         } else if (cardDetails.laneId == "lane2") {
             values = {
                 "status": 2
