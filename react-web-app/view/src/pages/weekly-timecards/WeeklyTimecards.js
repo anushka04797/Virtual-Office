@@ -36,7 +36,7 @@ const WeeklyTimecards = () => {
     React.useEffect(() => {
        
         // console.log(time_card_list_fetched)
-        API.get('project/assignees/all/' + sessionStorage.getItem(USER_ID) + "/").then((res) => {
+        API.get('project/assignees/all/'+ sessionStorage.getItem(USER_ID) + "/").then((res) => {
             // let assignees = [];
             let temp=[]
             Array.from(res.data.data).forEach((item, idx) => {

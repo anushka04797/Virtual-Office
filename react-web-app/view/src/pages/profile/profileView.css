@@ -47,10 +47,14 @@ border: none !important;
     border: 2px solid #FAFBFC;
 }
 .user-profile-pic-div{
-    background-color: #5e6969;
-    background-image: linear-gradient(196deg, #5e6969 0%, #cbd7d7 100%);
+    /* background-color: #5e6969;
+    background-image: linear-gradient(196deg, #5e6969 0%, #cbd7d7 100%); */
+    background-image: url('../../assets/bgs/profile-card-bg.png');
+    background-position: center;
+    background-repeat: no-repeat;
     padding-top: 10px;
-    padding-bottom: 10px;
+   background-size: cover;
+    padding-bottom: 12px;
     border: 1px solid #FAFBFC;
     
 
