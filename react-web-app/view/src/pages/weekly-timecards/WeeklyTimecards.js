@@ -10,7 +10,7 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import * as FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
-
+import CIcon from '@coreui/icons-react';
 
 
 const WeeklyTimecards = () => {
@@ -320,7 +320,7 @@ const WeeklyTimecards = () => {
 
                         </div>
                         <div className="col-lg-6 col-md-6 col-sm-12">
-                            <CButton className="generate-card-button" onClick={editForm.handleSubmit} >Generate Timecard</CButton>
+                            <CButton className="generate-card-button" onClick={editForm.handleSubmit}>Generate Timecard</CButton>
                         </div>
                     </CRow>
                 </CForm>
@@ -330,8 +330,8 @@ const WeeklyTimecards = () => {
                     {tableData.length != 0 && <CCol md="12">
                         <h5 className="tiny-header--5 mt-4">Export</h5>
                         <div className="format-buttons mt-3">
-                            <CButton className="file-format-download" onClick={() => exportPDF()}>PDF</CButton>
-                            <CButton className="file-format-download" onClick={() => exportToCSV(tableData, 'Timecard of' + " " + pdfTitle)} >Excel</CButton>
+                            <CButton className="file-format-download" onClick={() => exportPDF()}><CIcon name="cil-description" className="mr-2"/>PDF</CButton>
+                            <CButton className="file-format-download" onClick={() => exportToCSV(tableData, 'Timecard of' + " " + pdfTitle)} ><CIcon name="cil-spreadsheet" className="mr-2"/>Excel</CButton>
 
                             {/* <CButton className="file-format-download">Print</CButton> */}
 

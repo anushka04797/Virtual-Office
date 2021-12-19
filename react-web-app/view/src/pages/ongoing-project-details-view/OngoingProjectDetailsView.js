@@ -416,7 +416,7 @@ const OngoingDetailsView = () => {
                 </CModal>
                 {/**Edit ongoing project details ends */}
                 
-                <h3 className="dash-header-1">Project Details <CButton className="export-project-list" onClick={() => exportToCSV()}>Export to excel</CButton></h3>
+                <h3 className="dash-header-1">Project Details <CButton className="export-project-list" onClick={() => exportToCSV()}><CIcon name="cil-spreadsheet" className="mr-2"/>Export to excel</CButton></h3>
                 {status === 0 ?
                     (
                         <div className="card-header-portion-ongoing">

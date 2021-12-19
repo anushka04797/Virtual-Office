@@ -141,7 +141,7 @@ const CompleteProjects = () => {
                 <div className="row">
 
                     <div className="col-md-11 col-sm-12 col-xs-12 mt-1">
-                    <h3 className="dash-header">Completed Projects({projects.length}) <CButton className="export-project-list" onClick={() => exportToCSV()}>Export to excel</CButton></h3>
+                    <h3 className="dash-header">Completed Projects({projects.length}) <CButton className="export-project-list" onClick={() => exportToCSV()}><CIcon name="cil-spreadsheet" className="mr-2"/>Export to excel</CButton></h3>
                         {projects != undefined && <Accordion allowMultipleExpanded={false} className="remove-acc-bg" allowZeroExpanded>
                             {projects.map((project, idx) => (
                                 <AccordionItem key={idx} className="card-ongoing-project">

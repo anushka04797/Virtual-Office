@@ -215,6 +215,10 @@ const OngoingProjectDetails = () => {
                                     </div>
                                 </div>
                             </CRow>
+                                {/**forward to wbs button  */}
+                                <CRow className="justify-content-center">
+                                <CButton className="create-wbs-from-modal" onClick={() => history.push({pathname:'/dashboard/WBS/create-wbs'})}>Create WBS</CButton>
+                            </CRow>
                         </CForm>
                     </CContainer>
                 </CModalBody>
@@ -223,7 +227,7 @@ const OngoingProjectDetails = () => {
 
                 <div className="row">
                     <div className="col-md-12 col-lg-11 col-sm-12 col-xs-12 mt-1 mb-3">
-                        <h4 className="dash-header">Assigned Projects({Array.from(projects).length}) <CButton className="export-project-list" onClick={() => exportToCSV()}>Export to excel</CButton></h4>
+                        <h4 className="dash-header">Assigned Projects({Array.from(projects).length}) <CButton className="export-project-list" onClick={() => exportToCSV()}><CIcon name="cil-spreadsheet" className="mr-2"/>Export to excel</CButton></h4>
                         {projects != undefined &&
 
                             <Accordion allowMultipleExpanded={false} className="remove-acc-bg" allowZeroExpanded>
