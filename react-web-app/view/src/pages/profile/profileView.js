@@ -331,7 +331,7 @@ const UserProfile = () => {
                                                     <div className="col-md-6 col-lg-4">
                                                         <h5 className="info-header-1"> Phone</h5>
                                                         <h5 className="profile-details-points child">
-                                                            {profile_details.phone}
+                                                            +{profile_details.phone}
                                                         </h5>
                                                     </div>
                                                 </div>

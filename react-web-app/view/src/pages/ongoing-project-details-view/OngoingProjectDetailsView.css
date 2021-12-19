@@ -50,7 +50,7 @@ margin-bottom: 30px;
     }
    .delete-project-2:active,.delete-project-2:focus, .edit-project-ongoing-task:active,.edit-project-ongoing-task:focus,.cancel-name:active,.cancel-name:focus,.edit-ongoing-project-title:focus,.edit-ongoing-project-title:active,.confirm-name:focus,.confirm-name:active{
         border-color: transparent;
-        outline: 0 !important;
+        CIcon: 0 !important;
         box-shadow: none !important;
         transition: none !important;
     }

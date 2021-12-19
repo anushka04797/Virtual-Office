@@ -4,6 +4,8 @@ import { logoNegative } from './logo-negative'
 
 import {
   cilCamera,
+  cilDescription,
+  cilArrowThickFromRight,
   cilAccountLogout,
   cilPlus,
   cibSkype,
@@ -31,7 +33,7 @@ import {
   cibStripe,
   cibPaypal,
   cibGooglePay,
-  cibCcAmex,cilBadge,cilControl,
+  cibCcAmex, cilBadge, cilControl,
   cibGhost,
   cisFileXls
 
@@ -118,7 +120,7 @@ import {
   cilPaperclip,
   cilPaperPlane,
   cilPencil,
-  cilPeople,cilMoney,
+  cilPeople, cilMoney,
   cilPhone,
   cilPrint,
   cilPuzzle,
@@ -151,7 +153,7 @@ import {
   cilPenAlt,
   cilPen,
   cilArrowThickToTop
- 
+
 } from '@coreui/icons'
 
 export const icons = Object.assign({}, {
@@ -159,12 +161,14 @@ export const icons = Object.assign({}, {
   logo,
   logoNegative
 }, {
-cilCamera,
+  cilArrowThickFromRight,
+  cilDescription,
+  cilCamera,
   cilClock,
   cilAccountLogout,
   cilPlus,
   cilAlignCenter,
-  cilTag,cilMoney,
+  cilTag, cilMoney,
   cilAlignLeft,
   cilAlignRight,
   cilApplicationsSettings,
@@ -173,7 +177,7 @@ cilCamera,
   cilAsterisk,
   cilBan,
   cilBasket,
-  cilBell,cilBadge,cilControl,
+  cilBell, cilBadge, cilControl,
   cilBold,
   cilBookmark,
   cilCalculator,
@@ -305,5 +309,5 @@ cilCamera,
   cilPen,
   cilArrowThickToTop,
 
-  
+
 })

@@ -12,7 +12,7 @@ import "jspdf-autotable";
 import * as FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
 import { fetchPersonalDetails } from "../../store/slices/ProfileSlice";
-
+import CIcon from '@coreui/icons-react';
 
 const TimeCards = () => {
     const profile_details = useSelector(state => state.profile.data)
@@ -22,9 +22,9 @@ const TimeCards = () => {
     console.log('userdata', usersData)
     const [assignee, setAssigneeValue] = useState();
     const [pdfTitle, setPdfTitle] = useState();
-    const [assigneeList,setAssigneeList] = useState([]);
+    const [assigneeList, setAssigneeList] = useState([]);
     {/**fetch all assignees for PM */ }
-    
+
 
     const getTimeCards = (values) => {
         if (has_permission('projects.add_projects') && has_permission('wbs.change_timecard') && has_permission('wbs.add_timecard')) {
@@ -76,7 +76,7 @@ const TimeCards = () => {
 
 
     }
-    
+
     function capitalize(string) {
         if (string != undefined) {
             return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
@@ -84,11 +84,11 @@ const TimeCards = () => {
         return ''
     }
     {/**fetch all assignees for PM */ }
-    
-    React.useEffect(()=>{
+
+    React.useEffect(() => {
         if (has_permission('projects.change_projectassignee') || has_permission('projects.add_projectassignee')) {
             API.get('project/assignees/all/' + sessionStorage.getItem(USER_ID) + "/").then((res) => {
-                let temp=[]
+                let temp = []
                 if (res.data.data.length > 0) {
                     Array.from(res.data.data).forEach((item, idx) => {
                         temp.push({ data: item, value: item.id, label: capitalize(item.first_name) + " " + capitalize(item.last_name) })
@@ -99,9 +99,9 @@ const TimeCards = () => {
                 }
                 setAssigneeList(temp)
             })
-    
+
         }
-    },[])
+    }, [])
     const getAssigneeList = (option) => {
         setAssigneeValue(option)
         editForm.setValues({
@@ -194,32 +194,32 @@ const TimeCards = () => {
                             }
                             {/**IF PM */}
                             {has_permission('projects.add_projects') &&
-        <div>
-            <CLabel className="custom-label-5" htmlFor="assigneeSelectPM">
-                Select Employee
-            </CLabel>
-            <Select
-                closeMenuOnSelect={true}
-                aria-labelledby="assigneeSelectPM"
-                id="assigneeSelectPM"
-                minHeight="35px"
+                                <div>
+                                    <CLabel className="custom-label-5" htmlFor="assigneeSelectPM">
+                                        Select Employee
+                                    </CLabel>
+                                    <Select
+                                        closeMenuOnSelect={true}
+                                        aria-labelledby="assigneeSelectPM"
+                                        id="assigneeSelectPM"
+                                        minHeight="35px"
 
-                placeholder="Select from list"
-                isClearable={false}
-                isMulti={false}
-                onChange={getAssigneeList}
-                classNamePrefix="custom-forminput-6"
-                options={assigneeList}
-                styles={colourStyles}
-            />
-            {/* {editForm.errors.assigneeSelectPM && <p className="error mt-1">{editForm.errors.assigneeSelectPM}</p>} */}
-        </div>
+                                        placeholder="Select from list"
+                                        isClearable={false}
+                                        isMulti={false}
+                                        onChange={getAssigneeList}
+                                        classNamePrefix="custom-forminput-6"
+                                        options={assigneeList}
+                                        styles={colourStyles}
+                                    />
+                                    {/* {editForm.errors.assigneeSelectPM && <p className="error mt-1">{editForm.errors.assigneeSelectPM}</p>} */}
+                                </div>
 
 
 
-    }
-    {/**If PM but no assignee list **/ }
-    {/* {has_group('pm')&& (assigneeList.length == 0) &&
+                            }
+                            {/**If PM but no assignee list **/}
+                            {/* {has_group('pm')&& (assigneeList.length == 0) &&
                                 <div>
                                     <CLabel className="custom-label-5" htmlFor="assigneeSelect">
                                         Select Employee
@@ -231,77 +231,77 @@ const TimeCards = () => {
                             } */}
 
                         </CCol >
-    {/**start date */ }
-    < CCol xl = "3" lg = "3" md = "6" >
+                        {/**start date */}
+                        < CCol xl="3" lg="3" md="6" >
                             <CLabel className="custom-label-5" htmlFor="startDate">
                                 From Date
                             </CLabel>
                             <CInput className="custom-forminput-6  w-100" type="date" name="startDate" id="startDate" value={editForm.values.startDate} onChange={editForm.handleChange} />
-{/**Error show */ }
-{ editForm.errors.startDate && <p className="error mt-1">{editForm.errors.startDate}</p> }
+                            {/**Error show */}
+                            {editForm.errors.startDate && <p className="error mt-1">{editForm.errors.startDate}</p>}
                         </CCol >
-    {/**END DATE */ }
-    < CCol xl = "3" lg = "3" md = "6" >
+                        {/**END DATE */}
+                        < CCol xl="3" lg="3" md="6" >
 
                             <CLabel className="custom-label-5" htmlFor="todate">
                                 To Date
                             </CLabel>
                             <CInput className="custom-forminput-6  w-100" type="date" name="todate" id="todate" value={editForm.values.todate} onChange={editForm.handleChange} />
-{/**Error show */ }
-{ editForm.errors.todate && <p className="error mt-1">{editForm.errors.todate}</p> }
+                            {/**Error show */}
+                            {editForm.errors.todate && <p className="error mt-1">{editForm.errors.todate}</p>}
                         </CCol >
-    <CCol xl="3" lg="3" md="6">
-        <div className="button-holder--3">
-            <CButton className="generate-card-button" onClick={editForm.handleSubmit}>Generate Timecard</CButton>
-        </div>
-    </CCol>
+                        <CCol xl="3" lg="3" md="6">
+                            <div className="button-holder--3">
+                                <CButton className="generate-card-button" onClick={editForm.handleSubmit}>Generate Timecard</CButton>
+                            </div>
+                        </CCol>
 
-{/**buttons for format of timecard */ }
+                        {/**buttons for format of timecard */}
 
-{
-    usersData != 0 && <CCol md="12">
-        <h5 className="tiny-header--5 mt-4">Export</h5>
-        <div className="format-buttons mt-2">
-            <CButton className="file-format-download" onClick={() => exportPDF()}>PDF</CButton>
-            <CButton className="file-format-download" onClick={() => exportToCSV(usersData, 'Timecard of' + " " + pdfTitle)} >Excel</CButton>
+                        {
+                            usersData != 0 && <CCol md="12">
+                                <h5 className="tiny-header--5 mt-4">Export</h5>
+                                <div className="format-buttons mt-2">
+                                    <CButton className="file-format-download" onClick={() => exportPDF()}><CIcon name="cil-description" className="mr-2" /> PDF</CButton>
+                                    <CButton className="file-format-download" onClick={() => exportToCSV(usersData, 'Timecard of' + " " + pdfTitle)} ><CIcon name="cil-spreadsheet" className="mr-2" />Excel</CButton>
 
-            {/* <CButton className="file-format-download">Print</CButton> */}
-        </div>
-    </CCol>
-}
-{/**table for displaying all the entries */ }
-<CCol md="12">
-    <div className="mt-4">
-        <CDataTable items={usersData} fields={[
-            {
-                key: "#",
-                _style: { width: "5%" },
-                _classes: "font-weight-bold",
-            },
-            'TDO',
-            'Project Name',
-            'Task Title',
-            'Actual Work Done',
-            'Hrs Today',
-            'Date Created',
-            'Date Updated'
+                                    {/* <CButton className="file-format-download">Print</CButton> */}
+                                </div>
+                            </CCol>
+                        }
+                        {/**table for displaying all the entries */}
+                        <CCol md="12">
+                            <div className="mt-4">
+                                <CDataTable items={usersData} fields={[
+                                    {
+                                        key: "#",
+                                        _style: { width: "5%" },
+                                        _classes: "font-weight-bold",
+                                    },
+                                    'TDO',
+                                    'Project Name',
+                                    'Task Title',
+                                    'Actual Work Done',
+                                    'Hrs Today',
+                                    'Date Created',
+                                    'Date Updated'
 
-        ]}
-            primary
-            hover
-            striped
-            bordered
-            sorter
-            columnFilter
+                                ]}
+                                    primary
+                                    hover
+                                    striped
+                                    bordered
+                                    sorter
+                                    columnFilter
 
-            size="sm"
-            itemsPerPage={10}
-            pagination
-        >
+                                    size="sm"
+                                    itemsPerPage={10}
+                                    pagination
+                                >
 
-        </CDataTable>
-    </div>
-</CCol>
+                                </CDataTable>
+                            </div>
+                        </CCol>
                     </CRow >
                 </CForm >
 

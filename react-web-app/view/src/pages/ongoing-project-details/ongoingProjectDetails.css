@@ -552,6 +552,27 @@ color: #FAFBFC;
     color: #FFFFFF;  
     background-color: rgb(56, 142, 60);
 }
+.create-wbs-from-modal
+{
+    -webkit-box-align: baseline;
+    align-items: baseline;
+    border-width: 0px;
+    border-radius: 3px;
+    box-sizing: border-box;
+    font-style: normal;
+    font-weight: 500;
+    height: 40px;
+    width: 150px;
+    padding: 0px 10px;
+    font-size: 14px;
+    line-height: 2.28571em;
+    background-color: #0052cc;
+    color: white;
+}
+.create-wbs-from-modal:hover{
+    background-color: #0065ff;
+    color: white;
+}
 /* .child{
     margin-left: auto;
     order: 2;

@@ -20,7 +20,7 @@ const CompletedDetailsView = () => {
 
 
  
-  console.log('project from completed page', project)
+  // console.log('project from completed page', project)
 
   useEffect(() => {
     API.get("project/details/"+ work_package_number +"/").then((res) => {
@@ -34,7 +34,7 @@ const CompletedDetailsView = () => {
   
   
     });
-    // console.log('project from completed page', project)
+    console.log('project from completed page', project)
   }, [project])
    {/**export in excel */ }
    const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
@@ -68,7 +68,7 @@ const CompletedDetailsView = () => {
     <>
       {project != undefined &&
         <CContainer>
-          <h3 className="dash-header-1">Project Details <CButton className="export-project-list" onClick={() => exportToCSV()}>Export to excel</CButton></h3>
+          <h3 className="dash-header-1">Project Details <CButton className="export-project-list" onClick={() => exportToCSV()}><CIcon name="cil-spreadsheet" className="mr-2"/>Export to excel</CButton></h3>
           <div className="card-header-portion-ongoing">
             <h4 className="ongoing-card-header-1">
               <IconButton
