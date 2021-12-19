@@ -141,6 +141,8 @@ margin-bottom: 30px;
     text-transform: capitalize;
     mix-blend-mode: normal;
     }
+ 
+
     .file-attached-ongoing{
    
       padding-top: 5px;
@@ -202,6 +204,21 @@ margin-bottom: 30px;
     .export-project-list:hover{
         color: #FFFFFF;  
         background-color: rgb(56, 142, 60);
+    }
+    .tooltiptext1{
+        /* visibility: hidden;
+        width: 100px; */
+        background-color: white !important;
+        color: #444444 !important;
+        text-align: center;
+        border: 1px solid #2998F9;
+    border-radius: 8px;
+        padding: 2px 0;
+        font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 17px;
+
     }
    
     /**___________ACTION BUTTONS____________**/

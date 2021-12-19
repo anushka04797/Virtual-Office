@@ -9,6 +9,7 @@ import {
   CSidebarMinimizer,
   CSidebarNavDropdown,
   CSidebarNavItem,
+  CImg
 } from '@coreui/react'
 import { changeState } from '../store/slices/SideBarSlice';
 import CIcon from '@coreui/icons-react'
@@ -39,18 +40,18 @@ const TheSidebar = () => {
       onShowChange={(val) => dispatch(changeState(val))}
     >
       <CSidebarBrand className="d-md-down-none custom-color" to="/">
-        {/* <CIcon
+        <CImg
           className="c-sidebar-brand-full"
-          name="logo-negative"
+          src={'assets/icons/DMA-LOGO-BIG.svg'}
           height={35}
-        /> */}
-        <span className="c-sidebar-brand-full name-brand1">Virtual Office</span>
+        />
+        <h6 className="c-sidebar-brand-full name-brand1">Virtual Office</h6>
 
-        {/* <CIcon
+        <CImg
           className="c-sidebar-brand-minimized"
-          name="sygnet"
+          src={'assets/icons/DMA-logo-small.svg'}
           height={35}
-        /> */}
+        />
         <span className="c-sidebar-brand-minimized name-brand1">VO</span>
       </CSidebarBrand>
       <CSidebarNav className="vo-sidebar">
