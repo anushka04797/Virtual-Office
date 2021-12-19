@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { fetchProjectsForPMThunk, fetchProjectsThunk } from '../../store/slices/ProjectsSlice';
 import '../ongoing-project-details/ongoingProjectDetails.css';
-import { CCol, CAlert, CCard, CCardBody, CButton, CModal, CModalHeader, CModalBody, CContainer, CForm, CRow, CLabel, CInput, CModalTitle } from '@coreui/react';
+import { CTooltip,CCol, CAlert, CCard, CCardBody, CButton, CModal, CModalHeader, CModalBody, CContainer, CForm, CRow, CLabel, CInput, CModalTitle } from '@coreui/react';
 import GradeIcon from '@material-ui/icons/Grade';
 import IconButton from '@material-ui/core/IconButton';
 import CIcon from "@coreui/icons-react";
@@ -314,10 +314,10 @@ const MyProjects = () => {
                                             {/*Project participants */}
                                             <div className="all-da-workers1">
                                                 {project.assignees.length > 0 && Array.from(project.assignees).map((assignee, idx) => (
-                                                    <span className="assignee-name-list">
+                                                 <CTooltip content={capitalize(assignee.first_name + ' ' + assignee.last_name)} className="tooltiptext1">  
                                                         <img key={idx} className="img-fluid worker-image" src={assignee.profile_pic != null ? BASE_URL + assignee.profile_pic : 'avatars/user-avatar-default.png'} />
-                                                        <span className="tooltiptext1">{capitalize(assignee.first_name + ' ' + assignee.last_name)}</span>
-                                                    </span>
+                                                       
+                                                  </CTooltip>
                                                 ))}
                                             </div>
                                             {/*project info in text */}
