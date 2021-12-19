@@ -57,7 +57,7 @@ const SharedDocuments = () => {
             {/**VIEW DOCUMENTS */}
             <CTabPane data-tab="viewDocs">
               <CContainer>
-                <h3 className="profile-page-header">View Shared Documents</h3>
+                {/* <h3 className="profile-page-header">View Shared Documents</h3> */}
                 <CRow>
                   <div className="col-md-12">
                     <ShowDocuments />
