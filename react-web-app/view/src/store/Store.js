@@ -9,6 +9,7 @@ import MeetingSlice from "./slices/MeetingSlice"
 import EvmsSlice from './slices/EvmsSlice'
 import TdoSlice from './slices/TdoSlice'
 import TimecardSlice from './slices/TimecardSlice'
+
 export default configureStore({
   reducer: {
     drawer: DrawerSlice,
