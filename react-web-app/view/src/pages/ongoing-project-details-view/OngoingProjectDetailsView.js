@@ -278,7 +278,7 @@ const OngoingDetailsView = () => {
 
 
             const item = project.subtasks[i];
-         fileName='Details of'+''+item.sub_task;
+         fileName='Details of'+' '+item.sub_task;
          
             let assigneNames = [];
             var assigneName;

@@ -1,6 +1,6 @@
 import { React, useEffect, useState } from 'react';
 import './ongoingProjectDetails.css'
-import { CAlert, CCard, CCardBody, CButton, CModal, CModalHeader, CModalBody, CContainer, CForm, CRow, CLabel, CInput, CModalTitle } from '@coreui/react';
+import { CTooltip,CAlert, CCard, CCardBody, CButton, CModal, CModalHeader, CModalBody, CContainer, CForm, CRow, CLabel, CInput, CModalTitle } from '@coreui/react';
 import GradeIcon from '@material-ui/icons/Grade';
 import IconButton from '@material-ui/core/IconButton';
 import Select from "react-select";
@@ -13,7 +13,7 @@ import { API } from '../../Config';
 import swal from 'sweetalert'
 import { fetchProjectsThunk } from '../../store/slices/ProjectsSlice';
 import { has_permission } from '../../helper';
-import '../my-projects/myProjects.css';
+// import '../my-projects/myProjects.css';
 import * as FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
 import { capitalize } from '../../helper';
@@ -266,10 +266,10 @@ const OngoingProjectDetails = () => {
                                             {/*Project participants */}
                                             <div className="all-da-workers1">
                                                 {project.assignees.length > 0 && Array.from(project.assignees).map((assignee, idx) => (
-                                                     <div className="assignee-name-list">
+                                                  <CTooltip content={capitalize(assignee.first_name + ' ' + assignee.last_name)} className="tooltiptext1">  
                                                      <img key={idx} className="img-fluid worker-image" src={assignee.profile_pic != null ? BASE_URL + assignee.profile_pic : 'avatars/user-avatar-default.png'} />
-                                                     <span className="tooltiptext1">{capitalize(assignee.first_name + ' ' + assignee.last_name)}</span>
-                                                 </div>
+                                                     {/* <span className="tooltiptext1">{capitalize(assignee.first_name + ' ' + assignee.last_name)}</span> */}
+                                            </CTooltip>
                                                 ))}
                                             </div>
                                             {/*project info in text */}

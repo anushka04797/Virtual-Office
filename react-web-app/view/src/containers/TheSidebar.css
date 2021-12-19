@@ -9,6 +9,10 @@
     text-decoration: none !important;
    
 }
+.c-sidebar .c-sidebar-brand, .c-sidebar .c-sidebar-header {
+    display: block;
+    text-align: center;
+}
 /* .c-sidebar-nav-icon{
 color: #0065ff !important;
 
@@ -21,6 +25,10 @@ color: #0065ff !important;
     font-weight: 500;
     letter-spacing: -0.01em;
 text-decoration-color: none !important;
+
+}
+.full-img-sidebar{
+    display: block !important;
 }
 .c-sidebar-brand-minimized{
     font-size: 18px;

@@ -104,27 +104,7 @@ color: #FAFBFC;
     color: #FAFBFC;
     background-color: #0065ff;
 }
-.assignee-name-list .tooltiptext1{
-    visibility: hidden;
-    width: 100px;
-    background-color: white;
-    color: #444444;
-    text-align: center;
-    border: 1px solid #2998F9;
-border-radius: 8px;
-    padding: 2px 0;
-    font-style: normal;
-font-weight: normal;
-font-size: 12px;
-line-height: 17px;
-    /* Position the tooltip */
-    position: absolute;
-    z-index: 1;
-    bottom: 120%;
-    left: 50%;
-    cursor: pointer;
-    margin-left: -60px;
-}
+
 .package-button .tooltiptext {
     visibility: hidden;
     width: 100px;
@@ -146,7 +126,7 @@ line-height: 17px;
     cursor: pointer;
     margin-left: -60px;
   }
-  .package-button .tooltiptext::after,.assignee-name-list>.tooltiptext1::after{
+  .package-button .tooltiptext::after{
     content: "";
     position: absolute;
     top: 100%;
@@ -161,10 +141,7 @@ line-height: 17px;
   .package-button:hover .tooltiptext{
       visibility: visible;
   }
-  .assignee-name-list:hover .tooltiptext1{
-    visibility: visible;
-   
-  }
+
 .lilac{
     background: #EEE8FA;
     color: #BD9EFB;
@@ -328,6 +305,29 @@ margin-bottom: 10px;
     font-size:30px;
 
 }
+
+.tooltiptext1{
+    /* visibility: hidden;
+    width: 100px; */
+    background-color: white !important;
+    color: #444444 !important;
+    text-align: center;
+    border: 1px solid #2998F9;
+border-radius: 8px;
+    padding: 2px 0;
+    font-style: normal;
+font-weight: normal;
+font-size: 12px;
+line-height: 17px;
+    /* Position the tooltip */
+    /* position: absolute;
+    z-index: 1;
+    bottom: 120%;
+    left: 50%;
+    cursor: pointer;
+    margin-left: -60px; */
+}
+
 /*new task add*/
 .new-task-add{
     margin-top:20px;
