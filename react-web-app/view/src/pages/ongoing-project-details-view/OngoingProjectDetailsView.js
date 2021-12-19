@@ -404,9 +404,9 @@ const OngoingDetailsView = () => {
                                             <CButton type="button" className="profile-form-btn update-profile" onClick={editForm.handleSubmit}>
                                                 Update Info
                                             </CButton>
-                                            <CButton className="profile-form-btn cancel-update" onClick={() => setEditModal(!editModal)} type="reset">
+                                            {/* <CButton className="profile-form-btn cancel-update" onClick={() => setEditModal(!editModal)} type="reset">
                                                 Cancel
-                                            </CButton>
+                                            </CButton> */}
                                         </div>
                                     </CCol>
                                 </CRow>

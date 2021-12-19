@@ -324,6 +324,7 @@ const CreateNewProject = () => {
         swal('Created!', 'Successfuly Created', 'success')
       }
     })
+    window.location.reload(true);
   }
 
   const formCreateProject = useFormik({
@@ -649,7 +650,7 @@ const CreateNewProject = () => {
                       {/**work package number */}
                       <div className="col-lg-6 mb-3">
                         <CLabel className="custom-label-5" htmlFor="workPackageNo">
-                          Work Package Number * <span className="input-info-msg">{isWpExist && "(Work Package exists)"}</span>
+                          Work Package Number * <span className="input-alert-msg">{isWpExist && "(Work Package exists)"}</span>
                         </CLabel>
                         {<CreatableSelect
                           closeMenuOnSelect={true}
@@ -775,7 +776,7 @@ const CreateNewProject = () => {
                       {/**submit buttons */}
                       <div className="col-md-12">{is_form_submitting() == true ? <LinearProgress /> :
                         <div className="project-form-button-holders mt-3">
-                          <CButton disabled={isWpExist} type="button" onClick={formCreateProject.handleSubmit} className="create-btn-prjct create-prjct">Create Project</CButton>
+                          <CButton type="button" onClick={formCreateProject.handleSubmit} className="create-btn-prjct create-prjct">Create Project</CButton>
                           <CButton type="button" onClick={reset_form} className="create-btn-prjct cancel-prjct">Cancel</CButton>
                         </div>}
                       </div>

@@ -114,6 +114,7 @@ const CreateNewWBS = () => {
                 swal('Created!', 'Successfuly Created', 'success')
             }
         })
+        window.location.reload(false);
     }
 
     // form reset method 

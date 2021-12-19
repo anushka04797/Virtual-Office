@@ -538,7 +538,7 @@ const MyProjectsDetailsView = () => {
                                     <div className="col-md-12">{is_form_submitting() == true ? <LinearProgress /> :
                                         <div className="project-form-button-holders mt-3">
                                             <CButton type="button" onClick={editForm.handleSubmit} className="create-btn-prjct create-prjct">Update Project</CButton>
-                                            <CButton type="button" onClick={reset_form} className="create-btn-prjct cancel-prjct">Cancel</CButton>
+                                            {/* <CButton type="button" onClick={reset_form} className="create-btn-prjct cancel-prjct">Cancel</CButton> */}
                                         </div>}
                                     </div>
                                 </CRow>
