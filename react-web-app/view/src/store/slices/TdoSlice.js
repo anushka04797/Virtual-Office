@@ -31,7 +31,7 @@ export const tdosSlice = createSlice({
       //state.data = action.payload
       state.data=[]
       Array.from(action.payload).forEach((tdo,idx)=>{
-          state.data.push({value:tdo.title,label:tdo.title})
+          state.data.push({value:{"title": tdo.title, "details": tdo.description},label:tdo.title})
       })
     },
     [fetchTdosThunk.rejected]: (state, action) => {

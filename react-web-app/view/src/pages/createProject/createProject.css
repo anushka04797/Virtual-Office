@@ -133,6 +133,14 @@
     border:transparent!important;
     box-shadow: none !important;
 }
+.input-info-msg {
+    color: rgb(0, 155, 0);
+    font-size: 12px;
+}
+.input-alert-msg {
+    color: rgb(255, 40, 40);
+    font-size: 12px;
+}
 /**_____MEDIA QUERY______**/
 @media all and (min-width:300px) and (max-width:601px){
     .custom-project-card-1{
