@@ -406,8 +406,6 @@ const CreateNewProject = () => {
   })
 
   function handlePlannedDeliveryDateChange(event) {
-    // formCreateProject.handleChange(event);
-    //  testMthd2(event.target.value)
     dateRange(formCreateProject.values.start_date, event.target.value)
   }
 
@@ -455,7 +453,6 @@ const CreateNewProject = () => {
     const monthNames = ["January", "February", "March", "April", "May", "June",
       "July", "August", "September", "October", "November", "December"
     ];
-    let temp_data = []
     let total_working_days = 0
     API.get('organizations/calender/all/').then((res) => {
       dates.forEach((date, idx) => {
@@ -469,8 +466,6 @@ const CreateNewProject = () => {
       })
       console.log("total_working_days after loop: ", total_working_days)
     }).then(() => {
-      // formCreateProject.setFieldValue("estimated_person", (calc(startDate, endDate) / total_working_days).toFixed(2));
-      // formCreateProject.setFieldValue("planned_hours", (8 * total_working_days));
       formCreateProject.setValues({
         task_delivery_order: formCreateProject.values.task_delivery_order,
         tdo_details: formCreateProject.values.tdo_details,
