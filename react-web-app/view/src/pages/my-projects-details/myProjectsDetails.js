@@ -29,9 +29,9 @@ const MyProjectsDetailsView = () => {
     const [status, setStatus] = useState(0);
     const [project, setProject] = useState()
     const [assignees, setAssignees] = useState([])
-    const [defaultValue, setDefaultValue] = useState([])
+
     const [inputList, setInputList] = useState([])
-    const [total_working_days,setTotalWorkingDays]=useState(0)
+    const [total_working_days, setTotalWorkingDays] = useState(0)
     let location = useLocation()
     let history = useHistory()
     const [titleStatus, setTitleStatus] = useState(1);
@@ -54,20 +54,21 @@ const MyProjectsDetailsView = () => {
         if (!values.planned_hours) errors.planned_hours = "Planned hours is required"
         return errors
     }
-    const edit_project = (values) => {
+    const edit_project = (values, { setSubmitting }) => {
         console.log(JSON.stringify(values))
         API.put('project/update/' + values.work_package_index + '/', values).then((res) => {
             console.log(res.data)
             if (res.status == 200 && res.data.success == 'True') {
                 setEditModal(false)
+                setSubmitting(false)
                 initialize()
-                swal('Updated!','Task Details is updated', 'success')
+                swal('Updated!', 'Task Details is updated', 'success')
             }
         })
     }
     const editForm = useFormik({
         initialValues: {
-            sub_task: "",
+            sub_task: project?.project.sub_task,
             work_package_number: project?.project.work_package_number,
             work_package_index: project?.project.work_package_index,
             task_title: "",
@@ -93,38 +94,30 @@ const MyProjectsDetailsView = () => {
         setInputList([])
         setSelectedAssigneesEP(0)
         setSelectedAssignees(null)
-      }
+    }
     const initialize_default_assignees = (subtask) => {
-        let dtem = []
         let preset_assignees = []
-        let temp_inputList=[]
-        
+
         API.get('auth/assignee/list/').then((res) => {
-            console.log('assignees', res.data.data)
             let temp = []
+            let dtem = []
             Array.from(res.data.data).forEach((item, idx) => {
-                temp.push({ value: item.id.toString(), label: item.first_name + ' ' + item.last_name, data:item })
+                temp.push({ value: item.id.toString(), label: item.first_name + ' ' + item.last_name, data: item })
             })
 
             subtask?.assignees.forEach((assignee, idx) => {
-                dtem.push({ value: String(assignee.assignee.id).toString(), label: assignee.assignee.first_name + ' ' + assignee.assignee.last_name, data:assignee.assignee })
-                preset_assignees.push(Number(assignee.assignee.id))
-                temp_inputList.push({ assignee: assignee.assignee, estimated_person: assignee.estimated_person })
-                
-                temp=temp.filter(function (ele) {
-                    console.log('ele',ele.value,'assignee',String(assignee.assignee.id).toString())
-                    return ele.value != String(assignee.assignee.id).toString();
-                });
-                // temp_employees=arrayRemoveItem(temp_employees,{value: String(assignee.assignee.id).toString(),label: assignee.assignee.first_name + ' ' + assignee.assignee.last_name, data:assignee.assignee,data:assignee.assignee})
+                dtem.push(assignee.assignee.id)
+                preset_assignees.push({ value: String(assignee.assignee.id).toString(), label: assignee.assignee.first_name + ' ' + assignee.assignee.last_name, data: assignee.assignee })
+                temp = arrayRemoveItem(temp, { value: String(assignee.assignee.id).toString(), label: assignee.assignee.first_name + ' ' + assignee.assignee.last_name, data: assignee.assignee })
             })
-            console.log('assignees from line 108', temp)
+            console.log('preset assignees', preset_assignees)
+            console.log('temp assignees', temp)
             setAssignees(temp)
-            setInputList(temp_inputList)
-            editForm.setFieldValue('assignee', preset_assignees)
-            setDefaultValue(dtem)
+            setSelectedAssignees(preset_assignees)
+            editForm.setFieldValue('assignee', dtem)
             return preset_assignees
         })
-        
+
     }
     const editInfoForm = (subtask) => {
         console.log('selected sub task', subtask)
@@ -147,15 +140,64 @@ const MyProjectsDetailsView = () => {
                 status: subtask.status,
                 sub_task_updated: ""
             })
-            dateRange(project?.project.start_date,project?.project.planned_delivery_date)
+            initialize_total_working_days(project?.project.start_date,project?.project.planned_delivery_date)
+            // dateRange(project?.project.start_date,project?.project.planned_delivery_date)
         }
-
     }
     function is_form_submitting() {
         if (editForm.isSubmitting && !editForm.isValidating) {
             return true
         }
         return false
+    }
+    const handleAssigneeChange = (values, actionMeta) => {
+        setSelectedAssignees(values)
+        let temp = []
+        let planned_value = 0
+        
+        Array.from(values).forEach((item, idx) => {
+            temp.push(item.value)
+            if (item.data.slc_details != null) {
+                planned_value += parseInt(item.data.slc_details.hourly_rate) * parseInt(total_working_days)
+            }
+        })
+        editForm.setValues({
+            sub_task: editForm.values.sub_task,
+            work_package_number: editForm.values.work_package_number,
+            work_package_index: editForm.values.work_package_index,
+            task_title: editForm.values.task_title,
+            estimated_person: editForm.values.estimated_person,
+            start_date: editForm.values.start_date,
+            planned_delivery_date: editForm.values.planned_delivery_date,
+            assignee: temp,
+            pm: project.project.pm.id,
+            planned_hours: editForm.values.planned_hours,
+            planned_value: parseFloat(planned_value),
+            remaining_hours: editForm.values.remaining_hours,
+            status: editForm.values.status,
+            sub_task_updated: ""
+        })
+    }
+    const initialize_total_working_days=(startDate,endDate)=>{
+        var start = startDate.split('-');
+        var end = endDate.split('-');
+        var startYear = parseInt(start[0]);
+        var endYear = parseInt(end[0]);
+        var dates = [];
+        for (var i = startYear; i <= endYear; i++) {
+            var endMonth = i != endYear ? 11 : parseInt(end[1]) - 1;
+            var startMon = i === startYear ? parseInt(start[1]) - 1 : 0;
+            for (var j = startMon; j <= endMonth; j = j > 12 ? j % 12 || 11 : j + 1) {
+                var month = j + 1;
+                var displayMonth = month < 10 ? '0' + month : month;
+                dates.push([i, displayMonth, '01'].join('-'));
+            }
+        }
+        const monthNames = ["January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+        ];
+        let total_working_days = 0
+        setTotalWorkingDays(calc(startDate, endDate))
     }
     const initialize = () => {
         API.get('project/details/' + work_package_number + '/').then((res) => {
@@ -168,7 +210,8 @@ const MyProjectsDetailsView = () => {
                 if (res.data.data.subtasks.length > 0) {
                     setProject(res.data.data)
                     setTdo(res.data.data.project.task_delivery_order.title)
-                    editForm.setFieldValue('assignee', res.data.assignee)
+                    // editForm.setFieldValue('assignee', res.data.assignee)
+                    initialize_total_working_days(res.data.data.project.start_date,res.data.data.project.planned_delivery_date)
                     // dateRange(res.data.data.project.start_date,res.data.data.project.planned_delivery_date)
                 }
                 else {
@@ -179,41 +222,41 @@ const MyProjectsDetailsView = () => {
             console.log(err)
         })
     }
-    function populate_planned_value_and_hours(inputList){
-        let total_planned_value=parseFloat(editForm.values.planned_value)
-        let total_planned_hours=parseFloat(editForm.values.planned_hours)
-        let assignees=[]
-        let assignee_eps=[]
-        let temp_ep=0
-        console.log('total working days',total_working_days)
-        Array.from(inputList).forEach((item,idx)=>{
-          assignees.push(item.assignee.id)
-          
-          assignee_eps.push(item.estimated_person)
-          total_planned_value+= item.assignee.slc_details.hourly_rate * 8 * parseFloat(total_working_days)
-          total_planned_hours+= parseFloat(item.estimated_person) * 8 * parseFloat(total_working_days)
+    function populate_planned_value_and_hours(inputList) {
+        let total_planned_value = parseFloat(editForm.values.planned_value)
+        let total_planned_hours = parseFloat(editForm.values.planned_hours)
+        let assignees = []
+        let assignee_eps = []
+
+        console.log('total working days', total_working_days)
+        Array.from(inputList).forEach((item, idx) => {
+            assignees.push(item.assignee.id)
+
+            assignee_eps.push(item.estimated_person)
+            total_planned_value += item.assignee.slc_details.hourly_rate * 8 * parseFloat(total_working_days)
+            total_planned_hours += parseFloat(item.estimated_person) * 8 * parseFloat(total_working_days)
         })
-        console.log('total_planned_hours',total_planned_hours)
+        console.log('total_planned_hours', total_planned_hours)
         editForm.setValues({
-        //   task_delivery_order: editForm.values.task_delivery_order,
-        //   tdo_details: editForm.values.tdo_details,
-          sub_task: editForm.values.sub_task,
-          work_package_number: editForm.values.work_package_number,
-          work_package_index: editForm.values.work_package_index,
-          task_title: editForm.values.task_title,
-          estimated_person: assignee_eps,
-          start_date: editForm.values.start_date,
-          planned_delivery_date: editForm.values.planned_delivery_date,
-          assignee: assignees,
-          pm: sessionStorage.getItem(USER_ID),
-          planned_hours: total_planned_hours,
-          planned_value: total_planned_value,
-          remaining_hours: total_planned_hours
+            //   task_delivery_order: editForm.values.task_delivery_order,
+            //   tdo_details: editForm.values.tdo_details,
+            sub_task: editForm.values.sub_task,
+            work_package_number: editForm.values.work_package_number,
+            work_package_index: editForm.values.work_package_index,
+            task_title: editForm.values.task_title,
+            estimated_person: assignee_eps,
+            start_date: editForm.values.start_date,
+            planned_delivery_date: editForm.values.planned_delivery_date,
+            assignee: assignees,
+            pm: sessionStorage.getItem(USER_ID),
+            planned_hours: total_planned_hours,
+            planned_value: total_planned_value,
+            remaining_hours: total_planned_hours
         })
-      }
-    function removeAssignee(item){
-        populate_planned_value_and_hours(arrayRemoveItem(inputList,item))
-        setInputList(arrayRemoveItem(inputList,item))
+    }
+    function removeAssignee(item) {
+        populate_planned_value_and_hours(arrayRemoveItem(inputList, item))
+        setInputList(arrayRemoveItem(inputList, item))
     }
     const colourStyles = {
         // control: (styles, state) => ({ ...styles,height:"35px", fontSize: '14px !important', lineHeight: '1.42857', borderRadius: "8px",borderRadius:".25rem",color:"rgb(133,133,133)",border:state.isFocused ? '2px solid #0065ff' :'inherit'}),
@@ -261,7 +304,25 @@ const MyProjectsDetailsView = () => {
             handle_tdo_title_change(project.project.task_delivery_order.id)
         }
     }
-    
+    function getBusinessDateCount(startDate, endDate) {
+        var elapsed, daysBeforeFirstSaturday, daysAfterLastSunday;
+        var ifThen = function (a, b, c) {
+            return a == b ? c : a;
+        };
+        elapsed = endDate - startDate;
+        elapsed /= 86400000;
+        var daysBeforeFirstSunday = (7 - startDate.getDay()) % 7;
+        daysAfterLastSunday = endDate.getDay();
+        elapsed -= (daysBeforeFirstSunday + daysAfterLastSunday);
+        elapsed = (elapsed / 7) * 5;
+        elapsed += ifThen(daysBeforeFirstSunday - 1, -1, 0) + ifThen(daysAfterLastSunday, 6, 5);
+        return Math.ceil(elapsed);
+    }
+    function calc(startDate, endDate) {
+        var result = getBusinessDateCount(new Date(startDate), new Date(endDate));
+        console.log(result)
+        return result;
+    }
     const delete_assignee = (project_id, assignee_id) => {
         swal({
             title: "Are you sure?",
@@ -295,9 +356,9 @@ const MyProjectsDetailsView = () => {
             });
     }
     function handlePlannedDeliveryDateChange(event) {
-        editForm.handleChange(event);
+        // editForm.handleChange(event);
         dateRange(editForm.values.start_date, event.target.value)
-      }
+    }
     function dateRange(startDate, endDate) {
         console.log("dateRange", startDate, endDate)
         var start = startDate.split('-');
@@ -330,11 +391,26 @@ const MyProjectsDetailsView = () => {
                     }
                 })
             })
-            setTotalWorkingDays(total_working_days)
+            // setTotalWorkingDays(total_working_days)
+        }).then(() => {
+            editForm.setValues({
+                sub_task: editForm.values.sub_task,
+                work_package_number: editForm.values.work_package_number,
+                work_package_index: editForm.values.work_package_index,
+                task_title: editForm.values.task_title,
+                estimated_person: (calc(startDate, endDate) / total_working_days).toFixed(2),
+                start_date: editForm.values.start_date,
+                planned_delivery_date: endDate,
+                assignee: assignees,
+                pm: sessionStorage.getItem(USER_ID),
+                planned_hours: editForm.values.planned_hours,
+                planned_value: editForm.values.planned_value,
+                remaining_hours: editForm.values.planned_hours
+            })
         })
     }
     const handleAddClick = () => {
-        console.log("selected assignee", selectedAssignees,'ep',selectedAssigneesEP)
+        console.log("selected assignee", selectedAssignees, 'ep', selectedAssigneesEP)
         populate_planned_value_and_hours([...inputList, { assignee: selectedAssignees.data, estimated_person: selectedAssigneesEP }])
         setInputList([...inputList, { assignee: selectedAssignees.data, estimated_person: selectedAssigneesEP }]);
         setSelectedAssignees(null)
@@ -420,7 +496,7 @@ const MyProjectsDetailsView = () => {
                                         <CLabel htmlFor="sub_task" className="custom-label-5">Sub Task</CLabel>
                                         <CInput id="sub_task" name="sub_task" type="text" value={editForm.values.sub_task} onChange={editForm.handleChange} className="custom-forminput-6" />
                                         {/**validation */}
-                                        {editForm.errors.sub_task && <p className="error">{editForm.errors.sub_task}</p>}
+                                        {editForm.errors.sub_task && editForm.touched.sub_task && <p className="error">{editForm.errors.sub_task}</p>}
                                     </CCol>
                                     {/**PM Name */}
                                     <CCol lg="12" className="mb-2">
@@ -442,7 +518,7 @@ const MyProjectsDetailsView = () => {
                                         <CLabel htmlFor="task_title" className="custom-label-5">Task Title</CLabel>
                                         <CInput id="task_title" name="task_title" value={editForm.values.task_title} onChange={editForm.handleChange} type="text" className="custom-forminput-6" />
                                         {/**validation */}
-                                        {editForm.errors.task_title && <p className="error">{editForm.errors.task_title}</p>}
+                                        {editForm.errors.task_title && editForm.touched.task_title && <p className="error">{editForm.errors.task_title}</p>}
                                     </CCol>
                                     {/**start date */}
                                     <div className="col-lg-6 mb-3">
@@ -460,51 +536,35 @@ const MyProjectsDetailsView = () => {
                                         <CInput id="planned_delivery_date" name="planned_delivery_date" value={editForm.values.planned_delivery_date} onChange={(event) => handlePlannedDeliveryDateChange(event)} className="custom-forminput-6" type="date" />
                                         {editForm.touched.planned_delivery_date && editForm.errors.planned_delivery_date && <small style={{ color: 'red' }}>{editForm.errors.planned_delivery_date}</small>}
                                     </div>
+
                                     <div className="col-lg-12 mb-3">
-                                        <div className="evms-div pr-3 pl-3">
-                                            <div className="row">
-                                                <ul className="m-3">
-                                                    {inputList.map((item) => (
-                                                        <li>
-                                                            {item.assignee.first_name + " " + item.assignee.last_name + " → " + item.estimated_person + " EP"}
-                                                            <CButton type="button" onClick={() => removeAssignee(item)} className="remove-file-ongoing"><img src={"assets/icons/icons8-close-64-blue.svg"} className="close-icon-size" /></CButton>
-                                                        </li>
-                                                    ))}
-                                                </ul>
-                                                <div className="col-lg-4 mb-3">
-                                                    <CLabel className="custom-label-5" htmlFor="workerBees" aria-labelledby="workerBees">
-                                                        Assignee
-                                                    </CLabel>
-                                                    <Select
-                                                        closeMenuOnSelect={true}
-                                                        aria-labelledby="workerBees"
-                                                        id="workerBees"
-                                                        minHeight="35px"
-                                                        placeholder="Select from list"
-                                                        isClearable={false}
-                                                        isMulti={false}
-                                                        onChange={(v, i) => { setSelectedAssignees(v) }}
-                                                        classNamePrefix="custom-forminput-6"
-                                                        value={selectedAssignees}
-                                                        options={assignees ? assignees : []}
-                                                        styles={colourStyles} />
-                                                    {editForm.touched.assignee && editForm.errors.assignee && <small style={{ color: 'red' }}>{editForm.errors.assignee}</small>}
-                                                </div>
-                                                <div className="col-lg-3 mb-3">
-                                                    <CLabel className="custom-label-5">
-                                                        Estimated Person(s)
-                                                    </CLabel>
-                                                    {/* onChange={(e) => { handleInputChange(e, i, 'ep') }} */}
-                                                    <CInput id="estimated_person" type="number" name="estimated_person" min="0" max="1" step="0.1" onChange={(e) => { setSelectedAssigneesEP(e.target.value) }} className="custom-forminput-6"></CInput>
-                                                </div>
-                                                <div className="col-lg-3 mb-3">
-                                                    <CButton color="info" className="ar-btn" onClick={handleAddClick}>+ Add</CButton>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <CLabel className="custom-label-5" htmlFor="workerBees" aria-labelledby="workerBees">
+                                            Assignee
+                                        </CLabel>
+                                        <Select
+                                            closeMenuOnSelect={true}
+                                            aria-labelledby="workerBees"
+                                            id="workerBees"
+                                            minHeight="35px"
+                                            placeholder="Select from list"
+                                            isClearable={false}
+                                            isMulti={true}
+                                            onChange={handleAssigneeChange}
+                                            classNamePrefix="custom-forminput-6"
+                                            value={selectedAssignees}
+                                            options={assignees ? assignees : []}
+                                            styles={colourStyles} />
+                                        {editForm.touched.assignee && editForm.errors.assignee && <small style={{ color: 'red' }}>{editForm.errors.assignee}</small>}
+                                    </div>
+                                    <div className="col-lg-3 mb-3">
+                                        <CLabel className="custom-label-5">
+                                            Estimated Person(s)
+                                        </CLabel>
+                                        {/* onChange={(e) => { handleInputChange(e, i, 'ep') }} */}
+                                        <CInput readOnly id="estimated_person" type="number" name="estimated_person" min="0" max="1" step="0.1" value={editForm.values.estimated_person} onChange={(e) => { setSelectedAssigneesEP(e.target.value) }} className="custom-forminput-6"></CInput>
                                     </div>
                                     {/**Planned Value */}
-                                    <div className="col-lg-4 mb-3">
+                                    <div className="col-lg-3 mb-3">
                                         <CLabel className="custom-label-5">
                                             Planned Value
                                         </CLabel>
@@ -513,7 +573,7 @@ const MyProjectsDetailsView = () => {
                                     </div>
                                     {/**planned hours */}
 
-                                    <div className="col-lg-4 mb-3">
+                                    <div className="col-lg-3 mb-3">
                                         <CLabel className="custom-label-5">
                                             Planned hr(s)
                                         </CLabel>
@@ -521,7 +581,7 @@ const MyProjectsDetailsView = () => {
                                         {/* {editForm.touched.planned_hours && editForm.errors.planned_hours && <small style={{ color: 'red' }}>{editForm.errors.planned_hours}</small>} */}
                                     </div>
                                     {/**remaining hours */}
-                                    <div className="col-lg-4 mb-3">
+                                    <div className="col-lg-3 mb-3">
                                         <CLabel className="custom-label-5">
                                             Remaining hr(s)
                                         </CLabel>
@@ -547,7 +607,7 @@ const MyProjectsDetailsView = () => {
                     </CModalBody>
                 </CModal>
                 {/**Edit ongoing project details ends */}
-                <h3 className="dash-header-1">Project Details <CButton className="export-project-list" onClick={() => exportToCSV()}><CIcon name="cil-spreadsheet" className="mr-2"/>Export to excel</CButton></h3>
+                <h3 className="dash-header-1">Project Details <CButton className="export-project-list" onClick={() => exportToCSV()}><CIcon name="cil-spreadsheet" className="mr-2" />Export to excel</CButton></h3>
                 {status === 0 ?
                     (
                         <div className="card-header-portion-ongoing">

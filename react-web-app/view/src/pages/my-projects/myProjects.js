@@ -165,8 +165,6 @@ const MyProjects = () => {
     const xlData = [];
     const exportToCSV = () => {
         for (let i = 0; i < projects.length; i++) {
-
-
             const item = projects[i];
             let subTaskNames = [];
             var subTaskName;
