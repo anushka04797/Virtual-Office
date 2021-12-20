@@ -24,6 +24,7 @@ const CreateNewProject = () => {
   const [selectedTDO, setSelectedTDO] = useState()
   const [selectedTDODetails, setSelectedTDODetails] = useState()
   const [selectedSubTask, setSelectedSubTask] = useState()
+  const [selectedTaskTitle, setSelectedTaskTitle] = useState()
   const [work_package_number, setWorkPackageNumber] = useState()
   const [assignees, setAssignees] = useState([])
   const [selectedAssignees, setSelectedAssignees] = useState([])
@@ -84,8 +85,31 @@ const CreateNewProject = () => {
     // console.group('setting value', inputValue)
   }
 
+  let task_title_array = [
+    {
+      value: 'Program Management',
+      label: 'Program Management'
+    }, {
+      value: 'Information Management',
+      label: 'Information Management'
+    }, {
+      value: 'Logistics',
+      label: 'Logistics'
+    }, {
+      value: 'Software Development',
+      label: 'Software Development'
+    }, {
+      value: 'Test & Verification',
+      label: 'Test & Verification'
+    }, {
+      value: 'Integration with a Portal',
+      label: 'Integration with a Portal'
+    }
+  ]
+
   //sub task list states and functions
   const [sub_task_list, setSubTaskList] = useState([])
+  const [task_title_list, setTaskTitleList] = useState(task_title_array)
 
   function get_sub_tasks(tdo) {
     let temp = []
@@ -135,6 +159,32 @@ const CreateNewProject = () => {
     }
   }
 
+  const handleTaskTitleChange = (newValue, actionMeta) => {
+    if (actionMeta.action == 'select-option') {
+      console.log('task title:::', newValue)
+      setSelectedTaskTitle(newValue)
+      formCreateProject.setValues({
+        task_delivery_order: formCreateProject.values.task_delivery_order,
+        tdo_details: formCreateProject.values.tdo_details,
+        sub_task: formCreateProject.values.sub_task,
+        work_package_number: formCreateProject.values.work_package_number,
+        task_title: newValue.value,
+        estimated_person: formCreateProject.values.estimated_person,
+        start_date: formCreateProject.values.start_date,
+        planned_delivery_date: formCreateProject.values.planned_delivery_date,
+        assignee: formCreateProject.values.assignees,
+        pm: sessionStorage.getItem(USER_ID),
+        planned_hours: formCreateProject.values.planned_hours,
+        planned_value: formCreateProject.values.planned_value,
+        remaining_hours: formCreateProject.values.planned_hours
+      })
+    }
+    else if (actionMeta.action == 'clear') {
+      setSelectedTaskTitle(null)
+      formCreateProject.setFieldValue('task_title', '')
+    }
+  }
+
   const handleSubTaskInputChange = (inputValue, actionMeta) => {
     if (actionMeta.action == 'set-value') {
       // if(existing_sub_tasks.includes(inputValue)){
@@ -148,6 +198,12 @@ const CreateNewProject = () => {
     setSubTaskList([...sub_task_list, { value: inputValue, label: inputValue }])
     setWorkPackages(get_work_packages(inputValue))
     setSelectedSubTask({ value: inputValue, label: inputValue })
+    // console.group('setting value', inputValue)
+  }
+
+  const handleTaskTitleCreate = (inputValue) => {
+    formCreateProject.setFieldValue('task_title', inputValue)
+    setTaskTitleList([...task_title_list, { value: inputValue, label: inputValue }])
     // console.group('setting value', inputValue)
   }
 
@@ -324,7 +380,7 @@ const CreateNewProject = () => {
         swal('Created!', 'Successfuly Created', 'success')
       }
     })
-    window.location.reload(true);
+    // window.location.reload(true);
   }
 
   const formCreateProject = useFormik({
@@ -683,7 +739,22 @@ const CreateNewProject = () => {
                         <CLabel className="custom-label-5">
                           Task Title
                         </CLabel>
-                        <CInput id="task_title" name="task_title" value={formCreateProject.values.task_title} onChange={formCreateProject.handleChange} className="custom-forminput-6" />
+                        <CreatableSelect
+                          closeMenuOnSelect={true}
+                          aria-labelledby="task_title"
+                          id="task_title"
+                          placeholder="Select from list or create new"
+                          isClearable={true}
+                          onChange={handleTaskTitleChange}
+                          onCreateOption={handleTaskTitleCreate}
+                          classNamePrefix="custom-forminput-6"
+                          value={selectedTaskTitle}
+                          options={task_title_list}
+                          getOptionLabel={option => option.label}
+                          getOptionValue={option => option.value}
+                          styles={colourStyles}
+                        />
+                        {/* <CInput id="task_title" name="task_title" value={formCreateProject.values.task_title} onChange={formCreateProject.handleChange} className="custom-forminput-6" /> */}
                         {formCreateProject.touched.task_title && formCreateProject.errors.task_title && <small style={{ color: 'red' }}>{formCreateProject.errors.task_title}</small>}
                       </div>
                       {/**start date */}
