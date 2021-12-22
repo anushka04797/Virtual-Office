@@ -112,10 +112,11 @@ const MyProjectsDetailsView = () => {
             })
             console.log('preset assignees', preset_assignees)
             console.log('temp assignees', temp)
+            console.log('dtem assignees', dtem)
             setAssignees(temp)
             setSelectedAssignees(preset_assignees)
             editForm.setFieldValue('assignee', dtem)
-            return preset_assignees
+            return dtem
         })
 
     }
