@@ -237,7 +237,6 @@ const WbsBoard = () => {
             console.log('update result', res)
             dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)))
         })
-        window.location.reload(false);
     }
 
     // filter wbs

@@ -96,14 +96,20 @@ const CreateNewProject = () => {
       value: 'Logistics',
       label: 'Logistics'
     }, {
-      value: 'Software Development',
-      label: 'Software Development'
+      value: 'Software Design & Development',
+      label: 'Software Design & Development'
+    }, {
+      value: 'Hardware Design & Development',
+      label: 'Hardware Design & Development'
     }, {
       value: 'Test & Verification',
       label: 'Test & Verification'
     }, {
-      value: 'Integration with a Portal',
-      label: 'Integration with a Portal'
+      value: 'Integration',
+      label: 'Integration'
+    }, {
+      value: 'Deployment',
+      label: 'Deployment'
     }
   ]
 
@@ -380,7 +386,6 @@ const CreateNewProject = () => {
         swal('Created!', 'Successfuly Created', 'success')
       }
     })
-    // window.location.reload(true);
   }
 
   const formCreateProject = useFormik({
@@ -477,7 +482,7 @@ const CreateNewProject = () => {
         planned_delivery_date: endDate,
         assignee: formCreateProject.values.assignee,
         pm: sessionStorage.getItem(USER_ID),
-        planned_hours: (8 * total_working_days),
+        planned_hours: (8 * calc(startDate, endDate)),
         planned_value: formCreateProject.values.planned_value,
         remaining_hours: formCreateProject.values.planned_hours
       })
