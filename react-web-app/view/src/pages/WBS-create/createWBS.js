@@ -7,6 +7,7 @@ import Select from "react-select";
 import { API, USER_ID } from '../../Config';
 import { useFormik } from 'formik';
 import swal from 'sweetalert'
+import LinearProgress from '@mui/material/LinearProgress';
 
 const CreateNewWBS = () => {
     const remaining_hours = (remaining, total) => {
@@ -102,7 +103,7 @@ const CreateNewWBS = () => {
     }
 
     //   create wbs method 
-    const create_wbs = async () => {
+    const create_wbs = () => {
         console.log('values', JSON.stringify(formCreateWbs.values))
         API.post('wbs/create/', formCreateWbs.values).then((res) => {
             console.log(res)
@@ -114,7 +115,6 @@ const CreateNewWBS = () => {
                 swal('Created!', 'Successfuly Created', 'success')
             }
         })
-        window.location.reload(false);
     }
 
     // form reset method 
@@ -148,7 +148,6 @@ const CreateNewWBS = () => {
         validate: validate_create_wbs_form,
         onSubmit: create_wbs
     })
-    
     const [selectedtask, setSelectedTask] = useState(null);
     const selectTaskTitleRef = useRef();
 
@@ -174,6 +173,14 @@ const CreateNewWBS = () => {
         } else if (actionMeta.action == 'clear') {
             setSelectedTask(null)
         }
+    }
+
+    function is_form_submitting() {
+        console.log(formCreateWbs.isSubmitting, formCreateWbs.isValidating)
+        if (formCreateWbs.isSubmitting && !formCreateWbs.isValidating) {
+            return true
+        }
+        return false
     }
 
     return (
@@ -236,7 +243,7 @@ const CreateNewWBS = () => {
                                             {/**wbs title */}
                                             <div className="col-lg-12 mb-3">
                                                 <CLabel className="custom-label-wbs5">
-                                                   WBS Title
+                                                    WBS Title
                                                 </CLabel>
                                                 {/* onChange={setWbsTitle} */}
                                                 <CInput id="title" name="title" value={formCreateWbs.values.title} onChange={formCreateWbs.handleChange} className="custom-forminput-6"></CInput>
@@ -285,11 +292,11 @@ const CreateNewWBS = () => {
                                                 {formCreateWbs.touched.assignee && formCreateWbs.errors.assignee && <small style={{ color: 'red' }}>{formCreateWbs.errors.assignee}</small>}
                                             </div>
                                             {/**submit buttons */}
-                                            <div className="col-md-12">
+                                            <div className="col-md-12">{is_form_submitting() == true ? <LinearProgress /> :
                                                 <div className="projectwbs-form-button-holders mt-3">
                                                     <CButton type="button" onClick={formCreateWbs.handleSubmit} className="create-btn-prjctwbs create-wbs">Create WBS</CButton>
                                                     <CButton type="button" onClick={reset_form} className="create-btn-prjctwbs cancel-wbs">Cancel</CButton>
-                                                </div>
+                                                </div>}
                                             </div>
                                         </CRow>
                                     </CForm>
