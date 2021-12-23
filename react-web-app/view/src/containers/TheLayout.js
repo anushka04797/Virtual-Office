@@ -29,7 +29,7 @@ const TheLayout = () => {
       console.log('is PM')
       dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)))
       dispatch(fetchEvmsThunk(sessionStorage.getItem(USER_ID)))
-    } 
+    }
   },[])
   return (
     <div className="c-app c-default-layout">

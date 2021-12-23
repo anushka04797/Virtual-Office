@@ -2,10 +2,11 @@ import React, { Suspense, useState } from 'react'
 import {
   Redirect,
   Route,
-  Switch
+  Switch,
+  useHistory
 } from 'react-router-dom'
 import { CContainer, CFade } from '@coreui/react'
-
+import IdleTimer from '../IdleTimer'
 // routes config
 import innerRoutes from '../routes/DashboardRoutes'
 
@@ -16,9 +17,30 @@ const loading = (
 )
 
 const TheContent = () => {
-  // const [groups,setGroups]=useState(user_groups())
+  const [isTimeout, setIsTimeout] = React.useState(false);
+  let history = useHistory()
   React.useEffect(()=>{
-    console.log('Container mounted')
+    const timer = new IdleTimer({
+      timeout: 600, //expire after 10 seconds
+      onTimeout: () => {
+        setIsTimeout(true);
+        sessionStorage.clear()
+        // window.location.href='/login'
+        history.push('/login')
+        console.log('timed out')
+        // 
+      },
+      onExpired: () => {
+        setIsTimeout(true);
+        //do something if expired on load
+        sessionStorage.clear()
+        history.push('/login')
+        console.log('expired')
+      }
+    });
+    return () => {
+      timer.cleanUp();
+    };
   },[])
   return (
     <main className="c-main">
@@ -39,7 +61,7 @@ const TheContent = () => {
                   )} />
               )
             })}
-            {/* <Redirect from="/" to="/dashboard" /> */}
+            {/* {isTimeout && <Redirect to="/login"/>} */}
           </Switch>
         </Suspense>
       </CContainer>
