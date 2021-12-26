@@ -49,8 +49,9 @@ const AssignedProjectsDashboard = () => {
                     {wbs != undefined && wbs.slice(0, 3).map((item, idx) => (
                         <CCard className="project-card1" key={idx} onClick={() => editWbsModal(item.id)}>
                             <CCardBody>
-                                <h5 className="card-details1"><span className="p-header-3">Project: </span> : {item.project.sub_task}</h5>
-                                <h6 className="card-details1"><span className="p-header-3">Task Title:</span> {item.project.task_title}</h6>
+                                <h5 className="card-details1"><span className="p-header-3">Project: </span> {item.project.sub_task}</h5>
+                                <h6 className="card-details1"><span className="p-header-3">WBS Title:</span> {item.title}</h6>
+                                <h6 className="card-details1"><span className="p-header-3">WBS Description:</span> {item.description}</h6>
                                 <h6 className="card-details1"><span className="p-header-3">End Date :</span> {item.end_date}</h6>
 
                             </CCardBody>
