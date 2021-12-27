@@ -33,6 +33,7 @@ const CreateNewProject = () => {
   const projects = useSelector(state => state.projects.pm_projects)
   const [work_package_numbers, setWorkPackageNumbers] = useState([])
   const [existing_sub_tasks, setExistingSubTasks] = useState([])
+  const [isWpInputdisabled, setIsWpInputdisabled] = useState(false)
   //tdo list states and functions
   const tdo_list = useSelector(state => state.projects.tdo_list)
   const new_tdo_list = useSelector(state => state.tdo.data)
@@ -44,7 +45,7 @@ const CreateNewProject = () => {
       formCreateProject.setFieldValue('tdo_details', newValue.value.details)
       setSelectedTDO(newValue)
       setSubTaskList(get_sub_tasks(newValue.value.title))
-      setWorkPackages(get_work_packages(newValue.value.title))
+      // setWorkPackages(get_work_packages(newValue.value.title))
       // console.group('Value Changed', newValue.value);
       // console.log('form values', formCreateProject.values)
       // console.groupEnd();
@@ -80,38 +81,42 @@ const CreateNewProject = () => {
     formCreateProject.setFieldValue('task_delivery_order', inputValue)
     dispatch(push_item({ value: inputValue, label: inputValue }))
     setSubTaskList(get_sub_tasks(inputValue))
-    setWorkPackages(get_work_packages(inputValue))
+    // setWorkPackages(get_work_packages(inputValue))
     setSelectedTDO({ value: inputValue, label: inputValue })
     // console.group('setting value', inputValue)
   }
 
   let task_title_array = [
     {
-      value: 'Program Management',
-      label: 'Program Management'
-    }, {
-      value: 'Information Management',
-      label: 'Information Management'
-    }, {
-      value: 'Logistics',
-      label: 'Logistics'
-    }, {
-      value: 'Software Design & Development',
-      label: 'Software Design & Development'
+      value: 'Deployment',
+      label: 'Deployment'
     }, {
       value: 'Hardware Design & Development',
       label: 'Hardware Design & Development'
     }, {
-      value: 'Test & Verification',
-      label: 'Test & Verification'
+      value: 'Information Management',
+      label: 'Information Management'
     }, {
       value: 'Integration',
       label: 'Integration'
     }, {
-      value: 'Deployment',
-      label: 'Deployment'
+      value: 'Logistics',
+      label: 'Logistics'
+    }, {
+      value: 'Program Management',
+      label: 'Program Management'
+    }, {
+      value: 'Software Design & Development',
+      label: 'Software Design & Development'
+    }, {
+      value: 'Test & Verification',
+      label: 'Test & Verification'
     }
   ]
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
 
   //sub task list states and functions
   const [sub_task_list, setSubTaskList] = useState([])
@@ -154,7 +159,8 @@ const CreateNewProject = () => {
         planned_value: formCreateProject.values.planned_value,
         remaining_hours: formCreateProject.values.planned_hours
       })
-      setWorkPackageNumber({ value: newValue.work_package_number, label: newValue.work_package_number })
+      setWorkPackageNumber(newValue.work_package_number)
+      setIsWpInputdisabled(true)
       // console.log('values', formCreateProject.values)
     }
     else if (actionMeta.action == 'clear') {
@@ -193,6 +199,7 @@ const CreateNewProject = () => {
 
   const handleSubTaskInputChange = (inputValue, actionMeta) => {
     if (actionMeta.action == 'set-value') {
+      console.log('wecedcedc')
       // if(existing_sub_tasks.includes(inputValue)){
       //   formCreateProject.setFieldError('sub_task','This sub task name already exists')
       // }
@@ -200,32 +207,50 @@ const CreateNewProject = () => {
   }
 
   const handleSubTaskCreate = (inputValue) => {
-    formCreateProject.setFieldValue('sub_task', inputValue)
+    // console.log('created', inputValue)
+    // formCreateProject.setFieldValue('sub_task', inputValue)
     setSubTaskList([...sub_task_list, { value: inputValue, label: inputValue }])
-    setWorkPackages(get_work_packages(inputValue))
+    // setWorkPackages(get_work_packages(inputValue))
     setSelectedSubTask({ value: inputValue, label: inputValue })
-    // console.group('setting value', inputValue)
+    setWorkPackageNumber('')
+    setIsWpInputdisabled(false)
+    formCreateProject.setValues({
+      task_delivery_order: formCreateProject.values.task_delivery_order,
+      tdo_details: formCreateProject.values.tdo_details,
+      sub_task: inputValue,
+      work_package_number: '',
+      task_title: formCreateProject.values.task_title,
+      estimated_person: formCreateProject.values.estimated_person,
+      start_date: formCreateProject.values.start_date,
+      planned_delivery_date: formCreateProject.values.planned_delivery_date,
+      assignee: formCreateProject.values.assignees,
+      pm: sessionStorage.getItem(USER_ID),
+      planned_hours: formCreateProject.values.planned_hours,
+      planned_value: formCreateProject.values.planned_value,
+      remaining_hours: formCreateProject.values.planned_hours
+    })
+    // console.log('top work_package_numbers', Math.max(work_package_numbers)+10)
   }
 
   const handleTaskTitleCreate = (inputValue) => {
     formCreateProject.setFieldValue('task_title', inputValue)
+    setSelectedTaskTitle({ value: inputValue, label: inputValue })
     setTaskTitleList([...task_title_list, { value: inputValue, label: inputValue }])
-    // console.group('setting value', inputValue)
   }
 
-  const [work_packages, setWorkPackages] = useState([])
+  // const [work_packages, setWorkPackages] = useState([])
 
-  function get_work_packages(tdo) {
-    let temp = []
-    projects.forEach((project, idx) => {
-      project.subtasks.forEach((subtask, idx) => {
-        if (subtask.task_delivery_order.title == tdo) {
-          temp.push({ value: subtask.work_package_number, label: subtask.work_package_number })
-        }
-      })
-    })
-    return temp.filter((value, index, array) => array.findIndex((t) => t.work_package_number === value.work_package_number) === index)
-  }
+  // function get_work_packages(tdo) {
+  //   let temp = []
+  //   projects.forEach((project, idx) => {
+  //     project.subtasks.forEach((subtask, idx) => {
+  //       if (subtask.task_delivery_order.title == tdo) {
+  //         temp.push({ value: subtask.work_package_number, label: subtask.work_package_number })
+  //       }
+  //     })
+  //   })
+  //   return temp.filter((value, index, array) => array.findIndex((t) => t.work_package_number === value.work_package_number) === index)
+  // }
 
   function is_form_submitting() {
     if (formCreateProject.isSubmitting && !formCreateProject.isValidating) {
@@ -236,14 +261,14 @@ const CreateNewProject = () => {
 
   const handleWorkPackageCreate = (value) => {
     setWorkPackageNumber({ value: value, label: value })
-    setWorkPackages([...work_packages, { value: value, label: value }])
+    // setWorkPackages([...work_packages, { value: value, label: value }])
     formCreateProject.setFieldValue('work_package_number', String(value))
   }
 
   const handleWorkPackageNumberChange = (newValue, actionMeta) => {
     if (actionMeta.action == 'select-option') {
       // console.log('selected work package', newValue)
-      setWorkPackageNumber(newValue)
+      setWorkPackageNumber(newValue.value.replace(/\D/g, ""))
       formCreateProject.setFieldValue('work_package_number', String(newValue.value))
     }
     else if (actionMeta.action == 'clear') {
@@ -312,8 +337,8 @@ const CreateNewProject = () => {
 
   const [isWpExist, setisWpExist] = useState(false)
 
-  const handleWorkPackageInputChange = (inputValue, actionMeta) => {
-    if (actionMeta.action == 'input-change') {
+  const handleWorkPackageInputChange = (inputValue) => {
+    // if (actionMeta.action == 'input-change') {
       if (work_package_numbers.find(item => item == inputValue) != undefined) {
         console.log("item exist")
         setisWpExist(true)
@@ -322,7 +347,7 @@ const CreateNewProject = () => {
         setisWpExist(false)
       }
       formCreateProject.setFieldValue('work_package_number', String(inputValue))
-    }
+    // }
   }
 
   function isDateBeforeToday(date) {
@@ -383,7 +408,17 @@ const CreateNewProject = () => {
         dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)))
         dispatch(fetchProjectsThunk(sessionStorage.getItem(USER_ID)))
         setSelectedAssignees([])
-        swal('Created!', 'Successfuly Created', 'success')
+        swal('Created!', 'Successfuly Created', 'success').then((e)=>{
+          if (e){
+            window.location.reload()
+          }
+        })
+      }else {
+        swal('Failed!', 'Project Creation unsuccessful', 'failed').then((e)=>{
+          if (e){
+            window.location.reload()
+          }
+        })
       }
     })
   }
@@ -659,7 +694,7 @@ const CreateNewProject = () => {
                           aria-labelledby="tdo"
                           id="tdo"
                           placeholder="Select from list or create new"
-                          isClearable={true}
+                          isClearable={false}
                           onChange={handleTDOChange}
                           onInputChange={handleTDOInputChange}
                           onCreateOption={handleTDOCreate}
@@ -689,7 +724,7 @@ const CreateNewProject = () => {
                           aria-labelledby="sub_task"
                           id="sub_task"
                           placeholder="Select from list or create new"
-                          isClearable={true}
+                          isClearable={false}
                           onChange={handleSubTaskChange}
                           onInputChange={handleSubTaskInputChange}
                           onCreateOption={handleSubTaskCreate}
@@ -708,7 +743,7 @@ const CreateNewProject = () => {
                         <CLabel className="custom-label-5" htmlFor="workPackageNo">
                           Work Package Number * <span className="input-alert-msg">{isWpExist && "(Work Package exists)"}</span>
                         </CLabel>
-                        {<CreatableSelect
+                        {/* {<CreatableSelect
                           closeMenuOnSelect={true}
                           aria-labelledby="workPackageNo"
                           id="workPackageNo"
@@ -723,15 +758,16 @@ const CreateNewProject = () => {
                           getOptionLabel={option => option.label}
                           getOptionValue={option => option.value}
                           styles={colourStyles}
-                        />}
-                        <div className="input-info-msg">
-                          Taken WP number(s): &nbsp;
-                          {work_package_numbers.map((item, idx) => (
+                        />} */}
+                        <CInput id='work_package_number' name='work_package_number' type='number' onChange={(e) => { setWorkPackageNumber(e.target.value); handleWorkPackageInputChange(e.target.value) }} value={work_package_number} disabled={isWpInputdisabled}></CInput>
+                        {!isWpInputdisabled && work_package_numbers.length > 0 && <div className="input-info-msg">
+                          WP #{Math.max(parseInt(work_package_numbers))+10} is available
+                          {/* {work_package_numbers.map((item, idx) => (
                             <span key={idx}>{item}<span>{(idx + 1 !== work_package_numbers.length) && ", "}</span></span>
                             // <span>{", " +idx + work_package_numbers.length}</span>
-                          ))}
-                        </div>
-                        {/* {formCreateProject.touched.work_package_number && formCreateProject.errors.work_package_number && <small style={{ color: 'red' }}>{formCreateProject.errors.work_package_number}</small>} */}
+                          ))} */}
+                        </div>}
+                        {formCreateProject.touched.work_package_number && formCreateProject.errors.work_package_number && <small style={{ color: 'red' }}>{formCreateProject.errors.work_package_number}</small>}
                         {/* {formCreateProject.touched.work_package_number_exists && formCreateProject.errors.work_package_number_exists && <small style={{ color: 'red' }}>{formCreateProject.errors.work_package_number_exists}</small>} */}
                       </div>
                       {/**Task title */}
@@ -744,7 +780,7 @@ const CreateNewProject = () => {
                           aria-labelledby="task_title"
                           id="task_title"
                           placeholder="Select from list or create new"
-                          isClearable={true}
+                          isClearable={false}
                           onChange={handleTaskTitleChange}
                           onCreateOption={handleTaskTitleCreate}
                           classNamePrefix="custom-forminput-6"
@@ -791,6 +827,7 @@ const CreateNewProject = () => {
                           Assignee
                         </CLabel>
                         <Select
+                          isDisabled={(formCreateProject.values.start_date === '') || (formCreateProject.values.planned_delivery_date === '')}
                           closeMenuOnSelect={true}
                           aria-labelledby="workerBees"
                           id="workerBees"
