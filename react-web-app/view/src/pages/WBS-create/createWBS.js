@@ -103,9 +103,10 @@ const CreateNewWBS = () => {
     }
 
     //   create wbs method 
-    const create_wbs = () => {
+    const create_wbs = (values,{setSubmitting}) => {
         console.log('values', JSON.stringify(formCreateWbs.values))
         API.post('wbs/create/', formCreateWbs.values).then((res) => {
+            setSubmitting(false)
             console.log(res)
             if (res.status == 200 && res.data.success == 'True') {
                 reset_form()
@@ -114,6 +115,8 @@ const CreateNewWBS = () => {
                 dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)))
                 swal('Created!', 'Successfuly Created', 'success')
             }
+        }).catch(err=>{
+            setSubmitting(false)
         })
     }
 

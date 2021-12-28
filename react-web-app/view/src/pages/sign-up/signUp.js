@@ -12,10 +12,10 @@ import { Link, useHistory } from "react-router-dom";
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { PUBLIC_FORM_API } from "../../Config";
-import CircularProgress from '@mui/material/CircularProgress';
 import { useSnackbar } from "notistack";
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
+import { LinearProgress } from "@mui/material";
 
 const SignupSchema = Yup.object().shape({
   first_name: Yup.string()
@@ -188,7 +188,7 @@ const Register = () => {
                         id="email"
                         name="email"
                         value={formSignUp.values.email}
-                        onChange={formSignUp.handleChange}
+                         onChange={formSignUp.handleChange}
                         aria-describedby="emailHelp"
                         className="custom-formgroup-2"
                       />
@@ -304,7 +304,7 @@ const Register = () => {
                     </div>
                     {/*submit button */}
                     <div className="sign-holder">
-                      {submitted?<CircularProgress/>:<CButton type="button" onClick={formSignUp.handleSubmit} className="submit-button-s">
+                      {submitted?<LinearProgress/>:<CButton type="button" onClick={formSignUp.handleSubmit} className="submit-button-s">
                         Sign up
                       </CButton>}
                     </div>
