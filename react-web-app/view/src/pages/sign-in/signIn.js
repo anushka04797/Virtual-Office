@@ -16,6 +16,7 @@ import { API, PERMISSIONS, PUBLIC_API, TOKEN, USER_ID } from "../../Config";
 import { useFormik } from "formik";
 import { useLocation } from "react-router";
 import { useSnackbar } from "notistack";
+import { LinearProgress } from "@mui/material";
 import swal from "sweetalert";
 const SignIn = () => {
   let history = useHistory();
@@ -32,8 +33,9 @@ const SignIn = () => {
   // const [password, setPwd] = useState('');
   const [isRevealPwd, setIsRevealPwd] = useState(false);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-  const login=()=>{  
+  const login=(values,{setSubmitting})=>{  
     PUBLIC_API.post('auth/login/',formLogin.values).then((res)=>{
+      setSubmitting(false)
       console.log('login response',res.data)
       if(res.status == 200 && res.data.success == 'True'){
         sessionStorage.setItem(TOKEN,res.data.token)
@@ -57,6 +59,7 @@ const SignIn = () => {
         })
       }
     }).catch(err=>{
+      setSubmitting(false)
       console.log(err)
       if(err?.response?.data?.message){
         enqueueSnackbar(err.response.data.message,{variant:"warning"})
@@ -78,7 +81,7 @@ const SignIn = () => {
   })
   const handleKeyPress = (event) => {
     if(event.key === 'Enter'){
-      login(formLogin.values)
+      formLogin.handleSubmit()
     }
   }
   
@@ -163,9 +166,10 @@ const SignIn = () => {
                         </div>
                       </div>
                       <div className="submit-holder">
+                      {formLogin.isSubmitting ? <LinearProgress/>:
                         <CButton type="button" onClick={formLogin.handleSubmit} className="submit-button-signin" disabled={!formLogin.isValid}>
                           Sign in
-                        </CButton>
+                        </CButton>}
                       </div>
                     </CForm>
                     {/**Go to register */}
