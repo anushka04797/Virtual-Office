@@ -22,6 +22,7 @@ import * as FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
 import { fetchProjectsForPMThunk } from '../../store/slices/ProjectsSlice';
 import { arrayRemoveItem } from '../../helper';
+import sortBy from 'lodash/sortBy';
 
 const MyProjectsDetailsView = () => {
     const { work_package_number } = useParams();
@@ -113,7 +114,7 @@ const MyProjectsDetailsView = () => {
             console.log('preset assignees', preset_assignees)
             console.log('temp assignees', temp)
             console.log('dtem assignees', dtem)
-            setAssignees(temp)
+            setAssignees(sortBy(temp, 'label'))
             setSelectedAssignees(preset_assignees)
             editForm.setFieldValue('assignee', dtem)
             return dtem
@@ -141,7 +142,7 @@ const MyProjectsDetailsView = () => {
                 status: subtask.status,
                 sub_task_updated: ""
             })
-            initialize_total_working_days(project?.project.start_date,project?.project.planned_delivery_date)
+            initialize_total_working_days(project?.project.start_date, project?.project.planned_delivery_date)
             // dateRange(project?.project.start_date,project?.project.planned_delivery_date)
         }
     }
@@ -155,11 +156,15 @@ const MyProjectsDetailsView = () => {
         setSelectedAssignees(values)
         let temp = []
         let planned_value = 0
-        
+
         Array.from(values).forEach((item, idx) => {
             temp.push(item.value)
             if (item.data.slc_details != null) {
-                planned_value += parseInt(item.data.slc_details.hourly_rate) * parseInt(total_working_days)
+                // if (actionMeta.action === 'select-option'){
+                planned_value += parseInt(item.data.slc_details.hourly_rate) * parseInt(total_working_days) * 8
+                // }else if (actionMeta.action === 'remove-value'){
+                //     planned_value += parseInt(item.data.slc_details.hourly_rate) * parseInt(calc(startDate, endDate)) * 8
+                // }
             }
         })
         editForm.setValues({
@@ -179,7 +184,7 @@ const MyProjectsDetailsView = () => {
             sub_task_updated: ""
         })
     }
-    const initialize_total_working_days=(startDate,endDate)=>{
+    const initialize_total_working_days = (startDate, endDate) => {
         var start = startDate.split('-');
         var end = endDate.split('-');
         var startYear = parseInt(start[0]);
@@ -195,7 +200,7 @@ const MyProjectsDetailsView = () => {
             }
         }
         const monthNames = ["January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
+            "July", "August", "September", "October", "November", "December"
         ];
         let total_working_days = 0
         setTotalWorkingDays(calc(startDate, endDate))
@@ -212,7 +217,7 @@ const MyProjectsDetailsView = () => {
                     setProject(res.data.data)
                     setTdo(res.data.data.project.task_delivery_order.title)
                     // editForm.setFieldValue('assignee', res.data.assignee)
-                    initialize_total_working_days(res.data.data.project.start_date,res.data.data.project.planned_delivery_date)
+                    initialize_total_working_days(res.data.data.project.start_date, res.data.data.project.planned_delivery_date)
                     // dateRange(res.data.data.project.start_date,res.data.data.project.planned_delivery_date)
                 }
                 else {
@@ -482,7 +487,7 @@ const MyProjectsDetailsView = () => {
         <>
             {project != undefined && <CContainer>
                 {/**Edit ongoing project details starts */}
-                <CModal alignment="center" show={editModal} onClose={() => { setEditModal(!editModal) }} size="lg">
+                <CModal closeOnBackdrop={false} alignment="center" show={editModal} onClose={() => { setEditModal(!editModal) }} size="lg">
                     <CModalHeader onClose={() => setEditModal(!editModal)} closeButton>
                         <CModalTitle className="modal-title-projects">
                             <span className="edit-profile-form-header">Edit Project Info</span>
@@ -557,13 +562,6 @@ const MyProjectsDetailsView = () => {
                                             styles={colourStyles} />
                                         {editForm.touched.assignee && editForm.errors.assignee && <small style={{ color: 'red' }}>{editForm.errors.assignee}</small>}
                                     </div>
-                                    <div className="col-lg-3 mb-3">
-                                        <CLabel className="custom-label-5">
-                                            Estimated Person(s)
-                                        </CLabel>
-                                        {/* onChange={(e) => { handleInputChange(e, i, 'ep') }} */}
-                                        <CInput readOnly id="estimated_person" type="number" name="estimated_person" min="0" max="1" step="0.1" value={editForm.values.estimated_person} onChange={(e) => { setSelectedAssigneesEP(e.target.value) }} className="custom-forminput-6"></CInput>
-                                    </div>
                                     {/**Planned Value */}
                                     <div className="col-lg-3 mb-3">
                                         <CLabel className="custom-label-5">
@@ -571,6 +569,13 @@ const MyProjectsDetailsView = () => {
                                         </CLabel>
                                         <CInput id="planned_value" name="planned_value" readOnly value={editForm.values.planned_value} className="custom-forminput-6"></CInput>
                                         {/* {editForm.touched.planned_value && editForm.errors.planned_value && <small style={{ color: 'red' }}>{editForm.errors.planned_value}</small>} */}
+                                    </div>
+                                    <div className="col-lg-3 mb-3">
+                                        <CLabel className="custom-label-5">
+                                            Estimated Person(s)
+                                        </CLabel>
+                                        {/* onChange={(e) => { handleInputChange(e, i, 'ep') }} */}
+                                        <CInput readOnly id="estimated_person" type="number" name="estimated_person" min="0" max="1" step="0.1" value={editForm.values.estimated_person} onChange={(e) => { setSelectedAssigneesEP(e.target.value) }} className="custom-forminput-6"></CInput>
                                     </div>
                                     {/**planned hours */}
 
@@ -647,29 +652,40 @@ const MyProjectsDetailsView = () => {
                                 <CCardBody className="details-project-body">
                                     {/*task percentage portion */}
                                     <div className="ongoing-initial-info row">
-                                        <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Sub Task Name</h6>
-                                            <h6 className="project-point-details">{project.project.sub_task}</h6></div>
-                                        <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">PM Name</h6>
-                                            <h6 className="project-point-details">{project.project.pm.first_name + ' ' + project.project.pm.last_name}</h6></div>
-                                        <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Work Package Number</h6>
-                                            <h6 className="project-point-details">{project.project.work_package_number}</h6>
+                                        <div className="tasks-done-2 col-lg-4">
+                                            <h6 className="tiny-header2">Sub Task Name</h6>
+                                            <h6 className="project-point-details">{project.project.sub_task}</h6>
                                         </div>
-                                        <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Work Package Index</h6>
-                                            <h6 className="project-point-details">{project.project.work_package_index}</h6>
-                                        </div>
-                                        <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Task Title</h6>
+                                        <div className="tasks-done-2 col-lg-4">
+                                            <h6 className="tiny-header2">Task Title</h6>
                                             <h6 className="project-point-details">{subtask.task_title}</h6>
                                         </div>
-                                        <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Estimated Person(s)</h6>
+                                        <div className="tasks-done-2 col-lg-4">
+                                            <h6 className="tiny-header2">PM Name</h6>
+                                            <h6 className="project-point-details">{project.project.pm.first_name + ' ' + project.project.pm.last_name}</h6>
+                                        </div>
+                                        <div className="tasks-done-2 col-lg-4">
+                                            <h6 className="tiny-header2">Work Package Number</h6>
+                                            <h6 className="project-point-details">{project.project.work_package_number}</h6>
+                                        </div>
+                                        <div className="tasks-done-2 col-lg-4">
+                                            <h6 className="tiny-header2">Work Package Index</h6>
+                                            <h6 className="project-point-details">{project.project.work_package_index}</h6>
+                                        </div>
+                                        <div className="tasks-done-2 col-lg-4">
+                                            <h6 className="tiny-header2">Estimated Person(s)</h6>
                                             <h6 className="project-point-details">{project.project.estimated_person}</h6>
                                         </div>
-                                        <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Planned Value</h6>
+                                        <div className="tasks-done-2 col-lg-4">
+                                            <h6 className="tiny-header2">Planned Value</h6>
                                             <h6 className="project-point-details">{project.project.planned_value} </h6>
                                         </div>
-                                        <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Planned Hours</h6>
+                                        <div className="tasks-done-2 col-lg-4">
+                                            <h6 className="tiny-header2">Planned Hours</h6>
                                             <h6 className="project-point-details">{project.project.planned_hours} </h6>
                                         </div>
-                                        <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Remaining Hours</h6>
+                                        <div className="tasks-done-2 col-lg-4">
+                                            <h6 className="tiny-header2">Remaining Hours</h6>
                                             <h6 className="project-point-details">{project.project.remaining_hours} </h6>
                                         </div>
                                     </div>

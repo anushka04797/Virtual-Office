@@ -1,5 +1,6 @@
 import { createSlice,createAsyncThunk } from '@reduxjs/toolkit'
 import { JsonClient } from '../../Config'
+import sortBy from 'lodash/sortBy';
 
 const initialState = {
   data:[],
@@ -54,7 +55,7 @@ export const projectsSlice = createSlice({
     [fetchProjectsThunk.fulfilled]: (state, action) => {
       state.status = 'succeeded'
       // Add any fetched posts to the array
-      state.data = action.payload
+      state.data = sortBy(action.payload, 'sub_task')
     },
     [fetchProjectsThunk.rejected]: (state, action) => {
       state.status = 'failed'

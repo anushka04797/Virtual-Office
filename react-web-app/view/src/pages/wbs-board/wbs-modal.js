@@ -6,6 +6,7 @@ import { API, USER_ID } from '../../Config';
 import swal from 'sweetalert';
 import { fetchProjectsForPMThunk, fetchProjectsThunk } from '../../store/slices/ProjectsSlice';
 import { fetchWbsThunk } from '../../store/slices/WbsSlice';
+import LinearProgress from '@mui/material/LinearProgress';
 
 const WbsModal = (props) => {
     console.log('props wbs modal: ', props)
@@ -73,9 +74,17 @@ const WbsModal = (props) => {
         onSubmit: (values) => updateWbs(values)
     })
 
+    function is_form_submitting() {
+        console.log(formWbsUpdate.isSubmitting, formWbsUpdate.isValidating)
+        if (formWbsUpdate.isSubmitting && !formWbsUpdate.isValidating) {
+            return true
+        }
+        return false
+    }
+
     return (
         <>
-            <CModal show={props.show} onClose={props.toggle} size="xl">
+            <CModal closeOnBackdrop={false} closeOnBackdrop={false} show={props.show} onClose={props.toggle} size="xl">
                 <CModalHeader closeButton>
                     {props.data.project && props.data.project.task_delivery_order.title + " / "}
                     {props.data.project && props.data.project.sub_task + " / "}
@@ -91,7 +100,7 @@ const WbsModal = (props) => {
                                             Title
                                         </CLabel>
                                         <CInput id="title" name="title" className="custom-forminput-5" onChange={formWbsUpdate.handleChange} value={formWbsUpdate.values.title} />
-                                        {formWbsUpdate.errors.title && <p className="error" style={{fontSize: '14px !important'}}>{formWbsUpdate.errors.title}</p>}
+                                        {formWbsUpdate.errors.title && <p className="error" style={{ fontSize: '14px !important' }}>{formWbsUpdate.errors.title}</p>}
                                     </div>
                                     {/* <div className="col-lg-3 mb-3">
                                         <CLabel className="custom-label-wbs5">
@@ -134,7 +143,7 @@ const WbsModal = (props) => {
                                             formWbsUpdate.setFieldValue('actual_work_done', e.target.value); if (e.target.value == null || e.target.value.length == 0) { setHrsWorked(true) } else { setHrsWorked(false) }
                                         }
                                         } value={formWbsUpdate.values.actual_work_done}></CInput>
-                                        {formWbsUpdate.errors.actual_work_done && <p className="error" style={{fontSize: '14px !important'}}>{formWbsUpdate.errors.actual_work_done}</p>}
+                                        {formWbsUpdate.errors.actual_work_done && <p className="error" style={{ fontSize: '14px !important' }}>{formWbsUpdate.errors.actual_work_done}</p>}
                                     </div>
                                 </CRow>
                                 <CRow>
@@ -175,12 +184,14 @@ const WbsModal = (props) => {
                                         <CInput id="deliverable" name="deliverable" className="custom-forminput-5" onChange={formWbsUpdate.handleChange} value={formWbsUpdate.values.deliverable} disabled={deliverableView} ></CInput>
                                     </div>
                                 </CRow>
-                                <div>
-                                    <CButton type="button" onClick={formWbsUpdate.handleSubmit} color="primary">Update</CButton>{' '}
-                                    <CButton
-                                        color="secondary"
-                                        onClick={props.toggle}
-                                    >Cancel</CButton>
+                                <div>{is_form_submitting() == true ? <LinearProgress /> :
+                                    <div>
+                                        <CButton type="button" onClick={formWbsUpdate.handleSubmit} color="primary">Update</CButton>{' '}
+                                        <CButton
+                                            color="secondary"
+                                            onClick={props.toggle}
+                                        >Cancel</CButton>
+                                    </div>}
                                 </div>
                             </CForm>
                         </div>
@@ -209,8 +220,8 @@ const WbsModal = (props) => {
                                     <ol className="task-list-show">
                                         {props.timeCardList?.data != undefined ? (Array.from(props.timeCardList.data).map((item) => (
                                             <li className="task-list-show-item">
-                                                {item.actual_work_done +" ➤ "+ item.hours_today +" hr(s)"}
-                                                <p><small> By {item.time_card_assignee.first_name +" "+ item.time_card_assignee.last_name} @ {item.date_updated} </small></p>
+                                                {item.actual_work_done + " ➤ " + item.hours_today + " hr(s)"}
+                                                <p><small> By {item.time_card_assignee.first_name + " " + item.time_card_assignee.last_name} @ {item.date_updated} </small></p>
                                             </li>
                                         ))) : ("No task has been done so far.")}
                                     </ol>

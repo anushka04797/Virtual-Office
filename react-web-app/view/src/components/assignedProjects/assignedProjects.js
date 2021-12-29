@@ -63,7 +63,7 @@ const AssignedProjectsDashboard = () => {
 
 
 
-                        <CAlert className="no-value-show-alert" color="primary">Currently there are no projects assigned to you</CAlert>
+                        <CAlert className="no-value-show-alert" color="primary">Currently there are no WBS assigned to you</CAlert>
 
 
                     ) : null

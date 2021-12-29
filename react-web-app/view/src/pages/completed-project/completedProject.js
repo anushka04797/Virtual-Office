@@ -66,7 +66,7 @@ const CompleteProjects = () => {
  
     return (
         <>
-            {selectedSubTask && <CModal size="lg" alignment="center" show={show_sub_task_details} onClose={() => { setShowSubTaskDetails(!show_sub_task_details) }}>
+            {selectedSubTask && <CModal closeOnBackdrop={false} size="lg" alignment="center" show={show_sub_task_details} onClose={() => { setShowSubTaskDetails(!show_sub_task_details) }}>
                 <CModalHeader onClose={() => setShowSubTaskDetails(!show_sub_task_details)} closeButton>
                     <CModalTitle className="modal-title-projects">
                         <span className="edit-profile-form-header">Subtask Details</span>
@@ -150,7 +150,7 @@ const CompleteProjects = () => {
                                             <IconButton aria-label="favourite" disabled size="medium" >
                                                 <GradeIcon fontSize="inherit" className="fav-button" />
 
-                                            </IconButton>{String(project.project.task_delivery_order.title).toUpperCase() + ' / ' + String(project.project.sub_task).toUpperCase()}
+                                            </IconButton>{String(project.project.sub_task).toUpperCase()}
 
                                             <span className="fix-action-btn-alignment">
                                             <CButton className="view-ongoing-details" onClick={() => historyTo.push({ pathname: '/dashboard/Projects/completed-projects/details/' + project.project.work_package_number, state: { project: project } })}><CIcon name="cil-list-rich" className="mr-1" />View Details</CButton>
