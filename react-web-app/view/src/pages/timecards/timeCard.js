@@ -48,6 +48,12 @@ const TimeCards = () => {
                 }
                 setUsersData(tableData)
             })
+            editForm.setValues({
+                assigneeSelect: '',
+                assigneeSelectPM: values.assigneeSelectPM,
+                startDate: '',
+                todate: ''
+            })
         }
         else {
             // console.log('values from timecards', values)
@@ -71,7 +77,12 @@ const TimeCards = () => {
                 setUsersData(tableData);
                 // console.log('userdata', usersData);
             })
-
+            editForm.setValues({
+                assigneeSelect: values.assigneeSelect,
+                assigneeSelectPM: '',
+                startDate: '',
+                todate: ''
+            })
         }
 
 
