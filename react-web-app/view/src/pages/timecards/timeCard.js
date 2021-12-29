@@ -16,19 +16,20 @@ import CIcon from '@coreui/icons-react';
 
 const TimeCards = () => {
     const profile_details = useSelector(state => state.profile.data)
-    console.log(profile_details)
+    // console.log(profile_details)
     const [usersData, setUsersData] = useState([])
     const [pdfData, setPdfData] = useState([])
-    console.log('userdata', usersData)
+    // console.log('userdata', usersData)
     const [assignee, setAssigneeValue] = useState();
     const [pdfTitle, setPdfTitle] = useState();
     const [assigneeList, setAssigneeList] = useState([]);
+    // const [selectedEmployee, setSelectedEmployee] = useState(initialState)
     {/**fetch all assignees for PM */ }
 
 
     const getTimeCards = (values) => {
         if (has_permission('projects.add_projects') && has_permission('wbs.change_timecard') && has_permission('wbs.add_timecard')) {
-            console.log('values from timecards', values)
+            // console.log('values from timecards', values)
             API.get('wbs/user/time-card/list/' + values.assigneeSelectPM + "/").then((res) => {
                 let temp = []
                 Array.from(res.data.data).forEach((item, idx) => {
@@ -38,7 +39,7 @@ const TimeCards = () => {
 
                 let filteredData = [];
                 filteredData = temp.filter(p => p.data.date_updated >= values.startDate && p.data.date_updated <= values.todate)
-                console.log('timecard for id', filteredData)
+                // console.log('timecard for id', filteredData)
                 setPdfData(filteredData)
                 var tableData = [];
                 for (let index = 0; index < filteredData.length; index++) {
@@ -46,11 +47,10 @@ const TimeCards = () => {
                     tableData.push({ '#': index + 1, 'TDO': element.data.project.task_delivery_order.title, "Project Name": element.data.project.sub_task, "Task Title": element.data.project.task_title, "Actual Work Done": element.data.actual_work_done, "Hrs Today": element.data.hours_today, "Date Created": element.data.date_created, "Date Updated": element.data.date_updated })
                 }
                 setUsersData(tableData)
-
             })
         }
         else {
-            console.log('values from timecards', values)
+            // console.log('values from timecards', values)
             API.get('wbs/user/time-card/list/' + values.assigneeSelect + "/").then((res) => {
                 let temp = []
                 setPdfTitle(profile_details.first_name + " " + profile_details.last_name);
@@ -61,7 +61,7 @@ const TimeCards = () => {
 
                 let filteredData = [];
                 filteredData = temp.filter(p => p.data.date_updated >= values.startDate && p.data.date_updated <= values.todate)
-                console.log('timecard for id', filteredData)
+                // console.log('timecard for id', filteredData)
                 setPdfData(filteredData)
                 var tableData = [];
                 for (let index = 0; index < filteredData.length; index++) {
@@ -69,7 +69,7 @@ const TimeCards = () => {
                     tableData.push({ '#': index + 1, 'TDO': element.data.project.task_delivery_order.title, "Project Name": element.data.project.sub_task, "Task Title": element.data.project.task_title, "Actual Work Done": element.data.actual_work_done, "Hrs Today": element.data.hours_today, "Date Created": element.data.date_created, "Date Updated": element.data.date_updated })
                 }
                 setUsersData(tableData);
-                console.log('userdata', usersData);
+                // console.log('userdata', usersData);
             })
 
         }
@@ -101,6 +101,21 @@ const TimeCards = () => {
             })
 
         }
+        API.get('wbs/user/time-card/list/' + sessionStorage.getItem(USER_ID) + "/").then((res) => {
+            let temp = []
+            Array.from(res.data.data).forEach((item, idx) => {
+                temp.push({ data: item })
+            })
+            let filteredData = [];
+            filteredData = temp;
+            setPdfData(filteredData)
+            var tableData = [];
+            for (let index = 0; index < filteredData.length; index++) {
+                const element = filteredData[index];
+                tableData.push({ '#': index + 1, 'TDO': element.data.project.task_delivery_order.title, "Project Name": element.data.project.sub_task, "Task Title": element.data.project.task_title, "Actual Work Done": element.data.actual_work_done, "Hrs Today": element.data.hours_today, "Date Created": element.data.date_created, "Date Updated": element.data.date_updated })
+            }
+            setUsersData(tableData)
+        })
     }, [])
     const getAssigneeList = (option) => {
         setAssigneeValue(option)
@@ -116,10 +131,11 @@ const TimeCards = () => {
         if (!values.todate) errors.todate = "To date selection is required"
         return errors
     }
+
     const editForm = useFormik({
         initialValues: {
             assigneeSelect: sessionStorage.getItem(USER_ID),
-            assigneeSelectPM: "",
+            assigneeSelectPM: sessionStorage.getItem(USER_ID),
             startDate: "",
             todate: ""
         },
@@ -173,6 +189,8 @@ const TimeCards = () => {
         doc.save("Timecard of" + " " + pdfTitle + ".pdf")
     }
 
+    const profile = useSelector(state => state.profile.data)
+
     return (
         <>
             <CContainer>
@@ -203,7 +221,7 @@ const TimeCards = () => {
                                         aria-labelledby="assigneeSelectPM"
                                         id="assigneeSelectPM"
                                         minHeight="35px"
-
+                                        // value={}
                                         placeholder="Select from list"
                                         isClearable={false}
                                         isMulti={false}
@@ -214,9 +232,6 @@ const TimeCards = () => {
                                     />
                                     {/* {editForm.errors.assigneeSelectPM && <p className="error mt-1">{editForm.errors.assigneeSelectPM}</p>} */}
                                 </div>
-
-
-
                             }
                             {/**If PM but no assignee list **/}
                             {/* {has_group('pm')&& (assigneeList.length == 0) &&

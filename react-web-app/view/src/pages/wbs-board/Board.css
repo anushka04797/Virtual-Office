@@ -12,7 +12,7 @@
 }
 
 .jSvQFG {
-    max-height: calc(100vh - 215px);
+    max-height: calc(100vh - 215px) !important;
 }
 
 .bgOcuh {

@@ -23,9 +23,9 @@ const OngoingDetailsView = () => {
     const dispatch = useDispatch()
     const [status, setStatus] = useState(0);
     const [project, setProject] = useState()
-    const [assignees,setAssignees]=useState([])
-    const [assigneeValue,setAssigneeValue]=useState([])
-    const [defaultValue,setDefaultValue]=useState([])
+    const [assignees, setAssignees] = useState([])
+    const [assigneeValue, setAssigneeValue] = useState([])
+    const [defaultValue, setDefaultValue] = useState([])
     let location = useLocation()
     let history = useHistory()
     const [titleStatus, setTitleStatus] = useState(1);
@@ -35,30 +35,30 @@ const OngoingDetailsView = () => {
         setTitleStatus(titleStatus);
     };
     const [editModal, setEditModal] = useState(false);
-    const validateEditForm=(values)=>{
-        console.log('validating values',values)
-        const errors={}
-        if(!values.sub_task || String(values.sub_task).length<1) errors.task_delivery_order="Task Delivery Order is required"
-       if(!values.sub_task)errors.sub_task="Sub task is required"
-        if(!values.task_title)errors.task_title="Task title is required"
-        if(!values.estimated_person)errors.estimated_person="Estimated person is required"
-        if(!values.planned_value)errors.planned_value="Planned value is required"
-        if(!values.planned_hours)errors.planned_hours="Planned hours is required"
-        
+    const validateEditForm = (values) => {
+        console.log('validating values', values)
+        const errors = {}
+        if (!values.sub_task || String(values.sub_task).length < 1) errors.task_delivery_order = "Task Delivery Order is required"
+        if (!values.sub_task) errors.sub_task = "Sub task is required"
+        if (!values.task_title) errors.task_title = "Task title is required"
+        if (!values.estimated_person) errors.estimated_person = "Estimated person is required"
+        if (!values.planned_value) errors.planned_value = "Planned value is required"
+        if (!values.planned_hours) errors.planned_hours = "Planned hours is required"
+
         return errors
     }
-    const edit_project=(values)=>{
+    const edit_project = (values) => {
         console.log(values)
-        API.put('project/update/'+values.work_package_index+'/',values).then((res)=>{
+        API.put('project/update/' + values.work_package_index + '/', values).then((res) => {
             console.log(res.data)
-            if(res.status==200 && res.data.success=='True'){
+            if (res.status == 200 && res.data.success == 'True') {
                 setEditModal(false)
                 initialize()
-                swal('Updated!','Task Details is updated','success')
+                swal('Updated!', 'Task Details is updated', 'success')
             }
         })
     }
-    const editForm=useFormik({
+    const editForm = useFormik({
         initialValues: {
             sub_task: "",
             work_package_number: project?.project.work_package_number,
@@ -71,37 +71,37 @@ const OngoingDetailsView = () => {
             planned_hours: "",
             planned_value: "",
             remaining_hours: "",
-            status:project?.project.status,
-            sub_task_updated:""
+            status: project?.project.status,
+            sub_task_updated: ""
         },
-        validateOnBlur:true,
-        validateOnChange:true,
-        validate:validateEditForm,
+        validateOnBlur: true,
+        validateOnChange: true,
+        validate: validateEditForm,
         onSubmit: edit_project
     })
-    const initialize_default_assignees=(subtask)=>{
-        let dtem=[]
-        let preset_assignees=[]
+    const initialize_default_assignees = (subtask) => {
+        let dtem = []
+        let preset_assignees = []
         //setDefaultValue([])
-        subtask.assignees.forEach((assignee,idx)=>{
-            dtem.push({value:String(assignee.assignee.id).toString(),label:assignee.assignee.first_name+' '+assignee.assignee.last_name})
-            
+        subtask.assignees.forEach((assignee, idx) => {
+            dtem.push({ value: String(assignee.assignee.id).toString(), label: assignee.assignee.first_name + ' ' + assignee.assignee.last_name })
+
             preset_assignees.push(Number(assignee.assignee.id))
         })
-        editForm.setFieldValue('assignee',preset_assignees)
+        editForm.setFieldValue('assignee', preset_assignees)
         setDefaultValue(dtem)
         return preset_assignees
     }
     const editInfoForm = (subtask) => {
         setEditModal(!editModal)
-        if(editForm){
-            console.log('assignee in edit form',editForm.values)
+        if (editForm) {
+            console.log('assignee in edit form', editForm.values)
             editForm.setValues({
                 sub_task: project?.project.sub_task,
                 work_package_number: project?.project.work_package_number,
                 work_package_index: subtask?.work_package_index,
                 task_title: subtask?.task_title,
-                estimated_person: subtask?Number(subtask.estimated_person):0,
+                estimated_person: subtask ? Number(subtask.estimated_person) : 0,
                 planned_delivery_date: project?.project.planned_delivery_date,
                 assignee: initialize_default_assignees(subtask),
                 pm: project.project.pm.id,
@@ -109,37 +109,37 @@ const OngoingDetailsView = () => {
                 planned_value: project?.project.planned_value,
                 remaining_hours: project?.project.remaining_hours,
                 status: subtask.status,
-                sub_task_updated:""
+                sub_task_updated: ""
             })
         }
-        
+
     }
-    
+
     const colourStyles = {
         // control: (styles, state) => ({ ...styles,height:"35px", fontSize: '14px !important', lineHeight: '1.42857', borderRadius: "8px",borderRadius:".25rem",color:"rgb(133,133,133)",border:state.isFocused ? '2px solid #0065ff' :'inherit'}),
         option: (provided, state) => ({ ...provided, fontSize: '14px !important' }),
 
     }
-    
+
     const initialize = () => {
         API.get('project/details/' + work_package_number + '/').then((res) => {
-            if(res.statusText != 'OK'){
+            if (res.statusText != 'OK') {
                 history.push('/dashboard/Projects/assigned-projects')
             }
-            else{
+            else {
                 setProject(res.data.data)
                 setTdo(res.data.data.project.task_delivery_order.title)
-                editForm.setFieldValue('assignee',res.data.ass)
+                editForm.setFieldValue('assignee', res.data.ass)
             }
-        }).catch(err=>{
+        }).catch(err => {
             console.log(err)
         })
     }
     useEffect(() => {
-        API.get('auth/assignee/list/').then((res)=>{
-            let temp=[]
-            Array.from(res.data.data).forEach((item,idx)=>{
-              temp.push({value:item.id.toString(),label:item.first_name+' '+item.last_name})
+        API.get('auth/assignee/list/').then((res) => {
+            let temp = []
+            Array.from(res.data.data).forEach((item, idx) => {
+                temp.push({ value: item.id.toString(), label: item.first_name + ' ' + item.last_name })
             })
             setAssignees(temp)
         })
@@ -157,7 +157,7 @@ const OngoingDetailsView = () => {
 
     const handle_tdo_title_change = (id) => {
         console.log({ title: tdo })
-        if(tdo.length>0){
+        if (tdo.length > 0) {
             API.put('project/change-tdo-title/' + id + '/', { title: tdo }).then((res) => {
                 console.log('rs', res.data)
                 if (res.data.success == 'True') {
@@ -175,35 +175,35 @@ const OngoingDetailsView = () => {
                 swal('Failed', 'Proccess Failed', 'error')
             })
         }
-        else{
-            swal('Invalid!','Task delivery order name can not be empty','warning')
+        else {
+            swal('Invalid!', 'Task delivery order name can not be empty', 'warning')
         }
     }
-    const handleKeyPress=(event)=>{
-        if(event.key === 'Enter'){
+    const handleKeyPress = (event) => {
+        if (event.key === 'Enter') {
             handle_tdo_title_change(project.project.task_delivery_order.id)
         }
     }
-    const handleAssigneeChange = (value,actionMeta) => {
-        if(actionMeta.action=='select-option' || actionMeta.action == 'remove-value'){
-            let temp=[]
-            value.forEach((item,idx)=>{
-              temp.push(Number(item.value))
+    const handleAssigneeChange = (value, actionMeta) => {
+        if (actionMeta.action == 'select-option' || actionMeta.action == 'remove-value') {
+            let temp = []
+            value.forEach((item, idx) => {
+                temp.push(Number(item.value))
             })
             setDefaultValue(value)
-            editForm.setFieldValue('assignee',temp)
+            editForm.setFieldValue('assignee', temp)
         }
-        else if(actionMeta.action == 'clear'){
+        else if (actionMeta.action == 'clear') {
             setDefaultValue(null)
-            editForm.setFieldValue('assignee',[])
+            editForm.setFieldValue('assignee', [])
         }
     }
-    const handleStatusChange=(value,actionMeta)=>{
-        if(actionMeta.action == 'select-option'){
-            editForm.setFieldValue('status',String(value.value).toString())
+    const handleStatusChange = (value, actionMeta) => {
+        if (actionMeta.action == 'select-option') {
+            editForm.setFieldValue('status', String(value.value).toString())
         }
     }
-    const delete_assignee = (project_id,assignee_id) => {
+    const delete_assignee = (project_id, assignee_id) => {
         swal({
             title: "Are you sure?",
             text: "Once deleted, you will not be able to recover this record!",
@@ -213,7 +213,7 @@ const OngoingDetailsView = () => {
         })
             .then((willDelete) => {
                 if (willDelete) {
-                    API.delete('/project/remove-assignee/' + assignee_id + "/",{data:{project:project_id,assignee:assignee_id}}).then(response => {
+                    API.delete('/project/remove-assignee/' + assignee_id + "/", { data: { project: project_id, assignee: assignee_id } }).then(response => {
                         if (response.data.success == "True") {
                             dispatch(fetchProjectsThunk(sessionStorage.getItem(USER_ID)))
                             initialize()
@@ -267,19 +267,19 @@ const OngoingDetailsView = () => {
                 }
             });
     }
-     {/**export in excel */ }
-     const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-     const fileExtension = '.xlsx';
-     var fileName;
-     const xlData = [];
+    {/**export in excel */ }
+    const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+    const fileExtension = '.xlsx';
+    var fileName;
+    const xlData = [];
     const exportToCSV = () => {
-        
+
         for (let i = 0; i < project.subtasks.length; i++) {
 
 
             const item = project.subtasks[i];
-         fileName='Details of'+' '+item.sub_task;
-         
+            fileName = 'Details of' + ' ' + item.sub_task;
+
             let assigneNames = [];
             var assigneName;
             Array.from(item.assignees).map((el) => {
@@ -287,8 +287,8 @@ const OngoingDetailsView = () => {
             })
             assigneName = assigneNames.join(",");
 
-            xlData.push({'Sl. No': i+1,'TDO':item.task_delivery_order.title,'Project Name':item.sub_task,'Work Package Number':item.work_package_number,'Work Package Index':item.work_package_index,'Project Manager':item.pm.first_name+''+item.pm.last_name,'Task Title':item.task_title,'Estimated Persons':item.estimated_person,'Planned Value':project.project.planned_value,'Planned Hours':project.project.planned_hours,'Planned Delivery Date':project.project.planned_delivery_date,'Assignee(s)':assigneName})
-           
+            xlData.push({ 'Sl. No': i + 1, 'TDO': item.task_delivery_order.title, 'Project Name': item.sub_task, 'Work Package Number': item.work_package_number, 'Work Package Index': item.work_package_index, 'Project Manager': item.pm.first_name + '' + item.pm.last_name, 'Task Title': item.task_title, 'Estimated Persons': item.estimated_person, 'Planned Value': project.project.planned_value, 'Planned Hours': project.project.planned_hours, 'Planned Delivery Date': project.project.planned_delivery_date, 'Assignee(s)': assigneName })
+
         }
         const ws = XLSX.utils.json_to_sheet(xlData);
         const wb = { Sheets: { 'data': ws }, SheetNames: ['data'] };
@@ -296,12 +296,12 @@ const OngoingDetailsView = () => {
         const data = new Blob([excelBuffer], { type: fileType });
         FileSaver.saveAs(data, fileName + fileExtension);
     }
-    console.log('ongoind details',project)
+    console.log('ongoind details', project)
     return (
         <>
             {project != undefined && <CContainer>
                 {/**Edit ongoing project details starts */}
-                <CModal alignment="center" show={editModal} onClose={()=>{setEditModal(!editModal)}}>
+                <CModal closeOnBackdrop={false} alignment="center" show={editModal} onClose={() => { setEditModal(!editModal) }}>
                     <CModalHeader onClose={() => setEditModal(!editModal)} closeButton>
                         <CModalTitle className="modal-title-projects">
                             <span className="edit-profile-form-header">Edit Project Info</span>
@@ -314,27 +314,27 @@ const OngoingDetailsView = () => {
                                     {/**Subtask Name*/}
                                     <CCol lg="12" className="mb-2">
                                         <CLabel htmlFor="sub_task" className="custom-label-5">Sub Task</CLabel>
-                                        <CInput id="sub_task" name="sub_task" type="text" value={editForm.values.sub_task} onChange={editForm.handleChange} className="custom-forminput-6"/>
-                                     {/**validation */}
-                                     {editForm.errors.sub_task && <p className="error">{editForm.errors.sub_task}</p>}
+                                        <CInput id="sub_task" name="sub_task" type="text" value={editForm.values.sub_task} onChange={editForm.handleChange} className="custom-forminput-6" />
+                                        {/**validation */}
+                                        {editForm.errors.sub_task && <p className="error">{editForm.errors.sub_task}</p>}
                                     </CCol>
                                     {/**PM Name */}
                                     <CCol lg="6" className="mb-2">
                                         <CLabel htmlFor="pmName" className="custom-label-5">PM Name</CLabel>
-                                        <CInput value={project.project.pm.first_name+' '+project.project.pm.last_name} id="pmName" name="pmName" type="text" className="custom-forminput-6" readOnly />
+                                        <CInput value={project.project.pm.first_name + ' ' + project.project.pm.last_name} id="pmName" name="pmName" type="text" className="custom-forminput-6" readOnly />
                                     </CCol>
                                     {/**Work Package Number */}
                                     <CCol lg="6" className="mb-2">
                                         <CLabel htmlFor="work_package_number" className="custom-label-5">Work Package Number</CLabel>
-                                        <CInput readOnly id="work_package_number" name="work_package_number" type="number" className="custom-forminput-6" min="0" value={editForm.values.work_package_number} onChange={editForm.handleChange}/>
+                                        <CInput readOnly id="work_package_number" name="work_package_number" type="number" className="custom-forminput-6" min="0" value={editForm.values.work_package_number} onChange={editForm.handleChange} />
                                     </CCol>
-                                 
+
                                     {/**Task Title */}
                                     <CCol lg="12" className="mb-2">
                                         <CLabel htmlFor="task_title" className="custom-label-5">Task Title</CLabel>
                                         <CInput id="task_title" name="task_title" value={editForm.values.task_title} onChange={editForm.handleChange} type="text" className="custom-forminput-6" />
-                                    {/**validation */}
-                                    {editForm.errors.task_title && <p className="error">{editForm.errors.task_title}</p>}
+                                        {/**validation */}
+                                        {editForm.errors.task_title && <p className="error">{editForm.errors.task_title}</p>}
                                     </CCol>
                                     {/**assignees */}
                                     <CCol lg="12" className="mb-2">
@@ -359,23 +359,23 @@ const OngoingDetailsView = () => {
                                     <CCol lg="6" className="mb-2">
                                         <CLabel htmlFor="estimated_person" className="custom-label-5">Estimated Person(s)</CLabel>
                                         <CInput id="estimated_person" name="estimated_person" value={editForm.values.estimated_person} onChange={editForm.handleChange} type="number" className="custom-forminput-6" min="0" />
-                                    {/**validation */}
-                                    {editForm.errors.estimated_person && <p className="error">{editForm.errors.estimated_person}</p>}
+                                        {/**validation */}
+                                        {editForm.errors.estimated_person && <p className="error">{editForm.errors.estimated_person}</p>}
                                     </CCol>
 
                                     {/**planned Value */}
                                     <CCol lg="6" className="mb-2">
                                         <CLabel htmlFor="planned_value" className="custom-label-5">Planned Value</CLabel>
                                         <CInput id="planned_value" name="planned_value" type="number" value={editForm.values.planned_value} onChange={editForm.handleChange} className="custom-forminput-6" min="0" />
-                                     {/**validation */}
-                                     {editForm.errors.planned_value && <p className="error">{editForm.errors.planned_value}</p>}
+                                        {/**validation */}
+                                        {editForm.errors.planned_value && <p className="error">{editForm.errors.planned_value}</p>}
                                     </CCol>
                                     {/**Planned hours */}
                                     <CCol lg="6" className="mb-2">
                                         <CLabel htmlFor="planned_hours" className="custom-label-5">Planned Hours</CLabel>
                                         <CInput id="planned_hours" name="planned_hours" type="number" value={editForm.values.planned_hours} onChange={editForm.handleChange} className="custom-forminput-6" min="0" />
-                                     {/**validation */}
-                                     {editForm.errors.planned_hours && <p className="error">{editForm.errors.planned_hours}</p>}
+                                        {/**validation */}
+                                        {editForm.errors.planned_hours && <p className="error">{editForm.errors.planned_hours}</p>}
                                     </CCol>
                                     {/**Remaining hours */}
                                     <CCol lg="6" className="mb-2">
@@ -385,17 +385,17 @@ const OngoingDetailsView = () => {
                                     {/**Planned delivery date */}
                                     <CCol lg="6" className="mb-2">
                                         <CLabel htmlFor="planned_hours" className="custom-label-5">Planned Delivery Date</CLabel>
-                                        <CInput id="planned_delivery_date" name="planned_delivery_date" type="date" value={editForm.values.planned_delivery_date} onChange={editForm.handleChange} className="custom-forminput-6"/>
+                                        <CInput id="planned_delivery_date" name="planned_delivery_date" type="date" value={editForm.values.planned_delivery_date} onChange={editForm.handleChange} className="custom-forminput-6" />
                                     </CCol>
                                     {/**status */}
                                     <CCol lg="6" className="mb-2">
                                         <CLabel htmlFor="Status" className="custom-label-5">Status</CLabel>
-                                        <Select 
+                                        <Select
                                             id="Status"
                                             name="Status"
                                             onChange={handleStatusChange}
                                             className="custom-forminput-6"
-                                            options={[{value:0,label:"On Going"},{value:1,label:"Completed"}]}
+                                            options={[{ value: 0, label: "On Going" }, { value: 1, label: "Completed" }]}
                                         />
                                     </CCol>
                                     {/**Action buttons */}
@@ -415,8 +415,8 @@ const OngoingDetailsView = () => {
                     </CModalBody>
                 </CModal>
                 {/**Edit ongoing project details ends */}
-                
-                <h3 className="dash-header-1">Project Details <CButton className="export-project-list" onClick={() => exportToCSV()}><CIcon name="cil-spreadsheet" className="mr-2"/>Export to excel</CButton></h3>
+
+                <h3 className="dash-header-1">Project Details <CButton className="export-project-list" onClick={() => exportToCSV()}><CIcon name="cil-spreadsheet" className="mr-2" />Export to excel</CButton></h3>
                 {status === 0 ?
                     (
                         <div className="card-header-portion-ongoing">
@@ -455,29 +455,39 @@ const OngoingDetailsView = () => {
                                 <CCardBody className="details-project-body">
                                     {/*task percentage portion */}
                                     <div className="ongoing-initial-info row">
-                                        <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Sub Task Name</h6>
+                                        <div className="tasks-done-2 col-lg-4">
+                                            <h6 className="tiny-header2">Sub Task Name</h6>
                                             <h6 className="project-point-details">{project.project.sub_task}</h6></div>
-                                        <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">PM Name</h6>
-                                            <h6 className="project-point-details">{project.project.pm.first_name + ' ' + project.project.pm.last_name}</h6></div>
-                                        <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Work Package Number</h6>
-                                            <h6 className="project-point-details">{project.project.work_package_number}</h6>
-                                        </div>
-                                        <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Work Package Index</h6>
-                                            <h6 className="project-point-details">{project.project.work_package_index}</h6>
-                                        </div>
-                                        <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Task Title</h6>
+                                        <div className="tasks-done-2 col-lg-4">
+                                            <h6 className="tiny-header2">Task Title</h6>
                                             <h6 className="project-point-details">{subtask.task_title}</h6>
                                         </div>
-                                        <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Estimated Person(s)</h6>
+                                        <div className="tasks-done-2 col-lg-4">
+                                            <h6 className="tiny-header2">PM Name</h6>
+                                            <h6 className="project-point-details">{project.project.pm.first_name + ' ' + project.project.pm.last_name}</h6>
+                                        </div>
+                                        <div className="tasks-done-2 col-lg-4">
+                                            <h6 className="tiny-header2">Work Package Number</h6>
+                                            <h6 className="project-point-details">{project.project.work_package_number}</h6>
+                                        </div>
+                                        <div className="tasks-done-2 col-lg-4">
+                                            <h6 className="tiny-header2">Work Package Index</h6>
+                                            <h6 className="project-point-details">{project.project.work_package_index}</h6>
+                                        </div>
+                                        <div className="tasks-done-2 col-lg-4">
+                                            <h6 className="tiny-header2">Estimated Person(s)</h6>
                                             <h6 className="project-point-details">{subtask.estimated_person}</h6>
                                         </div>
-                                        <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Planned Value</h6>
+                                        <div className="tasks-done-2 col-lg-4">
+                                            <h6 className="tiny-header2">Planned Value</h6>
                                             <h6 className="project-point-details">{project.project.planned_value} </h6>
                                         </div>
-                                        <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Planned Hours</h6>
+                                        <div className="tasks-done-2 col-lg-4">
+                                            <h6 className="tiny-header2">Planned Hours</h6>
                                             <h6 className="project-point-details">{project.project.planned_hours} </h6>
                                         </div>
-                                        <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Remaining Hours</h6>
+                                        <div className="tasks-done-2 col-lg-4">
+                                            <h6 className="tiny-header2">Remaining Hours</h6>
                                             <h6 className="project-point-details">{project.project.remaining_hours} </h6>
                                         </div>
                                     </div>
@@ -489,7 +499,7 @@ const OngoingDetailsView = () => {
                                             {project != undefined && Array.from(subtask.assignees).map((item, idx) => (
                                                 <div key={idx} className="col-md-4 col-sm-6 col-lg-2">
                                                     <div className="file-attached-ongoing rounded-pill">
-                                                        {has_permission('projects.delete_projectassignee') && has_permission('projects.change_projectassignee') && sessionStorage.getItem(USER_ID) == project.pm && <CButton type="button" onClick={() => delete_assignee(subtask.id,item.assignee.id)} className="remove-file-ongoing"><img src={"assets/icons/icons8-close-64-blue.svg"} className="close-icon-size" /></CButton>}{item.assignee.first_name + ' ' + item.assignee.last_name}
+                                                        {has_permission('projects.delete_projectassignee') && has_permission('projects.change_projectassignee') && sessionStorage.getItem(USER_ID) == project.pm && <CButton type="button" onClick={() => delete_assignee(subtask.id, item.assignee.id)} className="remove-file-ongoing"><img src={"assets/icons/icons8-close-64-blue.svg"} className="close-icon-size" /></CButton>}{item.assignee.first_name + ' ' + item.assignee.last_name}
                                                     </div>
                                                 </div>
                                             ))}

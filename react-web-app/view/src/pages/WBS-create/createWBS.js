@@ -1,5 +1,5 @@
 import { CContainer, CRow, CCol, CCard, CCardHeader, CCardBody, CForm, CLabel, CInput, CButton, CSelect, CTextarea, CAlert } from '@coreui/react';
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import './createWBS.css'
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProjectsThunk, fetchProjectsAssigneeThunk, createWbsThunk, fetchWbsThunk, fetchProjectsForPMThunk } from '../../store/slices/ProjectsSlice';
@@ -8,6 +8,7 @@ import { API, USER_ID } from '../../Config';
 import { useFormik } from 'formik';
 import swal from 'sweetalert'
 import LinearProgress from '@mui/material/LinearProgress';
+import sortBy from 'lodash/sortBy';
 
 const CreateNewWBS = () => {
     const remaining_hours = (remaining, total) => {
@@ -20,7 +21,7 @@ const CreateNewWBS = () => {
             if (parseFloat(item.project.remaining_hours) > 0) {
                 temp.push({
                     value: item.project.id,
-                    label: item.project.task_delivery_order.title + ' / ' + item.project.sub_task,
+                    label: item.project.sub_task,
                     data: item
                 })
             }
@@ -34,7 +35,7 @@ const CreateNewWBS = () => {
 
     const getTaskList = (option) => {
         console.log("task list###########: ", option)
-        setTaskList(option);
+        setTaskList(sortBy(option, 'task_title'));
     }
 
     const dispatch = useDispatch()
@@ -43,14 +44,27 @@ const CreateNewWBS = () => {
 
     const getAssigneeList = (option) => {
         dispatch(fetchProjectsAssigneeThunk(option.data.project.work_package_number))
-        setAssigneeList(option.data.assignees)
-        console.log("option.data.project.planned_delivery_date", option.data.project.planned_delivery_date)
+        setAssigneeList(sortBy(option.data.assignees, 'first_name'))
+        console.log("assignees", option)
         setSelectedProjectEndDate(option.data.project.planned_delivery_date)
     }
 
+    function reversDate(input) {
+        var temp = input.split('-');
+        let year = temp[0];
+        let month = temp[1]
+        let day = temp[2]
+        return day + '/' + month + '/' + year;
+    }
+
     const [selectedProject, setSelectedProject] = useState(null)
-    const [selectedProjectEndDate, setSelectedProjectEndDate] = useState(null)
+    const [selectedProjectEndDate, setSelectedProjectEndDate] = useState('')
     const [selectedAssignees, setSelectedAssignees] = useState([])
+
+    useEffect(() => {
+        console.log(reversDate(selectedProjectEndDate))
+    }, [selectedProjectEndDate])
+
     const handleProjectChange = (newValue, actionMeta) => {
         console.log(`action: ${actionMeta.action}`);
         console.log("newValue: ", newValue);
@@ -263,7 +277,7 @@ const CreateNewWBS = () => {
                                                     Start date
                                                 </CLabel>
                                                 {/* onChange={setWbsStartDate} */}
-                                                <CInput type="date" id="start_date" name="start_date" value={formCreateWbs.values.start_date} onChange={formCreateWbs.handleChange} className="custom-forminput-6"></CInput>
+                                                <CInput max={selectedProjectEndDate} type="date" id="start_date" name="start_date" value={formCreateWbs.values.start_date} onChange={formCreateWbs.handleChange} className="custom-forminput-6"></CInput>
                                                 {formCreateWbs.touched.start_date && formCreateWbs.errors.start_date && <small style={{ color: 'red' }}>{formCreateWbs.errors.start_date}</small>}
                                             </div>
                                             {/**End date */}
@@ -272,7 +286,7 @@ const CreateNewWBS = () => {
                                                     End date
                                                 </CLabel>
                                                 {/* onChange={setWbsEndDate} */}
-                                                <CInput max="" type="date" id="end_date" name="end_date" value={formCreateWbs.values.end_date} onChange={formCreateWbs.handleChange} className="custom-forminput-6"></CInput>
+                                                <CInput max={selectedProjectEndDate} type="date" id="end_date" name="end_date" value={formCreateWbs.values.end_date} onChange={formCreateWbs.handleChange} className="custom-forminput-6"></CInput>
                                                 {formCreateWbs.touched.end_date && formCreateWbs.errors.end_date && <small style={{ color: 'red' }}>{formCreateWbs.errors.end_date}</small>}
 
                                             </div>

@@ -5,7 +5,7 @@ import { CAlert, CCard, CCardBody, CButton, CModal, CModalHeader, CModalBody, CC
 const SubTaskDetailsModal =(props)=>{
     return(
         <>
-        {props.selectedSubTask && <CModal alignment="center" show={props.show} onClose={() => props.onPressClose()}>
+        {props.selectedSubTask && <CModal closeOnBackdrop={false} alignment="center" show={props.show} onClose={() => props.onPressClose()}>
                 <CModalHeader onClose={() => props.onPressClose(!props.show)} closeButton>
                     <CModalTitle className="modal-title-projects">
                         <span className="edit-profile-form-header">Subtask Details</span>

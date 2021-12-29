@@ -1,6 +1,6 @@
 import { React, useEffect, useState } from 'react';
 import './ongoingProjectDetails.css'
-import { CTooltip,CAlert, CCard, CCardBody, CButton, CModal, CModalHeader, CModalBody, CContainer, CForm, CRow, CLabel, CInput, CModalTitle } from '@coreui/react';
+import { CTooltip, CAlert, CCard, CCardBody, CButton, CModal, CModalHeader, CModalBody, CContainer, CForm, CRow, CLabel, CInput, CModalTitle } from '@coreui/react';
 import GradeIcon from '@material-ui/icons/Grade';
 import IconButton from '@material-ui/core/IconButton';
 import Select from "react-select";
@@ -144,7 +144,7 @@ const OngoingProjectDetails = () => {
     }
     return (
         <>
-            {selectedSubTask && <CModal size="lg" alignment="center" show={show_sub_task_details} onClose={() => { setShowSubTaskDetails(!show_sub_task_details) }}>
+            {selectedSubTask && <CModal closeOnBackdrop={false} size="lg" alignment="center" show={show_sub_task_details} onClose={() => { setShowSubTaskDetails(!show_sub_task_details) }}>
                 <CModalHeader onClose={() => setShowSubTaskDetails(!show_sub_task_details)} closeButton>
                     <CModalTitle className="modal-title-projects">
                         <span className="edit-profile-form-header">Subtask Details</span>
@@ -168,26 +168,36 @@ const OngoingProjectDetails = () => {
                                         <CCard className="card-ongoing-project">
                                             <CCardBody className="details-project-body">
                                                 <div className="ongoing-initial-info row">
-                                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Sub Task Name</h6>
-                                                        <h6 className="project-point-details">{selectedSubTask.task_title}</h6></div>
-                                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">PM Name</h6>
-                                                        <h6 className="project-point-details">{selectedSubTask.pm.first_name + ' ' + selectedSubTask.pm.last_name}</h6></div>
-                                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Work Package Number</h6>
-                                                        <h6 className="project-point-details">{selectedSubTask.work_package_number}</h6>
-                                                    </div>
-                                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Task Title</h6>
+                                                    <div className="tasks-done-2 col-lg-4">
+                                                        <h6 className="tiny-header2">Sub Task Name</h6>
                                                         <h6 className="project-point-details">{selectedSubTask.task_title}</h6>
                                                     </div>
-                                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Estimated Person(s)</h6>
+                                                    <div className="tasks-done-2 col-lg-4">
+                                                        <h6 className="tiny-header2">Task Title</h6>
+                                                        <h6 className="project-point-details">{selectedSubTask.task_title}</h6>
+                                                    </div>
+                                                    <div className="tasks-done-2 col-lg-4">
+                                                        <h6 className="tiny-header2">PM Name</h6>
+                                                        <h6 className="project-point-details">{selectedSubTask.pm.first_name + ' ' + selectedSubTask.pm.last_name}</h6>
+                                                    </div>
+                                                    <div className="tasks-done-2 col-lg-4">
+                                                        <h6 className="tiny-header2">Work Package Number</h6>
+                                                        <h6 className="project-point-details">{selectedSubTask.work_package_number}</h6>
+                                                    </div>
+                                                    <div className="tasks-done-2 col-lg-4">
+                                                        <h6 className="tiny-header2">Estimated Person(s)</h6>
                                                         <h6 className="project-point-details">{selectedSubTask.estimated_person}</h6>
                                                     </div>
-                                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Planned Value</h6>
+                                                    <div className="tasks-done-2 col-lg-4">
+                                                        <h6 className="tiny-header2">Planned Value</h6>
                                                         <h6 className="project-point-details">{selectedSubTask.assignees[0].project.planned_value} </h6>
                                                     </div>
-                                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Planned Hours</h6>
+                                                    <div className="tasks-done-2 col-lg-4">
+                                                        <h6 className="tiny-header2">Planned Hours</h6>
                                                         <h6 className="project-point-details">{selectedSubTask.assignees[0].project.planned_hours} </h6>
                                                     </div>
-                                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Remaining Hours</h6>
+                                                    <div className="tasks-done-2 col-lg-4">
+                                                        <h6 className="tiny-header2">Remaining Hours</h6>
                                                         <h6 className="project-point-details">{selectedSubTask.remaining_hours} </h6>
                                                     </div>
                                                 </div>
@@ -215,9 +225,9 @@ const OngoingProjectDetails = () => {
                                     </div>
                                 </div>
                             </CRow>
-                                {/**forward to wbs button  */}
-                                <CRow className="justify-content-center">
-                                <CButton className="create-wbs-from-modal" onClick={() => history.push({pathname:'/dashboard/WBS/create-wbs'})}>Create WBS</CButton>
+                            {/**forward to wbs button  */}
+                            <CRow className="justify-content-center">
+                                <CButton className="create-wbs-from-modal" onClick={() => history.push({ pathname: '/dashboard/WBS/create-wbs' })}>Create WBS</CButton>
                             </CRow>
                         </CForm>
                     </CContainer>
@@ -227,7 +237,7 @@ const OngoingProjectDetails = () => {
 
                 <div className="row">
                     <div className="col-md-12 col-lg-11 col-sm-12 col-xs-12 mt-1 mb-3">
-                        <h4 className="dash-header">Assigned Projects({Array.from(projects).length}) <CButton className="export-project-list" onClick={() => exportToCSV()}><CIcon name="cil-spreadsheet" className="mr-2"/>Export to excel</CButton></h4>
+                        <h4 className="dash-header">Assigned Projects({Array.from(projects).length}) <CButton className="export-project-list" onClick={() => exportToCSV()}><CIcon name="cil-spreadsheet" className="mr-2" />Export to excel</CButton></h4>
                         {projects != undefined &&
 
                             <Accordion allowMultipleExpanded={false} className="remove-acc-bg" allowZeroExpanded>
@@ -238,7 +248,7 @@ const OngoingProjectDetails = () => {
 
                                                 <IconButton aria-label="favourite" disabled size="medium" >
                                                     <GradeIcon fontSize="inherit" className="fav-button" />
-                                                </IconButton>{String(project.project.task_delivery_order.title).toUpperCase() + ' / ' + String(project.project.sub_task).toUpperCase()}
+                                                </IconButton>{String(project.project.sub_task).toUpperCase()}
                                                 {/**action buttons */}
                                                 <span className="fix-action-btn-alignment">
                                                     <CButton className="view-ongoing-details" onClick={() => history.push({ pathname: '/dashboard/Projects/assigned-projects/details/' + project.project.work_package_number, state: { project: project } })}><CIcon name="cil-list-rich" className="mr-1" />View Details</CButton>
@@ -266,10 +276,10 @@ const OngoingProjectDetails = () => {
                                             {/*Project participants */}
                                             <div className="all-da-workers1">
                                                 {project.assignees.length > 0 && Array.from(project.assignees).map((assignee, idx) => (
-                                                  <CTooltip content={capitalize(assignee.first_name + ' ' + assignee.last_name)} className="tooltiptext1">  
-                                                     <img key={idx} className="img-fluid worker-image" src={assignee.profile_pic != null ? BASE_URL + assignee.profile_pic : 'avatars/user-avatar-default.png'} />
-                                                     {/* <span className="tooltiptext1">{capitalize(assignee.first_name + ' ' + assignee.last_name)}</span> */}
-                                            </CTooltip>
+                                                    <CTooltip content={capitalize(assignee.first_name + ' ' + assignee.last_name)} className="tooltiptext1">
+                                                        <img key={idx} className="img-fluid worker-image" src={assignee.profile_pic != null ? BASE_URL + assignee.profile_pic : 'avatars/user-avatar-default.png'} />
+                                                        {/* <span className="tooltiptext1">{capitalize(assignee.first_name + ' ' + assignee.last_name)}</span> */}
+                                                    </CTooltip>
                                                 ))}
                                             </div>
                                             {/*project info in text */}

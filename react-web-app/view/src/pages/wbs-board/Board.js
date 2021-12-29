@@ -14,6 +14,8 @@ import Select from "react-select";
 import * as FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
 import { getStepLabelUtilityClass } from '@material-ui/core';
+import sortBy from 'lodash/sortBy';
+import {has_permission} from '../../helper.js';
 const WbsBoard = () => {
     {/**export in excel */ }
     const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
@@ -125,7 +127,8 @@ const WbsBoard = () => {
                     // console.log('3', temp_data)
                 }
             })
-            setWbsAssigneeList(tempAssigneList)
+            // console.log('tempAssigneList', tempAssigneList)
+            // setWbsAssigneeList(sortBy(tempAssigneList, 'first_name'))
             // setResetAssigneeSelectValue({value:sessionStorage.getItem(USER_ID), label:profile.first_name+' '+profile.last_name})
         }
         // console.log('temp data', temp_data)
@@ -145,6 +148,8 @@ const WbsBoard = () => {
                 }
             })
         }
+        setWbsAssigneeList(sortBy(tempAssigneList, 'label'))
+        // console.log('tempAssigneList', tempAssigneList)
     }
 
 
@@ -261,18 +266,34 @@ const WbsBoard = () => {
     console.log('BOard', boardData)
     React.useEffect(() => {
         // dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)))
-        API.get('wbs/all/' + sessionStorage.getItem(USER_ID) + '/').then((res) => {
-            setWbsList(res.data.data)
-            let pre_selected_items = []
-            Array.from(res.data.data).forEach((item, idx) => {
-                if (item.assignee.id === profile.id) {
-                    pre_selected_items.push(item)
-                }
+        if (has_permission("projects.add_projects")){
+            console.log("true")
+            API.get('wbs/pm/all/' + sessionStorage.getItem(USER_ID) + '/').then((res) => {
+                setWbsList(res.data.data)
+                let pre_selected_items = []
+                Array.from(res.data.data).forEach((item, idx) => {
+                    if (item.assignee.id === profile.id) {
+                        pre_selected_items.push(item)
+                    }
+                })
+                populate_data(pre_selected_items)
+                getAssigneeList(res.data.data)
+                setResetAssigneeSelectValue({ value: sessionStorage.getItem(USER_ID), label: profile.first_name + ' ' + profile.last_name })
             })
-            populate_data(pre_selected_items)
-            getAssigneeList(res.data.data)
-            setResetAssigneeSelectValue({ value: sessionStorage.getItem(USER_ID), label: profile.first_name + ' ' + profile.last_name })
-        })
+        }else {
+            API.get('wbs/all/' + sessionStorage.getItem(USER_ID) + '/').then((res) => {
+                setWbsList(res.data.data)
+                let pre_selected_items = []
+                Array.from(res.data.data).forEach((item, idx) => {
+                    if (item.assignee.id === profile.id) {
+                        pre_selected_items.push(item)
+                    }
+                })
+                populate_data(pre_selected_items)
+                getAssigneeList(res.data.data)
+                setResetAssigneeSelectValue({ value: sessionStorage.getItem(USER_ID), label: profile.first_name + ' ' + profile.last_name })
+            })
+        }
     }, [profile])
     return (
         <>

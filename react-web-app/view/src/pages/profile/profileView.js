@@ -153,7 +153,7 @@ const UserProfile = () => {
     return (
         <>
             <CContainer>
-                <CModal alignment="center" show={visible} onClose={profileEditForm}>
+                <CModal closeOnBackdrop={false} alignment="center" show={visible} onClose={profileEditForm}>
                     <CModalHeader closeButton>
                         <CModalTitle className="modal-title-profile">
                             <span className="edit-profile-form-header">

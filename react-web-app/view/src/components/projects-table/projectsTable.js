@@ -18,7 +18,7 @@ const ProjectsTableDashboard = () => {
         <>
             <div className="main-holder-projects">
                 <h3 className="projectsHeader">
-                    Projects
+                    Assigned Projects
                 </h3>
 
                 <div className="card-holder1">
@@ -38,7 +38,7 @@ const ProjectsTableDashboard = () => {
 
 
 
-                        <CAlert className="no-value-show-alert" color="primary">Currently there are no ongoing projects</CAlert>
+                        <CAlert className="no-value-show-alert" color="primary">Currently there are no projects assigned to you</CAlert>
 
 
                     ) : null

@@ -14,6 +14,7 @@ import moment from 'moment'
 import { fetchProjectsForPMThunk, fetchProjectsThunk } from '../../store/slices/ProjectsSlice';
 import LinearProgress from '@mui/material/LinearProgress';
 import { arrayRemoveItem } from '../../helper';
+import sortBy from 'lodash/sortBy';
 const CreateNewProject = () => {
   const colourStyles = {
     // control: (styles, state) => ({ ...styles,height:"35px", fontSize: '14px !important', lineHeight: '1.42857', borderRadius: "8px",borderRadius:".25rem",color:"rgb(133,133,133)",border:state.isFocused ? '2px solid #0065ff' :'inherit'}),
@@ -36,7 +37,7 @@ const CreateNewProject = () => {
   const [isWpInputdisabled, setIsWpInputdisabled] = useState(false)
   //tdo list states and functions
   const tdo_list = useSelector(state => state.projects.tdo_list)
-  const new_tdo_list = useSelector(state => state.tdo.data)
+  const new_tdo_list = useSelector(state => sortBy(state.tdo.data, 'label'))
 
   const handleTDOChange = (newValue, actionMeta) => {
     console.log("TDO details: ", newValue.value.details);
@@ -132,7 +133,8 @@ const CreateNewProject = () => {
       })
     })
     temp = temp.filter((value, index, array) => array.findIndex((t) => t.work_package_number === value.work_package_number) === index)
-    return temp;
+    console.log("sort bY subtask", sortBy(temp, 'label'))
+    return sortBy(temp, 'label');
   }
 
   const valid_date = (current) => {
@@ -282,14 +284,14 @@ const CreateNewProject = () => {
 
   const handleAssigneeChange = (value, actionMeta) => {
     setSelectedAssignees(value)
-    if (actionMeta.action == 'select-option') {
+    // if (actionMeta.action == 'select-option') {
       let single_planned_value = 0;
       let temp = []
       console.log('values', value)
       value.forEach((item, idx) => {
         temp.push(item.data.id)
         if (item.data.slc_details != null) {
-          single_planned_value += parseInt(item.data.slc_details.hourly_rate) * parseInt(total_working_days)
+          single_planned_value += parseInt(item.data.slc_details.hourly_rate) * parseInt(total_working_days) * 8
         }
       })
       formCreateProject.setValues({
@@ -307,7 +309,7 @@ const CreateNewProject = () => {
         planned_value: parseFloat(single_planned_value),
         remaining_hours: formCreateProject.values.planned_hours
       })
-    }
+    // }
     console.log(value, actionMeta.action)
   }
 
@@ -457,7 +459,7 @@ const CreateNewProject = () => {
       Array.from(res.data.data).forEach((item, idx) => {
         temp.push({ value: item.id, label: item.first_name + ' ' + item.last_name, data: item })
       })
-      setAssignees(temp)
+      setAssignees(sortBy(temp,'label'))
     })
     API.get('project/work-package-numbers/').then((res) => {
       console.log('WP list', res.data.wp)

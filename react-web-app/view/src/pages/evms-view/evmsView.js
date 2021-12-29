@@ -99,7 +99,7 @@ const ViewEvms = () => {
             {/**display all evms */}
             <CContainer>
                 {/**modal to edit evms */}
-                <CModal alignment="center" show={visible} onClose={editEVMSForm}>
+                <CModal closeOnBackdrop={false} alignment="center" show={visible} onClose={editEVMSForm}>
                     <CModalHeader onClose={() => setVisible(!visible)} closeButton>  <CModalTitle className="modal-title">
                         <span className="edit-profile-form-header">
                             Edit EVMS Info
