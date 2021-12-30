@@ -9,6 +9,7 @@ import { useFormik } from 'formik';
 import swal from 'sweetalert'
 import LinearProgress from '@mui/material/LinearProgress';
 import sortBy from 'lodash/sortBy';
+import { has_permission } from '../../helper.js';
 
 const CreateNewWBS = () => {
     const remaining_hours = (remaining, total) => {
@@ -26,6 +27,20 @@ const CreateNewWBS = () => {
                 })
             }
         })
+        if (has_permission("projects.add_projects")) {
+            Array.from(state.projects.pm_projects).forEach((item, idx) => {
+                if (parseFloat(item.project.remaining_hours) > 0) {
+                    // console.log(tempitem.label === item.project.sub_task))
+                    if (!temp.find(ele => ele.label === item.project.sub_task)){
+                        temp.push({
+                            value: item.project.id,
+                            label: item.project.sub_task,
+                            data: item
+                        })
+                    }
+                }
+            })
+        }
         // console.log("get project list: ", temp)
         return temp
     })
@@ -117,7 +132,7 @@ const CreateNewWBS = () => {
     }
 
     //   create wbs method 
-    const create_wbs = (values,{setSubmitting}) => {
+    const create_wbs = (values, { setSubmitting }) => {
         console.log('values', JSON.stringify(formCreateWbs.values))
         API.post('wbs/create/', formCreateWbs.values).then((res) => {
             setSubmitting(false)
@@ -129,7 +144,7 @@ const CreateNewWBS = () => {
                 dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)))
                 swal('Created!', 'Successfuly Created', 'success')
             }
-        }).catch(err=>{
+        }).catch(err => {
             setSubmitting(false)
         })
     }
