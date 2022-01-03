@@ -670,7 +670,7 @@ const MyProjectsDetailsView = () => {
                                         </div>
                                         <div className="tasks-done-2 col-lg-4">
                                             <h6 className="tiny-header2">Work Package Index</h6>
-                                            <h6 className="project-point-details">{project.project.work_package_index}</h6>
+                                            <h6 className="project-point-details">{subtask.work_package_index}</h6>
                                         </div>
                                         <div className="tasks-done-2 col-lg-4">
                                             <h6 className="tiny-header2">Estimated Person(s)</h6>
