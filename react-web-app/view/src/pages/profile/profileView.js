@@ -322,12 +322,10 @@ const UserProfile = () => {
                                                             {profile_details.email}
                                                         </h5>
                                                     </div>
-                                                    {/* <div className="col-md-6">
+                                                    <div className="col-md-6 col-lg-4">
                                                         <h5 className="info-header-1">Job title</h5>
-                                                        {profile_details.designation!=null ?( <h5 className="profile-details-points child">
-                                                            {profile_details.designation.name}
-                                                        </h5>) : <h5 className="profile-details-points child"> Not Available</h5>}
-                                                    </div> */}
+                                                        <h5 className="profile-details-points-email">{profile_details?.slc_details.slc.name}</h5>
+                                                    </div>
                                                     <div className="col-md-6 col-lg-4">
                                                         <h5 className="info-header-1"> Phone</h5>
                                                         <h5 className="profile-details-points child">
