@@ -478,10 +478,10 @@ const OngoingDetailsView = () => {
                                             <h6 className="tiny-header2">Estimated Person(s)</h6>
                                             <h6 className="project-point-details">{subtask.estimated_person}</h6>
                                         </div>
-                                        <div className="tasks-done-2 col-lg-4">
+                                        {has_permission("projects.add_projects") && <div className="tasks-done-2 col-lg-4">
                                             <h6 className="tiny-header2">Planned Value</h6>
                                             <h6 className="project-point-details">{project.project.planned_value} </h6>
-                                        </div>
+                                        </div>}
                                         <div className="tasks-done-2 col-lg-4">
                                             <h6 className="tiny-header2">Planned Hours</h6>
                                             <h6 className="project-point-details">{project.project.planned_hours} </h6>

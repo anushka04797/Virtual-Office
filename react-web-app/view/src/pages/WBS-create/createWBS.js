@@ -61,7 +61,6 @@ const CreateNewWBS = () => {
         dispatch(fetchProjectsAssigneeThunk(option.data.project.work_package_number))
         setAssigneeList(sortBy(option.data.assignees, 'first_name'))
         console.log("assignees", option)
-        setSelectedProjectEndDate(option.data.project.planned_delivery_date)
     }
 
     function reversDate(input) {
@@ -84,7 +83,6 @@ const CreateNewWBS = () => {
         console.log(`action: ${actionMeta.action}`);
         console.log("newValue: ", newValue);
         if (actionMeta.action == 'select-option') {
-            setSelectedProject(newValue);
             getAssigneeList(newValue);
             getTaskList(newValue.data.subtasks);
             formCreateWbs.setValues({
@@ -185,6 +183,8 @@ const CreateNewWBS = () => {
 
     const handleTaskTitleChange = (newValue, actionMeta) => {
         console.log("newValue newValue:", newValue)
+        setSelectedProject(newValue);
+        setSelectedProjectEndDate(newValue.planned_delivery_date)
         if (actionMeta.action == 'select-option') {
             setSelectedTask(newValue);
             formCreateWbs.setValues({
@@ -238,12 +238,12 @@ const CreateNewWBS = () => {
                                                     // getOptionLabel={option => option.task_delivery_order + " / " + option.sub_task}
                                                     // getOptionValue={option => option.id}
                                                     onChange={handleProjectChange}
-                                                    ref={selectProjectRef}
+                                                    // ref={selectProjectRef}
                                                 />
                                                 {formCreateWbs.touched.project && formCreateWbs.errors.project && <small style={{ color: 'red' }}>{formCreateWbs.errors.project}</small>}
 
                                             </div>
-                                            {selectedProject != null ?
+                                            {/* {selectedProject != null ?
                                                 <div className="col-lg-12 mb-3">
                                                     <CAlert color="primary">
                                                         <small>
@@ -256,7 +256,7 @@ const CreateNewWBS = () => {
                                                     </CAlert>
                                                 </div> :
                                                 <></>
-                                            }
+                                            } */}
                                             {/**task title */}
                                             <div className="col-lg-12 mb-3">
                                                 <CLabel className="custom-label-wbs5">
@@ -272,6 +272,20 @@ const CreateNewWBS = () => {
                                                 />
                                                 {formCreateWbs.touched.task_title && formCreateWbs.errors.task_title && <small style={{ color: 'red' }}>{formCreateWbs.errors.task_title}</small>}
                                             </div>
+                                            {selectedProject != null ?
+                                                <div className="col-lg-12 mb-3">
+                                                    <CAlert color="primary">
+                                                        <small>
+                                                            <b>Planned Delivery Date: </b> {selectedProject.planned_delivery_date}
+                                                            <br />
+                                                            <b>Planned Hours: </b> {selectedProject.planned_hours}
+                                                            <br />
+                                                            <b>Remaining Hours: </b> {selectedProject.remaining_hours}
+                                                        </small>
+                                                    </CAlert>
+                                                </div> :
+                                                <></>
+                                            }
                                             {/**wbs title */}
                                             <div className="col-lg-12 mb-3">
                                                 <CLabel className="custom-label-wbs5">

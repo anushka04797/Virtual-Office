@@ -23,6 +23,7 @@ import * as XLSX from 'xlsx';
 import { fetchProjectsForPMThunk } from '../../store/slices/ProjectsSlice';
 import { arrayRemoveItem } from '../../helper';
 import sortBy from 'lodash/sortBy';
+import { has_permission } from '../../helper';
 
 const MyProjectsDetailsView = () => {
     const { work_package_number } = useParams();
@@ -676,10 +677,10 @@ const MyProjectsDetailsView = () => {
                                             <h6 className="tiny-header2">Estimated Person(s)</h6>
                                             <h6 className="project-point-details">{project.project.estimated_person}</h6>
                                         </div>
-                                        <div className="tasks-done-2 col-lg-4">
+                                        {has_permission("projects.add_projects") && <div className="tasks-done-2 col-lg-4">
                                             <h6 className="tiny-header2">Planned Value</h6>
                                             <h6 className="project-point-details">{project.project.planned_value} </h6>
-                                        </div>
+                                        </div>}
                                         <div className="tasks-done-2 col-lg-4">
                                             <h6 className="tiny-header2">Planned Hours</h6>
                                             <h6 className="project-point-details">{project.project.planned_hours} </h6>
