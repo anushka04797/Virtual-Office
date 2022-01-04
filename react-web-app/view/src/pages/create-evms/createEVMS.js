@@ -70,6 +70,7 @@ const ProjectEVMS = () => {
 
   const dispatch = useDispatch();
   React.useEffect(() => {
+    window.scrollTo(0, 0);
     console.log('pm project list', projects)
   }, [projects])
 

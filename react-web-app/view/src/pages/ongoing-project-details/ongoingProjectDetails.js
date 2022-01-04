@@ -66,6 +66,7 @@ const OngoingProjectDetails = () => {
 
     const animatedComponents = makeAnimated();
     useEffect(() => {
+        window.scrollTo(0, 0);
         console.log('projects', projects);
         dispatch(fetchProjectsThunk(sessionStorage.getItem(USER_ID)))
     }, [])

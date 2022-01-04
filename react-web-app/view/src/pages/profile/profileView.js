@@ -130,6 +130,7 @@ const UserProfile = () => {
         })
     }
     useEffect(() => {
+        window.scrollTo(0, 0);
         setAvatar(profile_details.profile_pic ? (BASE_URL + profile_details.profile_pic) : "avatars/user-avatar-default.png")
     }, [profile_details])
     const profile_update_form = useFormik({

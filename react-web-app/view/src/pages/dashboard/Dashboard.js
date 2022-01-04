@@ -30,6 +30,7 @@ const Dashboard=()=> {
     const dispatch = useDispatch()
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     React.useEffect(()=>{
+        window.scrollTo(0, 0);
         console.log('dashboard mounted')
         if(location.state?.from == 'login'){
             enqueueSnackbar('Welcome ',{variant:'success'})

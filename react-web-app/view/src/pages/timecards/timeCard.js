@@ -97,6 +97,7 @@ const TimeCards = () => {
     {/**fetch all assignees for PM */ }
 
     React.useEffect(() => {
+        window.scrollTo(0, 0);
         if (has_permission('projects.change_projectassignee') || has_permission('projects.add_projectassignee')) {
             API.get('project/assignees/all/' + sessionStorage.getItem(USER_ID) + "/").then((res) => {
                 let temp = []

@@ -136,6 +136,7 @@ const OngoingDetailsView = () => {
         })
     }
     useEffect(() => {
+        window.scrollTo(0, 0);
         API.get('auth/assignee/list/').then((res) => {
             let temp = []
             Array.from(res.data.data).forEach((item, idx) => {

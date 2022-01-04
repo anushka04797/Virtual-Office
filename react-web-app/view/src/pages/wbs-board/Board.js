@@ -266,6 +266,7 @@ const WbsBoard = () => {
     console.log('BOard', boardData)
     React.useEffect(() => {
         // dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)))
+        window.scrollTo(0, 0);
         if (has_permission("projects.add_projects")){
             console.log("true")
             API.get('wbs/pm/all/' + sessionStorage.getItem(USER_ID) + '/').then((res) => {

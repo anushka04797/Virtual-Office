@@ -34,7 +34,7 @@ const WeeklyTimecards = () => {
         option: (provided, state) => ({ ...provided, fontSize: "14px !important" }),
     };
     React.useEffect(() => {
-       
+        window.scrollTo(0, 0);
         // console.log(time_card_list_fetched)
         API.get('project/assignees/all/'+ sessionStorage.getItem(USER_ID) + "/").then((res) => {
             // let assignees = [];

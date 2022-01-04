@@ -271,6 +271,7 @@ const MyProjectsDetailsView = () => {
 
     }
     useEffect(() => {
+        window.scrollTo(0, 0);
         if (location.state != undefined) {
             console.log('project', location.state.project)
             setProject(location.state.project)

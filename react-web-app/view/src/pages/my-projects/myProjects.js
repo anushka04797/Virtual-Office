@@ -63,6 +63,7 @@ const MyProjects = () => {
     const [show_sub_task_details, setShowSubTaskDetails] = useState(false)
     const [selectedSubTask, setSelectedSubTask] = useState()
     useEffect(() => {
+        window.scrollTo(0, 0);
         console.log('projects', projects)
         dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)))
         API.get('project/managers/').then((res) => {
