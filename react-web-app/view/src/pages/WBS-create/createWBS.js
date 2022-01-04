@@ -63,21 +63,9 @@ const CreateNewWBS = () => {
         console.log("assignees", option)
     }
 
-    function reversDate(input) {
-        var temp = input.split('-');
-        let year = temp[0];
-        let month = temp[1]
-        let day = temp[2]
-        return day + '/' + month + '/' + year;
-    }
-
     const [selectedProject, setSelectedProject] = useState(null)
     const [selectedProjectEndDate, setSelectedProjectEndDate] = useState('')
     const [selectedAssignees, setSelectedAssignees] = useState([])
-
-    useEffect(() => {
-        console.log(reversDate(selectedProjectEndDate))
-    }, [selectedProjectEndDate])
 
     const handleProjectChange = (newValue, actionMeta) => {
         console.log(`action: ${actionMeta.action}`);
@@ -133,9 +121,9 @@ const CreateNewWBS = () => {
     const create_wbs = (values, { setSubmitting }) => {
         console.log('values', JSON.stringify(formCreateWbs.values))
         API.post('wbs/create/', formCreateWbs.values).then((res) => {
-            setSubmitting(false)
+            // setSubmitting(false)
             console.log(res)
-            if (res.status == 200 && res.data.success == 'True') {
+            if (res.status === 200 && res.data.success === 'True') {
                 reset_form()
                 dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)))
                 dispatch(fetchProjectsThunk(sessionStorage.getItem(USER_ID)))
@@ -143,6 +131,7 @@ const CreateNewWBS = () => {
                 swal('Created!', 'Successfuly Created', 'success')
             }
         }).catch(err => {
+            console.log(err)
             setSubmitting(false)
         })
     }
@@ -184,7 +173,7 @@ const CreateNewWBS = () => {
     const handleTaskTitleChange = (newValue, actionMeta) => {
         console.log("newValue newValue:", newValue)
         setSelectedProject(newValue);
-        setSelectedProjectEndDate(newValue.planned_delivery_date)
+        setSelectedProjectEndDate(newValue?.planned_delivery_date)
         if (actionMeta.action == 'select-option') {
             setSelectedTask(newValue);
             formCreateWbs.setValues({
@@ -238,7 +227,7 @@ const CreateNewWBS = () => {
                                                     // getOptionLabel={option => option.task_delivery_order + " / " + option.sub_task}
                                                     // getOptionValue={option => option.id}
                                                     onChange={handleProjectChange}
-                                                    // ref={selectProjectRef}
+                                                    ref={selectProjectRef}
                                                 />
                                                 {formCreateWbs.touched.project && formCreateWbs.errors.project && <small style={{ color: 'red' }}>{formCreateWbs.errors.project}</small>}
 

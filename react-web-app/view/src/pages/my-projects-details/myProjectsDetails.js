@@ -108,7 +108,7 @@ const MyProjectsDetailsView = () => {
             })
 
             subtask?.assignees.forEach((assignee, idx) => {
-                dtem.push(assignee.assignee.id)
+                dtem.push(assignee.assignee.id.toString())
                 preset_assignees.push({ value: String(assignee.assignee.id).toString(), label: assignee.assignee.first_name + ' ' + assignee.assignee.last_name, data: assignee.assignee })
                 temp = arrayRemoveItem(temp, { value: String(assignee.assignee.id).toString(), label: assignee.assignee.first_name + ' ' + assignee.assignee.last_name, data: assignee.assignee })
             })
@@ -237,7 +237,7 @@ const MyProjectsDetailsView = () => {
 
         console.log('total working days', total_working_days)
         Array.from(inputList).forEach((item, idx) => {
-            assignees.push(item.assignee.id)
+            assignees.push(item.assignee.id.toString())
 
             assignee_eps.push(item.estimated_person)
             total_planned_value += item.assignee.slc_details.hourly_rate * 8 * parseFloat(total_working_days)
@@ -400,6 +400,11 @@ const MyProjectsDetailsView = () => {
             })
             // setTotalWorkingDays(total_working_days)
         }).then(() => {
+            var assignee_array = []
+            selectedAssignees.forEach(item => {
+                console.log(item.data.id)
+                assignee_array.push(item.data.id.toString())
+            })
             editForm.setValues({
                 sub_task: editForm.values.sub_task,
                 work_package_number: editForm.values.work_package_number,
@@ -408,7 +413,7 @@ const MyProjectsDetailsView = () => {
                 estimated_person: (calc(startDate, endDate) / total_working_days).toFixed(2),
                 start_date: editForm.values.start_date,
                 planned_delivery_date: endDate,
-                assignee: assignees,
+                assignee: assignee_array,
                 pm: sessionStorage.getItem(USER_ID),
                 planned_hours: editForm.values.planned_hours,
                 planned_value: editForm.values.planned_value,
