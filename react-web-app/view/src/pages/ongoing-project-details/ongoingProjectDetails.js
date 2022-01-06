@@ -107,6 +107,22 @@ const OngoingProjectDetails = () => {
     const worked_hours = (remaining, total) => {
         return String(parseFloat(total) - parseFloat(remaining))
     }
+    const remaining_hours = (projects) => {
+        let remaining_hours = 0;
+        projects.forEach(item => {
+            console.log(item.remaining_hours)
+            remaining_hours += parseFloat(item.remaining_hours);
+        })
+        return remaining_hours;
+    }
+    function totalProjectHrs(projects) {
+        let total_hours = 0;
+        projects.forEach(item => {
+            console.log(item.planned_hours)
+            total_hours += parseFloat(item.planned_hours);
+        })
+        return total_hours;
+    }
     function calculate_progress_in_percentage(total_hours, remaining_hours) {
         let worked_hours = parseFloat(total_hours) - parseFloat(remaining_hours)
         return (100 * worked_hours) / parseFloat(total_hours)
@@ -261,8 +277,8 @@ const OngoingProjectDetails = () => {
                                             {/* <hr className="header-underline1" /> */}
                                             {/*task percentage portion */}
                                             <div>
-                                                <h6 className="show-amount">{worked_hours(project.project.remaining_hours, project.project.planned_hours)}/{parseInt(project.project.planned_hours)} Hrs</h6>
-                                                <LinearWithValueLabel progress={calculate_progress_in_percentage(project.project.planned_hours, project.project.remaining_hours)} />
+                                                <h6 className="show-amount">{remaining_hours(project.subtasks)}/{totalProjectHrs(project.subtasks)} Hrs</h6>
+                                                <LinearWithValueLabel progress={() => calculate_progress_in_percentage(totalProjectHrs(project.subtasks), remaining_hours(project.subtasks))} />
                                             </div>
                                             {/*Project category buttons */}
                                             <div className="all-da-buttons-1">
@@ -287,14 +303,16 @@ const OngoingProjectDetails = () => {
                                             <div className="information-show row">
                                                 <div className="info-show-now col-lg-6">
                                                     <h5 className="project-details-points child"><h5 className="info-header-1">Assigned by :</h5>{project.project.pm.first_name + ' ' + project.project.pm.last_name}</h5>
-                                                    <h5 className="project-details-points"><h5 className="info-header-1">Project Manager : </h5>{project.project.pm.first_name + ' ' + project.project.pm.last_name}    </h5>
                                                 </div>
                                                 <div className="info-show-now col-lg-6">
-                                                    {/* <h5 className="project-details-points"><h5 className="info-header-1">Project Details :</h5>Design and develop the app for the seller and buyer module</h5> */}
-                                                    <h5 className="project-details-points child"><h5 className="info-header-1">Start Date : </h5>{project.project.date_created}</h5>
+                                                    <h5 className="project-details-points"><h5 className="info-header-1">Project Manager : </h5>{project.project.pm.first_name + ' ' + project.project.pm.last_name}    </h5>
+                                                </div>
+                                                {/* <div className="info-show-now col-lg-6"> */}
+                                                {/* <h5 className="project-details-points"><h5 className="info-header-1">Project Details :</h5>Design and develop the app for the seller and buyer module</h5> */}
+                                                {/* <h5 className="project-details-points child"><h5 className="info-header-1">Start Date : </h5>{project.project.date_created}</h5>
 
                                                     <h5 className="project-details-points"><h5 className="info-header-1">Planned Delivery Date : </h5>{project.project.planned_delivery_date}</h5>
-                                                </div>
+                                                </div> */}
                                             </div>
                                         </AccordionItemPanel>
                                     </AccordionItem>

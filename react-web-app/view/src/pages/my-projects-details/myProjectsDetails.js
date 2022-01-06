@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { CCardBody, CCard, CForm, CButton, CInput, CBadge, CModal, CModalHeader, CModalTitle, CModalBody, CContainer, CRow, CCol, CLabel } from '@coreui/react'
+import { CCardBody, CCard, CForm, CButton, CInput, CBadge, CModal, CModalHeader, CModalTitle, CModalBody, CContainer, CRow, CCol, CLabel, CTextarea } from '@coreui/react'
 
 import GradeIcon from '@material-ui/icons/Grade';
 import IconButton from '@material-ui/core/IconButton';
@@ -24,6 +24,7 @@ import { fetchProjectsForPMThunk } from '../../store/slices/ProjectsSlice';
 import { arrayRemoveItem } from '../../helper';
 import sortBy from 'lodash/sortBy';
 import { has_permission } from '../../helper';
+import LinearWithValueLabel from '../../components/linear-progress-bar/linear-progress-bar';
 
 const MyProjectsDetailsView = () => {
     const { work_package_number } = useParams();
@@ -71,6 +72,7 @@ const MyProjectsDetailsView = () => {
     const editForm = useFormik({
         initialValues: {
             sub_task: project?.project.sub_task,
+            description: project?.project.description,
             work_package_number: project?.project.work_package_number,
             work_package_index: project?.project.work_package_index,
             task_title: "",
@@ -129,6 +131,7 @@ const MyProjectsDetailsView = () => {
             console.log('assignee in edit form', editForm.values)
             editForm.setValues({
                 sub_task: project?.project.sub_task,
+                description: project?.project.description,
                 work_package_number: project?.project.work_package_number,
                 work_package_index: subtask?.work_package_index,
                 task_title: subtask?.task_title,
@@ -170,6 +173,7 @@ const MyProjectsDetailsView = () => {
         })
         editForm.setValues({
             sub_task: editForm.values.sub_task,
+            description: editForm.values.description,
             work_package_number: editForm.values.work_package_number,
             work_package_index: editForm.values.work_package_index,
             task_title: editForm.values.task_title,
@@ -248,6 +252,7 @@ const MyProjectsDetailsView = () => {
             //   task_delivery_order: editForm.values.task_delivery_order,
             //   tdo_details: editForm.values.tdo_details,
             sub_task: editForm.values.sub_task,
+            description: editForm.values.description,
             work_package_number: editForm.values.work_package_number,
             work_package_index: editForm.values.work_package_index,
             task_title: editForm.values.task_title,
@@ -408,6 +413,7 @@ const MyProjectsDetailsView = () => {
             })
             editForm.setValues({
                 sub_task: editForm.values.sub_task,
+                description: editForm.values.description,
                 work_package_number: editForm.values.work_package_number,
                 work_package_index: editForm.values.work_package_index,
                 task_title: editForm.values.task_title,
@@ -421,6 +427,10 @@ const MyProjectsDetailsView = () => {
                 remaining_hours: editForm.values.planned_hours
             })
         })
+    }
+    function calculate_progress_in_percentage(total_hours, remaining_hours) {
+        let worked_hours = parseFloat(total_hours) - parseFloat(remaining_hours)
+        return (100 * worked_hours) / parseFloat(total_hours)
     }
     const handleAddClick = () => {
         console.log("selected assignee", selectedAssignees, 'ep', selectedAssigneesEP)
@@ -510,6 +520,11 @@ const MyProjectsDetailsView = () => {
                                         <CInput id="sub_task" name="sub_task" type="text" value={editForm.values.sub_task} onChange={editForm.handleChange} className="custom-forminput-6" />
                                         {/**validation */}
                                         {editForm.errors.sub_task && editForm.touched.sub_task && <p className="error">{editForm.errors.sub_task}</p>}
+                                    </CCol>
+                                    {/**Subtask Details*/}
+                                    <CCol lg="12" className="mb-2">
+                                        <CLabel htmlFor="sub_task" className="custom-label-5">Sub Task details</CLabel>
+                                        <CTextarea id="description" name="description" type="text" value={editForm.values.description} onChange={editForm.handleChange} className="custom-forminput-6"></CTextarea>
                                     </CCol>
                                     {/**PM Name */}
                                     <CCol lg="12" className="mb-2">
@@ -625,9 +640,9 @@ const MyProjectsDetailsView = () => {
                     (
                         <div className="card-header-portion-ongoing">
                             <h4 className="ongoing-card-header-1">
-                                <IconButton aria-label="favourite" disabled size="medium" color="primary">
+                                {/* <IconButton aria-label="favourite" disabled size="medium" color="primary">
                                     <GradeIcon fontSize="inherit" className="fav-button" />
-                                </IconButton>
+                                </IconButton> */}
                                 {project != undefined ? project.project.task_delivery_order.title : ''}
                             </h4>
                             <CButton className="edit-ongoing-project-title" variant='ghost' onClick={(e) => radioHandler(1, 0)}><CIcon name="cil-pencil" className="mr-1 pen-icon" /></CButton>
@@ -649,6 +664,11 @@ const MyProjectsDetailsView = () => {
 
                     </div>) : null}
 
+                <div>
+                    <h6>{project.project.sub_task}</h6>
+                    <div className="project-point-details">{project.project.description == '' ? 'Not available' : project.project.description}</div>
+                </div>
+
                 {/**card show */}
                 <hr className="header-underline1" />
                 {/**Details card */}
@@ -660,8 +680,8 @@ const MyProjectsDetailsView = () => {
                                     {/*task percentage portion */}
                                     <div className="ongoing-initial-info row">
                                         <div className="tasks-done-2 col-lg-4">
-                                            <h6 className="tiny-header2">Sub Task Name</h6>
-                                            <h6 className="project-point-details">{project.project.sub_task}</h6>
+                                            <h6 className="tiny-header2">Work Package Index</h6>
+                                            <h6 className="project-point-details">{subtask.work_package_index}</h6>
                                         </div>
                                         <div className="tasks-done-2 col-lg-4">
                                             <h6 className="tiny-header2">Task Title</h6>
@@ -670,14 +690,6 @@ const MyProjectsDetailsView = () => {
                                         <div className="tasks-done-2 col-lg-4">
                                             <h6 className="tiny-header2">PM Name</h6>
                                             <h6 className="project-point-details">{project.project.pm.first_name + ' ' + project.project.pm.last_name}</h6>
-                                        </div>
-                                        <div className="tasks-done-2 col-lg-4">
-                                            <h6 className="tiny-header2">Work Package Number</h6>
-                                            <h6 className="project-point-details">{project.project.work_package_number}</h6>
-                                        </div>
-                                        <div className="tasks-done-2 col-lg-4">
-                                            <h6 className="tiny-header2">Work Package Index</h6>
-                                            <h6 className="project-point-details">{subtask.work_package_index}</h6>
                                         </div>
                                         <div className="tasks-done-2 col-lg-4">
                                             <h6 className="tiny-header2">Estimated Person(s)</h6>
@@ -692,13 +704,19 @@ const MyProjectsDetailsView = () => {
                                             <h6 className="project-point-details">{project.project.planned_hours} </h6>
                                         </div>
                                         <div className="tasks-done-2 col-lg-4">
+                                            <h6 className="tiny-header2">Actual Hours</h6>
+                                            <h6 className="project-point-details">{project.project.planned_hours - project.project.remaining_hours} </h6>
+                                        </div>
+                                        <div className="tasks-done-2 col-lg-4">
                                             <h6 className="tiny-header2">Remaining Hours</h6>
                                             <h6 className="project-point-details">{project.project.remaining_hours} </h6>
                                         </div>
                                     </div>
-
+                                    <div>
+                                        <LinearWithValueLabel progress={() => calculate_progress_in_percentage(project.project.planned_hours, project.project.remaining_hours)} />
+                                    </div>
                                     {/**assignees */}
-                                    <div className="col-md-12 mt-4 mb-2">
+                                    <div className="mt-4 mb-2">
                                         <h5 className="projectName mb-3">Asssignee(s)-({Array.from(subtask.assignees).length})</h5>
                                         <div className="file-show-ongoing-details row">
                                             {project != undefined && Array.from(subtask.assignees).map((item, idx) => (
@@ -712,7 +730,7 @@ const MyProjectsDetailsView = () => {
                                         </div>
                                     </div>
                                     {/**ACTION BUTTONS !!!!!!!!!! */}
-                                    <div className="col-md-12 mt-2 mb-2">
+                                    <div className="mt-2 mb-2">
                                         <div className="project-actions">
                                             <CButton className="edit-project-ongoing-task" onClick={() => editInfoForm(subtask)} ><CIcon name="cil-pencil" className="mr-1" /> Edit </CButton>
                                             <CButton type="button" onClick={() => delete_subtask(subtask.work_package_index)} className="delete-project-2"><CIcon name="cil-trash" className="mr-1" /> Delete</CButton>

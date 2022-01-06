@@ -128,7 +128,7 @@ const CreateNewProject = () => {
     projects.forEach((project, idx) => {
       project.subtasks.forEach((subtask, idx) => {
         if (subtask.task_delivery_order.title == tdo) {
-          temp.push({ value: subtask.sub_task, label: subtask.sub_task, work_package_number: subtask.work_package_number })
+          temp.push({ value: subtask.sub_task, label: subtask.sub_task, work_package_number: subtask.work_package_number, description: subtask.description })
         }
       })
     })
@@ -150,6 +150,7 @@ const CreateNewProject = () => {
         task_delivery_order: formCreateProject.values.task_delivery_order,
         tdo_details: formCreateProject.values.tdo_details,
         sub_task: newValue.value,
+        description: newValue.description,
         work_package_number: newValue.work_package_number,
         task_title: formCreateProject.values.task_title,
         estimated_person: formCreateProject.values.estimated_person,
@@ -173,6 +174,11 @@ const CreateNewProject = () => {
     }
   }
 
+  const handleSubtaskDetailsChange = (event) => {
+    console.log("subtask details: ", event.target.value);
+    formCreateProject.setFieldValue('description', event.target.value)
+  }
+
   const handleTaskTitleChange = (newValue, actionMeta) => {
     if (actionMeta.action == 'select-option') {
       console.log('task title:::', newValue)
@@ -181,6 +187,7 @@ const CreateNewProject = () => {
         task_delivery_order: formCreateProject.values.task_delivery_order,
         tdo_details: formCreateProject.values.tdo_details,
         sub_task: formCreateProject.values.sub_task,
+        description: formCreateProject.values.description,
         work_package_number: formCreateProject.values.work_package_number,
         task_title: newValue.value,
         estimated_person: formCreateProject.values.estimated_person,
@@ -220,6 +227,7 @@ const CreateNewProject = () => {
       task_delivery_order: formCreateProject.values.task_delivery_order,
       tdo_details: formCreateProject.values.tdo_details,
       sub_task: inputValue,
+      description: '',
       work_package_number: '',
       task_title: formCreateProject.values.task_title,
       estimated_person: formCreateProject.values.estimated_person,
@@ -298,6 +306,7 @@ const CreateNewProject = () => {
         task_delivery_order: formCreateProject.values.task_delivery_order,
         tdo_details: formCreateProject.values.tdo_details,
         sub_task: formCreateProject.values.sub_task,
+        description: formCreateProject.values.description,
         work_package_number: formCreateProject.values.work_package_number,
         task_title: formCreateProject.values.task_title,
         estimated_person: formCreateProject.values.estimated_person,
@@ -323,6 +332,7 @@ const CreateNewProject = () => {
         task_delivery_order: formCreateProject.values.task_delivery_order,
         tdo_details: formCreateProject.values.tdo_details,
         sub_task: formCreateProject.values.sub_task,
+        description: formCreateProject.values.description,
         work_package_number: formCreateProject.values.work_package_number,
         task_title: formCreateProject.values.task_title,
         estimated_person: temp,
@@ -430,6 +440,7 @@ const CreateNewProject = () => {
       task_delivery_order: "",
       tdo_details: "",
       sub_task: "",
+      description: "",
       work_package_number: "",
       task_title: "",
       estimated_person: 0,
@@ -512,6 +523,7 @@ const CreateNewProject = () => {
         task_delivery_order: formCreateProject.values.task_delivery_order,
         tdo_details: formCreateProject.values.tdo_details,
         sub_task: formCreateProject.values.sub_task,
+        description: formCreateProject.values.description,
         work_package_number: formCreateProject.values.work_package_number,
         task_title: formCreateProject.values.task_title,
         estimated_person: (calc(startDate, endDate) / total_working_days).toFixed(2),
@@ -577,6 +589,7 @@ const CreateNewProject = () => {
         task_delivery_order: formCreateProject.values.task_delivery_order,
         tdo_details: formCreateProject.values.tdo_details,
         sub_task: formCreateProject.values.sub_task,
+        description: formCreateProject.values.description,
         work_package_number: formCreateProject.values.work_package_number,
         task_title: formCreateProject.values.task_title,
         estimated_person: formCreateProject.values.estimated_person,
@@ -604,6 +617,7 @@ const CreateNewProject = () => {
           task_delivery_order: formCreateProject.values.task_delivery_order,
           tdo_details: formCreateProject.values.tdo_details,
           sub_task: formCreateProject.values.sub_task,
+          description: formCreateProject.values.description,
           work_package_number: formCreateProject.values.work_package_number,
           task_title: formCreateProject.values.task_title,
           estimated_person: selectedAssigneesEP,
@@ -647,6 +661,7 @@ const CreateNewProject = () => {
       task_delivery_order: formCreateProject.values.task_delivery_order,
       tdo_details: formCreateProject.values.tdo_details,
       sub_task: formCreateProject.values.sub_task,
+      description: formCreateProject.values.description,
       work_package_number: formCreateProject.values.work_package_number,
       task_title: formCreateProject.values.task_title,
       estimated_person: assignee_eps,
@@ -771,6 +786,12 @@ const CreateNewProject = () => {
                         </div>}
                         {formCreateProject.touched.work_package_number && formCreateProject.errors.work_package_number && <small style={{ color: 'red' }}>{formCreateProject.errors.work_package_number}</small>}
                         {/* {formCreateProject.touched.work_package_number_exists && formCreateProject.errors.work_package_number_exists && <small style={{ color: 'red' }}>{formCreateProject.errors.work_package_number_exists}</small>} */}
+                      </div>
+                      <div className="col-lg-12 mb-3">
+                        <CLabel className="custom-label-5" htmlFor="tdo" aria-labelledby="tdo">
+                          Subtask Details
+                        </CLabel>
+                        <CTextarea id="description" name="description" value={formCreateProject.values.description} onChange={handleSubtaskDetailsChange} rows="6" placeholder="Enter details..."></CTextarea>
                       </div>
                       {/**Task title */}
                       <div className="col-lg-12 mb-3">

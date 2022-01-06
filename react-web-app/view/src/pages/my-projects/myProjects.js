@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { fetchProjectsForPMThunk, fetchProjectsThunk } from '../../store/slices/ProjectsSlice';
 import '../ongoing-project-details/ongoingProjectDetails.css';
-import { CTooltip,CCol, CAlert, CCard, CCardBody, CButton, CModal, CModalHeader, CModalBody, CContainer, CForm, CRow, CLabel, CInput, CModalTitle } from '@coreui/react';
+import { CTooltip, CCol, CAlert, CCard, CCardBody, CButton, CModal, CModalHeader, CModalBody, CContainer, CForm, CRow, CLabel, CInput, CModalTitle } from '@coreui/react';
 import GradeIcon from '@material-ui/icons/Grade';
 import IconButton from '@material-ui/core/IconButton';
 import CIcon from "@coreui/icons-react";
@@ -121,8 +121,21 @@ const MyProjects = () => {
                 break
         }
     }
-    const remaining_hours = (remaining, total) => {
-        return String(parseFloat(total) - parseFloat(remaining))
+    const remaining_hours = (projects) => {
+        let remaining_hours = 0;
+        projects.forEach(item => {
+            console.log(item.remaining_hours)
+            remaining_hours += parseFloat(item.remaining_hours);
+        })
+        return remaining_hours;
+    }
+    function totalProjectHrs(projects) {
+        let total_hours = 0;
+        projects.forEach(item => {
+            console.log(item.planned_hours)
+            total_hours += parseFloat(item.planned_hours);
+        })
+        return total_hours;
     }
     const delete_assignee = (project_id, assignee_id) => {
         swal({
@@ -262,7 +275,7 @@ const MyProjects = () => {
                             </CRow>
                             {/**forward to wbs button  */}
                             <CRow className="justify-content-center">
-                                <CButton className="create-wbs-from-modal" onClick={() => history.push({pathname:'/dashboard/WBS/create-wbs'})}>Create WBS</CButton>
+                                <CButton className="create-wbs-from-modal" onClick={() => history.push({ pathname: '/dashboard/WBS/create-wbs' })}>Create WBS</CButton>
                             </CRow>
                         </CForm>
                     </CContainer>
@@ -274,7 +287,7 @@ const MyProjects = () => {
 
                 <div className="row">
                     <div className="col-md-12 col-lg-11 col-sm-12 col-xs-12 mt-1">
-                        <h4 className="dash-header">My Projects({Array.from(projects).length}) <CButton className="export-project-list" onClick={() => exportToCSV()}><CIcon name="cil-spreadsheet" className="mr-2"/>Export to excel</CButton></h4>
+                        <h4 className="dash-header">My Projects({Array.from(projects).length}) <CButton className="export-project-list" onClick={() => exportToCSV()}><CIcon name="cil-spreadsheet" className="mr-2" />Export to excel</CButton></h4>
                         {projects != undefined &&
                             <Accordion allowMultipleExpanded={false} className="remove-acc-bg  mb-3" allowZeroExpanded>
                                 {Array.from(projects).map((project, idx) => (
@@ -296,8 +309,8 @@ const MyProjects = () => {
                                             {/* <hr className="header-underline1" /> */}
                                             {/*task percentage portion */}
                                             <div>
-                                                <h6 className="show-amount">{remaining_hours(project.project.remaining_hours, project.project.planned_hours)}/{parseInt(project.project.planned_hours)} Hrs</h6>
-                                                <LinearWithValueLabel progress={() => calculate_progress_in_percentage(project.project.planned_hours, project.project.remaining_hours)} />
+                                                <h6 className="show-amount">{remaining_hours(project.subtasks)}/{totalProjectHrs(project.subtasks)} Hrs</h6>
+                                                <LinearWithValueLabel progress={() => calculate_progress_in_percentage(totalProjectHrs(project.subtasks), remaining_hours(project.subtasks))} />
                                             </div>
                                             {/*Project category buttons */}
                                             <div className="all-da-buttons-1">
@@ -313,16 +326,18 @@ const MyProjects = () => {
                                             {/*Project participants */}
                                             <div className="all-da-workers1">
                                                 {project.assignees.length > 0 && Array.from(project.assignees).map((assignee, idx) => (
-                                                 <CTooltip content={capitalize(assignee.first_name + ' ' + assignee.last_name)} className="tooltiptext1">  
+                                                    <CTooltip content={capitalize(assignee.first_name + ' ' + assignee.last_name)} className="tooltiptext1">
                                                         <img key={idx} className="img-fluid worker-image" src={assignee.profile_pic != null ? BASE_URL + assignee.profile_pic : 'avatars/user-avatar-default.png'} />
-                                                       
-                                                  </CTooltip>
+
+                                                    </CTooltip>
                                                 ))}
                                             </div>
                                             {/*project info in text */}
                                             <div className="information-show row">
                                                 <div className="info-show-now col-lg-6">
                                                     <h5 className="project-details-points child"><h5 className="info-header-1">Assigned by :</h5>{project.project.pm.first_name + ' ' + project.project.pm.last_name}</h5>
+                                                </div>
+                                                <div className="info-show-now col-lg-6">
                                                     <h5 className="project-details-points"><h5 className="info-header-1">Project Manager : {status.project != idx ? (<CButton className="edit-pm-name" variant='ghost' onClick={(e) => changePMChangeInputFieldStatus(idx, 'open')}><CIcon name="cil-pencil" className="mr-1 pen-icon-pm" /></CButton>) : null}</h5>{status.project != idx ? (<span>{project.project.pm.first_name + ' ' + project.project.pm.last_name}</span>
                                                     ) : <></>}
                                                         {/**if clicked edit button */}
@@ -355,12 +370,12 @@ const MyProjects = () => {
                                                         ) : <></>}
                                                     </h5>
                                                 </div>
-                                                <div className="info-show-now col-lg-6">
-                                                    {/* <h5 className="project-details-points"><h5 className="info-header-1">Project Details :</h5>Design and develop the app for the seller and buyer module</h5> */}
-                                                    <h5 className="project-details-points child"><h5 className="info-header-1">Start Date : </h5>{project.project.start_date}</h5>
+                                                {/* <div className="info-show-now col-lg-6"> */}
+                                                {/* <h5 className="project-details-points"><h5 className="info-header-1">Project Details :</h5>Design and develop the app for the seller and buyer module</h5> */}
+                                                {/* <h5 className="project-details-points child"><h5 className="info-header-1">Start Date : </h5>{project.project.start_date}</h5>
 
                                                     <h5 className="project-details-points"><h5 className="info-header-1">Planned Delivery Date : </h5>{project.project.planned_delivery_date}</h5>
-                                                </div>
+                                                </div> */}
                                             </div>
                                         </AccordionItemPanel>
                                     </AccordionItem>

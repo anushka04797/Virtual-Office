@@ -18,6 +18,7 @@ import { has_permission } from '../../helper';
 import { useFormik } from 'formik';
 import * as FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
+import LinearWithValueLabel from '../../components/linear-progress-bar/linear-progress-bar';
 const OngoingDetailsView = () => {
     const { work_package_number } = useParams();
     const dispatch = useDispatch()
@@ -236,6 +237,10 @@ const OngoingDetailsView = () => {
                 }
             });
     }
+    function calculate_progress_in_percentage(total_hours, remaining_hours) {
+        let worked_hours = parseFloat(total_hours) - parseFloat(remaining_hours)
+        return (100 * worked_hours) / parseFloat(total_hours)
+    }
     const delete_subtask = (work_package_index) => {
         swal({
             title: "Are you sure?",
@@ -422,9 +427,9 @@ const OngoingDetailsView = () => {
                     (
                         <div className="card-header-portion-ongoing">
                             <h4 className="ongoing-card-header-1">
-                                <IconButton aria-label="favourite" disabled size="medium" color="primary">
+                                {/* <IconButton aria-label="favourite" disabled size="medium" color="primary">
                                     <GradeIcon fontSize="inherit" className="fav-button" />
-                                </IconButton>
+                                </IconButton> */}
                                 {project != undefined ? project.project.task_delivery_order.title : ''}
                             </h4>
                             {has_permission('projects.change_tdo') && <CButton className="edit-ongoing-project-title" variant='ghost' onClick={(e) => radioHandler(1, 0)}><CIcon name="cil-pencil" className="mr-1 pen-icon" /></CButton>}
@@ -446,6 +451,11 @@ const OngoingDetailsView = () => {
 
                     </div>) : null}
 
+                <div>
+                    <h6>{project.project.sub_task}</h6>
+                    <div className="project-point-details">{project.project.description == '' ? 'Not available' : project.project.description}</div>
+                </div>
+
                 {/**card show */}
                 <hr className="header-underline1" />
                 {/**Details card */}
@@ -457,8 +467,9 @@ const OngoingDetailsView = () => {
                                     {/*task percentage portion */}
                                     <div className="ongoing-initial-info row">
                                         <div className="tasks-done-2 col-lg-4">
-                                            <h6 className="tiny-header2">Sub Task Name</h6>
-                                            <h6 className="project-point-details">{project.project.sub_task}</h6></div>
+                                            <h6 className="tiny-header2">Work Package Index</h6>
+                                            <h6 className="project-point-details">{subtask.work_package_index}</h6>
+                                        </div>
                                         <div className="tasks-done-2 col-lg-4">
                                             <h6 className="tiny-header2">Task Title</h6>
                                             <h6 className="project-point-details">{subtask.task_title}</h6>
@@ -466,14 +477,6 @@ const OngoingDetailsView = () => {
                                         <div className="tasks-done-2 col-lg-4">
                                             <h6 className="tiny-header2">PM Name</h6>
                                             <h6 className="project-point-details">{project.project.pm.first_name + ' ' + project.project.pm.last_name}</h6>
-                                        </div>
-                                        <div className="tasks-done-2 col-lg-4">
-                                            <h6 className="tiny-header2">Work Package Number</h6>
-                                            <h6 className="project-point-details">{project.project.work_package_number}</h6>
-                                        </div>
-                                        <div className="tasks-done-2 col-lg-4">
-                                            <h6 className="tiny-header2">Work Package Index</h6>
-                                            <h6 className="project-point-details">{subtask.work_package_index}</h6>
                                         </div>
                                         <div className="tasks-done-2 col-lg-4">
                                             <h6 className="tiny-header2">Estimated Person(s)</h6>
@@ -488,13 +491,19 @@ const OngoingDetailsView = () => {
                                             <h6 className="project-point-details">{project.project.planned_hours} </h6>
                                         </div>
                                         <div className="tasks-done-2 col-lg-4">
+                                            <h6 className="tiny-header2">Actual Hours</h6>
+                                            <h6 className="project-point-details">{project.project.planned_hours - project.project.remaining_hours} </h6>
+                                        </div>
+                                        <div className="tasks-done-2 col-lg-4">
                                             <h6 className="tiny-header2">Remaining Hours</h6>
                                             <h6 className="project-point-details">{project.project.remaining_hours} </h6>
                                         </div>
                                     </div>
-
+                                    <div>
+                                        <LinearWithValueLabel progress={() => calculate_progress_in_percentage(project.project.planned_hours, project.project.remaining_hours)} />
+                                    </div>
                                     {/**assignees */}
-                                    <div className="col-md-12 mt-4 mb-2">
+                                    <div className="mt-4 mb-2">
                                         <h5 className="projectName mb-3">Asssignee(s)-({Array.from(subtask.assignees).length})</h5>
                                         <div className="file-show-ongoing-details row">
                                             {project != undefined && Array.from(subtask.assignees).map((item, idx) => (
