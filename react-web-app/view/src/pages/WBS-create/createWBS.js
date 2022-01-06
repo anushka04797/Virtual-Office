@@ -270,6 +270,8 @@ const CreateNewWBS = () => {
                                                             <b>Planned Hours: </b> {selectedProject.planned_hours}
                                                             <br />
                                                             <b>Remaining Hours: </b> {selectedProject.remaining_hours}
+                                                            <br />
+                                                            <b>Task details: </b> {selectedProject.description}
                                                         </small>
                                                     </CAlert>
                                                 </div> :

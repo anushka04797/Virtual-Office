@@ -128,7 +128,7 @@ const CreateNewProject = () => {
     projects.forEach((project, idx) => {
       project.subtasks.forEach((subtask, idx) => {
         if (subtask.task_delivery_order.title == tdo) {
-          temp.push({ value: subtask.sub_task, label: subtask.sub_task, work_package_number: subtask.work_package_number, description: subtask.description })
+          temp.push({ value: subtask.sub_task, label: subtask.sub_task, work_package_number: subtask.work_package_number })
         }
       })
     })
@@ -725,12 +725,12 @@ const CreateNewProject = () => {
                         {formCreateProject.touched.task_delivery_order && formCreateProject.errors.task_delivery_order && <small style={{ color: 'red' }}>{formCreateProject.errors.task_delivery_order}</small>}
                       </div>
                       {/**task delivery order details */}
-                      <div className="col-lg-12 mb-3">
+                      {/* <div className="col-lg-12 mb-3">
                         <CLabel className="custom-label-5" htmlFor="tdo" aria-labelledby="tdo">
                           Task Delivery Order Details
                         </CLabel>
                         <CTextarea id="tdo_details" name="tdo_details" value={formCreateProject.values.tdo_details} onChange={handleTdoDetailsChange} rows="6" placeholder="Enter details..."></CTextarea>
-                      </div>
+                      </div> */}
                       {/**Sub task */}
                       <div className="col-lg-6 mb-3">
                         <CLabel className="custom-label-5" htmlFor="sTask">
@@ -787,12 +787,6 @@ const CreateNewProject = () => {
                         {formCreateProject.touched.work_package_number && formCreateProject.errors.work_package_number && <small style={{ color: 'red' }}>{formCreateProject.errors.work_package_number}</small>}
                         {/* {formCreateProject.touched.work_package_number_exists && formCreateProject.errors.work_package_number_exists && <small style={{ color: 'red' }}>{formCreateProject.errors.work_package_number_exists}</small>} */}
                       </div>
-                      <div className="col-lg-12 mb-3">
-                        <CLabel className="custom-label-5" htmlFor="tdo" aria-labelledby="tdo">
-                          Subtask Details
-                        </CLabel>
-                        <CTextarea id="description" name="description" value={formCreateProject.values.description} onChange={handleSubtaskDetailsChange} rows="6" placeholder="Enter details..."></CTextarea>
-                      </div>
                       {/**Task title */}
                       <div className="col-lg-12 mb-3">
                         <CLabel className="custom-label-5">
@@ -815,6 +809,12 @@ const CreateNewProject = () => {
                         />
                         {/* <CInput id="task_title" name="task_title" value={formCreateProject.values.task_title} onChange={formCreateProject.handleChange} className="custom-forminput-6" /> */}
                         {formCreateProject.touched.task_title && formCreateProject.errors.task_title && <small style={{ color: 'red' }}>{formCreateProject.errors.task_title}</small>}
+                      </div>
+                      <div className="col-lg-12 mb-3">
+                        <CLabel className="custom-label-5" htmlFor="tdo" aria-labelledby="tdo">
+                          Task Details
+                        </CLabel>
+                        <CTextarea id="description" name="description" value={formCreateProject.values.description} onChange={handleSubtaskDetailsChange} rows="6" placeholder="Enter details..."></CTextarea>
                       </div>
                       {/**start date */}
                       <div className="col-lg-6 mb-3">

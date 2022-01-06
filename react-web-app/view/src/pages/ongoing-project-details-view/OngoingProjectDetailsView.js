@@ -453,7 +453,7 @@ const OngoingDetailsView = () => {
 
                 <div>
                     <h6>{project.project.sub_task}</h6>
-                    <div className="project-point-details">{project.project.description == '' ? 'Not available' : project.project.description}</div>
+                    {/* <div className="project-point-details">{project.project.description == '' ? 'Not available' : project.project.description}</div> */}
                 </div>
 
                 {/**card show */}
@@ -476,7 +476,7 @@ const OngoingDetailsView = () => {
                                         </div>
                                         <div className="tasks-done-2 col-lg-4">
                                             <h6 className="tiny-header2">PM Name</h6>
-                                            <h6 className="project-point-details">{project.project.pm.first_name + ' ' + project.project.pm.last_name}</h6>
+                                            <h6 className="project-point-details">{subtask.pm.first_name + ' ' + subtask.pm.last_name}</h6>
                                         </div>
                                         <div className="tasks-done-2 col-lg-4">
                                             <h6 className="tiny-header2">Estimated Person(s)</h6>
@@ -484,23 +484,31 @@ const OngoingDetailsView = () => {
                                         </div>
                                         {has_permission("projects.add_projects") && <div className="tasks-done-2 col-lg-4">
                                             <h6 className="tiny-header2">Planned Value</h6>
-                                            <h6 className="project-point-details">{project.project.planned_value} </h6>
+                                            <h6 className="project-point-details">{subtask.planned_value} </h6>
                                         </div>}
                                         <div className="tasks-done-2 col-lg-4">
                                             <h6 className="tiny-header2">Planned Hours</h6>
-                                            <h6 className="project-point-details">{project.project.planned_hours} </h6>
+                                            <h6 className="project-point-details">{subtask.planned_hours} </h6>
                                         </div>
                                         <div className="tasks-done-2 col-lg-4">
                                             <h6 className="tiny-header2">Actual Hours</h6>
-                                            <h6 className="project-point-details">{project.project.planned_hours - project.project.remaining_hours} </h6>
+                                            <h6 className="project-point-details">{(subtask.planned_hours - subtask.remaining_hours).toFixed(1)} </h6>
                                         </div>
                                         <div className="tasks-done-2 col-lg-4">
                                             <h6 className="tiny-header2">Remaining Hours</h6>
-                                            <h6 className="project-point-details">{project.project.remaining_hours} </h6>
+                                            <h6 className="project-point-details">{subtask.remaining_hours} </h6>
+                                        </div>
+                                        <div className="tasks-done-2 col-lg-4">
+                                            <h6 className="tiny-header2">Planned delivery date</h6>
+                                            <h6 className="project-point-details">{subtask.planned_delivery_date} </h6>
+                                        </div>
+                                        <div className="tasks-done-2 col-lg-12">
+                                            <h6 className="tiny-header2">Task deatils</h6>
+                                            <h6 className="project-point-details">{subtask.description == '' ? 'Not available' : subtask.description}</h6>
                                         </div>
                                     </div>
                                     <div>
-                                        <LinearWithValueLabel progress={() => calculate_progress_in_percentage(project.project.planned_hours, project.project.remaining_hours)} />
+                                        <LinearWithValueLabel progress={() => calculate_progress_in_percentage(subtask.planned_hours, subtask.remaining_hours)} />
                                     </div>
                                     {/**assignees */}
                                     <div className="mt-4 mb-2">

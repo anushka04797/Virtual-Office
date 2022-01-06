@@ -521,11 +521,6 @@ const MyProjectsDetailsView = () => {
                                         {/**validation */}
                                         {editForm.errors.sub_task && editForm.touched.sub_task && <p className="error">{editForm.errors.sub_task}</p>}
                                     </CCol>
-                                    {/**Subtask Details*/}
-                                    <CCol lg="12" className="mb-2">
-                                        <CLabel htmlFor="sub_task" className="custom-label-5">Sub Task details</CLabel>
-                                        <CTextarea id="description" name="description" type="text" value={editForm.values.description} onChange={editForm.handleChange} className="custom-forminput-6"></CTextarea>
-                                    </CCol>
                                     {/**PM Name */}
                                     <CCol lg="12" className="mb-2">
                                         <CLabel htmlFor="pmName" className="custom-label-5">PM Name</CLabel>
@@ -547,6 +542,11 @@ const MyProjectsDetailsView = () => {
                                         <CInput id="task_title" name="task_title" value={editForm.values.task_title} onChange={editForm.handleChange} type="text" className="custom-forminput-6" />
                                         {/**validation */}
                                         {editForm.errors.task_title && editForm.touched.task_title && <p className="error">{editForm.errors.task_title}</p>}
+                                    </CCol>
+                                    {/**Task Details*/}
+                                    <CCol lg="12" className="mb-2">
+                                        <CLabel htmlFor="sub_task" className="custom-label-5">Task details</CLabel>
+                                        <CTextarea id="description" name="description" type="text" value={editForm.values.description} onChange={editForm.handleChange} className="custom-forminput-6"></CTextarea>
                                     </CCol>
                                     {/**start date */}
                                     <div className="col-lg-6 mb-3">
@@ -666,7 +666,6 @@ const MyProjectsDetailsView = () => {
 
                 <div>
                     <h6>{project.project.sub_task}</h6>
-                    <div className="project-point-details">{project.project.description == '' ? 'Not available' : project.project.description}</div>
                 </div>
 
                 {/**card show */}
@@ -689,31 +688,39 @@ const MyProjectsDetailsView = () => {
                                         </div>
                                         <div className="tasks-done-2 col-lg-4">
                                             <h6 className="tiny-header2">PM Name</h6>
-                                            <h6 className="project-point-details">{project.project.pm.first_name + ' ' + project.project.pm.last_name}</h6>
+                                            <h6 className="project-point-details">{subtask.pm.first_name + ' ' + subtask.pm.last_name}</h6>
                                         </div>
                                         <div className="tasks-done-2 col-lg-4">
                                             <h6 className="tiny-header2">Estimated Person(s)</h6>
-                                            <h6 className="project-point-details">{project.project.estimated_person}</h6>
+                                            <h6 className="project-point-details">{subtask.estimated_person}</h6>
                                         </div>
                                         {has_permission("projects.add_projects") && <div className="tasks-done-2 col-lg-4">
                                             <h6 className="tiny-header2">Planned Value</h6>
-                                            <h6 className="project-point-details">{project.project.planned_value} </h6>
+                                            <h6 className="project-point-details">{subtask.planned_value} </h6>
                                         </div>}
                                         <div className="tasks-done-2 col-lg-4">
                                             <h6 className="tiny-header2">Planned Hours</h6>
-                                            <h6 className="project-point-details">{project.project.planned_hours} </h6>
+                                            <h6 className="project-point-details">{subtask.planned_hours} </h6>
                                         </div>
                                         <div className="tasks-done-2 col-lg-4">
                                             <h6 className="tiny-header2">Actual Hours</h6>
-                                            <h6 className="project-point-details">{project.project.planned_hours - project.project.remaining_hours} </h6>
+                                            <h6 className="project-point-details">{(subtask.planned_hours - subtask.remaining_hours).toFixed(1)} </h6>
                                         </div>
                                         <div className="tasks-done-2 col-lg-4">
                                             <h6 className="tiny-header2">Remaining Hours</h6>
-                                            <h6 className="project-point-details">{project.project.remaining_hours} </h6>
+                                            <h6 className="project-point-details">{subtask.remaining_hours} </h6>
+                                        </div>
+                                        <div className="tasks-done-2 col-lg-4">
+                                            <h6 className="tiny-header2">Planned delivery date</h6>
+                                            <h6 className="project-point-details">{subtask.planned_delivery_date} </h6>
+                                        </div>
+                                        <div className="tasks-done-2 col-lg-12">
+                                            <h6 className="tiny-header2">Task deatils</h6>
+                                            <h6 className="project-point-details">{subtask.description == '' ? 'Not available' : subtask.description}</h6>
                                         </div>
                                     </div>
                                     <div>
-                                        <LinearWithValueLabel progress={() => calculate_progress_in_percentage(project.project.planned_hours, project.project.remaining_hours)} />
+                                        <LinearWithValueLabel progress={() => calculate_progress_in_percentage(subtask.planned_hours, subtask.remaining_hours)} />
                                     </div>
                                     {/**assignees */}
                                     <div className="mt-4 mb-2">

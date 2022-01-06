@@ -277,7 +277,7 @@ const OngoingProjectDetails = () => {
                                             {/* <hr className="header-underline1" /> */}
                                             {/*task percentage portion */}
                                             <div>
-                                                <h6 className="show-amount">{remaining_hours(project.subtasks)}/{totalProjectHrs(project.subtasks)} Hrs</h6>
+                                                <h6 className="show-amount">{remaining_hours(project.subtasks).toFixed(1)}/{totalProjectHrs(project.subtasks)} Hrs</h6>
                                                 <LinearWithValueLabel progress={() => calculate_progress_in_percentage(totalProjectHrs(project.subtasks), remaining_hours(project.subtasks))} />
                                             </div>
                                             {/*Project category buttons */}
@@ -301,11 +301,14 @@ const OngoingProjectDetails = () => {
                                             </div>
                                             {/*project info in text */}
                                             <div className="information-show row">
-                                                <div className="info-show-now col-lg-6">
+                                                {/* <div className="info-show-now col-lg-6">
                                                     <h5 className="project-details-points child"><h5 className="info-header-1">Assigned by :</h5>{project.project.pm.first_name + ' ' + project.project.pm.last_name}</h5>
-                                                </div>
+                                                </div> */}
                                                 <div className="info-show-now col-lg-6">
                                                     <h5 className="project-details-points"><h5 className="info-header-1">Project Manager : </h5>{project.project.pm.first_name + ' ' + project.project.pm.last_name}    </h5>
+                                                </div>
+                                                <div className="info-show-now col-lg-6">
+                                                    <h5 className="project-details-points child"><h5 className="info-header-1">Planned delivery date :</h5>{project.project.planned_delivery_date}</h5>
                                                 </div>
                                                 {/* <div className="info-show-now col-lg-6"> */}
                                                 {/* <h5 className="project-details-points"><h5 className="info-header-1">Project Details :</h5>Design and develop the app for the seller and buyer module</h5> */}
