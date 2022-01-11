@@ -136,13 +136,13 @@ const MyProjectsDetailsView = () => {
                 work_package_index: subtask?.work_package_index,
                 task_title: subtask?.task_title,
                 estimated_person: subtask ? Number(subtask.estimated_person) : 0,
-                start_date: project?.project.start_date,
-                planned_delivery_date: project?.project.planned_delivery_date,
+                start_date: subtask.start_date,
+                planned_delivery_date: subtask.planned_delivery_date,
                 assignee: initialize_default_assignees(subtask),
                 pm: project.project.pm.id,
-                planned_hours: project?.project.planned_hours,
-                planned_value: project?.project.planned_value,
-                remaining_hours: project?.project.remaining_hours,
+                planned_hours: subtask.planned_hours,
+                planned_value: subtask.planned_value,
+                remaining_hours: subtask.remaining_hours,
                 status: subtask.status,
                 sub_task_updated: ""
             })

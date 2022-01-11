@@ -220,7 +220,7 @@ object-fit: cover;
 }
 .information-show{
 margin-top: 22px;
-justify-content: center;
+/* justify-content: center; */
 }
 .project-details-points{
     font-size: 14px;

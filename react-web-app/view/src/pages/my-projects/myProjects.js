@@ -11,6 +11,7 @@ import { BASE_URL, USER_ID } from '../../Config';
 import { API } from '../../Config';
 import swal from 'sweetalert'
 import Select from "react-select";
+import { has_permission } from '../../helper';
 import {
     Accordion,
     AccordionItem,
@@ -214,43 +215,61 @@ const MyProjects = () => {
                             <CRow>
                                 <div className="card-header-portion-ongoing">
                                     <h4 className="ongoing-card-header-1">
-                                        <IconButton aria-label="favourite" disabled size="medium" color="primary">
+                                        {/* <IconButton aria-label="favourite" disabled size="medium" color="primary">
                                             <GradeIcon fontSize="inherit" className="fav-button" />
-                                        </IconButton>
-                                        {selectedSubTask != undefined ? selectedSubTask.task_delivery_order.title : ''}
+                                        </IconButton> */}
+                                        {selectedSubTask != undefined ? selectedSubTask.sub_task : ''}
                                     </h4>
 
                                 </div>
                                 <div className="justify-content-center">
-                                    <div className="col-md-12 col-sm-12 col-xs-12 col-lg-12 mt-1 mb-2">
+                                    <div className="mt-1 mb-2">
                                         <CCard className="card-ongoing-project">
                                             <CCardBody className="details-project-body">
                                                 <div className="ongoing-initial-info row">
-                                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Sub Task Name</h6>
-                                                        <h6 className="project-point-details">{selectedSubTask.task_title}</h6></div>
-                                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">PM Name</h6>
-                                                        <h6 className="project-point-details">{selectedSubTask.pm.first_name + ' ' + selectedSubTask.pm.last_name}</h6></div>
-                                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Work Package Number</h6>
-                                                        <h6 className="project-point-details">{selectedSubTask.work_package_number}</h6>
+                                                    <div className="tasks-done-2 col-lg-4">
+                                                        <h6 className="tiny-header2">Work Package Index</h6>
+                                                        <h6 className="project-point-details">{selectedSubTask.work_package_index}</h6>
                                                     </div>
-                                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Task Title</h6>
+                                                    <div className="tasks-done-2 col-lg-4">
+                                                        <h6 className="tiny-header2">Task Title</h6>
                                                         <h6 className="project-point-details">{selectedSubTask.task_title}</h6>
                                                     </div>
-                                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Estimated Person(s)</h6>
+                                                    <div className="tasks-done-2 col-lg-4">
+                                                        <h6 className="tiny-header2">PM Name</h6>
+                                                        <h6 className="project-point-details">{selectedSubTask.pm.first_name + ' ' + selectedSubTask.pm.last_name}</h6>
+                                                    </div>
+                                                    <div className="tasks-done-2 col-lg-4">
+                                                        <h6 className="tiny-header2">Estimated Person(s)</h6>
                                                         <h6 className="project-point-details">{selectedSubTask.estimated_person}</h6>
                                                     </div>
-                                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Planned Value</h6>
-                                                        <h6 className="project-point-details">{selectedSubTask.assignees[0].project.planned_value} </h6>
+                                                    {has_permission("projects.add_projects") && <div className="tasks-done-2 col-lg-4">
+                                                        <h6 className="tiny-header2">Planned Value</h6>
+                                                        <h6 className="project-point-details">{selectedSubTask.planned_value} </h6>
+                                                    </div>}
+                                                    <div className="tasks-done-2 col-lg-4">
+                                                        <h6 className="tiny-header2">Planned Hours</h6>
+                                                        <h6 className="project-point-details">{selectedSubTask.planned_hours} </h6>
                                                     </div>
-                                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Planned Hours</h6>
-                                                        <h6 className="project-point-details">{selectedSubTask.assignees[0].project.planned_hours} </h6>
+                                                    <div className="tasks-done-2 col-lg-4">
+                                                        <h6 className="tiny-header2">Actual Hours</h6>
+                                                        <h6 className="project-point-details">{(selectedSubTask.planned_hours - selectedSubTask.remaining_hours).toFixed(1)} </h6>
                                                     </div>
-                                                    <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Remaining Hours</h6>
+                                                    <div className="tasks-done-2 col-lg-4">
+                                                        <h6 className="tiny-header2">Remaining Hours</h6>
                                                         <h6 className="project-point-details">{selectedSubTask.remaining_hours} </h6>
+                                                    </div>
+                                                    <div className="tasks-done-2 col-lg-4">
+                                                        <h6 className="tiny-header2">Planned delivery date</h6>
+                                                        <h6 className="project-point-details">{selectedSubTask.planned_delivery_date} </h6>
+                                                    </div>
+                                                    <div className="tasks-done-2 col-lg-12">
+                                                        <h6 className="tiny-header2">Task deatils</h6>
+                                                        <h6 className="project-point-details">{selectedSubTask.description == '' ? 'Not available' : selectedSubTask.description}</h6>
                                                     </div>
                                                 </div>
 
-                                                <div className="col-md-12 mt-4 mb-2">
+                                                <div className="mt-4 mb-2">
                                                     <h5 className="projectName mb-3">Asssignee(s)-({Array.from(selectedSubTask.assignees).length})</h5>
                                                     <div className="file-show-ongoing-details row">
                                                         {selectedSubTask != undefined && Array.from(selectedSubTask.assignees).map((item, idx) => (
@@ -370,9 +389,9 @@ const MyProjects = () => {
                                                         ) : <></>}
                                                     </h5>
                                                 </div>
-                                                <div className="info-show-now col-lg-6">
+                                                {/* <div className="info-show-now col-lg-6">
                                                     <h5 className="project-details-points child"><h5 className="info-header-1">Planned delivery date :</h5>{project.project.planned_delivery_date}</h5>
-                                                </div>
+                                                </div> */}
                                                 {/* <div className="info-show-now col-lg-6"> */}
                                                 {/* <h5 className="project-details-points"><h5 className="info-header-1">Project Details :</h5>Design and develop the app for the seller and buyer module</h5> */}
                                                 {/* <h5 className="project-details-points child"><h5 className="info-header-1">Start Date : </h5>{project.project.start_date}</h5>
