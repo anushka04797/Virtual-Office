@@ -499,6 +499,10 @@ const OngoingDetailsView = () => {
                                             <h6 className="project-point-details">{subtask.remaining_hours} </h6>
                                         </div>
                                         <div className="tasks-done-2 col-lg-4">
+                                            <h6 className="tiny-header2">Start date</h6>
+                                            <h6 className="project-point-details">{subtask.start_date} </h6>
+                                        </div>
+                                        <div className="tasks-done-2 col-lg-4">
                                             <h6 className="tiny-header2">Planned delivery date</h6>
                                             <h6 className="project-point-details">{subtask.planned_delivery_date} </h6>
                                         </div>
