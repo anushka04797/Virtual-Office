@@ -778,7 +778,7 @@ const CreateNewProject = () => {
                         />} */}
                         <CInput id='work_package_number' name='work_package_number' type='number' onChange={(e) => { setWorkPackageNumber(e.target.value); handleWorkPackageInputChange(e.target.value) }} value={work_package_number} disabled={isWpInputdisabled}></CInput>
                         {!isWpInputdisabled && work_package_numbers.length > 0 && <div className="input-info-msg">
-                          WP #{Math.max(parseInt(work_package_numbers))+10} is available
+                          WP #{parseInt(Math.max(...work_package_numbers)+10)} is available
                           {/* {work_package_numbers.map((item, idx) => (
                             <span key={idx}>{item}<span>{(idx + 1 !== work_package_numbers.length) && ", "}</span></span>
                             // <span>{", " +idx + work_package_numbers.length}</span>
