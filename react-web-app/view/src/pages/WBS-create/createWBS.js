@@ -50,7 +50,20 @@ const CreateNewWBS = () => {
 
     const getTaskList = (option) => {
         console.log("task list###########: ", option)
-        setTaskList(sortBy(option, 'task_title'));
+        if (!has_permission("projects.add_projects")) {
+            var temp_task_list = []
+            option.forEach(item => {
+                item.assignees.forEach(element => {
+                    console.log(element.assignee.id)
+                    if(element.assignee.id == sessionStorage.getItem(USER_ID)){
+                        temp_task_list.push(item)
+                    }
+                })
+            })
+            setTaskList(sortBy(temp_task_list, 'task_title'));
+        } else {
+            setTaskList(sortBy(option, 'task_title'));
+        }
     }
 
     const dispatch = useDispatch()
@@ -58,8 +71,12 @@ const CreateNewWBS = () => {
     const selectAssigneRef = useRef();
 
     const getAssigneeList = (option) => {
-        dispatch(fetchProjectsAssigneeThunk(option.data.project.work_package_number))
-        setAssigneeList(sortBy(option.data.assignees, 'first_name'))
+        dispatch(fetchProjectsAssigneeThunk(option.work_package_index))
+        var temp_array = []
+        option.assignees.forEach(item => {
+            temp_array.push(item.assignee)
+        })
+        setAssigneeList(sortBy(temp_array, 'first_name'))
         console.log("assignees", option)
     }
 
@@ -71,7 +88,7 @@ const CreateNewWBS = () => {
         console.log(`action: ${actionMeta.action}`);
         console.log("newValue: ", newValue);
         if (actionMeta.action == 'select-option') {
-            getAssigneeList(newValue);
+            // getAssigneeList(newValue);
             getTaskList(newValue.data.subtasks);
             formCreateWbs.setValues({
                 project: '',
@@ -172,6 +189,7 @@ const CreateNewWBS = () => {
 
     const handleTaskTitleChange = (newValue, actionMeta) => {
         console.log("newValue newValue:", newValue)
+        getAssigneeList(newValue);
         setSelectedProject(newValue);
         setSelectedProjectEndDate(newValue?.planned_delivery_date)
         if (actionMeta.action == 'select-option') {
