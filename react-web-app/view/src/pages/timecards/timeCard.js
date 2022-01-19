@@ -13,6 +13,8 @@ import * as FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
 import { fetchPersonalDetails } from "../../store/slices/ProfileSlice";
 import CIcon from '@coreui/icons-react';
+import moment from "moment";
+import ReactDOM from 'react-dom'; // you used 'react-dom' as 'ReactDOM'
 
 const TimeCards = () => {
     const profile_details = useSelector(state => state.profile.data)
@@ -25,9 +27,16 @@ const TimeCards = () => {
     const [assigneeList, setAssigneeList] = useState([]);
     // const [selectedEmployee, setSelectedEmployee] = useState(initialState)
     {/**fetch all assignees for PM */ }
-
+    const [startDate, setStartDate] = useState("")
+    const [endDate, setEndDate] = useState("")
+    const [totalHrs, setTotalHrs] = useState(0)
 
     const getTimeCards = (values) => {
+        setStartDate(values.startDate)
+        setEndDate(values.todate)
+        var temp_hrs = 0;
+        const section = document.querySelector('#tableRef');
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
         if (has_permission('projects.add_projects') && has_permission('wbs.change_timecard') && has_permission('wbs.add_timecard')) {
             // console.log('values from timecards', values)
             API.get('wbs/user/time-card/list/' + values.assigneeSelectPM + "/").then((res) => {
@@ -44,8 +53,10 @@ const TimeCards = () => {
                 var tableData = [];
                 for (let index = 0; index < filteredData.length; index++) {
                     const element = filteredData[index];
-                    tableData.push({ '#': index + 1, 'TDO': element.data.project.task_delivery_order.title, "Project Name": element.data.project.sub_task, "Task Title": element.data.project.task_title, "Actual Work Done": element.data.actual_work_done, "Hrs Today": element.data.hours_today, "Date Created": element.data.date_created, "Date Updated": element.data.date_updated })
+                    temp_hrs += parseFloat(element.data.hours_today)
+                    tableData.push({ '#': index + 1, "Project Name (Work Package)": element.data.project.sub_task + ' (' + element.data.project.work_package_number + ')', "Task Title": element.data.project.task_title, "Actual Work Done": element.data.actual_work_done, "Hour(s)": element.data.hours_today, "Date Created": element.data.date_created })
                 }
+                setTotalHrs(temp_hrs);
                 setUsersData(tableData)
             })
             editForm.setValues({
@@ -72,10 +83,11 @@ const TimeCards = () => {
                 var tableData = [];
                 for (let index = 0; index < filteredData.length; index++) {
                     const element = filteredData[index];
-                    tableData.push({ '#': index + 1, 'TDO': element.data.project.task_delivery_order.title, "Project Name": element.data.project.sub_task, "Task Title": element.data.project.task_title, "Actual Work Done": element.data.actual_work_done, "Hrs Today": element.data.hours_today, "Date Created": element.data.date_created, "Date Updated": element.data.date_updated })
+                    temp_hrs += parseFloat(element.data.hours_today)
+                    tableData.push({ '#': index + 1, "Project Name (Work Package)": element.data.project.sub_task + ' (' + element.data.project.work_package_number + ')', "Task Title": element.data.project.task_title, "Actual Work Done": element.data.actual_work_done, "Hour(s)": element.data.hours_today, "Date Created": element.data.date_created })
                 }
                 setUsersData(tableData);
-                // console.log('userdata', usersData);
+                setTotalHrs(temp_hrs);
             })
             editForm.setValues({
                 assigneeSelect: values.assigneeSelect,
@@ -98,6 +110,7 @@ const TimeCards = () => {
 
     React.useEffect(() => {
         window.scrollTo(0, 0);
+        setTotalHrs(0)
         if (has_permission('projects.change_projectassignee') || has_permission('projects.add_projectassignee')) {
             API.get('project/assignees/all/' + sessionStorage.getItem(USER_ID) + "/").then((res) => {
                 let temp = []
@@ -124,7 +137,7 @@ const TimeCards = () => {
             var tableData = [];
             for (let index = 0; index < filteredData.length; index++) {
                 const element = filteredData[index];
-                tableData.push({ '#': index + 1, 'TDO': element.data.project.task_delivery_order.title, "Project Name": element.data.project.sub_task, "Task Title": element.data.project.task_title, "Actual Work Done": element.data.actual_work_done, "Hrs Today": element.data.hours_today, "Date Created": element.data.date_created, "Date Updated": element.data.date_updated })
+                tableData.push({ '#': index + 1, "Project Name (Work Package)": element.data.project.sub_task + ' (' + element.data.project.work_package_number + ')', "Task Title": element.data.project.task_title, "Actual Work Done": element.data.actual_work_done, "Hour(s)": element.data.hours_today, "Date Created": element.data.date_created })
             }
             setUsersData(tableData)
         })
@@ -182,14 +195,13 @@ const TimeCards = () => {
         doc.setFontSize(15);
 
         const title = "Timecard of" + " " + pdfTitle;
-        const headers = [["#", "TDO",
-            "Project Name",
+        const headers = [["#",
+            "Project Name (Work Package)",
             "Task Title",
             "Actual Work Done",
-            "Hrs Today",
-            "Date Created",
-            "Date Updated"]];
-        const uData = pdfData.map((elt, idx) => [idx + 1, elt.data.project.task_delivery_order.title, elt.data.project.sub_task, elt.data?.project.task_title, elt.data.actual_work_done, elt.data.hours_today, elt.data.date_created, elt.data.date_updated]);
+            "Hour(s)",
+            "Date Created"]];
+        const uData = pdfData.map((elt, idx) => [idx + 1, elt.data.project.sub_task + ' (' + elt.data.project.work_package_number + ')', elt.data?.project.task_title, elt.data.actual_work_done, elt.data.hours_today, elt.data.date_created]);
         let content = {
             startY: 50,
             head: headers,
@@ -265,7 +277,7 @@ const TimeCards = () => {
                             </CLabel>
                             <CInput className="custom-forminput-6  w-100" type="date" name="startDate" id="startDate" value={editForm.values.startDate} onChange={editForm.handleChange} />
                             {/**Error show */}
-                            {editForm.errors.startDate && <p className="error mt-1">{editForm.errors.startDate}</p>}
+                            {editForm.errors.startDate && <p className="error mt-0 mb-0"><small>{editForm.errors.startDate}</small></p>}
                         </CCol >
                         {/**END DATE */}
                         < CCol xl="3" lg="3" md="6" >
@@ -275,7 +287,7 @@ const TimeCards = () => {
                             </CLabel>
                             <CInput className="custom-forminput-6  w-100" type="date" name="todate" id="todate" value={editForm.values.todate} onChange={editForm.handleChange} />
                             {/**Error show */}
-                            {editForm.errors.todate && <p className="error mt-1">{editForm.errors.todate}</p>}
+                            {editForm.errors.todate && <p className="error mt-0 mb-0"><small>{editForm.errors.todate}</small></p>}
                         </CCol >
                         <CCol xl="3" lg="3" md="6">
                             <div className="button-holder--3">
@@ -286,33 +298,34 @@ const TimeCards = () => {
                         {/**buttons for format of timecard */}
 
                         {
-                            usersData != 0 && <CCol md="12">
-                                <h5 className="tiny-header--5 mt-4">Export</h5>
-                                <div className="format-buttons mt-2">
+                            usersData != 0 && <CCol md="12" id="tableRef">
+                                <h5 className="tiny-header--5 mt-0">Export</h5>
+                                <div className="format-buttons mt-3 mb-3">
                                     <CButton className="file-format-download" onClick={() => exportPDF()}><CIcon name="cil-description" className="mr-2" /> PDF</CButton>
                                     <CButton className="file-format-download" onClick={() => exportToCSV(usersData, 'Timecard of' + " " + pdfTitle)} ><CIcon name="cil-spreadsheet" className="mr-2" />Excel</CButton>
 
                                     {/* <CButton className="file-format-download">Print</CButton> */}
                                 </div>
+                                {totalHrs != 0 && <div class="alert alert-info" role="alert">
+                                    {<small>Total <b>{totalHrs}hrs&nbsp;</b></small>}
+                                    {<small> from <b>{moment(startDate).format('DD-MMM-YY')}</b> to <b>{moment(endDate).format('DD-MMM-YY')}</b></small>}
+                                </div>}
                             </CCol>
                         }
                         {/**table for displaying all the entries */}
                         <CCol md="12">
-                            <div className="mt-4">
+                            <div className="">
                                 <CDataTable items={usersData} fields={[
                                     {
                                         key: "#",
                                         _style: { width: "5%" },
                                         _classes: "font-weight-bold",
                                     },
-                                    'TDO',
-                                    'Project Name',
+                                    'Project Name (Work Package)',
                                     'Task Title',
                                     'Actual Work Done',
-                                    'Hrs Today',
+                                    'Hour(s)',
                                     'Date Created',
-                                    'Date Updated'
-
                                 ]}
                                     primary
                                     hover
@@ -328,6 +341,10 @@ const TimeCards = () => {
 
                                 </CDataTable>
                             </div>
+                            {totalHrs != 0 && <div class="alert alert-info" role="alert">
+                                {<small>Total <b>{totalHrs}hrs&nbsp;</b></small>}
+                                {<small> from <b>{moment(startDate).format('DD-MMM-YY')}</b> to <b>{moment(endDate).format('DD-MMM-YY')}</b></small>}
+                            </div>}
                         </CCol>
                     </CRow >
                 </CForm >

@@ -720,7 +720,7 @@ const MyProjectsDetailsView = () => {
                                         </div>
                                         <div className="tasks-done-2 col-lg-12">
                                             <h6 className="tiny-header2">Task deatils</h6>
-                                            <h6 className="project-point-details">{subtask.description == '' ? 'Not available' : subtask.description}</h6>
+                                            <h6 className="project-point-details-2">{subtask.description == '' ? 'Not available' : subtask.description}</h6>
                                         </div>
                                     </div>
                                     <div>

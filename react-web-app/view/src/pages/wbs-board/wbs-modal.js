@@ -184,7 +184,7 @@ const WbsModal = (props) => {
                                         <CInput id="deliverable" name="deliverable" className="custom-forminput-5" onChange={formWbsUpdate.handleChange} value={formWbsUpdate.values.deliverable} disabled={deliverableView} ></CInput>
                                     </div>
                                 </CRow>
-                                <div>{is_form_submitting() == true ? <LinearProgress /> :
+                                {props.data.assignee.id == sessionStorage.getItem(USER_ID) && <div>{is_form_submitting() == true ? <LinearProgress /> :
                                     <div>
                                         <CButton type="button" onClick={formWbsUpdate.handleSubmit} color="primary">Update</CButton>{' '}
                                         <CButton
@@ -192,7 +192,7 @@ const WbsModal = (props) => {
                                             onClick={props.toggle}
                                         >Cancel</CButton>
                                     </div>}
-                                </div>
+                                </div>}
                             </CForm>
                         </div>
                         <div className="col-lg-4 mb-3">
@@ -221,7 +221,8 @@ const WbsModal = (props) => {
                                         {props.timeCardList?.data != undefined ? (Array.from(props.timeCardList.data).map((item) => (
                                             <li className="task-list-show-item">
                                                 {item.actual_work_done + " ➤ " + item.hours_today + " hr(s)"}
-                                                <p><small> By {item.time_card_assignee.first_name + " " + item.time_card_assignee.last_name} @ {item.date_updated} </small></p>
+                                                 {/* By {item.time_card_assignee.first_name + " " + item.time_card_assignee.last_name}  */}
+                                                <p><small>@ {item.date_updated} </small></p>
                                             </li>
                                         ))) : ("No task has been done so far.")}
                                     </ol>
