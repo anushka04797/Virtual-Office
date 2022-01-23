@@ -20,6 +20,7 @@ import {
     CForm,
     CInput,
 } from "@coreui/react";
+import Select from 'react-select'
 import React, { useEffect, useRef, useState } from "react";
 import "./profileView.css";
 import PassWordChangeForm from "../../components/changeUserPasswordForm/changePassword";
@@ -34,11 +35,23 @@ const UserProfile = () => {
     const onButtonClick = () => {
         // `current` points to the mounted file input element
     };
+    const blood_groups = [
+        { value: 'A+', label: 'A+' },
+        { value: 'A-', label: 'A-' },
+        { value: 'B+', label: 'B+' },
+        { value: 'B-', label: 'B-' },
+        { value: 'AB+', label: 'AB+' },
+        { value: 'AB-', label: 'AB-' },
+        { value: 'O+', label: 'O+' },
+        { value: 'O-', label: 'O-' },
+      ]
+      
     const [revealOldPwd, setRevealOldPwd] = useState(false);
     const [revealNewPwd, setRevealNewPwd] = useState(false);
     const [revealConfPwd, setRevealConfPwd] = useState(false);
     const profile_details = useSelector(state => state.profile.data)
     console.log(profile_details);
+    const [initialBloodGroup, setInitialBloodGroup] = useState("")
     const inputFile = useRef(null)
     const [image, setImage] = useState()
     const [avatar, setAvatar] = useState(profile_details ? (BASE_URL + profile_details.profile_pic) : "avatars/user-avatar-default.png")
@@ -53,13 +66,28 @@ const UserProfile = () => {
         inputFile.current.click()
     }
     const profileEditForm = () => {
+        console.log("values")
         setVisible(!visible);
         profile_update_form.setValues({
             first_name: profile_details.first_name,
             last_name: profile_details.last_name,
             email: profile_details.email,
-            phone: profile_details.phone
+            phone: profile_details.phone,
+            address: profile_details.address,
+            blood_group: profile_details.blood_group
         })
+    }
+    const handleBloodGroupChange = (values) => {
+        console.log(values)
+        profile_update_form.setValues({
+            first_name: profile_update_form.values.first_name,
+            last_name: profile_update_form.values.last_name,
+            email: profile_update_form.values.email,
+            phone: profile_update_form.values.phone,
+            address: profile_update_form.values.address,
+            blood_group: values.value
+        })
+        setInitialBloodGroup({value: values.value, label: values.label})
     }
     const validateChangePassForm = (values) => {
         const errors = {}
@@ -106,6 +134,7 @@ const UserProfile = () => {
         return errors
     }
     const update_profile = (values) => {
+        console.log(values)
         API.post('auth/profile/update/' + sessionStorage.getItem(USER_ID) + '/', profile_update_form.values).then((res) => {
             console.log(res)
             if (res.status == 201 && res.data.success == 'True') {
@@ -131,6 +160,7 @@ const UserProfile = () => {
     }
     useEffect(() => {
         window.scrollTo(0, 0);
+        setInitialBloodGroup({value: profile_details.blood_group, label: profile_details.blood_group})
         setAvatar(profile_details.profile_pic ? (BASE_URL + profile_details.profile_pic) : "avatars/user-avatar-default.png")
     }, [profile_details])
     const profile_update_form = useFormik({
@@ -138,7 +168,9 @@ const UserProfile = () => {
             first_name: '',
             last_name: '',
             email: '',
-            phone: ''
+            phone: '',
+            address: '',
+            blood_group: ''
         },
         validateOnChange: true,
         validateOnBlur: true,
@@ -210,17 +242,6 @@ const UserProfile = () => {
                                             readOnly
                                         ></CInput>
                                     </div>
-                                    {/**Email */}
-                                    {/* <div className="col-md-12">
-                    <CLabel className="custom-label-5" htmlFor="uJobTitle">
-                      Job Title
-                    </CLabel>
-                    <CInput
-                      type="text"
-                      name="uJobTitle"
-                      className="custom-forminput-6"
-                    ></CInput>
-                  </div> */}
                                     {/**Phone */}
                                     <div className="col-md-12 mb-3">
                                         <CLabel className="custom-label-5" htmlFor="uPhoneNo">
@@ -233,8 +254,34 @@ const UserProfile = () => {
                                             value={profile_update_form.values.phone}
                                             onChange={profile_update_form.handleChange}
                                             className="custom-forminput-6"
-                                            readOnly
                                         ></CInput>
+                                    </div>
+                                    {/**address */}
+                                    <div className="col-md-12 mb-3">
+                                        <CLabel className="custom-label-5" htmlFor="Address">
+                                            Address
+                                        </CLabel>
+                                        <CInput
+                                            type="text"
+                                            name="address"
+                                            id="address"
+                                            value={profile_update_form.values.address}
+                                            onChange={profile_update_form.handleChange}
+                                            className="custom-forminput-6"
+                                        ></CInput>
+                                    </div>
+                                    {/**blood_group */}
+                                    <div className="col-md-12 mb-3">
+                                        <CLabel className="custom-label-5" htmlFor="blood_group">
+                                            Blood Group
+                                        </CLabel>
+                                        <Select
+                                            id="blood_group"
+                                            value={initialBloodGroup}
+                                            onChange={handleBloodGroupChange}
+                                            className="custom-forminput-6"
+                                            options={blood_groups}
+                                        ></Select>
                                     </div>
 
                                     {/**Button groups */}
@@ -331,6 +378,18 @@ const UserProfile = () => {
                                                         <h5 className="info-header-1"> Phone</h5>
                                                         <h5 className="profile-details-points child">
                                                             +{profile_details.phone}
+                                                        </h5>
+                                                    </div>
+                                                    <div className="col-md-6 col-lg-4">
+                                                        <h5 className="info-header-1"> Address</h5>
+                                                        <h5 className="profile-details-points child">
+                                                            {profile_details.address}
+                                                        </h5>
+                                                    </div>
+                                                    <div className="col-md-6 col-lg-4">
+                                                        <h5 className="info-header-1"> Blood Group</h5>
+                                                        <h5 className="profile-details-points child">
+                                                            {profile_details.blood_group}
                                                         </h5>
                                                     </div>
                                                 </div>

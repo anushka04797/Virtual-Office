@@ -10,7 +10,17 @@ import { API, USER_ID } from "../../Config";
 const AssignedProjectsDashboard = () => {
     let history = useHistory();
     const dispatch = useDispatch()
-    const wbs = useSelector(state => state.wbs.data);
+    const wbs = useSelector(state => {
+        // state.wbs.data
+        var temp_data = [];
+        state.wbs.data.forEach(element => {
+            if (element.assignee.id == sessionStorage.getItem(USER_ID)) {
+                temp_data.push(element)
+                console.log(element)
+            }
+        });
+        return temp_data;
+    });
     console.log(wbs)
     const [updatedData, setUpdatedData] = useState([]);
     const [modal, setModal] = useState(false);
@@ -47,6 +57,7 @@ const AssignedProjectsDashboard = () => {
 
                 <div className="card-holder1">
                     {wbs != undefined && wbs.slice(0, 3).map((item, idx) => (
+                        // item.assignee.id == sessionStorage.getItem(USER_ID) && 
                         <CCard className="project-card1" key={idx} onClick={() => editWbsModal(item.id)}>
                             <CCardBody>
                                 <h5 className="card-details1"><span className="p-header-3">Project: </span> {item.project.sub_task}</h5>

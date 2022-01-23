@@ -15,6 +15,7 @@ const CreateNewWBS = () => {
     const remaining_hours = (remaining, total) => {
         return String(parseFloat(total) - parseFloat(remaining))
     }
+
     const projects = useSelector(state => {
         let temp = []
         Array.from(state.projects.data).forEach((item, idx) => {
@@ -69,9 +70,10 @@ const CreateNewWBS = () => {
     const dispatch = useDispatch()
     const selectProjectRef = useRef();
     const selectAssigneRef = useRef();
+    const selectTaskTitleRef = useRef();
 
     const getAssigneeList = (option) => {
-        dispatch(fetchProjectsAssigneeThunk(option.work_package_index))
+        dispatch(fetchProjectsAssigneeThunk(option?.work_package_index))
         var temp_array = []
         option.assignees.forEach(item => {
             temp_array.push(item.assignee)
@@ -82,7 +84,6 @@ const CreateNewWBS = () => {
 
     const [selectedProject, setSelectedProject] = useState(null)
     const [selectedProjectEndDate, setSelectedProjectEndDate] = useState('')
-    const [selectedAssignees, setSelectedAssignees] = useState([])
 
     const handleProjectChange = (newValue, actionMeta) => {
         console.log(`action: ${actionMeta.action}`);
@@ -110,6 +111,7 @@ const CreateNewWBS = () => {
             setSelectedProject(null)
         }
     };
+
     const handleAssigneeChange = (value, actionMeta) => {
         let assigneeArray = []
         value.forEach(item => {
@@ -117,12 +119,14 @@ const CreateNewWBS = () => {
         })
         formCreateWbs.setFieldValue('assignee', assigneeArray)
     }
+
     // form validation for WBS create
     const is_before_start_date = (start_date, end_date) => {
         console.log('start date', new Date(start_date))
         console.log('end date', new Date(end_date))
         return new Date(end_date) < new Date(start_date)
     }
+
     const validate_create_wbs_form = (values) => {
         const errors = {}
         if (!values.project) errors.project = "Project is required"
@@ -142,6 +146,7 @@ const CreateNewWBS = () => {
             console.log(res)
             if (res.status === 200 && res.data.success === 'True') {
                 reset_form()
+                setTaskList([])
                 dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)))
                 dispatch(fetchProjectsThunk(sessionStorage.getItem(USER_ID)))
                 dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)))
@@ -184,16 +189,15 @@ const CreateNewWBS = () => {
         validate: validate_create_wbs_form,
         onSubmit: create_wbs
     })
-    const [selectedtask, setSelectedTask] = useState(null);
-    const selectTaskTitleRef = useRef();
 
     const handleTaskTitleChange = (newValue, actionMeta) => {
         console.log("newValue newValue:", newValue)
-        getAssigneeList(newValue);
-        setSelectedProject(newValue);
-        setSelectedProjectEndDate(newValue?.planned_delivery_date)
+        if (newValue != null){
+            getAssigneeList(newValue);
+            setSelectedProject(newValue);
+            setSelectedProjectEndDate(newValue?.planned_delivery_date)
+        }
         if (actionMeta.action == 'select-option') {
-            setSelectedTask(newValue);
             formCreateWbs.setValues({
                 project: newValue.id,
                 work_package_number: formCreateWbs.values.work_package_number,
@@ -209,8 +213,6 @@ const CreateNewWBS = () => {
                 comments: formCreateWbs.values.comments,
                 deliverable: formCreateWbs.values.deliverable
             })
-        } else if (actionMeta.action == 'clear') {
-            setSelectedTask(null)
         }
     }
 

@@ -299,7 +299,7 @@ const TimeCards = () => {
 
                         {
                             usersData != 0 && <CCol md="12" id="tableRef">
-                                <h5 className="tiny-header--5 mt-0">Export</h5>
+                                <h5 className="tiny-header--5 mt-3">Export</h5>
                                 <div className="format-buttons mt-3 mb-3">
                                     <CButton className="file-format-download" onClick={() => exportPDF()}><CIcon name="cil-description" className="mr-2" /> PDF</CButton>
                                     <CButton className="file-format-download" onClick={() => exportToCSV(usersData, 'Timecard of' + " " + pdfTitle)} ><CIcon name="cil-spreadsheet" className="mr-2" />Excel</CButton>
@@ -307,7 +307,7 @@ const TimeCards = () => {
                                     {/* <CButton className="file-format-download">Print</CButton> */}
                                 </div>
                                 {totalHrs != 0 && <div class="alert alert-info" role="alert">
-                                    {<small>Total <b>{totalHrs}hrs&nbsp;</b></small>}
+                                    {<small>Total <b>{totalHrs.toFixed(1)}hrs&nbsp;</b></small>}
                                     {<small> from <b>{moment(startDate).format('DD-MMM-YY')}</b> to <b>{moment(endDate).format('DD-MMM-YY')}</b></small>}
                                 </div>}
                             </CCol>
@@ -342,7 +342,7 @@ const TimeCards = () => {
                                 </CDataTable>
                             </div>
                             {totalHrs != 0 && <div class="alert alert-info" role="alert">
-                                {<small>Total <b>{totalHrs}hrs&nbsp;</b></small>}
+                                {<small>Total <b>{totalHrs.toFixed(1)}hrs&nbsp;</b></small>}
                                 {<small> from <b>{moment(startDate).format('DD-MMM-YY')}</b> to <b>{moment(endDate).format('DD-MMM-YY')}</b></small>}
                             </div>}
                         </CCol>
