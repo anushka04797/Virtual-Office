@@ -22,7 +22,7 @@ const TheSidebar = () => {
   let history = useHistory()
   const show = useSelector(state => state.sidebar.sidebarShow)
   React.useEffect(() => {
-    
+
   }, [])
   const logout = () => {
     API.get('auth/logout/').then((res) => {
@@ -76,35 +76,36 @@ const TheSidebar = () => {
 
 
         </CSidebarNavDropdown>
-         {/**WBS */}
-         <CSidebarNavDropdown icon="cil-spreadsheet" name="WBS" className="vo-navItem">
-          <CSidebarNavItem to="/dashboard/WBS/create-wbs" name="Create WBS" className="vo-navItem"  ></CSidebarNavItem>
+        {/**WBS */}
+        <CSidebarNavDropdown icon="cil-spreadsheet" name="WBS" className="vo-navItem">
+          <CSidebarNavItem to="/dashboard/WBS/create-wbs" name="Create WBS" className="vo-navItem"></CSidebarNavItem>
           <CSidebarNavItem to="/dashboard/WBS/board" name="Board" className="vo-navItem" ></CSidebarNavItem>
 
         </CSidebarNavDropdown>
-         {/**EVMS */}
+        {/**EVMS */}
         {/* <CSidebarNavItem to="/dashboard/EVMS"name="EVMS" icon="cil-chart-line" className="vo-navItem"></CSidebarNavItem> */}
         {has_permission('evms.view_evms') && <CSidebarNavDropdown icon="cil-chart-line" name="EVMS" className="vo-navItem">
-          <CSidebarNavItem to="/dashboard/EVMS/create" name="Create EVMS" className="vo-navItem"  ></CSidebarNavItem>
-          <CSidebarNavItem to="/dashboard/EVMS/view" name="View EVMS" className="vo-navItem" ></CSidebarNavItem>
+          <CSidebarNavItem to="/dashboard/EVMS/create" name="Create EVMS" className="vo-navItem"></CSidebarNavItem>
+          <CSidebarNavItem to="/dashboard/EVMS/view" name="View EVMS" className="vo-navItem"></CSidebarNavItem>
         </CSidebarNavDropdown>}
 
         {/**Timecards */}
-          {!has_permission('projects.add_projects') &&<CSidebarNavItem to="/dashboard/timecard/generate-timecard" name="Generate Timecard" icon="cil-library" className="vo-navItem"></CSidebarNavItem>}
+        {!has_permission('projects.add_projects') && <CSidebarNavItem to="/dashboard/timecard/generate-timecard" name="Generate Timecard" icon="cil-library" className="vo-navItem"></CSidebarNavItem>}
         {/**timecards if PM */}
         {has_permission('projects.add_projects') && <CSidebarNavDropdown icon="cil-library" name="Timecards" className="vo-navItem">
-          <CSidebarNavItem to="/dashboard/timecard/generate-timecard" name="Generate Timecard" className="vo-navItem"  ></CSidebarNavItem>
-          <CSidebarNavItem to="/dashboard/timecard/weekly-timecards" name="Weekly Timecard" className="vo-navItem" ></CSidebarNavItem>
+          <CSidebarNavItem to="/dashboard/timecard/generate-timecard" name="Actual Work Done" className="vo-navItem"></CSidebarNavItem>
+          <CSidebarNavItem to="/dashboard/timecard/weekly-timecards" name="Weekly Timecard" className="vo-navItem"></CSidebarNavItem>
+          <CSidebarNavItem to="/dashboard/timecard/weekly-timecards" name="Report" className="vo-navItem"></CSidebarNavItem>
         </CSidebarNavDropdown>}
         {/**Meetings */}
         <CSidebarNavItem to="/dashboard/meetings" icon="cil-view-module" name="Meetings" className="vo-navItem"></CSidebarNavItem>
         {/**Shared Docs */}
         <CSidebarNavItem to="/dashboard/shared-documents" name="Shared Documents" icon="cil-folder-open" className="vo-navItem"></CSidebarNavItem>
-       <hr/>
+        <hr />
         {/**Profile */}
         <CSidebarNavItem to="/dashboard/profile" name="Profile" icon="cil-user" className="vo-navItem"></CSidebarNavItem>
 
-       
+
         {/**log out */}
         <CSidebarNavItem onClick={logout} name="Logout" icon="cil-account-logout" className="vo-navItem"></CSidebarNavItem>
 

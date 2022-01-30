@@ -75,7 +75,6 @@ const TimeCards = () => {
                     // temp.push({data:item.date_updated >=values.startDate && item.date_updated <= values.todate})
                     temp.push({ data: item })
                 })
-
                 let filteredData = [];
                 filteredData = temp.filter(p => p.data.date_updated >= values.startDate && p.data.date_updated <= values.todate)
                 // console.log('timecard for id', filteredData)
@@ -218,11 +217,9 @@ const TimeCards = () => {
     return (
         <>
             <CContainer>
-                <h3 className="timecards-page-header mb-3">Generate Timecards</h3>
-
+                <h3 className="timecards-page-header mb-3">Actual Work Done</h3>
                 <CForm>
                     <CRow>
-
                         {/**assignees */}
                         <CCol xl="3" lg="3" md="6">
                             {!has_permission('projects.add_projects') &&
@@ -231,7 +228,6 @@ const TimeCards = () => {
                                         Select Employee
                                     </CLabel>
                                     <CInput name="assigneeSelect" type="text" value={capitalize(profile_details.first_name) + ' ' + capitalize(profile_details.last_name)} onChange={editForm.handleChange} readOnly />
-
                                 </div>
                             }
                             {/**IF PM */}
@@ -264,11 +260,8 @@ const TimeCards = () => {
                                         Select Employee
                                     </CLabel>
                                     <CInput name="assigneeSelect" type="text" value={capitalize(profile_details.first_name) + ' ' + capitalize(profile_details.last_name)} onChange={editForm.handleChange} readOnly />
-
                                 </div>
-                               
                             } */}
-
                         </CCol >
                         {/**start date */}
                         < CCol xl="3" lg="3" md="6" >
@@ -281,7 +274,6 @@ const TimeCards = () => {
                         </CCol >
                         {/**END DATE */}
                         < CCol xl="3" lg="3" md="6" >
-
                             <CLabel className="custom-label-5" htmlFor="todate">
                                 To Date
                             </CLabel>
@@ -291,19 +283,16 @@ const TimeCards = () => {
                         </CCol >
                         <CCol xl="3" lg="3" md="6">
                             <div className="button-holder--3">
-                                <CButton className="generate-card-button" onClick={editForm.handleSubmit}>Generate Timecard</CButton>
+                                <CButton className="generate-card-button" onClick={editForm.handleSubmit}>Get Data</CButton>
                             </div>
                         </CCol>
-
                         {/**buttons for format of timecard */}
-
                         {
                             usersData != 0 && <CCol md="12" id="tableRef">
                                 <h5 className="tiny-header--5 mt-3">Export</h5>
                                 <div className="format-buttons mt-3 mb-3">
                                     <CButton className="file-format-download" onClick={() => exportPDF()}><CIcon name="cil-description" className="mr-2" /> PDF</CButton>
                                     <CButton className="file-format-download" onClick={() => exportToCSV(usersData, 'Timecard of' + " " + pdfTitle)} ><CIcon name="cil-spreadsheet" className="mr-2" />Excel</CButton>
-
                                     {/* <CButton className="file-format-download">Print</CButton> */}
                                 </div>
                                 {totalHrs != 0 && <div class="alert alert-info" role="alert">
@@ -333,12 +322,10 @@ const TimeCards = () => {
                                     bordered
                                     sorter
                                     columnFilter
-
                                     size="sm"
                                     itemsPerPage={10}
                                     pagination
                                 >
-
                                 </CDataTable>
                             </div>
                             {totalHrs != 0 && <div class="alert alert-info" role="alert">
@@ -348,11 +335,7 @@ const TimeCards = () => {
                         </CCol>
                     </CRow >
                 </CForm >
-
             </CContainer >
-
-
-
         </>
     )
 }
