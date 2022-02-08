@@ -17,7 +17,7 @@ const WeeklyTimecards = () => {
     const profile_details = useSelector(state => state.profile.data)
     const [tableData, setTabledata] = useState([]);
     let newArray = [];
-    var defaultName = "all";
+    // var defaultName = "all";
     // const [filterData, setFilterData] = useState([])
     const [pdfData, setPdfData] = useState([])
     const [pdfTitle, setPdfTitle] = useState();
@@ -93,7 +93,7 @@ const WeeklyTimecards = () => {
             // console.log("unique effect", newArray);
             // setFilterData(newArray);
             setPdfData(newArray);
-            setPdfTitle(defaultName);
+            // setPdfTitle(defaultName);
             {/**let's populate the damn table,shall we?**/ }
             if (newArray.length != 0 || newArray != undefined) {
                 let temp_array = tableData
@@ -255,6 +255,16 @@ const WeeklyTimecards = () => {
     const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
     const fileExtension = '.xlsx';
     const exportToCSV = (csvData, fileName) => {
+        console.log(csvData)
+        var temp_data = []
+        // var xlsHeader = [
+        //     "Pial",
+        //     "03/12/22",
+        //     "VO"
+        // ]
+        // temp_data[0] = xlsHeader;
+        // temp_data = [...temp_data, ...csvData]
+        // console.log(temp_data)
         const ws = XLSX.utils.json_to_sheet(csvData);
         const wb = { Sheets: { 'data': ws }, SheetNames: ['data'] };
         const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
@@ -266,50 +276,80 @@ const WeeklyTimecards = () => {
     const exportPDF = () => {
         const unit = "pt";
         const size = "A4"; // Use A1, A2, A3 or A4
-        const orientation = "portrait"; // portrait or landscape
+        const orientation = "landscape"; // portrait or landscape
         const marginLeft = 40;
         const doc = new jsPDF(orientation, unit, size);
-        doc.setFontSize(15);
-        const title = "Timecard of" + " " + pdfTitle;
-        const headers = [["No.", "Employee Name",
-            "Project Name",
-            "Task Title",
-            "Actual Work Done",
-            "Total Hr(s)"]];
+        doc.setFontSize(12);
+        const title = profile_details.first_name + "_" + profile_details.last_name + "_" + "Timecard_" + moment(startDate).format("DD/MM/YYYY") + "-" + moment(endDate).format("DD/MM/YYYY");
+        const headers = [[
+            "No.",
+            // "Employee Name",
+            // "Project Name",
+            // "Task Title",
+            // "Actual Work Done",
+            // "Total Hr(s)"
+            "WBS",
+            "Time",
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "Total"
+        ]];
         console.log("pdfData", pdfData)
-        let actualData = [];
-        for (let j = 0; j < pdfData.length; j++) {
-            let element3 = pdfData[j];
-            var assigneeName = element3.time_card_assignee.first_name + ' ' + element3.time_card_assignee.last_name;
-            {/**Again fetch project Name */ }
-            let projectList = [];
-            var projectName;
-            Array.from(element3.project).map((item) => {
-                projectList.push(item.sub_task)
-            })
-            projectName = projectList.join(",")
-            {/**Again fetch task title */ }
-            let taskTitle = [];
-            var taskTitles;
-            Array.from(element3.project).map((item) => {
-                taskTitle.push(item.task_title)
-            })
-            taskTitles = taskTitle.join(",")
-            {/**Concat all actual work */ }
-            let actualList = [];
-            var actualWork;
-            Array.from(element3.actual_work_done).map((item) => {
-                actualList.push(item)
-            })
-            actualWork = actualList.join(",")
-            {/**calculate total hours */ }
-            var totalHrs = element3.hours_today.reduce((total, currentVal) => total = total + currentVal, 0)
-            {/**remodified data for pdf array pushing */ }
-            actualData.push({ "name": assigneeName, "project": projectName, "task_title": taskTitles, "actual_work": actualWork, "total_hrs": totalHrs });
-        }
-        console.log('actual data for pdf', actualData);
-        const uData = actualData.map((elt, idx) =>
-            [idx + 1, elt.name, elt.project, elt.task_title, elt.actual_work, elt.total_hrs])
+        // let actualData = [];
+        // for (let j = 0; j < pdfData.length; j++) {
+        //     let element3 = pdfData[j];
+        //     var assigneeName = element3.time_card_assignee.first_name + ' ' + element3.time_card_assignee.last_name;
+        //     {/**Again fetch project Name */ }
+        //     let projectList = [];
+        //     var projectName;
+        //     Array.from(element3.project).map((item) => {
+        //         projectList.push(item.sub_task)
+        //     })
+        //     projectName = projectList.join(",")
+        //     {/**Again fetch task title */ }
+        //     let taskTitle = [];
+        //     var taskTitles;
+        //     Array.from(element3.project).map((item) => {
+        //         taskTitle.push(item.task_title)
+        //     })
+        //     taskTitles = taskTitle.join(",")
+        //     {/**Concat all actual work */ }
+        //     let actualList = [];
+        //     var actualWork;
+        //     Array.from(element3.actual_work_done).map((item) => {
+        //         actualList.push(item)
+        //     })
+        //     actualWork = actualList.join(",")
+        //     {/**calculate total hours */ }
+        //     var totalHrs = element3.hours_today.reduce((total, currentVal) => total = total + currentVal, 0)
+        //     {/**remodified data for pdf array pushing */ }
+        //     actualData.push({ 
+        //         "name": assigneeName, 
+        //         "project": projectName, 
+        //         "task_title": taskTitles, 
+        //         "actual_work": actualWork, 
+        //         "total_hrs": totalHrs 
+        //     });
+        // }
+        // console.log('actual data for pdf', actualData);
+        const uData = tableData.map((elt, idx) => [
+            idx + 1, 
+            elt.WBS, 
+            elt.Time, 
+            elt.Sunday,  
+            elt.Monday,  
+            elt.Tuesday,  
+            elt.Wednesday,  
+            elt.Thursday,  
+            elt.Friday,  
+            elt.Saturday, 
+            elt.Total
+        ])
         let content = {
             startY: 50,
             head: headers,
@@ -317,7 +357,7 @@ const WeeklyTimecards = () => {
         };
         doc.text(title, marginLeft, 30);
         doc.autoTable(content);
-        doc.save("Timecard of" + " " + pdfTitle + ".pdf")
+        doc.save(profile_details.first_name + "_" + profile_details.last_name + "_" + "Timecard_" + moment(startDate).format("DD/MM/YYYY") + "-" + moment(endDate).format("DD/MM/YYYY") + ".pdf")
     }
 
     return (
@@ -357,15 +397,15 @@ const WeeklyTimecards = () => {
                         <h5 className="tiny-header--5 mt-0">Export</h5>
                         <div className="format-buttons mt-3 mb-3">
                             <CButton className="file-format-download" onClick={() => exportPDF()}><CIcon name="cil-description" className="mr-2" />PDF</CButton>
-                            <CButton className="file-format-download" onClick={() => exportToCSV(tableData, 'Timecard of' + " " + pdfTitle)} ><CIcon name="cil-spreadsheet" className="mr-2" />Excel</CButton>
+                            <CButton className="file-format-download" onClick={() => exportToCSV(tableData, profile_details.first_name + "_" + profile_details.last_name + "_" + "Timecard_" + moment(startDate).format("DD/MM/YYYY") + "-" + moment(endDate).format("DD/MM/YYYY"))} ><CIcon name="cil-spreadsheet" className="mr-2" />Excel</CButton>
                             {/* <CButton className="file-format-download">Print</CButton> */}
                         </div>
                     </CCol>
                     }
                     {/**view timecard data */}
                     <CCol md="4">
-                        Name: {profile_details.first_name + " " + profile_details.last_name}<br/>
-                        Phone: {profile_details.phone}
+                        Name: {profile_details.first_name + " " + profile_details.last_name}<br />
+                        Phone: +{profile_details.phone}
                     </CCol>
                     <CCol md="4">
                         Week: {moment(startDate).format("DD/MM/YYYY")} - {moment(endDate).format("DD/MM/YYYY")} <br />
@@ -373,8 +413,8 @@ const WeeklyTimecards = () => {
                         Year: {moment(endDate).format('YYYY')}
                     </CCol>
                     <CCol md="4">
-                        Project: {[...new Set(projectList)].map((item, idx) => (
-                            <span>{item}{idx < projectList.length-1 && <span>, </span>}</span>
+                        Project Name(s): {[...new Set(projectList)].map((item, idx) => (
+                            <span>{item}{idx < projectList.length - 1 && <span>, </span>}</span>
                         ))}
                     </CCol>
                     {<CCol md="12">
@@ -401,8 +441,6 @@ const WeeklyTimecards = () => {
                                 striped
                                 bordered
                                 size="sm"
-                                itemsPerPage={10}
-                                pagination
                             >
                             </CDataTable>
                             {/* <p className='text-right'><b>Total</b> = <b>{totalHrs}</b></p> */}
