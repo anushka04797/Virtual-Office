@@ -3,7 +3,6 @@ import "../timecards/timeCards.css";
 import { useFormik } from "formik";
 import { BASE_URL, USER_ID } from '../../Config';
 import { API } from '../../Config';
-import { CCol, CButton, CContainer, CForm, CRow, CLabel, CDataTable } from '@coreui/react';
 import Select from "react-select";
 import { useDispatch, useSelector } from 'react-redux';
 import jsPDF from "jspdf";
@@ -12,125 +11,69 @@ import * as FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
 import CIcon from '@coreui/icons-react';
 import moment from "moment";
+import { CDataTable, CCardBody, CCard, CForm, CButton, CInput, CBadge, CModal, CModalHeader, CModalTitle, CModalBody, CContainer, CRow, CCol, CLabel, CTextarea } from '@coreui/react';
+import LinearProgress from '@mui/material/LinearProgress';
+import { useSnackbar } from "notistack";
 
 const WeeklyTimecards = () => {
     const profile_details = useSelector(state => state.profile.data)
     const [tableData, setTabledata] = useState([]);
     let newArray = [];
-    // var defaultName = "all";
-    // const [filterData, setFilterData] = useState([])
     const [pdfData, setPdfData] = useState([])
     const [pdfTitle, setPdfTitle] = useState();
     const [startDate, setStartDate] = useState();
     const [endDate, setEndDate] = useState();
     const [projectList, setProjectList] = useState([]);
-    // const [assignee, setAssigneeValue] = useState();
-    // const [assigneeList, setAssigneeList] = useState([])
-    // const [new_array,setNewArray] = useState([])
     const [userData, setUserData] = useState([])
     const [totalHrs, setTotalHrs] = useState(0);
-    // const dispatch = useDispatch();
-    // const time_card_list_fetched = useSelector(state=>state.timecardList.status)
-    // const timecardList = useSelector(state => state.timecardList.pm_timecards);
-    // const colourStyles = {
-    //     // control: (styles, state) => ({ ...styles,height:"35px", fontSize: '14px !important', lineHeight: '1.42857', borderRadius: "8px",borderRadius:".25rem",color:"rgb(133,133,133)",border:state.isFocused ? '2px solid #0065ff' :'inherit'}),
-    //     option: (provided, state) => ({ ...provided, fontSize: "14px !important" }),
-    // };
+    const [editModal, setEditModal] = useState(false);
     var project = []
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
     React.useEffect(() => {
         window.scrollTo(0, 0);
-        // console.log(time_card_list_fetched)
-        // API.get('project/assignees/all/'+ sessionStorage.getItem(USER_ID) + "/").then((res) => {
-        // let assignees = [];
-        // let temp=[]
-        // Array.from(res.data.data).forEach((item, idx) => {
-        //     temp.push({ data: item, value: item.id, label: capitalize(item.first_name) + " " + capitalize(item.last_name) })
-        // })
-        // setAssigneeList(temp)
-        // setAssigneeList(assignees);
-        // });
+        getWeeklyTimecard();
+    }, [])
+
+    function getWeeklyTimecard(){
         API.get('wbs/user-wise/weekly-time-card/' + sessionStorage.getItem(USER_ID) + '/').then((res) => {
             setStartDate(res.data.start_date);
             setEndDate(res.data.end_date);
             if (res.data.data != undefined) {
                 res.data.data.forEach((item, idx) => {
                     project.push(item.project.sub_task)
-                    // if (project.length == 0){
-                    //     project.push(item.project)
-                    // }
-                    // else if (project.length != 0){
-                    //     project.find(ele => {
-                    //         if(ele.id != item.project.id) {
-                    //             project.push(item.project)
-                    //         }
-                    //     })
-                    // }
-                    var newItem = { id: idx, project: item.project, time_card_assignee: item.time_card_assignee, actual_work_done: item.actual_work_done, hours_today: item.hours_today, date_created: item.date_created, date_updated: item.date_updated };
-                    // res.data.data.forEach(innerItem => {
-                    //     if (innerItem.time_card_assignee.id == item.time_card_assignee.id) {
-                    //         newItem.project = newItem.project.concat(innerItem.project);
-                    //         newItem.time_card_assignee = innerItem.time_card_assignee;
-                    //         newItem.actual_work_done = newItem.actual_work_done.concat(innerItem.actual_work_done);
-                    //         newItem.hours_today = newItem.hours_today.concat(parseInt(innerItem.hours_today));
-                    //         newItem.date_created = newItem.date_created.concat(innerItem.date_created);
-                    //         newItem.date_updated = newItem.date_updated.concat(innerItem.date_updated);
-                    //     }
-                    // });
+                    var newItem = {
+                        id: item.id,
+                        project: item.project,
+                        time_card_assignee: item.time_card_assignee,
+                        actual_work_done: item.actual_work_done,
+                        time_type: item.time_type,
+                        submitted: item.submitted,
+                        hours_today: item.hours_today,
+                        date_created: item.date_created,
+                        date_updated: item.date_updated
+                    };
                     newArray.push(newItem);
                 });
             }
             console.log(project)
             console.log('new array', newArray)
-            // for (let i = 0; i < newArray.length; i++) {
-            //     let key = newArray[i].time_card_assignee.id;
-            //     for (let j = i + 1; j < newArray.length; j++) {
-            //         if (newArray[j].time_card_assignee.id == key) {
-            //             delete newArray.splice(j, 1);
-            //         }
-            //     }
-            // }
-            // console.log("unique effect", newArray);
-            // setFilterData(newArray);
             setPdfData(newArray);
-            // setPdfTitle(defaultName);
             {/**let's populate the damn table,shall we?**/ }
             if (newArray.length != 0 || newArray != undefined) {
-                let temp_array = tableData
+                let temp_array = []
                 var temp_totalHrs = 0;
                 for (let index = 0; index < newArray.length; index++) {
                     const element = newArray[index];
                     temp_totalHrs += parseFloat(element.hours_today);
-                    {/**concat all projects */ }
-                    // let projectList = [];
-                    // var projectName;
-                    // Array.from(element.project).map((item) => {
-                    //     projectList.push(item.sub_task)
-                    // })
-                    // projectName = projectList.join(",")
-                    {/**Conact all task title */ }
-                    // let taskTitle = [];
-                    // var taskTitles;
-                    // Array.from(element.project).map((item) => {
-                    //     taskTitle.push(item.task_title)
-                    // })
-                    // taskTitles = taskTitle.join(",")
-                    {/**Concat all actual work */ }
-                    // let actualList = [];
-                    // var actualWork;
-                    // Array.from(element.actual_work_done).map((item) => {
-                    //     actualList.push(item)
-                    // })
-                    // actualWork = actualList.join(",")
-                    {/**calculate total hours */ }
-                    // var totalHrs = element.hours_today.reduce((total, currentVal) => total = total + currentVal, 0)
                     console.log(element.date_updated)
                     var weekday = moment(element.date_updated).weekday();
                     {/**final push to gtable */ }
                     temp_array.push({
                         'No.': index + 1,
+                        'id': element.id,
                         'WBS': element.actual_work_done,
-                        'Time': 'RHR',
+                        'Time': element.time_type,
                         'Sunday': weekday == 0 ? element.hours_today : '',
                         'Monday': weekday == 1 ? element.hours_today : '',
                         'Tuesday': weekday == 2 ? element.hours_today : '',
@@ -144,6 +87,7 @@ const WeeklyTimecards = () => {
                 }
                 temp_array.push({
                     'No.': '',
+                    'id': '',
                     'WBS': '',
                     'Time': '',
                     'Sunday': '',
@@ -161,95 +105,24 @@ const WeeklyTimecards = () => {
                 console.log("tabledata from weekly timecard", totalHrs)
             }
         })
-    }, [])
+    }
 
     React.useEffect(() => {
         setProjectList(project);
     }, []);
 
-    {/**set value of form field*/ }
-    // const getAssigneeList = (option) => {
-    //     setAssigneeValue(option)
-    //     editForm.setValues({
-    //         assigneeSelect: option.value
-    //     })
-    // }
-
-    {/**validate form */ }
-
-    {/*function to filter timecards*/ }
-    // const getTimeCards = (values) => {
-    //     let singleUserData = [];
-    //     singleUserData = filterData.filter(p => p.time_card_assignee.id == values.assigneeSelect);
-    //     console.log("singleUserData", singleUserData)
-    //     setPdfData(singleUserData);
-    //     {/*populate the damned table again */ }
-    //     if (singleUserData.length != 0 || singleUserData != undefined) {
-    //         let temp_array1 = [];
-    //         for (let index = 0; index < singleUserData.length; index++) {
-    //             const element2 = singleUserData[index];
-    //             setPdfTitle(element2.time_card_assignee.first_name + ' ' + element2.time_card_assignee.last_name);
-    //             {/**concat all projects */ }
-    //             var projectName;
-    //             let projectList = [];
-    //             Array.from(element2.project).map((item) => {
-    //                 projectList.push(item.sub_task)
-    //             })
-    //             projectName = projectList.join(",");
-    //             {/**Conact all task title */ }
-    //             let taskTitle = [];
-    //             var taskTitles;
-    //             Array.from(element2.project).map((item) => {
-    //                 taskTitle.push(item.task_title)
-    //             })
-    //             taskTitles = taskTitle.join(",");
-    //             {/**Concat all actual work */ }
-    //             let actualList = [];
-    //             var actualWork;
-    //             Array.from(element2.actual_work_done).map((item) => {
-    //                 actualList.push(item)
-    //             })
-    //             actualWork = actualList.join(",")
-    //             {/**calculate total hours */ }
-    //             var totalHrs = element2.hours_today.reduce((total, currentVal) => total = total + currentVal, 0)
-    //             var weekday = moment(element2.date_updated[0]).weekday();
-    //             {/**once again push the filtered result to table */ }
-    //             temp_array1.push({ 
-    //                 'No.': index + 1, 
-    //                 'WBS': actualWork, 
-    //                 'Time': 'RHR', 
-    //                 'Sunday': weekday == 0 ? totalHrs:'', 
-    //                 'Monday': weekday == 1 ? totalHrs:'' , 
-    //                 'Tuesday': weekday == 2 ? totalHrs:'' , 
-    //                 'Wednesday': weekday == 3 ? totalHrs:'' , 
-    //                 'Thursday': weekday == 4 ? totalHrs:'' , 
-    //                 'Friday': weekday == 5 ? totalHrs:'' , 
-    //                 'Saturday': weekday == 6 ? totalHrs:''
-    //             })
-    //         }
-    //         setTabledata(temp_array1)
-    //         setUserData(temp_array1)
-    //         console.log("table data for speicifc user", tableData)
-    //     }
-    // }
-
     {/*initialize form */ }
-    // const editForm = useFormik({
-    //     initialValues: {
-    //         assigneeSelect: "",
-    //     },
-    //     validateOnBlur: true,
-    //     validateOnChange: true,
-    //     onSubmit: getTimeCards
-    // })
+    const editForm = useFormik({
+        initialValues: {
+            wbs: "",
+            time: "",
+            hrs: "",
 
-    {/**function for capitalizing the label */ }
-    // function capitalize(string) {
-    //     if (string != undefined) {
-    //         return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
-    //     }
-    //     return ''
-    // }
+        },
+        validateOnBlur: true,
+        validateOnChange: true,
+        // onSubmit: getTimeCards
+    })
 
     {/**export fetched tabledata to excel */ }
     const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
@@ -257,14 +130,6 @@ const WeeklyTimecards = () => {
     const exportToCSV = (csvData, fileName) => {
         console.log(csvData)
         var temp_data = []
-        // var xlsHeader = [
-        //     "Pial",
-        //     "03/12/22",
-        //     "VO"
-        // ]
-        // temp_data[0] = xlsHeader;
-        // temp_data = [...temp_data, ...csvData]
-        // console.log(temp_data)
         const ws = XLSX.utils.json_to_sheet(csvData);
         const wb = { Sheets: { 'data': ws }, SheetNames: ['data'] };
         const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
@@ -283,11 +148,6 @@ const WeeklyTimecards = () => {
         const title = profile_details.first_name + "_" + profile_details.last_name + "_" + "Timecard_" + moment(startDate).format("DD/MM/YYYY") + "-" + moment(endDate).format("DD/MM/YYYY");
         const headers = [[
             "No.",
-            // "Employee Name",
-            // "Project Name",
-            // "Task Title",
-            // "Actual Work Done",
-            // "Total Hr(s)"
             "WBS",
             "Time",
             "Sunday",
@@ -300,54 +160,17 @@ const WeeklyTimecards = () => {
             "Total"
         ]];
         console.log("pdfData", pdfData)
-        // let actualData = [];
-        // for (let j = 0; j < pdfData.length; j++) {
-        //     let element3 = pdfData[j];
-        //     var assigneeName = element3.time_card_assignee.first_name + ' ' + element3.time_card_assignee.last_name;
-        //     {/**Again fetch project Name */ }
-        //     let projectList = [];
-        //     var projectName;
-        //     Array.from(element3.project).map((item) => {
-        //         projectList.push(item.sub_task)
-        //     })
-        //     projectName = projectList.join(",")
-        //     {/**Again fetch task title */ }
-        //     let taskTitle = [];
-        //     var taskTitles;
-        //     Array.from(element3.project).map((item) => {
-        //         taskTitle.push(item.task_title)
-        //     })
-        //     taskTitles = taskTitle.join(",")
-        //     {/**Concat all actual work */ }
-        //     let actualList = [];
-        //     var actualWork;
-        //     Array.from(element3.actual_work_done).map((item) => {
-        //         actualList.push(item)
-        //     })
-        //     actualWork = actualList.join(",")
-        //     {/**calculate total hours */ }
-        //     var totalHrs = element3.hours_today.reduce((total, currentVal) => total = total + currentVal, 0)
-        //     {/**remodified data for pdf array pushing */ }
-        //     actualData.push({ 
-        //         "name": assigneeName, 
-        //         "project": projectName, 
-        //         "task_title": taskTitles, 
-        //         "actual_work": actualWork, 
-        //         "total_hrs": totalHrs 
-        //     });
-        // }
-        // console.log('actual data for pdf', actualData);
         const uData = tableData.map((elt, idx) => [
-            idx + 1, 
-            elt.WBS, 
-            elt.Time, 
-            elt.Sunday,  
-            elt.Monday,  
-            elt.Tuesday,  
-            elt.Wednesday,  
-            elt.Thursday,  
-            elt.Friday,  
-            elt.Saturday, 
+            idx + 1,
+            elt.WBS,
+            elt.Time,
+            elt.Sunday,
+            elt.Monday,
+            elt.Tuesday,
+            elt.Wednesday,
+            elt.Thursday,
+            elt.Friday,
+            elt.Saturday,
             elt.Total
         ])
         let content = {
@@ -360,37 +183,47 @@ const WeeklyTimecards = () => {
         doc.save(profile_details.first_name + "_" + profile_details.last_name + "_" + "Timecard_" + moment(startDate).format("DD/MM/YYYY") + "-" + moment(endDate).format("DD/MM/YYYY") + ".pdf")
     }
 
+    const timeType = [
+        { value: "RHR", label: "RHR" },
+        { value: "OTO", label: "OTO" }
+    ]
+
+    function updateTimeCard(event, item) {
+        console.log(event.target.value, item)
+        var data = {
+            "time_type": event.target.value,
+            "hours_today": item.Total,
+            "date_updated": ""
+        }
+        API.put('wbs/time-card/update/' + item.id + '/', data).then((res) => {
+            console.log(res)
+            if(res.status === 200){
+                getWeeklyTimecard();
+                enqueueSnackbar('Time type update succefull.', { variant: 'info' })
+            }
+        })
+    }
+
+    function updateTimeCardHrs(event, item) {
+        console.log(event.target.value, item)
+        var data = {
+            "time_type": item.Time,
+            "hours_today": event.target.value,
+            "date_updated": ""
+        }
+        API.put('wbs/time-card/update/' + item.id + '/', data).then((res) => {
+            console.log(res)
+            if(res.status === 200){
+                getWeeklyTimecard();
+                enqueueSnackbar('Actual hours update succefull.', { variant: 'info' })
+            }
+        })
+    }
+
     return (
         <>
             <CContainer>
                 <h3 className="timecards-page-header mb-3">Weekly Timecard</h3>
-                {/**option to select particular emoloyee */}
-                {/* <CForm className="mt-2">
-                    <CRow>
-                        <div className="col-lg-5 col-md-6 col-sm-12">
-                            <CLabel className="custom-label-5" htmlFor="assigneeSelect">
-                                Select Employee
-                            </CLabel>
-                            <Select
-                                closeMenuOnSelect={true}
-                                aria-labelledby="assigneeSelect"
-                                id="assigneeSelect"
-                                minHeight="35px"
-                                classNamePrefix="custom-forminput-6"
-                                styles={colourStyles}
-                                onChange={getAssigneeList}
-                                options={assigneeList}
-                                placeholder="Select from list"
-                                isClearable={false}
-                                isMulti={false}
-                            />
-                        </div>
-                        <div className="col-lg-6 col-md-6 col-sm-12">
-                            <CButton className="generate-card-button" onClick={editForm.handleSubmit}>Generate Timecard</CButton>
-                        </div>
-                    </CRow>
-                </CForm> */}
-                {/**Show Table */}
                 <CRow>
                     {/**Export buttons */}
                     {tableData.length != 0 && <CCol md="12">
@@ -422,28 +255,125 @@ const WeeklyTimecards = () => {
                             <CDataTable items={tableData} fields={[
                                 {
                                     key: "No.",
-                                    _style: { width: "5%" },
+                                    _style: { width: "auto" },
                                     _classes: "font-weight-bold",
                                 },
                                 'WBS',
-                                'Time',
-                                'Sunday',
-                                'Monday',
-                                'Tuesday',
-                                'Wednesday',
-                                'Thursday',
-                                'Friday',
-                                'Saturday',
-                                'Total'
+                                {
+                                    key: 'Time',
+                                    _style: { width: '100px' }
+                                },
+                                {
+                                    key: 'Sunday',
+                                    _style: { width: '70px' }
+                                },
+                                {
+                                    key: 'Monday',
+                                    _style: { width: '70px' }
+                                },
+                                {
+                                    key: 'Tuesday',
+                                    _style: { width: '70px' }
+                                },
+                                {
+                                    key: 'Wednesday',
+                                    _style: { width: '70px' }
+                                },
+                                {
+                                    key: 'Thursday',
+                                    _style: { width: '70px' }
+                                },
+                                {
+                                    key: 'Friday',
+                                    _style: { width: '70px' }
+                                },
+                                {
+                                    key: 'Saturday',
+                                    _style: { width: '70px' }
+                                },
+                                {
+                                    key: 'Total',
+                                    _style: { width: 'auto' }
+                                },
                             ]}
                                 primary
                                 hover
                                 striped
                                 bordered
                                 size="sm"
+                                scopedSlots={{
+                                    'Time':
+                                        (item, index) => {
+                                            return (
+                                                <td className="py-2">
+                                                    {item.Time != "" && <select onChange={(event) => { updateTimeCard(event, item) }}>
+                                                        {timeType.map(ele => (
+                                                            <option selected={ele.value == item.Time}>{ele.value}</option>
+                                                        ))
+                                                        }
+                                                    </select>}
+                                                </td>
+                                            )
+                                        },
+                                    'Sunday':
+                                        (item, index) => {
+                                            return (
+                                                <td className="py-2">
+                                                    {item.Sunday != "" && <CInput name="Sunday" type="number" onBlur={(event) => { updateTimeCardHrs(event, item) }} defaultValue={item.Sunday} className="custom-forminput-6" />}
+                                                </td>
+                                            )
+                                        },
+                                    'Monday':
+                                        (item, index) => {
+                                            return (
+                                                <td className="py-2">
+                                                    {item.Monday != "" && <CInput name="Monday" type="number" onBlur={(event) => { updateTimeCardHrs(event, item) }} defaultValue={item.Monday} className="custom-forminput-6" />}
+                                                </td>
+                                            )
+                                        },
+                                    'Tuesday':
+                                        (item, index) => {
+                                            return (
+                                                <td className="py-2">
+                                                    {item.Tuesday != "" && <CInput name="Tuesday" type="number" onBlur={(event) => { updateTimeCardHrs(event, item) }} defaultValue={item.Tuesday} className="custom-forminput-6" />}
+                                                </td>
+                                            )
+                                        },
+                                    'Wednesday':
+                                        (item, index) => {
+                                            return (
+                                                <td className="py-2">
+                                                    {item.Wednesday != "" && <CInput name="Wednesday" type="number" onBlur={(event) => { updateTimeCardHrs(event, item) }} defaultValue={item.Wednesday} className="custom-forminput-6" />}
+                                                </td>
+                                            )
+                                        },
+                                    'Thursday':
+                                        (item, index) => {
+                                            return (
+                                                <td className="py-2">
+                                                    {item.Thursday != "" && <CInput name="Thursday" type="number" onBlur={(event) => { updateTimeCardHrs(event, item) }} defaultValue={item.Thursday} className="custom-forminput-6" />}
+                                                </td>
+                                            )
+                                        },
+                                    'Friday':
+                                        (item, index) => {
+                                            return (
+                                                <td className="py-2">
+                                                    {item.Friday != "" && <CInput name="Friday" type="number" onBlur={(event) => { updateTimeCardHrs(event, item) }} defaultValue={item.Friday} className="custom-forminput-6" />}
+                                                </td>
+                                            )
+                                        },
+                                    'Saturday':
+                                        (item, index) => {
+                                            return (
+                                                <td className="py-2">
+                                                    {item.Saturday != "" && <CInput name="Saturday" type="number" onBlur={(event) => { updateTimeCardHrs(event, item) }} defaultValue={item.Saturday} className="custom-forminput-6" />}
+                                                </td>
+                                            )
+                                        },
+                                }}
                             >
                             </CDataTable>
-                            {/* <p className='text-right'><b>Total</b> = <b>{totalHrs}</b></p> */}
                         </div>
                     </CCol>}
                 </CRow>
