@@ -1,5 +1,5 @@
 import axios from 'axios';
-const status = 'prod'
+const status = 'dev'
 export const API_URL = status === 'prod' ? 'http://dma.com.bd:8003/' : 'http://localhost:8000/'
 export const TOKEN = "access_token"
 export const USER_ID = "user_id"
@@ -54,9 +54,10 @@ FILE_API.interceptors.request.use(
 export const PUBLIC_API = axios.create({
   baseURL: API_URL,
   timeout: 100000,
-  headers:{
-    "Content-Type": "application/json"
-  }
+  // headers:{
+  //   "Content-Type": "application/json",
+  //   'Access-Control-Allow-Origin': true,
+  // }
 })
 
 export const PUBLIC_FORM_API = axios.create({
