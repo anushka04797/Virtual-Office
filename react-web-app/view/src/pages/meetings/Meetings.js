@@ -165,6 +165,9 @@ const OurMeetings = () => {
         let yesterday= moment().subtract( 1, 'day' )
         return current.isAfter( yesterday );
     }
+    const setShowMeeting=(meeting)=>{
+        setMeeting(meeting)
+    }
     useEffect(()=>{
         API.get('auth/assignee/list/').then((res)=>{
             console.log('assignees',res.data.data)
@@ -196,7 +199,7 @@ const OurMeetings = () => {
                                                     <h6 className="meeting-id">Meeting Agenda: {meeting.agenda}</h6>
                                                    <h6 className="projectName">Room name : {meeting.room_name}</h6>
                                                     {meeting.host != null && <h6 className="projectName">Host: {meeting.host.first_name+' '+meeting.host.last_name}</h6>}
-                                                    <div className="join-btn-holder"><CButton className="meeting-join-btn">Join</CButton></div>
+                                                    <div className="join-btn-holder"><CButton className="meeting-join-btn" type='button' onClick={()=>setShowMeeting(meeting)}>Join</CButton></div>
                                                 </div>
                                             </div>
                                         </CCardBody>
@@ -381,7 +384,7 @@ const OurMeetings = () => {
                         </div>
                     </div>) :
                     (<CRow>
-                        <JitsiMeet roomName={formMeeting.values.room_name} username="Shaif" onMeetingClose={() => create_meeting(false)} />
+                        <JitsiMeet roomName={meeting.room_name} username="Shaif" onMeetingClose={() => create_meeting(false)} />
                     </CRow>)}
             </CContainer>
         </>
