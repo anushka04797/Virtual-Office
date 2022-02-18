@@ -13,7 +13,7 @@ import moment from 'moment'
 import { fetchMeetingList } from '../../store/slices/MeetingSlice';
 
 const OurMeetings = () => {
-    const [meeting, setMeeting] = useState(false)
+    const [meeting, setMeeting] = useState(true)
     const dispatch = useDispatch()
     // const [roomName,setRoomName]=useState('')
     // const [username,setUserName] = useState('')
@@ -384,7 +384,7 @@ const OurMeetings = () => {
                         </div>
                     </div>) :
                     (<CRow>
-                        <JitsiMeet roomName={meeting.room_name} username="Shaif" onMeetingClose={() => create_meeting(false)} />
+                        <JitsiMeet roomName={'dma'} username="Shaif" onMeetingClose={() => create_meeting(false)} />
                     </CRow>)}
             </CContainer>
         </>
