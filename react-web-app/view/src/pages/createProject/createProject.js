@@ -1,4 +1,4 @@
-import { CContainer, CRow, CCard, CCardHeader, CCardBody, CForm, CLabel, CInput, CButton, CTextarea, CSelect } from '@coreui/react';
+import { CContainer, CRow, CCard, CCardHeader, CCardBody, CForm, CLabel, CInput, CButton, CTextarea, CSelect, CPopover } from '@coreui/react';
 import { React, useState, useEffect } from 'react';
 import './createProject.css';
 import CreatableSelect from 'react-select/creatable';
@@ -13,8 +13,9 @@ import Datetime from 'react-datetime'
 import moment from 'moment'
 import { fetchProjectsForPMThunk, fetchProjectsThunk } from '../../store/slices/ProjectsSlice';
 import LinearProgress from '@mui/material/LinearProgress';
-import { arrayRemoveItem } from '../../helper';
+import { arrayRemoveItem, capitalizeFirstLetter } from '../../helper';
 import sortBy from 'lodash/sortBy';
+import AssignedProjectsPopover from './inc/AssignedProjectsPopover';
 
 const CreateNewProject = () => {
   const colourStyles = {
@@ -142,7 +143,7 @@ const CreateNewProject = () => {
     let yesterday = moment().subtract(1, 'day')
     return current.isAfter(yesterday);
   }
-
+  
   const handleSubTaskChange = (newValue, actionMeta) => {
     if (actionMeta.action == 'select-option') {
       // console.log('sub task', newValue)
@@ -863,8 +864,7 @@ const CreateNewProject = () => {
                             <ul className="m-3">
                               {inputList.map((item) => (
                                 <li>
-                                  {item.assignee.data.first_name + " " + item.assignee.data.last_name + " → " + item.estimated_person + " EP → " + item.planned_value + " PV → " + item.planned_hours + " Hr(s)"}
-                                  <CButton type="button" onClick={() => removeAssignee(item)} className="remove-file-ongoing"><img src={"assets/icons/icons8-close-64-blue.svg"} className="close-icon-size" /></CButton>
+                                  <AssignedProjectsPopover remove={removeAssignee} data={item} text1={capitalizeFirstLetter(item.assignee.data.first_name) + " " + capitalizeFirstLetter(item.assignee.data.last_name)} text2={"  → " + item.estimated_person + " EP → " + item.planned_value + " PV → " + item.planned_hours + " Hr(s)"}/>
                                 </li>
                               ))}
                             </ul>

@@ -38,3 +38,7 @@ export function capitalize(string) {
     }
     return ''
 }
+
+export function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}

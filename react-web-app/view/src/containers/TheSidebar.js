@@ -88,7 +88,7 @@ const TheSidebar = () => {
           <CSidebarNavItem to="/dashboard/EVMS/create" name="Create EVMS" className="vo-navItem"></CSidebarNavItem>
           <CSidebarNavItem to="/dashboard/EVMS/view" name="View EVMS" className="vo-navItem"></CSidebarNavItem>
         </CSidebarNavDropdown>}
-
+        <CSidebarNavItem to="/dashboard/employees" name="Employees" icon="cil-people" className="vo-navItem"></CSidebarNavItem>
         {/**Timecards */}
         {!has_permission('projects.add_projects') && <CSidebarNavItem to="/dashboard/timecard/generate-timecard" name="Generate Timecard" icon="cil-library" className="vo-navItem"></CSidebarNavItem>}
         {/**timecards if PM */}
