@@ -294,7 +294,7 @@ const MyProjects = () => {
                             </CRow>
                             {/**forward to wbs button  */}
                             <CRow className="justify-content-center">
-                                <CButton className="create-wbs-from-modal" onClick={() => history.push({ pathname: '/dashboard/WBS/create-wbs' })}>Create WBS</CButton>
+                                <CButton type='button' className="create-wbs-from-modal" onClick={() => history.push({ pathname: '/dashboard/WBS/create-wbs',state:{task:selectedSubTask} })}>Create WBS</CButton>
                             </CRow>
                         </CForm>
                     </CContainer>
