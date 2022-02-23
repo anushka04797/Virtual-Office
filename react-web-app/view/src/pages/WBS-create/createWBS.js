@@ -10,8 +10,10 @@ import swal from 'sweetalert'
 import LinearProgress from '@mui/material/LinearProgress';
 import sortBy from 'lodash/sortBy';
 import { has_permission } from '../../helper.js';
+import { useLocation } from 'react-router-dom';
 
 const CreateNewWBS = () => {
+    let location = useLocation()
     const remaining_hours = (remaining, total) => {
         return String(parseFloat(total) - parseFloat(remaining))
     }
@@ -191,7 +193,6 @@ const CreateNewWBS = () => {
     })
 
     const handleTaskTitleChange = (newValue, actionMeta) => {
-        console.log("newValue newValue:", newValue)
         if (newValue != null){
             getAssigneeList(newValue);
             setSelectedProject(newValue);
@@ -223,7 +224,12 @@ const CreateNewWBS = () => {
         }
         return false
     }
-
+    React.useEffect(()=>{
+        console.log('location data',location)
+        if(location.state?.task){
+            console.log('location data if block',location.state.task)
+        }
+    },[])
     return (
         <>
             <CContainer>
