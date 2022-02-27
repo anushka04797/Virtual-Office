@@ -11,17 +11,24 @@ import LinearProgress from '@mui/material/LinearProgress';
 import sortBy from 'lodash/sortBy';
 import { has_permission } from '../../helper.js';
 import { useLocation } from 'react-router-dom';
+import store from '../../store/Store'
 
 const CreateNewWBS = () => {
+    const dispatch = useDispatch()
     let location = useLocation()
     const remaining_hours = (remaining, total) => {
         return String(parseFloat(total) - parseFloat(remaining))
     }
+    
+    // const [projects,setProjects] = useState([])
+    const [assigneeList, setAssigneeList] = useState([])
+    const [taskList, setTaskList] = useState([])
 
-    const projects = useSelector(state => {
+    const projects = useSelector(state=>{
         let temp = []
+        
         Array.from(state.projects.data).forEach((item, idx) => {
-            console.log('remaining hours ', remaining_hours(item.project.remaining_hours, item.project.planned_hours))
+            // console.log('remaining hours ', remaining_hours(item.project.remaining_hours, item.project.planned_hours))
             if (parseFloat(item.project.remaining_hours) > 0) {
                 temp.push({
                     value: item.project.id,
@@ -47,9 +54,38 @@ const CreateNewWBS = () => {
         // console.log("get project list: ", temp)
         return temp
     })
-
-    const [assigneeList, setAssigneeList] = useState([])
-    const [taskList, setTaskList] = useState([])
+    //fetcing projects from store
+    const getProjectList=()=>{
+        let temp = []
+        console.log('projects',store.getState().projects.data)
+        Array.from(store.getState().projects.data).forEach((item, idx) => {
+            // console.log('remaining hours ', remaining_hours(item.project.remaining_hours, item.project.planned_hours))
+            if (parseFloat(item.project.remaining_hours) > 0) {
+                temp.push({
+                    value: item.project.id,
+                    label: item.project.sub_task,
+                    data: item
+                })
+            }
+        })
+        if (has_permission("projects.add_projects")) {
+            Array.from(store.getState().projects.pm_projects).forEach((item, idx) => {
+                if (parseFloat(item.project.remaining_hours) > 0) {
+                    // console.log(tempitem.label === item.project.sub_task))
+                    if (!temp.find(ele => ele.label === item.project.sub_task)){
+                        temp.push({
+                            value: item.project.id,
+                            label: item.project.sub_task,
+                            data: item
+                        })
+                    }
+                }
+            })
+        }
+        // console.log("get project list: ", temp)
+        // return temp
+        // setProjects(temp)
+    }
 
     const getTaskList = (option) => {
         console.log("task list###########: ", option)
@@ -69,11 +105,16 @@ const CreateNewWBS = () => {
         }
     }
 
-    const dispatch = useDispatch()
+    
     const selectProjectRef = useRef();
     const selectAssigneRef = useRef();
     const selectTaskTitleRef = useRef();
 
+    const [selectedTask, setSelectedTask] = useState(null)
+    const [selectedSubTask,setSelectedSubTask]=useState({})
+    const [selectedProjectEndDate, setSelectedProjectEndDate] = useState('')
+
+    
     const getAssigneeList = (option) => {
         dispatch(fetchProjectsAssigneeThunk(option?.work_package_index))
         var temp_array = []
@@ -84,17 +125,15 @@ const CreateNewWBS = () => {
         console.log("assignees", option)
     }
 
-    const [selectedProject, setSelectedProject] = useState(null)
-    const [selectedProjectEndDate, setSelectedProjectEndDate] = useState('')
-
     const handleProjectChange = (newValue, actionMeta) => {
         console.log(`action: ${actionMeta.action}`);
         console.log("newValue: ", newValue);
         if (actionMeta.action == 'select-option') {
             // getAssigneeList(newValue);
+            setSelectedSubTask(newValue)
             getTaskList(newValue.data.subtasks);
             formCreateWbs.setValues({
-                project: '',
+                project: newValue.data.project.id,
                 work_package_number: newValue.data.project.work_package_number,
                 assignee: formCreateWbs.values.assignee,
                 reporter: sessionStorage.getItem(USER_ID),
@@ -110,7 +149,7 @@ const CreateNewWBS = () => {
             })
         }
         else if (actionMeta.action == 'clear') {
-            setSelectedProject(null)
+            setSelectedSubTask(null)
         }
     };
 
@@ -124,8 +163,8 @@ const CreateNewWBS = () => {
 
     // form validation for WBS create
     const is_before_start_date = (start_date, end_date) => {
-        console.log('start date', new Date(start_date))
-        console.log('end date', new Date(end_date))
+        // console.log('start date', new Date(start_date))
+        // console.log('end date', new Date(end_date))
         return new Date(end_date) < new Date(start_date)
     }
 
@@ -195,7 +234,7 @@ const CreateNewWBS = () => {
     const handleTaskTitleChange = (newValue, actionMeta) => {
         if (newValue != null){
             getAssigneeList(newValue);
-            setSelectedProject(newValue);
+            setSelectedTask(newValue);
             setSelectedProjectEndDate(newValue?.planned_delivery_date)
         }
         if (actionMeta.action == 'select-option') {
@@ -218,18 +257,53 @@ const CreateNewWBS = () => {
     }
 
     function is_form_submitting() {
-        console.log(formCreateWbs.isSubmitting, formCreateWbs.isValidating)
+        // console.log(formCreateWbs.isSubmitting, formCreateWbs.isValidating)
         if (formCreateWbs.isSubmitting && !formCreateWbs.isValidating) {
             return true
         }
         return false
     }
+    function set_selected_project(sub_task){
+        let all_projects = projects
+        console.log('projects',projects)
+        all_projects.forEach((item,idx)=>{
+            if(item.label == sub_task){
+                setSelectedSubTask(item)
+                getTaskList(item.data.subtasks)
+            }
+        })
+    }
+    
     React.useEffect(()=>{
-        console.log('location data',location)
         if(location.state?.task){
-            console.log('location data if block',location.state.task)
+            let task = location.state.task
+            console.log('location data if block',task)
+            set_selected_project(task.sub_task)
+            setSelectedTask(task)
+            getAssigneeList(task)
+            setSelectedProjectEndDate(task.planned_delivery_date)
+
+            formCreateWbs.setValues({
+                project: task.id,
+                work_package_number: task.work_package_number,
+                assignee: formCreateWbs.values.assignee,
+                reporter: sessionStorage.getItem(USER_ID),
+                title: formCreateWbs.values.title,
+                description: formCreateWbs.values.description,
+                start_date: formCreateWbs.values.start_date,
+                end_date: formCreateWbs.values.end_date,
+                hours_worked: formCreateWbs.values.hours_worked,
+                status: formCreateWbs.values.status,
+                progress: formCreateWbs.values.progress,
+                comments: formCreateWbs.values.comments,
+                deliverable: formCreateWbs.values.deliverable
+            })
+        }
+        else{
+            
         }
     },[])
+   
     return (
         <>
             <CContainer>
@@ -252,21 +326,21 @@ const CreateNewWBS = () => {
                                                     options={projects}
                                                     // getOptionLabel={option => option.task_delivery_order + " / " + option.sub_task}
                                                     // getOptionValue={option => option.id}
+                                                    value={selectedSubTask}
                                                     onChange={handleProjectChange}
                                                     ref={selectProjectRef}
                                                 />
                                                 {formCreateWbs.touched.project && formCreateWbs.errors.project && <small style={{ color: 'red' }}>{formCreateWbs.errors.project}</small>}
-
                                             </div>
-                                            {/* {selectedProject != null ?
+                                            {/* {selectedTask != null ?
                                                 <div className="col-lg-12 mb-3">
                                                     <CAlert color="primary">
                                                         <small>
-                                                            <b>Planned Delivery Date: </b> {selectedProject.data.project.planned_delivery_date}
+                                                            <b>Planned Delivery Date: </b> {selectedTask.data.project.planned_delivery_date}
                                                             <br />
-                                                            <b>Planned Hours: </b> {selectedProject.data.project.planned_hours}
+                                                            <b>Planned Hours: </b> {selectedTask.data.project.planned_hours}
                                                             <br />
-                                                            <b>Remaining Hours: </b> {selectedProject.data.project.remaining_hours}
+                                                            <b>Remaining Hours: </b> {selectedTask.data.project.remaining_hours}
                                                         </small>
                                                     </CAlert>
                                                 </div> :
@@ -283,21 +357,22 @@ const CreateNewWBS = () => {
                                                     getOptionLabel={option => option.task_title}
                                                     getOptionValue={option => option.id}
                                                     onChange={handleTaskTitleChange}
+                                                    value={selectedTask}
                                                     ref={selectTaskTitleRef}
                                                 />
                                                 {formCreateWbs.touched.task_title && formCreateWbs.errors.task_title && <small style={{ color: 'red' }}>{formCreateWbs.errors.task_title}</small>}
                                             </div>
-                                            {selectedProject != null ?
+                                            {selectedTask != null ?
                                                 <div className="col-lg-12 mb-3">
                                                     <CAlert color="primary">
                                                         <small>
-                                                            <b>Planned Delivery Date: </b> {selectedProject.planned_delivery_date}
+                                                            <b>Planned Delivery Date: </b> {selectedTask.planned_delivery_date}
                                                             <br />
-                                                            <b>Planned Hours: </b> {selectedProject.planned_hours}
+                                                            <b>Planned Hours: </b> {selectedTask.planned_hours}
                                                             <br />
-                                                            <b>Remaining Hours: </b> {selectedProject.remaining_hours}
+                                                            <b>Remaining Hours: </b> {selectedTask.remaining_hours}
                                                             <br />
-                                                            <b>Task details: </b> {selectedProject.description}
+                                                            <b>Task details: </b> {selectedTask.description}
                                                         </small>
                                                     </CAlert>
                                                 </div> :

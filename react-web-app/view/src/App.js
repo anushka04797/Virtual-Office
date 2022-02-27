@@ -9,10 +9,6 @@ const ClearCacheComponent = withClearCache();
 // Pages
 
 const App = () => {
-  const logOut = () => {
-    console.log('logging out')
-    //dispatch(logout());
-  };
   return (
     <>
       <ClearCacheComponent />;
