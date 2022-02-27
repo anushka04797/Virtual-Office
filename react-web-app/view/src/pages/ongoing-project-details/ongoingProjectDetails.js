@@ -30,7 +30,15 @@ const OngoingProjectDetails = () => {
     let history = useHistory();
     const dispatch = useDispatch();
 
-
+    const can_create_wbs=(assignees)=>{
+        let result=false
+        assignees.forEach((item,idx)=>{
+            if(item.assignee.id == sessionStorage.getItem(USER_ID)){
+                result=true
+            }
+        })
+        return result
+    }
     const [pmStatus, setPmStatus] = useState(1);
     const [status, setStatus] = useState(0);
     const radioHandler = (status, pmStatus) => {
@@ -251,9 +259,9 @@ const OngoingProjectDetails = () => {
                                 </div>
                             </CRow>
                             {/**forward to wbs button  */}
-                            <CRow className="justify-content-center">
-                                <CButton className="create-wbs-from-modal" onClick={() => history.push({ pathname: '/dashboard/WBS/create-wbs',state:{task:selectedSubTask} })}>Create WBS</CButton>
-                            </CRow>
+                            {can_create_wbs(selectedSubTask.assignees)==true && <CRow className="justify-content-center">
+                                <CButton type='button' className="create-wbs-from-modal" onClick={() => history.push({ pathname: '/dashboard/WBS/create-wbs',state:{task:selectedSubTask} })}>Create WBS</CButton>
+                            </CRow>}
                         </CForm>
                     </CContainer>
                 </CModalBody>

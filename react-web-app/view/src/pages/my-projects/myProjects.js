@@ -130,6 +130,15 @@ const MyProjects = () => {
         })
         return remaining_hours;
     }
+    const can_create_wbs=(assignees)=>{
+        let result=false
+        assignees.forEach((item,idx)=>{
+            if(item.assignee.id == sessionStorage.getItem(USER_ID)){
+                result=true
+            }
+        })
+        return result
+    }
     function totalProjectHrs(projects) {
         let total_hours = 0;
         projects.forEach(item => {
@@ -293,9 +302,10 @@ const MyProjects = () => {
                                 </div>
                             </CRow>
                             {/**forward to wbs button  */}
-                            <CRow className="justify-content-center">
+                            {can_create_wbs(selectedSubTask.assignees) && <CRow className="justify-content-center">
                                 <CButton type='button' className="create-wbs-from-modal" onClick={() => history.push({ pathname: '/dashboard/WBS/create-wbs',state:{task:selectedSubTask} })}>Create WBS</CButton>
-                            </CRow>
+                            </CRow>}
+                            
                         </CForm>
                     </CContainer>
                 </CModalBody>
