@@ -16,7 +16,7 @@ const AssignedProjectsDashboard = () => {
         state.wbs.data.forEach(element => {
             if (element.assignee.id == sessionStorage.getItem(USER_ID)) {
                 temp_data.push(element)
-                console.log(element)
+                // console.log(element)
             }
         });
         return temp_data;

@@ -26,19 +26,22 @@ import {
 } from 'react-accessible-accordion';
 import 'react-accessible-accordion/dist/fancy-example.css';
 import LinearWithValueLabel from '../../components/linear-progress-bar/linear-progress-bar';
+
+export const can_create_wbs=(assignees)=>{
+    let result=false
+    assignees.forEach((item,idx)=>{
+        if(item.assignee.id == sessionStorage.getItem(USER_ID)){
+            result=true
+        }
+    })
+    return result
+}
+
 const OngoingProjectDetails = () => {
     let history = useHistory();
     const dispatch = useDispatch();
 
-    const can_create_wbs=(assignees)=>{
-        let result=false
-        assignees.forEach((item,idx)=>{
-            if(item.assignee.id == sessionStorage.getItem(USER_ID)){
-                result=true
-            }
-        })
-        return result
-    }
+    
     const [pmStatus, setPmStatus] = useState(1);
     const [status, setStatus] = useState(0);
     const radioHandler = (status, pmStatus) => {
@@ -144,8 +147,6 @@ const OngoingProjectDetails = () => {
     const xlData = [];
     const exportToCSV = () => {
         for (let i = 0; i < projects.length; i++) {
-
-
             const item = projects[i];
             let subTaskNames = [];
             var subTaskName;
@@ -267,9 +268,8 @@ const OngoingProjectDetails = () => {
                 </CModalBody>
             </CModal>}
             <div className="container">
-
                 <div className="row">
-                    <div className="col-md-12 col-lg-11 col-sm-12 col-xs-12 mt-1 mb-3">
+                    <div className="col-md-10 offset-md-1">
                         <h4 className="dash-header">Assigned Projects({Array.from(projects).length}) <CButton className="export-project-list" onClick={() => exportToCSV()}><CIcon name="cil-spreadsheet" className="mr-2" />Export to excel</CButton></h4>
                         {projects != undefined &&
 

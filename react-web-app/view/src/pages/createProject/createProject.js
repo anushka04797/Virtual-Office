@@ -13,15 +13,17 @@ import Datetime from 'react-datetime'
 import moment from 'moment'
 import { fetchProjectsForPMThunk, fetchProjectsThunk } from '../../store/slices/ProjectsSlice';
 import LinearProgress from '@mui/material/LinearProgress';
-import { arrayRemoveItem, capitalizeFirstLetter } from '../../helper';
+import { arrayRemoveItem, capitalizeFirstLetter, has_permission } from '../../helper';
 import sortBy from 'lodash/sortBy';
 import AssignedProjectsPopover from './inc/AssignedProjectsPopover';
+import { useHistory } from 'react-router';
 
 const CreateNewProject = () => {
   const colourStyles = {
     // control: (styles, state) => ({ ...styles,height:"35px", fontSize: '14px !important', lineHeight: '1.42857', borderRadius: "8px",borderRadius:".25rem",color:"rgb(133,133,133)",border:state.isFocused ? '2px solid #0065ff' :'inherit'}),
     option: (provided, state) => ({ ...provided, fontSize: '14px !important' }),
   }
+  let history = useHistory()
   const dispatch = useDispatch()
   const [selectedTDO, setSelectedTDO] = useState()
   const [selectedTDODetails, setSelectedTDODetails] = useState()
@@ -118,7 +120,13 @@ const CreateNewProject = () => {
   ]
 
   useEffect(() => {
-    window.scrollTo(0, 0)
+    if(!has_permission('projects.add_projects')){
+      history.push({pathname:'/dashboard',state:{message:'You do not have permission to create project'}})
+    }
+    else{
+      window.scrollTo(0, 0)
+    }
+   
   }, [])
 
   //sub task list states and functions
