@@ -105,7 +105,6 @@ const CreateNewWBS = () => {
         }
     }
 
-    
     const selectProjectRef = useRef();
     const selectAssigneRef = useRef();
     const selectTaskTitleRef = useRef();
@@ -113,7 +112,6 @@ const CreateNewWBS = () => {
     const [selectedTask, setSelectedTask] = useState(null)
     const [selectedSubTask,setSelectedSubTask]=useState({})
     const [selectedProjectEndDate, setSelectedProjectEndDate] = useState('')
-
     
     const getAssigneeList = (option) => {
         dispatch(fetchProjectsAssigneeThunk(option?.work_package_index))

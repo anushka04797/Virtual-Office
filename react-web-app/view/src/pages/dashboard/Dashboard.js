@@ -1,14 +1,6 @@
 import React, { Suspense } from 'react';
-import Box from '@material-ui/core/Box';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Header from '../../components/header/Header';
-import MatSideBar from '../../components/sidebar/MatSideBar';
 import { CCol, CContainer, CFade, CRow } from '@coreui/react';
 import innerRoutes from '../../routes/DashboardRoutes'
-import {
-    Route,
-    Switch,
-  } from 'react-router-dom';
   
 import './dashboard.css';
 import ScheduledMeetings from '../../components/scheduledMeetings/scheduledMeets'
@@ -31,9 +23,13 @@ const Dashboard=()=> {
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     React.useEffect(()=>{
         window.scrollTo(0, 0);
-        console.log('dashboard mounted')
+        console.log('dashboard mounted',location.state)
         if(location.state?.from == 'login'){
             enqueueSnackbar('Welcome ',{variant:'success'})
+        }
+        if(location.state?.message){
+            console.log('message',location.state.message)
+            enqueueSnackbar(location.state.message,{variant:'warning'})
         }
         //console.log(new Date(JSON.parse(sessionStorage.getItem('TOKEN')).time).toISOString())
     },[])
@@ -43,16 +39,9 @@ const Dashboard=()=> {
             {/**Row for showing da tables */}
             <CRow>
                 <div className="col-lg-5 offset-lg-1"><ProjectTables/></div>
-
                 <div className="col-lg-5"><AssignedToMe/></div> 
-                
                 <div className="col-lg-5 offset-lg-1"><ScheduledMeetings/></div>
-                {has_permission('evms.view_evms') &&
-                <div className="col-lg-5 "><EvmsShow/></div>}
-                
-               
-            
-
+                {has_permission('evms.view_evms') && <div className="col-lg-5 "><EvmsShow/></div>}
             </CRow>
         </CContainer>
         </>

@@ -1,4 +1,4 @@
-import { CCardBody, CCard, CForm, CButton, CInput, CBadge, CModal, CModalHeader, CModalTitle, CModalBody, CContainer, CRow, CCol, CLabel } from '@coreui/react'
+import { CCardBody, CCard, CForm, CButton, CInput, CBadge, CModal, CModalHeader, CModalTitle, CModalBody, CContainer, CRow, CCol, CLabel, CCardFooter } from '@coreui/react'
 import React, { useEffect, useState } from 'react';
 import GradeIcon from '@material-ui/icons/Grade';
 import IconButton from '@material-ui/core/IconButton';
@@ -19,6 +19,7 @@ import { useFormik } from 'formik';
 import * as FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
 import LinearWithValueLabel from '../../components/linear-progress-bar/linear-progress-bar';
+import { can_create_wbs } from '../ongoing-project-details/ongoingProjectDetails';
 const OngoingDetailsView = () => {
     const { work_package_number } = useParams();
     const dispatch = useDispatch()
@@ -281,8 +282,6 @@ const OngoingDetailsView = () => {
     const exportToCSV = () => {
 
         for (let i = 0; i < project.subtasks.length; i++) {
-
-
             const item = project.subtasks[i];
             fileName = 'Details of' + ' ' + item.sub_task;
 
@@ -536,6 +535,9 @@ const OngoingDetailsView = () => {
                                         </div>
                                     </div>}
                                 </CCardBody>
+                                <CCardFooter row>
+                                    {can_create_wbs(subtask.assignees)==true && <CButton type='button' className="create-wbs-from-modal float-right" size='sm' onClick={() => history.push({ pathname: '/dashboard/WBS/create-wbs',state:{task:subtask} })}>Create WBS</CButton>}
+                                </CCardFooter>
                             </CCard>))}
                     </div>
                 </div>

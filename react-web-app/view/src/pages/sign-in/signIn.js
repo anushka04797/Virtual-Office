@@ -92,7 +92,7 @@ const SignIn = () => {
   },[])
   return (
     <>
-      {sessionStorage.getItem(TOKEN)?<Redirect to="/dashboard"/>:<div className="signin-content">
+      {sessionStorage.getItem(TOKEN)?<Redirect to={{pathname:"/dashboard",state:location.state}}/>:<div className="signin-content">
         <div className="container">
           <div className="row">
             {/**Form section */}
