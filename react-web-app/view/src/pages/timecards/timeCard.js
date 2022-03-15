@@ -318,6 +318,7 @@ const TimeCards = () => {
                                 ]}
                                     primary
                                     hover
+                                    tableFilter
                                     striped
                                     bordered
                                     sorter

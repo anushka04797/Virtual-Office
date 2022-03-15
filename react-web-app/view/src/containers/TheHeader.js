@@ -10,7 +10,7 @@ import {
   CSubheader,
   CBreadcrumbRouter,
   CLink,
-  CButton,CRow,CCol
+  CButton, CRow, CCol
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { useHistory } from "react-router-dom";
@@ -24,7 +24,9 @@ import {
   TheHeaderDropdownTasks
 } from './index'
 import './TheHeader.css';
-import Search from '../components/search/Search';
+import MatSearch from '../components/search/MatSearch';
+import MenuIcon from '@mui/icons-material/Menu';
+
 const TheHeader = () => {
   const dispatch = useDispatch()
   const sidebarShow = useSelector(state => state.sidebar.sidebarShow)
@@ -42,7 +44,7 @@ const TheHeader = () => {
     console.log('sidebar --- ', sidebarShow)
   }, [])
   return (
-    <CHeader withSubheader>
+    <CHeader withSubheader className="justify-content-between" colorScheme="light">
       <CToggler
         inHeader
         className="ml-md-3 d-lg-none"
@@ -53,11 +55,12 @@ const TheHeader = () => {
         className="ml-3 d-md-down-none"
         onClick={toggleSidebar}
       />
+
       {/* <CHeaderBrand className="mx-auto d-lg-none" to="/">
         <CIcon name="logo" height="48" alt="Logo"/>
       </CHeaderBrand> */}
 
-      <CHeaderNav className="d-md-down-none mr-auto">
+      <CHeaderNav className="d-md-down-none">
         {/* <CHeaderNavItem className="px-3" >
           <CHeaderNavLink to="/dashboard">Dashboard</CHeaderNavLink>
         </CHeaderNavItem> */}
@@ -67,15 +70,17 @@ const TheHeader = () => {
         <CHeaderNavItem className="px-3">
           <CHeaderNavLink>Settings</CHeaderNavLink>
         </CHeaderNavItem> */}
-        <Search/>
+
+        <CHeaderNavItem className="px-3 justify-content-between">
+          <MatSearch />
+        </CHeaderNavItem>
+
       </CHeaderNav>
 
       <CHeaderNav className="px-3">
-
         <TheHeaderDropdown />
       </CHeaderNav>
       <CSubheader className="px-3 justify-content-between">
-        {/**Back button */}
         <CButton className="back-button" onClick={() => history.goBack()}><CIcon name="cil-arrow-thick-from-right" className="mr-2" />Back</CButton>
         <CBreadcrumbRouter
           className="border-0 c-subheader-nav m-0 px-0 px-md-3 custom-router"

@@ -82,7 +82,7 @@ const Drawer = styled(MuiDrawer, {
 const useStyles = makeStyles((theme) => ({
 
   root: {
-    
+
     width: "100%",
     maxWidth: 360,
     backgroundColor: "theme.palette.background.paper",
@@ -102,11 +102,11 @@ export default function MatSideBar(props) {
   let history = useHistory();
   let location = useLocation();
   const [opening, setOpen] = useState(true);
-  const[opening2,setOpen2]=useState(true);
+  const [opening2, setOpen2] = useState(true);
   const handleClickProjects = () => {
     setOpen(!opening);
   };
-  const handleClickWBS=()=>{
+  const handleClickWBS = () => {
     setOpen2(!opening2);
   }
   const handleDrawerToggle = () => {
@@ -119,235 +119,235 @@ export default function MatSideBar(props) {
     console.log(location.pathname);
   }, [location]);
   return (
-   <>
-   {/**Desktop menu */}
-    <Drawer variant="permanent" open={open} 
-     className="custom-drawer">
-      <DrawerHeader>
-        <IconButton onClick={handleDrawerClose}>
-          {/* Logo */}
-          {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-        </IconButton>
-      </DrawerHeader>
+    <>
+      {/**Desktop menu */}
+      <Drawer variant="permanent" open={open}
+        className="custom-drawer">
+        <DrawerHeader>
+          <IconButton onClick={handleDrawerClose}>
+            {/* Logo */}
+            {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+          </IconButton>
+        </DrawerHeader>
 
-      <List>
-        <ListItem
-          className="custom-list-item"
-          button
-          onClick={() => {
-            history.push("/dashboard");
-          }}
-          selected={location.pathName == "/dashboard" ? true : false}
-        >
-          <ListItemIcon>
-            {/* <DashboardRoundedIcon/> */}
-            {/* <Icon><img src={DashBoardIconFigma}/></Icon> */}
-            <img src={DashBoardIconFigma} />
-          </ListItemIcon>
-          <ListItemText primary={"Dashboard"} />
-        </ListItem>
-        {/**Projects */}
-        <ListItem button onClick={handleClickProjects}>
-          {/* <ListItem button onClick={()=>{history.push('/dashboard/ongoing-project-details-view')}} selected={location.pathName == "/dashboard/ongoing-project-details-view"?true:false}> */}
+        <List>
+          <ListItem
+            className="custom-list-item"
+            button
+            onClick={() => {
+              history.push("/dashboard");
+            }}
+            selected={location.pathName == "/dashboard" ? true : false}
+          >
+            <ListItemIcon>
+              {/* <DashboardRoundedIcon/> */}
+              {/* <Icon><img src={DashBoardIconFigma}/></Icon> */}
+              <img src={DashBoardIconFigma} />
+            </ListItemIcon>
+            <ListItemText primary={"Dashboard"} />
+          </ListItem>
+          {/**Projects */}
+          <ListItem button onClick={handleClickProjects}>
+            {/* <ListItem button onClick={()=>{history.push('/dashboard/ongoing-project-details-view')}} selected={location.pathName == "/dashboard/ongoing-project-details-view"?true:false}> */}
 
-          <ListItemIcon>
-            {/* <DashboardRoundedIcon/> */}
-            {/* <Icon><img src={DashBoardIconFigma}/></Icon> */}
-            <img src={DashBoardIconFigma} />
-          </ListItemIcon>
-          <ListItemText primary="Projects" />
-          {opening ? <ExpandMore /> : <ExpandLess />}
-        </ListItem>
-        {/*Projects sub routes*/}
-        <Collapse in={!opening} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
-            {/**Ongoing project */}
-            <ListItem
-              button
-              className={classes.nested}
-              onClick={() => {
-                history.push(
-                  "/dashboard/Projects/ongoing-project-details-view"
-                );
-              }}
-              selected={
-                location.pathName ==
-                "/dashboard/Projects/ongoing-project-details-view"
-                  ? true
-                  : false
-              }
-            >
-              <ListItemIcon>
-                <RadioButtonCheckedIcon />
-              </ListItemIcon>
-              <ListItemText primary="Ongoing" />
-            </ListItem>
-            {/**Completed Project */}
-            <ListItem
-              button
-              className={classes.nested}
-              onClick={() => {
-                history.push("/dashboard/Projects/completed-projects");
-              }}
-              selected={
-                location.pathName == "/dashboard/Projects/completed-projects"
-                  ? true
-                  : false
-              }
-            >
-              <ListItemIcon>
-                <RadioButtonCheckedIcon />
-              </ListItemIcon>
-              <ListItemText primary="Completed" />
-            </ListItem>
-            {/**Create a new project */}
-            <ListItem
-              button
-              className={classes.nested}
-              onClick={() => {
-                history.push("/dashboard/Projects/create-new-project");
-              }}
-              selected={
-                location.pathName == "/dashboard/Projects/create-new-project"
-                  ? true
-                  : false
-              }
-            >
-              <ListItemIcon>
-                <RadioButtonCheckedIcon />
-              </ListItemIcon>
-              <ListItemText primary="Create Project" />
-            </ListItem>
-          </List>
-        </Collapse>
-        {/**Meetings */}
-        <ListItem
-          button
-          onClick={() => {
-            history.push("/dashboard/meetings");
-          }}
-          selected={location.pathName == "/dashboard/meetings" ? true : false}
-        >
-          <ListItemIcon>
-            <img src={DashBoardIconFigma} />
-          </ListItemIcon>
-          <ListItemText primary={"Meetings"} />
-        </ListItem>
-        {/*WBS*/}
-        <ListItem
-          button
-         onClick={handleClickWBS}
-        >
-          <ListItemIcon>
-            <img src={DashBoardIconFigma} />
-          </ListItemIcon>
-          <ListItemText primary={"WBS"} />
-          {opening2 ? <ExpandMore /> : <ExpandLess />}
-        </ListItem>
-        {/**WBS Subroutes */}
-        <Collapse in={!opening2} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
-            {/**Create WBS */}
-            <ListItem
-              button
-              className={classes.nested}
-              onClick={() => {
-                history.push(
-                  "/dashboard/WBS/create-wbs"
-                );
-              }}
-              selected={
-                location.pathName ==
-                "/dashboard/WBS/create-wbs"
-                  ? true
-                  : false
-              }
-            >
-              <ListItemIcon>
-                <RadioButtonCheckedIcon />
-              </ListItemIcon>
-              <ListItemText primary="Create WBS" />
-            </ListItem>
-            {/**BOARD */}
-            <ListItem
-              button
-              className={classes.nested}
-              onClick={() => {
-                history.push("/dashboard/WBS/board");
-              }}
-              selected={
-                location.pathName == "/dashboard/WBS/board"
-                  ? true
-                  : false
-              }
-            >
-              <ListItemIcon>
-                <RadioButtonCheckedIcon />
-              </ListItemIcon>
-              <ListItemText primary="Board" />
-            </ListItem>
-          
-          </List>
-        </Collapse>
-        {/**EVMS */}
-        <ListItem
-          button
-          onClick={() => {
-            history.push("/dashboard/EVMS");
-          }}
-          selected={location.pathName == "/dashboard/EVMS" ? true : false}
-        >
-          <ListItemIcon>
-            <img src={DashBoardIconFigma} />
-          </ListItemIcon>
-          <ListItemText primary={"EVMS"} />
-        </ListItem>
-        {/**Profile */}
-        <ListItem
-          button
-          onClick={() => {
-            history.push("/dashboard/profile");
-          }}
-          selected={location.pathName == "/dashboard/profile" ? true : false}
-        >
-          <ListItemIcon>
-            <img src={DashBoardIconFigma} />
-          </ListItemIcon>
-          <ListItemText primary={"Profile"} />
-        </ListItem>
-        {/**Time card */}
-        <ListItem
-          button
-          onClick={() => {
-            history.push("/dashboard/timecards");
-          }}
-          selected={location.pathName == "/dashboard/timecards" ? true : false}
-        >
-          <ListItemIcon>
-            <img src={DashBoardIconFigma} />
-          </ListItemIcon>
-          <ListItemText primary={"Timecards"} />
-        </ListItem>
-        {/**Shared Docs */}
-        <ListItem
-          button
-          onClick={() => {
-            history.push("/dashboard/shared-documents");
-          }}
-          selected={
-            location.pathName == "/dashboard/shared-documents" ? true : false
-          }
-        >
-          <ListItemIcon>
-            <img src={DashBoardIconFigma} />
-          </ListItemIcon>
-          <ListItemText primary={"Shared Docs"} />
-        </ListItem>
-      </List>
-    </Drawer>
+            <ListItemIcon>
+              {/* <DashboardRoundedIcon/> */}
+              {/* <Icon><img src={DashBoardIconFigma}/></Icon> */}
+              <img src={DashBoardIconFigma} />
+            </ListItemIcon>
+            <ListItemText primary="Projects" />
+            {opening ? <ExpandMore /> : <ExpandLess />}
+          </ListItem>
+          {/*Projects sub routes*/}
+          <Collapse in={!opening} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              {/**Ongoing project */}
+              <ListItem
+                button
+                className={classes.nested}
+                onClick={() => {
+                  history.push(
+                    "/dashboard/Projects/ongoing-project-details-view"
+                  );
+                }}
+                selected={
+                  location.pathName ==
+                    "/dashboard/Projects/ongoing-project-details-view"
+                    ? true
+                    : false
+                }
+              >
+                <ListItemIcon>
+                  <RadioButtonCheckedIcon />
+                </ListItemIcon>
+                <ListItemText primary="Ongoing" />
+              </ListItem>
+              {/**Completed Project */}
+              <ListItem
+                button
+                className={classes.nested}
+                onClick={() => {
+                  history.push("/dashboard/Projects/completed-projects");
+                }}
+                selected={
+                  location.pathName == "/dashboard/Projects/completed-projects"
+                    ? true
+                    : false
+                }
+              >
+                <ListItemIcon>
+                  <RadioButtonCheckedIcon />
+                </ListItemIcon>
+                <ListItemText primary="Completed" />
+              </ListItem>
+              {/**Create a new project */}
+              <ListItem
+                button
+                className={classes.nested}
+                onClick={() => {
+                  history.push("/dashboard/Projects/create-new-project");
+                }}
+                selected={
+                  location.pathName == "/dashboard/Projects/create-new-project"
+                    ? true
+                    : false
+                }
+              >
+                <ListItemIcon>
+                  <RadioButtonCheckedIcon />
+                </ListItemIcon>
+                <ListItemText primary="Create Project" />
+              </ListItem>
+            </List>
+          </Collapse>
+          {/**Meetings */}
+          <ListItem
+            button
+            onClick={() => {
+              history.push("/dashboard/meetings");
+            }}
+            selected={location.pathName == "/dashboard/meetings" ? true : false}
+          >
+            <ListItemIcon>
+              <img src={DashBoardIconFigma} />
+            </ListItemIcon>
+            <ListItemText primary={"Meetings"} />
+          </ListItem>
+          {/*WBS*/}
+          <ListItem
+            button
+            onClick={handleClickWBS}
+          >
+            <ListItemIcon>
+              <img src={DashBoardIconFigma} />
+            </ListItemIcon>
+            <ListItemText primary={"WBS"} />
+            {opening2 ? <ExpandMore /> : <ExpandLess />}
+          </ListItem>
+          {/**WBS Subroutes */}
+          <Collapse in={!opening2} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              {/**Create WBS */}
+              <ListItem
+                button
+                className={classes.nested}
+                onClick={() => {
+                  history.push(
+                    "/dashboard/WBS/create-wbs"
+                  );
+                }}
+                selected={
+                  location.pathName ==
+                    "/dashboard/WBS/create-wbs"
+                    ? true
+                    : false
+                }
+              >
+                <ListItemIcon>
+                  <RadioButtonCheckedIcon />
+                </ListItemIcon>
+                <ListItemText primary="Create WBS" />
+              </ListItem>
+              {/**BOARD */}
+              <ListItem
+                button
+                className={classes.nested}
+                onClick={() => {
+                  history.push("/dashboard/WBS/board");
+                }}
+                selected={
+                  location.pathName == "/dashboard/WBS/board"
+                    ? true
+                    : false
+                }
+              >
+                <ListItemIcon>
+                  <RadioButtonCheckedIcon />
+                </ListItemIcon>
+                <ListItemText primary="Board" />
+              </ListItem>
 
-    {/**mobile drawer */}
-   
+            </List>
+          </Collapse>
+          {/**EVMS */}
+          <ListItem
+            button
+            onClick={() => {
+              history.push("/dashboard/EVMS");
+            }}
+            selected={location.pathName == "/dashboard/EVMS" ? true : false}
+          >
+            <ListItemIcon>
+              <img src={DashBoardIconFigma} />
+            </ListItemIcon>
+            <ListItemText primary={"EVMS"} />
+          </ListItem>
+          {/**Profile */}
+          <ListItem
+            button
+            onClick={() => {
+              history.push("/dashboard/profile");
+            }}
+            selected={location.pathName == "/dashboard/profile" ? true : false}
+          >
+            <ListItemIcon>
+              <img src={DashBoardIconFigma} />
+            </ListItemIcon>
+            <ListItemText primary={"Profile"} />
+          </ListItem>
+          {/**Time card */}
+          <ListItem
+            button
+            onClick={() => {
+              history.push("/dashboard/timecards");
+            }}
+            selected={location.pathName == "/dashboard/timecards" ? true : false}
+          >
+            <ListItemIcon>
+              <img src={DashBoardIconFigma} />
+            </ListItemIcon>
+            <ListItemText primary={"Timecards"} />
+          </ListItem>
+          {/**Shared Docs */}
+          <ListItem
+            button
+            onClick={() => {
+              history.push("/dashboard/shared-documents");
+            }}
+            selected={
+              location.pathName == "/dashboard/shared-documents" ? true : false
+            }
+          >
+            <ListItemIcon>
+              <img src={DashBoardIconFigma} />
+            </ListItemIcon>
+            <ListItemText primary={"Shared Docs"} />
+          </ListItem>
+        </List>
+      </Drawer>
+
+      {/**mobile drawer */}
+
 
     </>
   );
