@@ -21,10 +21,12 @@ import { useFormik } from 'formik';
 import * as FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
 import { fetchProjectsForPMThunk } from '../../store/slices/ProjectsSlice';
-import { arrayRemoveItem } from '../../helper';
+import { arrayRemoveItem, capitalizeFirstLetter } from '../../helper';
 import sortBy from 'lodash/sortBy';
 import { has_permission } from '../../helper';
 import LinearWithValueLabel from '../../components/linear-progress-bar/linear-progress-bar';
+import './myProjectDetails.css'
+import AssignedProjectsPopover from '../createProject/inc/AssignedProjectsPopover';
 
 const MyProjectsDetailsView = () => {
     const { work_package_number } = useParams();
@@ -42,6 +44,7 @@ const MyProjectsDetailsView = () => {
     const [selectedAssignees, setSelectedAssignees] = useState([])
     const [selectedAssigneesEP, setSelectedAssigneesEP] = useState([])
     const profile_details = useSelector(state => state.profile.data)
+    const [remaining_EP, setRemaining_EP] = useState(1)
     const radioHandler = (status, titleStatus) => {
         setStatus(status);
         setTitleStatus(titleStatus);
@@ -103,20 +106,27 @@ const MyProjectsDetailsView = () => {
         let preset_assignees = []
 
         API.get('auth/assignee/list/').then((res) => {
+            console.log('assignees',res.data)
             let temp = []
             let dtem = []
+            let temp_inputList=[]
             Array.from(res.data.data).forEach((item, idx) => {
                 temp.push({ value: item.id.toString(), label: item.first_name + ' ' + item.last_name, data: item })
             })
 
+            console.log('subtask',subtask)
             subtask?.assignees.forEach((assignee, idx) => {
+                temp_inputList.push({ 
+                    assignee: { value: String(assignee.assignee.id).toString(), label: assignee.assignee.first_name + ' ' + assignee.assignee.last_name, data: assignee.assignee }, 
+                    estimated_person: assignee.estimated_person, 
+                    planned_value: parseFloat(assignee.assignee.slc_details.hourly_rate) * 8 * parseFloat(total_working_days), 
+                    planned_hours: parseFloat(((total_working_days * 8) * selectedAssigneesEP).toFixed(1))
+                })
                 dtem.push(assignee.assignee.id.toString())
                 preset_assignees.push({ value: String(assignee.assignee.id).toString(), label: assignee.assignee.first_name + ' ' + assignee.assignee.last_name, data: assignee.assignee })
                 temp = arrayRemoveItem(temp, { value: String(assignee.assignee.id).toString(), label: assignee.assignee.first_name + ' ' + assignee.assignee.last_name, data: assignee.assignee })
             })
-            console.log('preset assignees', preset_assignees)
-            console.log('temp assignees', temp)
-            console.log('dtem assignees', dtem)
+            setInputList(temp_inputList);
             setAssignees(sortBy(temp, 'label'))
             setSelectedAssignees(preset_assignees)
             editForm.setFieldValue('assignee', dtem)
@@ -238,6 +248,7 @@ const MyProjectsDetailsView = () => {
         let total_planned_hours = parseFloat(editForm.values.planned_hours)
         let assignees = []
         let assignee_eps = []
+        
 
         console.log('total working days', total_working_days)
         Array.from(inputList).forEach((item, idx) => {
@@ -267,8 +278,9 @@ const MyProjectsDetailsView = () => {
         })
     }
     function removeAssignee(item) {
+        setInputList(arrayRemoveItem(inputList, item));
         populate_planned_value_and_hours(arrayRemoveItem(inputList, item))
-        setInputList(arrayRemoveItem(inputList, item))
+        setRemaining_EP((parseFloat(remaining_EP) + parseFloat(item.estimated_person)).toFixed(1))
     }
     const colourStyles = {
         // control: (styles, state) => ({ ...styles,height:"35px", fontSize: '14px !important', lineHeight: '1.42857', borderRadius: "8px",borderRadius:".25rem",color:"rgb(133,133,133)",border:state.isFocused ? '2px solid #0065ff' :'inherit'}),
@@ -440,6 +452,23 @@ const MyProjectsDetailsView = () => {
         setSelectedAssigneesEP(0)
         console.log("inputList", inputList)
     };
+    const handleAddPerson = () => {
+        console.log("selected assignee", selectedAssignees, 'ep', selectedAssigneesEP)
+        populate_planned_value_and_hours([...inputList, { assignee: selectedAssignees.data, estimated_person: selectedAssigneesEP }])
+        setInputList([
+            ...inputList, 
+            { 
+              assignee: selectedAssignees, 
+              estimated_person: selectedAssigneesEP, 
+              planned_value: parseFloat(selectedAssignees.data.slc_details.hourly_rate) * 8 * parseFloat(total_working_days), 
+              planned_hours: parseFloat(((total_working_days * 8) * selectedAssigneesEP).toFixed(1)) 
+            }
+          ]);
+        setSelectedAssignees(null)
+        setSelectedAssigneesEP(0)
+        setRemaining_EP((remaining_EP - selectedAssigneesEP).toFixed(1))
+        console.log("inputList", inputList)
+    };
     const delete_subtask = (work_package_index) => {
         swal({
             title: "Are you sure?",
@@ -564,8 +593,48 @@ const MyProjectsDetailsView = () => {
                                         <CInput id="planned_delivery_date" name="planned_delivery_date" value={editForm.values.planned_delivery_date} onChange={(event) => handlePlannedDeliveryDateChange(event)} className="custom-forminput-6" type="date" />
                                         {editForm.touched.planned_delivery_date && editForm.errors.planned_delivery_date && <small style={{ color: 'red' }}>{editForm.errors.planned_delivery_date}</small>}
                                     </div>
-
                                     <div className="col-lg-12 mb-3">
+                                        <div className="evms-div pr-3 pl-3">
+                                            <div className="row">
+                                                <ul className="m-3">
+                                                    {inputList.map((item,idx) => (
+                                                        <li key={idx}>
+                                                            <AssignedProjectsPopover remove={removeAssignee} data={item} text1={capitalizeFirstLetter(item.assignee.data.first_name) + " " + capitalizeFirstLetter(item.assignee.data.last_name)} text2={"  → " + item.estimated_person + " EP → " + item.planned_value + " PV → " + item.planned_hours + " Hr(s)"} />
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                                <div className="col-lg-4 mb-3">
+                                                    <CLabel className="custom-label-5" htmlFor="workerBees" aria-labelledby="workerBees">
+                                                        Assignee
+                                                    </CLabel>
+                                                    <Select
+                                                        closeMenuOnSelect={true}
+                                                        aria-labelledby="workerBees"
+                                                        id="workerBees"
+                                                        minHeight="35px"
+                                                        placeholder="Select from list"
+                                                        isClearable={false}
+                                                        isMulti={false}
+                                                        onChange={(v, i) => { setSelectedAssignees(v); setSelectedAssigneesEP(remaining_EP) }}
+                                                        classNamePrefix="custom-forminput-6"
+                                                        value={selectedAssignees}
+                                                        options={assignees ? assignees : []}
+                                                        styles={colourStyles} />
+                                                    {editForm.touched.assignee && editForm.errors.assignee && <small style={{ color: 'red' }}>{editForm.errors.assignee}</small>}
+                                                </div>
+                                                <div className="col-lg-3 mb-3">
+                                                    <CLabel className="custom-label-5">
+                                                        Remaining EP
+                                                    </CLabel>
+                                                    <CInput id="estimated_person" type="number" name="estimated_person" min="0" max={remaining_EP} step="0.1" value={selectedAssigneesEP} onChange={(e) => { if (e.target.value.match("^(0(\.[0-9]+)?|1(\.0+)?)$") != null) { setSelectedAssigneesEP(e.target.value) } }} className="custom-forminput-6"></CInput>
+                                                </div>
+                                                <div className="col-lg-3 mb-3">
+                                                    <CButton color="info" className="ar-btn" onClick={handleAddPerson} disabled={selectedAssigneesEP == 0}>+ Add</CButton>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {/* <div className="col-lg-12 mb-3">
                                         <CLabel className="custom-label-5" htmlFor="workerBees" aria-labelledby="workerBees">
                                             Assignee
                                         </CLabel>
@@ -583,7 +652,7 @@ const MyProjectsDetailsView = () => {
                                             options={assignees ? assignees : []}
                                             styles={colourStyles} />
                                         {editForm.touched.assignee && editForm.errors.assignee && <small style={{ color: 'red' }}>{editForm.errors.assignee}</small>}
-                                    </div>
+                                    </div> */}
                                     {/**Planned Value */}
                                     <div className="col-lg-3 mb-3">
                                         <CLabel className="custom-label-5">

@@ -7,20 +7,21 @@ import { CButton, CCard, CCardBody, CCardHeader } from '@coreui/react';
 import { API } from '../../../Config';
 
 export default function AssignedProjectsPopover(props) {
-  const [projects,setProjects]=React.useState([])
-  const assigned_project_names=(user_id)=>{
-    API.get('project/assigned/all/'+user_id+'/').then(res=>{
-      let temp=[]
-      Array.from(res.data.data).forEach((item,idx)=>{
-        console.log(idx,item)
+  const [projects, setProjects] = React.useState([])
+  const assigned_project_names = (user_id) => {
+    API.get('project/assigned/all/' + user_id + '/').then(res => {
+      let temp = []
+      Array.from(res.data.data).forEach((item, idx) => {
+        console.log(idx, item)
         temp.push(item.sub_task)
       })
       setProjects(temp)
     })
   }
-    React.useEffect(()=>{
-        assigned_project_names(props.data.assignee.data.id)
-    },[props.data])
+  React.useEffect(() => {
+    console.log('modal data',props.data)
+    assigned_project_names(props.data.assignee.data.id)
+  }, [props.data])
   return (
     <PopupState variant="popover" popupId="demo-popup-popover">
       {(popupState) => (
@@ -43,18 +44,18 @@ export default function AssignedProjectsPopover(props) {
               horizontal: 'center',
             }}
           >
-              <CCard>
-                  <CCardHeader className="text-center">
-                      <h5>Currently Assigned</h5>
-                  </CCardHeader>
-                  <CCardBody>
-                    {Array.from(projects).map((item,idx)=>(
-                      <Typography>{(idx+1)+' . '+item}</Typography>
-                    ))}
-                    
-                    {/* <Typography sx={{ p: 2 }}>The content of the Popover.</Typography> */}
-                  </CCardBody>
-              </CCard>
+            <CCard>
+              <CCardHeader className="text-center">
+                <h5>Currently Assigned</h5>
+              </CCardHeader>
+              <CCardBody>
+                {Array.from(projects).map((item, idx) => (
+                  <Typography key={idx}>{(idx + 1) + ' . ' + item}</Typography>
+                ))}
+
+                {/* <Typography sx={{ p: 2 }}>The content of the Popover.</Typography> */}
+              </CCardBody>
+            </CCard>
           </Popover>
         </div>
       )}

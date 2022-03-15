@@ -14,7 +14,7 @@ export const fetchTimecardThunk =createAsyncThunk('timecard/fetchTimeCardThunk',
     return response.data
 })
 export const fetchAllTimecardsPmThunk= createAsyncThunk('timecard/fetchAllTimecardsPm',async(user_id) =>{
-    const response = await JsonClient.get('wbs/pm-wise/all-time-card/list/'+user_id+'/')
+    const response = await JsonClient.get('wbs/user-wise/weekly-time-card/'+user_id+'/')
     console.log('pm',response.data[0])
     return response.data[0]
 })

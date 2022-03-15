@@ -687,11 +687,12 @@ const CreateNewProject = () => {
 
   // handle click event of the Add button
   const handleAddClick = () => {
+    console.log('selectedAssignees',selectedAssignees)
     populate_planned_value_and_hours([...inputList, { assignee: selectedAssignees, estimated_person: selectedAssigneesEP }])
     setInputList([
       ...inputList, 
       { 
-        assignee: selectedAssignees, 
+        assignee: selectedAssignees,
         estimated_person: selectedAssigneesEP, 
         planned_value: parseFloat(selectedAssignees.data.slc_details.hourly_rate) * 8 * parseFloat(total_working_days), 
         planned_hours: parseFloat(((total_working_days * 8) * selectedAssigneesEP).toFixed(1)) 
@@ -704,7 +705,8 @@ const CreateNewProject = () => {
   };
 
   function removeAssignee(item) {
-    console.log(remaining_EP, item.estimated_person)
+    console.log('EP to remove',remaining_EP)
+    console.log('item to remove',arrayRemoveItem(inputList, item))
     populate_planned_value_and_hours(arrayRemoveItem(inputList, item))
     setInputList(arrayRemoveItem(inputList, item))
     setRemaining_EP((parseFloat(remaining_EP) + parseFloat(item.estimated_person)).toFixed(1))
@@ -870,8 +872,8 @@ const CreateNewProject = () => {
                         <div className="evms-div pr-3 pl-3">
                           <div className="row">
                             <ul className="m-3">
-                              {inputList.map((item) => (
-                                <li>
+                              {inputList.map((item,idx) => (
+                                <li key={idx}>
                                   <AssignedProjectsPopover remove={removeAssignee} data={item} text1={capitalizeFirstLetter(item.assignee.data.first_name) + " " + capitalizeFirstLetter(item.assignee.data.last_name)} text2={"  → " + item.estimated_person + " EP → " + item.planned_value + " PV → " + item.planned_hours + " Hr(s)"}/>
                                 </li>
                               ))}

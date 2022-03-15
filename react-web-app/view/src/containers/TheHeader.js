@@ -10,7 +10,7 @@ import {
   CSubheader,
   CBreadcrumbRouter,
   CLink,
-  CButton
+  CButton,CRow,CCol
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { useHistory } from "react-router-dom";
@@ -24,6 +24,7 @@ import {
   TheHeaderDropdownTasks
 } from './index'
 import './TheHeader.css';
+import Search from '../components/search/Search';
 const TheHeader = () => {
   const dispatch = useDispatch()
   const sidebarShow = useSelector(state => state.sidebar.sidebarShow)
@@ -66,6 +67,7 @@ const TheHeader = () => {
         <CHeaderNavItem className="px-3">
           <CHeaderNavLink>Settings</CHeaderNavLink>
         </CHeaderNavItem> */}
+        <Search/>
       </CHeaderNav>
 
       <CHeaderNav className="px-3">

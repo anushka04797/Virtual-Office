@@ -23,7 +23,7 @@ export const has_permission=(permission)=>{
 }
 export function arrayRemoveItem(arr, value) {
     return arr.filter(function (ele) {
-        console.log('ele',ele,'value',value)
+        // console.log('ele',ele,'value',value)
         return ele != value;
     });
 }
@@ -39,6 +39,6 @@ export function capitalize(string) {
     return ''
 }
 
-export function capitalizeFirstLetter(string) {
+export function capitalizeFirstLetter(string="") {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
