@@ -12,7 +12,14 @@ import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import { CRow } from '@coreui/react';
-import { Card, CardContent, CardHeader, Divider, Typography } from '@mui/material';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import Avatar from '@mui/material/Avatar';
+import ImageIcon from '@mui/icons-material/Image';
+import WorkIcon from '@mui/icons-material/Work';
+import BeachAccessIcon from '@mui/icons-material/BeachAccess';
+
+import { Card, CardContent, CardHeader, Divider, List, ListItem, Typography } from '@mui/material';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -55,33 +62,57 @@ export default function DraggableSearchResult(props) {
                 open={props.open}
                 onClose={props.handleClose}
                 PaperComponent={PaperComponent}
-                aria-labelledby="Search Result"
+                aria-labelledby="draggable-dialog-title"
                 TransitionComponent={Transition}
             >
                 <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
                     Search Result
                 </DialogTitle>
-                
+
                 <DialogContent>
-                    <Typography sx={{ fontSize: 14, fontWeight:'bold', marginBottom:3 }} color="#000000" >
+                    <Typography sx={{ fontSize: 14, fontWeight: 'bold', marginBottom: 3 }} color="#000000" >
                         You searched for '{props.searchText}'
                     </Typography>
                     <CRow>
                         <Card>
                             <CardContent>
-                                <Typography sx={{ fontSize: 14, fontWeight:'bold' }} color="#000000" >
-                                    Employees
+                                <Typography sx={{ fontSize: 14, fontWeight: 'bold' }} color="#000000" >
+                                    Employees ({props.result?.projects?.length})
                                 </Typography>
+                                <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+                                    {props.result?.employees?.length > 0 && Array.from(props.result.employees).map((item, idx) => (
+                                        <ListItem>
+                                            <ListItemAvatar>
+                                                <Avatar>
+                                                    <ImageIcon />
+                                                </Avatar>
+                                            </ListItemAvatar>
+                                            <ListItemText primary={item.first_name+' '+item.last_name} secondary="Jan 9, 2014" />
+                                        </ListItem>
+                                    ))}
+                                </List>
                             </CardContent>
                         </Card>
                     </CRow>
-                    <Divider orientation='vertical' flexItem/>
+                    <Divider orientation='vertical' flexItem />
                     <CRow className="mt-2">
                         <Card>
                             <CardContent>
-                                <Typography sx={{ fontSize: 14, fontWeight:'bold' }} color="#000000" >
-                                    Projects
+                                <Typography sx={{ fontSize: 14, fontWeight: 'bold' }} color="#000000" >
+                                    Projects ({props.result?.projects?.length})
                                 </Typography>
+                                <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+                                    {props.result?.projects?.length > 0 && Array.from(props.result.projects).map((item, idx) => (
+                                        <ListItem>
+                                            <ListItemAvatar>
+                                                <Avatar>
+                                                    <ImageIcon />
+                                                </Avatar>
+                                            </ListItemAvatar>
+                                            <ListItemText primary={item.sub_task} secondary="Jan 9, 2014" />
+                                        </ListItem>
+                                    ))}
+                                </List>
                             </CardContent>
                         </Card>
                     </CRow>
