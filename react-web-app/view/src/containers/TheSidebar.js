@@ -16,7 +16,7 @@ import CIcon from '@coreui/icons-react'
 import { has_permission } from '../helper';
 // sidebar nav config
 import { useHistory } from 'react-router';
-import { API } from '../Config'
+import { API, USER_ID } from '../Config'
 const TheSidebar = () => {
   const dispatch = useDispatch()
   let history = useHistory()
@@ -103,7 +103,7 @@ const TheSidebar = () => {
         <CSidebarNavItem to="/dashboard/shared-documents" name="Shared Documents" icon="cil-folder-open" className="vo-navItem"></CSidebarNavItem>
         <hr />
         {/**Profile */}
-        <CSidebarNavItem to="/dashboard/profile" name="Profile" icon="cil-user" className="vo-navItem"></CSidebarNavItem>
+        <CSidebarNavItem to={"/dashboard/profile/"+sessionStorage.getItem(USER_ID)} name="Profile" icon="cil-user" className="vo-navItem"></CSidebarNavItem>
 
 
         {/**log out */}

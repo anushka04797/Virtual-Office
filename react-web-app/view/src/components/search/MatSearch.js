@@ -3,11 +3,12 @@ import Paper from '@mui/material/Paper';
 import InputBase from '@mui/material/InputBase';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
-
+import CloseSharpIcon from '@mui/icons-material/CloseSharp';
 import SearchIcon from '@mui/icons-material/Search';
 import MatResult from './MatResult.js'
 import MatFullScreenSearchResult from './MatFullScreenSearchResult.js'
 import { API } from '../../Config.js';
+import DraggableSearchResultTab from './MatResultTab.js';
 
 const MatSearch = () => {
     const [searchText, setSearchText] = useState('')
@@ -22,6 +23,12 @@ const MatSearch = () => {
             })
             
         }
+    }
+    const handleKeyPress=(event)=>{
+        
+        if(event.key === 'Enter'){
+            search()
+          }
     }
     return (
         <>
@@ -38,11 +45,16 @@ const MatSearch = () => {
                     inputProps={{ 'aria-label': 'search' }}
                     value={searchText}
                     onChange={(e)=>setSearchText(e.target.value)}
+                    onKeyPress={handleKeyPress}
                 />
-                <IconButton type="submit" sx={{ p: '10px' }} aria-label="search" onClick={search}>
+                {String(searchText).length==0?
+                <IconButton type="button" sx={{ p: '10px', color:'rgb(0 82 204)' }} aria-label="search" onClick={search}>
                     <SearchIcon/>
-                </IconButton>
-                <MatResult open={open} handleClose={()=>setOpen(false)} searchText={searchText} result={result}/>
+                </IconButton>:<IconButton type="button" sx={{ p: '10px', color:'rgb(0 82 204)' }} aria-label="search" onClick={()=>setSearchText('')}>
+                    <CloseSharpIcon/>
+                </IconButton>}
+                {/* <MatResult open={open} handleClose={()=>setOpen(false)} searchText={searchText} result={result}/> */}
+                <DraggableSearchResultTab open={open} handleClose={()=>setOpen(false)} searchText={searchText} result={result}/>
                 {/* <MatFullScreenSearchResult open={open} handleClose={()=>setOpen(false)}/> */}
                 {/* <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" /> */}
                 {/* <IconButton color="primary" sx={{ p: '10px' }} aria-label="directions">

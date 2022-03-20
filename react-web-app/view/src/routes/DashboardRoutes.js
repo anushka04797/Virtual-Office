@@ -21,7 +21,7 @@ const routes = [
 
     { path: '/dashboard/timecard/generate-timecard', exact: true, name: 'Generate Timecard', component: React.lazy(() => import('../pages/timecards/timeCard')) },
     { path: '/dashboard/timecard/weekly-timecards', exact: true, name: 'Weekly Timecard', component: React.lazy(() => import('../pages/weekly-timecards/WeeklyTimecards')) },
-    { path: '/dashboard/profile', exact: true, name: 'Profile', component: React.lazy(() => import('../pages/profile/profileView')) },
+    { path: '/dashboard/profile/:id?', exact: true, name: 'Profile', component: React.lazy(() => import('../pages/profile/profileView')) },
     { path: '/dashboard/shared-documents', exact: true, name: 'Shared Documents', component: React.lazy(() => import('../pages/shared-docs/sharedDocs')) }
 
 ]

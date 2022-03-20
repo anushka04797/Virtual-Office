@@ -35,15 +35,8 @@ const ProjectsTableDashboard = () => {
                     ))}
                     { /**If no projects */}
                     {projects == '' || projects == undefined ? (
-
-
-
                         <CAlert className="no-value-show-alert" color="primary">Currently there are no projects assigned to you</CAlert>
-
-
                     ) : null
-
-
                     }
                 </div>
                 {projects != undefined && <div className="button-holder3"><CButton className="tiny-buttons1" onClick={() => history.push({ pathname: '/dashboard/Projects/assigned-projects' })}>View all</CButton></div>}

@@ -31,6 +31,7 @@ import { fetchPersonalDetails } from "../../store/slices/ProfileSlice";
 import swal from "sweetalert";
 import hidePwdImg from '../../assets/icons/Showpass-show.svg';
 import showPwdImg from '../../assets/icons/Hide.svg';
+import { useParams } from 'react-router-dom';
 const UserProfile = () => {
     const onButtonClick = () => {
         // `current` points to the mounted file input element
@@ -44,13 +45,14 @@ const UserProfile = () => {
         { value: 'AB-', label: 'AB-' },
         { value: 'O+', label: 'O+' },
         { value: 'O-', label: 'O-' },
-      ]
-      
+    ]
+    const { id } = useParams()
     const [revealOldPwd, setRevealOldPwd] = useState(false);
     const [revealNewPwd, setRevealNewPwd] = useState(false);
     const [revealConfPwd, setRevealConfPwd] = useState(false);
-    const profile_details = useSelector(state => state.profile.data)
-    console.log(profile_details);
+    // const profile_details = useSelector(state => state.profile.data)
+    const [profile_details,setProfileDetails]=useState()
+
     const [initialBloodGroup, setInitialBloodGroup] = useState("")
     const inputFile = useRef(null)
     const [image, setImage] = useState()
@@ -87,7 +89,7 @@ const UserProfile = () => {
             address: profile_update_form.values.address,
             blood_group: values.value
         })
-        setInitialBloodGroup({value: values.value, label: values.label})
+        setInitialBloodGroup({ value: values.value, label: values.label })
     }
     const validateChangePassForm = (values) => {
         const errors = {}
@@ -159,10 +161,26 @@ const UserProfile = () => {
         })
     }
     useEffect(() => {
-        window.scrollTo(0, 0);
-        setInitialBloodGroup({value: profile_details.blood_group, label: profile_details.blood_group})
-        setAvatar(profile_details.profile_pic ? (BASE_URL + profile_details.profile_pic) : "avatars/user-avatar-default.png")
-    }, [profile_details])
+        // window.scrollTo(0, 0);
+        // setInitialBloodGroup({ value: profile_details.blood_group, label: profile_details.blood_group })
+        // setAvatar(profile_details.profile_pic ? (BASE_URL + profile_details.profile_pic) : "avatars/user-avatar-default.png")
+    }, [])
+
+    useEffect(() => {
+        console.log('id from route', id)
+        if(id){
+            API.get('auth/profile/details/'+id+'/').then(res=>{
+                console.log('res',res.data)
+                // profile_details=res.data.data
+                setProfileDetails(res.data.data)
+                window.scrollTo(0, 0);
+                setInitialBloodGroup({ value: res.data.data.blood_group, label: res.data.data.blood_group })
+                setAvatar(res.data.data.profile_pic ? (BASE_URL + res.data.data.profile_pic) : "avatars/user-avatar-default.png")
+            }).catch(err=>{
+
+            })
+        }
+    }, [id])
     const profile_update_form = useFormik({
         initialValues: {
             first_name: '',
@@ -313,7 +331,7 @@ const UserProfile = () => {
                         </CNavItem>
                         {/**change password */}
                         <CNavItem>
-                            <CNavLink data-tab="changePassword" className="special">
+                            <CNavLink disabled={profile_details?.id!=sessionStorage.getItem(USER_ID)?true:false} data-tab="changePassword" className="special">
                                 <CIcon name="cil-pen-alt" className="mr-1" />
                                 Change Password
                             </CNavLink>
@@ -323,7 +341,7 @@ const UserProfile = () => {
                     <CTabContent>
                         {/**_____VIEW PROFILE____ */}
                         <CTabPane data-tab="viewProfile">
-                            {profile_details && <CContainer>
+                            {profile_details != undefined && <CContainer>
                                 <h3 className="profile-page-header">Profile Details</h3>
                                 <CRow>
                                     <div className="col-lg-8 offset-lg-2">
@@ -337,24 +355,24 @@ const UserProfile = () => {
 
                                                 {/**__PRO PIC UP BUTTON__ */}
                                                 <input style={{ display: 'none' }} ref={inputFile} type="file" onChange={(event) => { onImageChange(event.target.files[0]) }} />
-                                                <CButton
+                                                {profile_details.id == sessionStorage.getItem(USER_ID) && <CButton
                                                     onClick={changeImageClick}
                                                     type="button"
                                                     className="d-block mx-auto change-img-btn mt-1"
                                                 >
                                                     {" "}
                                                     <CIcon name="cil-camera"></CIcon> Change Picture
-                                                </CButton>
+                                                </CButton>}
                                             </div>
                                             <CCardBody>
                                                 <hr />
-                                                <CButton
+                                                {profile_details.id == sessionStorage.getItem(USER_ID) && <CButton
                                                     className="edit-profile mb-3"
                                                     onClick={() => profileEditForm()}
                                                 >
                                                     <CIcon name="cil-pen" className="mr-1" />
                                                     Edit Info
-                                                </CButton>
+                                                </CButton>}
 
                                                 {/**info show */}
                                                 <div className="row justify-content-center">
@@ -372,7 +390,7 @@ const UserProfile = () => {
                                                     </div>
                                                     <div className="col-md-6 col-lg-4">
                                                         <h5 className="info-header-1">Job title</h5>
-                                                        <h5 className="profile-details-points-email">{profile_details?.slc_details.slc.name}</h5>
+                                                        <h5 className="profile-details-points-email">{profile_details?.slc_details?.slc?.name}</h5>
                                                     </div>
                                                     <div className="col-md-6 col-lg-4">
                                                         <h5 className="info-header-1"> Phone</h5>
@@ -392,6 +410,16 @@ const UserProfile = () => {
                                                             {profile_details.blood_group}
                                                         </h5>
                                                     </div>
+                                                </div>
+                                               
+                                                <div className="all-da-buttons-1">
+                                                <CLabel>Assigned Projects</CLabel>
+                                                    {Array.from([{title:'ABC',work_package_index:'1001'}]).length > 0 && Array.from([{title:'ABC',work_package_index:'1001'}]).map((task, idx) => (
+                                                        <CButton key={idx} type="button" className="package-button rounded-pill" onClick={() => {  }}>
+                                                            {task.task_title}
+                                                            <span className="tooltiptext">{task.work_package_index}</span>
+                                                        </CButton>
+                                                    ))}
                                                 </div>
                                             </CCardBody>
                                         </CCard>
