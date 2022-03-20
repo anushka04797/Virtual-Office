@@ -23,6 +23,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ExtensionSharpIcon from '@mui/icons-material/ExtensionSharp';
 import AssignmentSharpIcon from '@mui/icons-material/AssignmentSharp';
 import AccountCircleSharpIcon from '@mui/icons-material/AccountCircleSharp';
+import CoPresentSharpIcon from '@mui/icons-material/CoPresentSharp';
 
 import { useHistory } from 'react-router-dom';
 
@@ -123,9 +124,10 @@ export default function DraggableSearchResultTab(props) {
                     </Typography>
                     <Box sx={{ width: '100%', bgcolor: 'background.paper' }}>
                         <Tabs value={value} onChange={handleChange} centered indicatorColor="primary">
-                            <Tab icon={<PeopleIcon fontSize="small" />} label="Employees" {...a11yProps(0)} />
-                            <Tab icon={<ExtensionSharpIcon fontSize="small" />} label="Projects" {...a11yProps(1)} />
-                            <Tab disabled icon={<AssignmentSharpIcon fontSize="small" />} label="WBS" {...a11yProps(2)} />
+                            <Tab icon={<PeopleIcon fontSize="small" />} label={"Employees ("+props.result?.employees?.length+")"} {...a11yProps(0)} />
+                            <Tab icon={<ExtensionSharpIcon fontSize="small" />} label={"Projects ("+props.result?.projects?.length+")"} {...a11yProps(1)} />
+                            <Tab icon={<AssignmentSharpIcon fontSize="small" />} label="WBS" {...a11yProps(2)} />
+                            <Tab icon={<CoPresentSharpIcon fontSize="small" />} label="Meetings" {...a11yProps(3)} />
                         </Tabs>
                         <SwipeableViews
                             axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
@@ -154,7 +156,7 @@ export default function DraggableSearchResultTab(props) {
                             <TabPanel value={value} index={1} dir={theme.direction}>
                                 <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
                                     {props.result?.projects?.length > 0 && Array.from(props.result.projects).map((item, idx) => (
-                                        <ListItem key={idx} onClick={()=>go_to_project_details(item)}>
+                                        <ListItem key={idx} onClick={()=>{props.handleClose();go_to_project_details(item)}}>
                                             
                                             <ListItemIcon>
                                                 <ExtensionSharpIcon/>
@@ -165,7 +167,10 @@ export default function DraggableSearchResultTab(props) {
                                 </List>
                             </TabPanel>
                             <TabPanel value={value} index={2} dir={theme.direction}>
-                                Item Three
+                                This Section is currently under development
+                            </TabPanel>
+                            <TabPanel value={value} index={3} dir={theme.direction}>
+                                This Section is currently under development
                             </TabPanel>
                         </SwipeableViews>
                     </Box>
