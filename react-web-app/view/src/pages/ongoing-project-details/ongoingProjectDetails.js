@@ -1,6 +1,6 @@
 import { React, useEffect, useState } from 'react';
 import './ongoingProjectDetails.css'
-import { CTooltip, CAlert, CCard, CCardBody, CButton, CModal, CModalHeader, CModalBody, CContainer, CForm, CRow, CLabel, CInput, CModalTitle } from '@coreui/react';
+import { CTooltip, CAlert, CCard, CCardBody, CButton, CModal, CModalHeader, CModalBody, CContainer, CForm, CRow, CCol, CInput, CModalTitle } from '@coreui/react';
 import GradeIcon from '@material-ui/icons/Grade';
 import IconButton from '@material-ui/core/IconButton';
 import Select from "react-select";
@@ -12,6 +12,7 @@ import { BASE_URL, USER_ID } from '../../Config';
 import { API } from '../../Config';
 import swal from 'sweetalert'
 import { fetchProjectsThunk } from '../../store/slices/ProjectsSlice';
+import SearchIcon from '@mui/icons-material/Search';
 import { has_permission } from '../../helper';
 // import '../my-projects/myProjects.css';
 import * as FileSaver from 'file-saver';
@@ -26,6 +27,8 @@ import {
 } from 'react-accessible-accordion';
 import 'react-accessible-accordion/dist/fancy-example.css';
 import LinearWithValueLabel from '../../components/linear-progress-bar/linear-progress-bar';
+import { Grid } from '@mui/material';
+import CustomSearch from '../../components/CustomSearch/CustomSearch';
 
 export const can_create_wbs=(assignees)=>{
     let result=false
@@ -270,9 +273,14 @@ const OngoingProjectDetails = () => {
             <div className="container">
                 <div className="row">
                     <div className="col-md-10 offset-md-1">
-                        <h4 className="dash-header">Assigned Projects({Array.from(projects).length}) <CButton className="export-project-list" onClick={() => exportToCSV()}><CIcon name="cil-spreadsheet" className="mr-2" />Export to excel</CButton></h4>
+                        {/* <CRow className="mb-3">
+                            <CCol>
+                                <CInput style={{width:'400px'}}/>
+                            </CCol>
+                        </CRow> */}
+                        <h4 className="dash-header">Assigned Projects ({Array.from(projects).length}) <CButton className="export-project-list" onClick={() => exportToCSV()}><CIcon name="cil-spreadsheet" className="mr-2" />Export to excel</CButton><CustomSearch/></h4>
+                    
                         {projects != undefined &&
-
                             <Accordion allowMultipleExpanded={false} className="remove-acc-bg" allowZeroExpanded>
                                 {Array.from(projects).map((project, idx) => (
                                     <AccordionItem key={idx} className="card-ongoing-project">

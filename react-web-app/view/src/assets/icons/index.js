@@ -33,9 +33,8 @@ import {
   cibStripe,
   cibPaypal,
   cibGooglePay,
-  cibCcAmex, cilBadge, cilControl,
-  cibGhost,
-  cisFileXls
+  cibCcAmex, cilBadge, cilControl,cisSearch,
+  cibGhost
 
 } from '@coreui/icons'
 import {
@@ -152,7 +151,7 @@ import {
   cilCheckAlt,
   cilPenAlt,
   cilPen,
-  cilArrowThickToTop
+  cilArrowThickToTop,
 
 } from '@coreui/icons'
 
@@ -307,7 +306,5 @@ export const icons = Object.assign({}, {
   cilChartLine,
   cilCheckAlt,
   cilPen,
-  cilArrowThickToTop,
-
-
+  cilArrowThickToTop
 })
