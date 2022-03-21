@@ -26,7 +26,7 @@ import sortBy from 'lodash/sortBy';
 import { has_permission } from '../../helper';
 import LinearWithValueLabel from '../../components/linear-progress-bar/linear-progress-bar';
 import './myProjectDetails.css'
-import AssignedProjectsPopover from '../createProject/inc/AssignedProjectsPopover';
+import AssignedProjectsPopover from './inc/AssignedProjectsPopover';
 
 const MyProjectsDetailsView = () => {
     const { work_package_number } = useParams();
@@ -45,12 +45,14 @@ const MyProjectsDetailsView = () => {
     const [selectedAssigneesEP, setSelectedAssigneesEP] = useState([])
     const profile_details = useSelector(state => state.profile.data)
     const [remaining_EP, setRemaining_EP] = useState(1)
+    const [total_ep,setTotalEp]=useState(0)
     const radioHandler = (status, titleStatus) => {
         setStatus(status);
         setTitleStatus(titleStatus);
     };
     const [editModal, setEditModal] = useState(false);
     const validateEditForm = (values) => {
+        console.log('values ****',values) 
         const errors = {}
         if (!values.sub_task || String(values.sub_task).length < 1) errors.task_delivery_order = "Task Delivery Order is required"
         if (!values.sub_task) errors.sub_task = "Sub task is required"
@@ -103,6 +105,8 @@ const MyProjectsDetailsView = () => {
         setSelectedAssignees(null)
     }
     const initialize_default_assignees = (subtask) => {
+        console.log('subtask ******',subtask)
+        setTotalWorkingDays(calc(subtask.start_date, subtask.planned_delivery_date))
         let preset_assignees = []
 
         API.get('auth/assignee/list/').then((res) => {
@@ -110,26 +114,30 @@ const MyProjectsDetailsView = () => {
             let temp = []
             let dtem = []
             let temp_inputList=[]
+            let total_temp_ep=0
             Array.from(res.data.data).forEach((item, idx) => {
                 temp.push({ value: item.id.toString(), label: item.first_name + ' ' + item.last_name, data: item })
             })
 
-            console.log('subtask',subtask)
             subtask?.assignees.forEach((assignee, idx) => {
+                total_temp_ep+=parseFloat(assignee.estimated_person)
                 temp_inputList.push({ 
-                    assignee: { value: String(assignee.assignee.id).toString(), label: assignee.assignee.first_name + ' ' + assignee.assignee.last_name, data: assignee.assignee }, 
+                    sorter: assignee.assignee.first_name,
+                    assignee: assignee.assignee, 
                     estimated_person: assignee.estimated_person, 
-                    planned_value: parseFloat(assignee.assignee.slc_details.hourly_rate) * 8 * parseFloat(total_working_days), 
-                    planned_hours: parseFloat(((total_working_days * 8) * selectedAssigneesEP).toFixed(1))
+                    planned_value: parseFloat(assignee.assignee.slc_details.hourly_rate) * 8 * parseFloat(total_working_days)*parseFloat(assignee.estimated_person), 
+                    planned_hours: parseFloat(((total_working_days * 8) * parseFloat(assignee.estimated_person)).toFixed(1))
                 })
                 dtem.push(assignee.assignee.id.toString())
                 preset_assignees.push({ value: String(assignee.assignee.id).toString(), label: assignee.assignee.first_name + ' ' + assignee.assignee.last_name, data: assignee.assignee })
                 temp = arrayRemoveItem(temp, { value: String(assignee.assignee.id).toString(), label: assignee.assignee.first_name + ' ' + assignee.assignee.last_name, data: assignee.assignee })
             })
-            setInputList(temp_inputList);
+            setInputList(sortBy(temp_inputList,'sorter'));
             setAssignees(sortBy(temp, 'label'))
-            setSelectedAssignees(preset_assignees)
+            setTotalEp(total_temp_ep)
+            // setSelectedAssignees(sortBy(preset_assignees,'label'))
             editForm.setFieldValue('assignee', dtem)
+            
             return dtem
         })
 
@@ -157,6 +165,7 @@ const MyProjectsDetailsView = () => {
                 sub_task_updated: ""
             })
             initialize_total_working_days(project?.project.start_date, project?.project.planned_delivery_date)
+            // populate_planned_value_and_hours(inputList)
             // dateRange(project?.project.start_date,project?.project.planned_delivery_date)
         }
     }
@@ -214,10 +223,10 @@ const MyProjectsDetailsView = () => {
                 dates.push([i, displayMonth, '01'].join('-'));
             }
         }
-        const monthNames = ["January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December"
-        ];
-        let total_working_days = 0
+        // const monthNames = ["January", "February", "March", "April", "May", "June",
+        //     "July", "August", "September", "October", "November", "December"
+        // ];
+        // let total_working_days = 0
         setTotalWorkingDays(calc(startDate, endDate))
     }
     const initialize = () => {
@@ -244,17 +253,17 @@ const MyProjectsDetailsView = () => {
         })
     }
     function populate_planned_value_and_hours(inputList) {
-        let total_planned_value = parseFloat(editForm.values.planned_value)
-        let total_planned_hours = parseFloat(editForm.values.planned_hours)
+        let total_planned_value = 0
+        let total_planned_hours = 0
         let assignees = []
         let assignee_eps = []
+        let total_temp_ep=0
         
-
-        console.log('total working days', total_working_days)
+        console.log('current input list', inputList)
         Array.from(inputList).forEach((item, idx) => {
-            assignees.push(item.assignee.id.toString())
-
+            assignees.push(item.assignee.id?.toString())
             assignee_eps.push(item.estimated_person)
+            total_temp_ep+=parseFloat(item.estimated_person)
             total_planned_value += item.assignee.slc_details.hourly_rate * 8 * parseFloat(total_working_days)
             total_planned_hours += parseFloat(item.estimated_person) * 8 * parseFloat(total_working_days)
         })
@@ -278,6 +287,8 @@ const MyProjectsDetailsView = () => {
         })
     }
     function removeAssignee(item) {
+        console.log('item',item,'assignee',selectedAssignees)
+        // setSelectedAssignees(selectedAssignees.filter(assignee=>assignee.data.id!=item.assignee.id))
         setInputList(arrayRemoveItem(inputList, item));
         populate_planned_value_and_hours(arrayRemoveItem(inputList, item))
         setRemaining_EP((parseFloat(remaining_EP) + parseFloat(item.estimated_person)).toFixed(1))
@@ -345,7 +356,7 @@ const MyProjectsDetailsView = () => {
     }
     function calc(startDate, endDate) {
         var result = getBusinessDateCount(new Date(startDate), new Date(endDate));
-        console.log(result)
+        console.log('total days from calc func',result)
         return result;
     }
     const delete_assignee = (project_id, assignee_id) => {
@@ -454,11 +465,11 @@ const MyProjectsDetailsView = () => {
     };
     const handleAddPerson = () => {
         console.log("selected assignee", selectedAssignees, 'ep', selectedAssigneesEP)
-        populate_planned_value_and_hours([...inputList, { assignee: selectedAssignees.data, estimated_person: selectedAssigneesEP }])
+        populate_planned_value_and_hours([...inputList, { assignee: selectedAssignees.data, estimated_person: selectedAssigneesEP,planned_value: parseFloat(selectedAssignees.data.slc_details.hourly_rate) * 8 * parseFloat(total_working_days),planned_hours: parseFloat(((total_working_days * 8) * selectedAssigneesEP).toFixed(1))}])
         setInputList([
             ...inputList, 
             { 
-              assignee: selectedAssignees, 
+              assignee: selectedAssignees.data, 
               estimated_person: selectedAssigneesEP, 
               planned_value: parseFloat(selectedAssignees.data.slc_details.hourly_rate) * 8 * parseFloat(total_working_days), 
               planned_hours: parseFloat(((total_working_days * 8) * selectedAssigneesEP).toFixed(1)) 
@@ -466,6 +477,7 @@ const MyProjectsDetailsView = () => {
           ]);
         setSelectedAssignees(null)
         setSelectedAssigneesEP(0)
+        setTotalEp(total_ep+parseFloat(selectedAssigneesEP))
         setRemaining_EP((remaining_EP - selectedAssigneesEP).toFixed(1))
         console.log("inputList", inputList)
     };
@@ -599,7 +611,7 @@ const MyProjectsDetailsView = () => {
                                                 <ul className="m-3">
                                                     {inputList.map((item,idx) => (
                                                         <li key={idx}>
-                                                            <AssignedProjectsPopover remove={removeAssignee} data={item} text1={capitalizeFirstLetter(item.assignee.data.first_name) + " " + capitalizeFirstLetter(item.assignee.data.last_name)} text2={"  → " + item.estimated_person + " EP → " + item.planned_value + " PV → " + item.planned_hours + " Hr(s)"} />
+                                                            <AssignedProjectsPopover remove={removeAssignee} data={item} text1={capitalizeFirstLetter(item.assignee.first_name) + " " + capitalizeFirstLetter(item.assignee.last_name)} text2={"  → " + item.estimated_person + " EP → " + item.planned_value + " PV → " + item.planned_hours + " Hr(s)"} />
                                                         </li>
                                                     ))}
                                                 </ul>
@@ -666,7 +678,7 @@ const MyProjectsDetailsView = () => {
                                             Estimated Person(s)
                                         </CLabel>
                                         {/* onChange={(e) => { handleInputChange(e, i, 'ep') }} */}
-                                        <CInput readOnly id="estimated_person" type="number" name="estimated_person" min="0" max="1" step="0.1" value={editForm.values.estimated_person} onChange={(e) => { setSelectedAssigneesEP(e.target.value) }} className="custom-forminput-6"></CInput>
+                                        <CInput readOnly id="estimated_person" type="number" name="estimated_person" min="0" max="1" step="0.1" value={total_ep} onChange={(e) => {  }} className="custom-forminput-6"></CInput>
                                     </div>
                                     {/**planned hours */}
 
