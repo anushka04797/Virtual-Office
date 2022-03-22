@@ -8,7 +8,7 @@ import {
   CImg
 } from '@coreui/react'
 import { useHistory } from 'react-router-dom';
-import { API, BASE_URL } from '../Config';
+import { API, BASE_URL, USER_ID } from '../Config';
 import CIcon from '@coreui/icons-react'
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -51,7 +51,7 @@ const TheHeaderDropdown = () => {
         >
           <strong>Account</strong>
         </CDropdownItem>
-        <CDropdownItem className="drop-text" to="/dashboard/profile">
+        <CDropdownItem className="drop-text" to={"/dashboard/profile/"+sessionStorage.getItem(USER_ID)}>
           <CIcon name="cil-user" className="mfe-2" />Profile
         </CDropdownItem>
 

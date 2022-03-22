@@ -154,7 +154,7 @@ const WbsBoard = () => {
 
 
 
-    const boardStyle = { backgroundColor: "#fff" };
+    const boardStyle = { backgroundColor: "#fff", margin:'auto' };
     const laneStyle = { backgroundColor: "rgb(243 243 243)" };
     let currentLaneId, currentCardId = '';
 
@@ -268,7 +268,7 @@ const WbsBoard = () => {
         // dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)))
         window.scrollTo(0, 0);
         if (has_permission("projects.add_projects")){
-            console.log("true")
+            
             API.get('wbs/pm/all/' + sessionStorage.getItem(USER_ID) + '/').then((res) => {
                 setWbsList(res.data.data)
                 let pre_selected_items = []
@@ -277,12 +277,16 @@ const WbsBoard = () => {
                         pre_selected_items.push(item)
                     }
                 })
+                pre_selected_items=sortBy(pre_selected_items,[function(item){
+                    return new Date(item.date_created)
+                }]).reverse()
                 populate_data(pre_selected_items)
                 getAssigneeList(res.data.data)
                 setResetAssigneeSelectValue({ value: sessionStorage.getItem(USER_ID), label: profile.first_name + ' ' + profile.last_name })
             })
         }else {
             API.get('wbs/all/' + sessionStorage.getItem(USER_ID) + '/').then((res) => {
+                console.log("true",res.data.data)
                 setWbsList(res.data.data)
                 let pre_selected_items = []
                 Array.from(res.data.data).forEach((item, idx) => {
@@ -290,6 +294,9 @@ const WbsBoard = () => {
                         pre_selected_items.push(item)
                     }
                 })
+                pre_selected_items=sortBy(pre_selected_items,[function(item){
+                    return new Date(item.date_created)
+                }]).reverse()
                 populate_data(pre_selected_items)
                 getAssigneeList(res.data.data)
                 setResetAssigneeSelectValue({ value: sessionStorage.getItem(USER_ID), label: profile.first_name + ' ' + profile.last_name })
@@ -298,28 +305,29 @@ const WbsBoard = () => {
     }, [profile])
     return (
         <>
+            <CContainer>
             <CRow>
-                <div className="col-lg-6 mb-3">
+                <CCol lg="6" className="mb-3 pl-4">
                     <Select
                         value={resetAssigneeSelectValue}
                         placeholder="Filter by assignee"
                         options={wbsAssigneeList}
                         onChange={filterWbs}
                     />
-                </div>
-                <div className="col-lg-3 col-md-6 col-sm-6 mb-3">
-                    {/* showClearBtn == true && */}
-                    {<CButton type="button" className="clear-filter-wbs" onClick={() => clearFilter()}>clear filter</CButton>}
-                </div>
-                <div className="col-lg-3 col-md-6 col-sm-6 mb-3">
-                    {/* showClearBtn == true && */}
-                    {<CButton className="export-project-list" onClick={() => exportToCSV()}><CIcon name="cil-spreadsheet" className="mr-2" />Export to excel</CButton>}
-                </div>
-
+                </CCol>
+                <CCol lg="3" md="6" sm="6" className="mb-3">
+                    <CButton type="button" className="clear-filter-wbs" onClick={() => clearFilter()}>clear filter</CButton>
+                </CCol>
+                <CCol lg="3" md="6" sm="6" className="mb-3">
+                    <CButton className="export-project-list" style={{float:'right'}} onClick={() => exportToCSV()}><CIcon name="cil-spreadsheet" className="mr-2" />Export to excel</CButton>
+                </CCol>
             </CRow>
             <CRow>
-                <Board data={boardData} hideCardDeleteIcon handleDragEnd={updateStatus} onCardClick={editWbs} style={boardStyle} laneStyle={laneStyle} />
+                <CCol lg="12">
+                    <Board data={boardData} hideCardDeleteIcon handleDragEnd={updateStatus} onCardClick={editWbs} style={boardStyle} laneStyle={laneStyle} />
+                </CCol>
             </CRow>
+            </CContainer>
             {modalData != null && <WbsModal show={modal} onClose={onWbsUpdate} toggle={toggle} data={modalData} timeCardList={timeCardListData}></WbsModal>}
         </>
     )

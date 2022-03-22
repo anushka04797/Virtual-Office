@@ -51,7 +51,7 @@ const UserProfile = () => {
     const [revealNewPwd, setRevealNewPwd] = useState(false);
     const [revealConfPwd, setRevealConfPwd] = useState(false);
     // const profile_details = useSelector(state => state.profile.data)
-    const [profile_details,setProfileDetails]=useState()
+    const [profile_details, setProfileDetails] = useState()
 
     const [initialBloodGroup, setInitialBloodGroup] = useState("")
     const inputFile = useRef(null)
@@ -133,6 +133,8 @@ const UserProfile = () => {
         if (!values.first_name) errors.first_name = "First Name is required"
         if (!values.last_name) errors.last_name = "Last Name is required"
         if (!values.email) errors.email = "Email is required"
+        if (!values.address) errors.address = "Address is required"
+        if (!values.blood_group) errors.blood_group = "Blood group is required"
         return errors
     }
     const update_profile = (values) => {
@@ -168,15 +170,15 @@ const UserProfile = () => {
 
     useEffect(() => {
         console.log('id from route', id)
-        if(id){
-            API.get('auth/profile/details/'+id+'/').then(res=>{
-                console.log('res',res.data)
+        if (id) {
+            API.get('auth/profile/details/' + id + '/').then(res => {
+                console.log('res', res.data)
                 // profile_details=res.data.data
                 setProfileDetails(res.data.data)
                 window.scrollTo(0, 0);
                 setInitialBloodGroup({ value: res.data.data.blood_group, label: res.data.data.blood_group })
                 setAvatar(res.data.data.profile_pic ? (BASE_URL + res.data.data.profile_pic) : "avatars/user-avatar-default.png")
-            }).catch(err=>{
+            }).catch(err => {
 
             })
         }
@@ -220,7 +222,7 @@ const UserProfile = () => {
                                     {/**First Name */}
                                     <div className="col-md-6 mb-3">
                                         <CLabel className="custom-label-5" htmlFor="userFName">
-                                            First Name
+                                            First Name *
                                         </CLabel>
                                         <CInput
                                             type="text"
@@ -234,7 +236,7 @@ const UserProfile = () => {
                                     {/**Last Name */}
                                     <div className="col-md-6 mb-3">
                                         <CLabel className="custom-label-5" htmlFor="userLName">
-                                            Last Name
+                                            Last Name *
                                         </CLabel>
                                         <CInput
                                             type="text"
@@ -248,7 +250,7 @@ const UserProfile = () => {
                                     {/**Job title */}
                                     <div className="col-md-12 mb-3">
                                         <CLabel className="custom-label-5" htmlFor="uEmail">
-                                            Email
+                                            Email *
                                         </CLabel>
                                         <CInput
                                             type="email"
@@ -263,7 +265,7 @@ const UserProfile = () => {
                                     {/**Phone */}
                                     <div className="col-md-12 mb-3">
                                         <CLabel className="custom-label-5" htmlFor="uPhoneNo">
-                                            Phone
+                                            Phone *
                                         </CLabel>
                                         <CInput
                                             type="tel"
@@ -277,7 +279,7 @@ const UserProfile = () => {
                                     {/**address */}
                                     <div className="col-md-12 mb-3">
                                         <CLabel className="custom-label-5" htmlFor="Address">
-                                            Address
+                                            Address *
                                         </CLabel>
                                         <CInput
                                             type="text"
@@ -287,11 +289,12 @@ const UserProfile = () => {
                                             onChange={profile_update_form.handleChange}
                                             className="custom-forminput-6"
                                         ></CInput>
+                                        {profile_update_form.touched.address && profile_update_form.errors.address && <small style={{ color: 'red' }}>{profile_update_form.errors.address}</small>}
                                     </div>
                                     {/**blood_group */}
                                     <div className="col-md-12 mb-3">
                                         <CLabel className="custom-label-5" htmlFor="blood_group">
-                                            Blood Group
+                                            Blood Group *
                                         </CLabel>
                                         <Select
                                             id="blood_group"
@@ -331,7 +334,7 @@ const UserProfile = () => {
                         </CNavItem>
                         {/**change password */}
                         <CNavItem>
-                            <CNavLink disabled={profile_details?.id!=sessionStorage.getItem(USER_ID)?true:false} data-tab="changePassword" className="special">
+                            <CNavLink disabled={profile_details?.id != sessionStorage.getItem(USER_ID) ? true : false} data-tab="changePassword" className="special">
                                 <CIcon name="cil-pen-alt" className="mr-1" />
                                 Change Password
                             </CNavLink>
@@ -411,8 +414,8 @@ const UserProfile = () => {
                                                         </h5>
                                                     </div>
                                                 </div>
-                                               
-                                                <div className="all-da-buttons-1">
+
+                                                {/* <div className="all-da-buttons-1">
                                                 <CLabel>Assigned Projects</CLabel>
                                                     {Array.from([{title:'ABC',work_package_index:'1001'}]).length > 0 && Array.from([{title:'ABC',work_package_index:'1001'}]).map((task, idx) => (
                                                         <CButton key={idx} type="button" className="package-button rounded-pill" onClick={() => {  }}>
@@ -420,7 +423,7 @@ const UserProfile = () => {
                                                             <span className="tooltiptext">{task.work_package_index}</span>
                                                         </CButton>
                                                     ))}
-                                                </div>
+                                                </div> */}
                                             </CCardBody>
                                         </CCard>
                                     </div>
