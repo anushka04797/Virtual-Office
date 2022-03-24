@@ -1,6 +1,7 @@
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux';
 import './TheSidebar.css'
+import ExtensionOutlinedIcon from '@mui/icons-material/ExtensionOutlined';
 
 import {
   CSidebar,
@@ -9,7 +10,7 @@ import {
   CSidebarMinimizer,
   CSidebarNavDropdown,
   CSidebarNavItem,
-  CImg
+  CImg,
 } from '@coreui/react'
 import { changeState } from '../store/slices/SideBarSlice';
 import CIcon from '@coreui/icons-react'
@@ -21,9 +22,13 @@ const TheSidebar = () => {
   const dispatch = useDispatch()
   let history = useHistory()
   const show = useSelector(state => state.sidebar.sidebarShow)
-  React.useEffect(() => {
 
+
+  React.useEffect(() => {
+     
   }, [])
+
+
   const logout = () => {
     API.get('auth/logout/').then((res) => {
       sessionStorage.clear()
@@ -65,19 +70,28 @@ const TheSidebar = () => {
             CSidebarNavTitle
           }}
         /> */}
-        <CSidebarNavItem to="/dashboard" icon="cil-speedometer" name="Dashboard" className="vo-navItem"></CSidebarNavItem>
+        <CSidebarNavItem to="/dashboard" icon="cil-list" name="Dashboard" className="vo-navItem "/>
+          {/* <CIcon
+            className = "dashboard-icon">
+           </CIcon>
+      
+
+         {/*  <i className='dashboard-icon'>  </i>*/}
+
+         
         {/**Projects */}
-        <CSidebarNavDropdown icon="cib-ghost" name="Projects" className="vo-navItem">
+        <CSidebarNavDropdown icon="cil-lightbulb"  name="Projects" className="vo-navItem "  >  
+
           {has_permission('projects.add_projects') && <CSidebarNavItem to="/dashboard/Projects/create-new-project" name="Create New Project" className="vo-navItem" ></CSidebarNavItem>}
           {has_permission('projects.add_projects') && <CSidebarNavItem to="/dashboard/Projects/my-projects" name="My Projects" className="vo-navItem"></CSidebarNavItem>}
-          <CSidebarNavItem to="/dashboard/Projects/assigned-projects" name="Assigned Projects" className="vo-navItem"  ></CSidebarNavItem>
+          <CSidebarNavItem to="/dashboard/Projects/assigned-projects" name="Assigned Projects" icon="cil-speedometer" className="vo-navItem"  ></CSidebarNavItem>
           <CSidebarNavItem to="/dashboard/Projects/completed-projects" name="Completed Projects" className="vo-navItem" ></CSidebarNavItem>
 
 
 
         </CSidebarNavDropdown>
         {/**WBS */}
-        <CSidebarNavDropdown icon="cil-spreadsheet" name="WBS" className="vo-navItem">
+        <CSidebarNavDropdown icon="cil-spreadsheet"  name="WBS" className="vo-navItem">
           <CSidebarNavItem to="/dashboard/WBS/create-wbs" name="Create WBS" className="vo-navItem"></CSidebarNavItem>
           <CSidebarNavItem to="/dashboard/WBS/board" name="Board" className="vo-navItem" ></CSidebarNavItem>
 
@@ -100,7 +114,7 @@ const TheSidebar = () => {
           <CSidebarNavItem to="/dashboard/timecard/weekly-timecards" name="Report" className="vo-navItem"></CSidebarNavItem>
         </CSidebarNavDropdown>}
         {/**Meetings */}
-        <CSidebarNavItem to="/dashboard/meetings" icon="cil-view-module" name="Meetings" className="vo-navItem"></CSidebarNavItem>
+        <CSidebarNavItem to="/dashboard/meetings" icon="cil-group" name="Meetings" className="vo-navItem"></CSidebarNavItem>
         {/**Shared Docs */}
         <CSidebarNavItem to="/dashboard/shared-documents" name="Shared Documents" icon="cil-folder-open" className="vo-navItem"></CSidebarNavItem>
         <hr />
