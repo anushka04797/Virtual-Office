@@ -8,22 +8,16 @@ import SearchIcon from '@mui/icons-material/Search';
 // import MatResult from './MatResult.js'
 // import MatFullScreenSearchResult from './MatFullScreenSearchResult.js'
 import { API } from '../../Config.js';
+import { process_params } from 'express/lib/router';
 // import DraggableSearchResultTab from './MatResultTab.js';
 
-const CustomSearch = () => {
+const CustomSearch = (props) => {
     const [searchText, setSearchText] = useState('')
     const [showSearchInput,setShowSearchInput]=useState(false)
     const [open,setOpen]=useState(false)
     const [result,setResult]=useState([])
     const search = () => {
-        if(String(searchText).length>0){
-            API.get('search?key='+searchText).then(res=>{
-                console.log(res.data.data)
-                setResult(res.data.data)
-                setOpen(true)
-            })
-            
-        }
+        props.search()
     }
     const handleKeyPress=(event)=>{
         
@@ -48,6 +42,7 @@ const CustomSearch = () => {
                     value={searchText}
                     onChange={(e)=>setSearchText(e.target.value)}
                     onKeyPress={handleKeyPress}
+                    onBlur={()=>{setShowSearchInput(false)}}
                 />
                 {String(searchText).length==0?
                 <IconButton type="button" sx={{ p: '10px', color:'rgb(0 82 204)' }} aria-label="search" onClick={search}>

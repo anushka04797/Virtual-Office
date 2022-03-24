@@ -25,6 +25,7 @@ import './myProjects.css'
 import * as FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
 import capitalize from '@material-ui/utils/capitalize';
+import CustomSearch from '../../components/CustomSearch/CustomSearch';
 const MyProjects = () => {
     let history = useHistory();
     const dispatch = useDispatch();
@@ -37,9 +38,7 @@ const MyProjects = () => {
         setPM(option)
     }
     const changePM = (wp) => {
-        console.log('wp', wp)
         API.put('project/change-project-manager/', { wp: wp, pm: currentPM.value }).then((res) => {
-            console.log(res)
             if (res.status == 200 && res.data.success == 'True') {
                 setStatus({ project: null })
                 setPM(null)
@@ -58,17 +57,17 @@ const MyProjects = () => {
             }
         })
         // setStatuses(temp_statues)
-        console.log('temp', temp)
+        // console.log('temp', temp)
         return temp
     })
     const [show_sub_task_details, setShowSubTaskDetails] = useState(false)
     const [selectedSubTask, setSelectedSubTask] = useState()
     useEffect(() => {
         window.scrollTo(0, 0);
-        console.log('projects', projects)
+        console.log('my projects', projects)
         dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)))
         API.get('project/managers/').then((res) => {
-            console.log('res', res.data.data)
+            // console.log('res', res.data.data)
             let temp = []
             Array.from(res.data.data).forEach((manager, idx) => {
                 temp.push({ value: manager.id, label: manager.first_name + ' ' + manager.last_name, data: manager })
@@ -125,7 +124,6 @@ const MyProjects = () => {
     const remaining_hours = (projects) => {
         let remaining_hours = 0;
         projects.forEach(item => {
-            console.log(item.remaining_hours)
             remaining_hours += parseFloat(item.remaining_hours);
         })
         return remaining_hours;
@@ -142,7 +140,6 @@ const MyProjects = () => {
     function totalProjectHrs(projects) {
         let total_hours = 0;
         projects.forEach(item => {
-            console.log(item.planned_hours)
             total_hours += parseFloat(item.planned_hours);
         })
         return total_hours;
@@ -316,7 +313,7 @@ const MyProjects = () => {
 
                 <div className="row">
                     <div className="col-md-12 col-lg-11 col-sm-12 col-xs-12 mt-1">
-                        <h4 className="dash-header">My Projects({Array.from(projects).length}) <CButton className="export-project-list" onClick={() => exportToCSV()}><CIcon name="cil-spreadsheet" className="mr-2" />Export to excel</CButton></h4>
+                        <h4 className="dash-header">My Projects({Array.from(projects).length}) <CButton className="export-project-list" onClick={() => exportToCSV()}><CIcon name="cil-spreadsheet" className="mr-2" />Export to excel</CButton><CustomSearch/></h4>
                         {projects != undefined &&
                             <Accordion allowMultipleExpanded={false} className="remove-acc-bg  mb-3" allowZeroExpanded>
                                 {Array.from(projects).map((project, idx) => (

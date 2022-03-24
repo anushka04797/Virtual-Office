@@ -638,7 +638,7 @@ const MyProjectsDetailsView = () => {
                                                     <CLabel className="custom-label-5">
                                                         Remaining EP
                                                     </CLabel>
-                                                    <CInput id="estimated_person" type="number" name="estimated_person" min="0" max={remaining_EP} step="0.1" value={selectedAssigneesEP} onChange={(e) => { if (e.target.value.match("^(0(\.[0-9]+)?|1(\.0+)?)$") != null) { setSelectedAssigneesEP(e.target.value) } }} className="custom-forminput-6"></CInput>
+                                                    <CInput id="estimated_person" type="number" name="estimated_person" min="0" step="0.1" value={selectedAssigneesEP} onChange={(e) => { if (e.target.value.match("^(0(\.[0-9]+)?|1(\.0+)?)$") != null) { setSelectedAssigneesEP(e.target.value) } }} className="custom-forminput-6"></CInput>
                                                 </div>
                                                 <div className="col-lg-3 mb-3">
                                                     <CButton color="info" className="ar-btn" onClick={handleAddPerson} disabled={selectedAssigneesEP == 0}>+ Add</CButton>
