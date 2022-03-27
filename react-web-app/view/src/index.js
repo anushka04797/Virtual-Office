@@ -1,15 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import { icons } from './assets/icons'
 import App from './App';
-// import '@coreui/dist/css/coreui.min.css';
-import { SnackbarProvider } from 'notistack';
+import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
+import { icons } from './assets/icons'
+import { SnackbarProvider } from 'notistack';
 import store from './store/Store'
 import { Provider } from 'react-redux'
 import 'bootstrap/dist/css/bootstrap.min.css';
-React.icons = icons
+
 ReactDOM.render(
   <Provider store={store}>
     <SnackbarProvider maxSnack={3} anchorOrigin={{vertical: 'bottom',horizontal: 'right'}}>
@@ -19,6 +19,11 @@ ReactDOM.render(
   </Provider>,
   document.getElementById('root')
 );
+
+// If you want your app to work offline and load faster, you can change
+// unregister() to register() below. Note this comes with some pitfalls.
+// Learn more about service workers: https://cra.link/PWA
+serviceWorkerRegistration.register();
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
