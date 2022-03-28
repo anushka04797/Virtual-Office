@@ -352,7 +352,7 @@ const MyProjects = () => {
                                             {/*Project participants */}
                                             <div className="all-da-workers1">
                                                 {project.assignees.length > 0 && Array.from(project.assignees).map((assignee, idx) => (
-                                                    <CTooltip content={capitalize(assignee.first_name + ' ' + assignee.last_name)} className="tooltiptext1">
+                                                    <CTooltip key={idx} content={capitalize(assignee.first_name + ' ' + assignee.last_name)} className="tooltiptext1">
                                                         <img key={idx} className="img-fluid worker-image" src={assignee.profile_pic != null ? BASE_URL + assignee.profile_pic : 'avatars/user-avatar-default.png'} />
 
                                                     </CTooltip>

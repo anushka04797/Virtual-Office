@@ -18,6 +18,7 @@ import sortBy from 'lodash/sortBy';
 import AssignedProjectsPopover from './inc/AssignedProjectsPopover';
 import { useHistory } from 'react-router';
 
+
 const CreateNewProject = () => {
   const colourStyles = {
     // control: (styles, state) => ({ ...styles,height:"35px", fontSize: '14px !important', lineHeight: '1.42857', borderRadius: "8px",borderRadius:".25rem",color:"rgb(133,133,133)",border:state.isFocused ? '2px solid #0065ff' :'inherit'}),
@@ -698,7 +699,7 @@ const CreateNewProject = () => {
         planned_hours: parseFloat(((total_working_days * 8) * selectedAssigneesEP).toFixed(1)) 
       }
     ]);
-    setRemaining_EP((remaining_EP - selectedAssigneesEP).toFixed(1))
+    // setRemaining_EP((remaining_EP - selectedAssigneesEP).toFixed(1))
     setSelectedAssignees(null)
     setSelectedAssigneesEP(0)
     console.log("inputList", inputList)
@@ -709,7 +710,7 @@ const CreateNewProject = () => {
     console.log('item to remove',arrayRemoveItem(inputList, item))
     populate_planned_value_and_hours(arrayRemoveItem(inputList, item))
     setInputList(arrayRemoveItem(inputList, item))
-    setRemaining_EP((parseFloat(remaining_EP) + parseFloat(item.estimated_person)).toFixed(1))
+    // setRemaining_EP((parseFloat(remaining_EP) + parseFloat(item.estimated_person)).toFixed(1))
   }
   
   return (
@@ -904,7 +905,7 @@ const CreateNewProject = () => {
                               <CInput id="estimated_person" type="number" name="estimated_person" min="0" max={remaining_EP} step="0.1" value={selectedAssigneesEP} onChange={(e) => { if(e.target.value.match("^(0(\.[0-9]+)?|1(\.0+)?)$")!=null){ setSelectedAssigneesEP(e.target.value) }}} className="custom-forminput-6"></CInput>
                             </div>
                             <div className="col-lg-3 mb-3">
-                              <CButton color="info" className="ar-btn" onClick={handleAddClick} disabled={selectedAssigneesEP == 0}>+ Add</CButton>
+                              <CButton color="primary" className="ar-btn" onClick={handleAddClick} disabled={selectedAssigneesEP == 0}>+ Add</CButton>
                             </div>
                           </div>
                         </div>
