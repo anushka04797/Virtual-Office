@@ -16,6 +16,8 @@ import * as XLSX from 'xlsx';
 import { getStepLabelUtilityClass } from '@material-ui/core';
 import sortBy from 'lodash/sortBy';
 import {has_permission} from '../../helper.js';
+
+
 const WbsBoard = () => {
     {/**export in excel */ }
     const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
@@ -56,6 +58,7 @@ const WbsBoard = () => {
         }
         return ''
     }
+    
     const profile = useSelector(state => state.profile.data)
     const populate_data = (data) => {
 
@@ -152,7 +155,14 @@ const WbsBoard = () => {
         // console.log('tempAssigneList', tempAssigneList)
     }
 
-
+    // function compareTime(data){
+    //     data.forEach(element => {
+    //         const currentDate= new Date();
+    //         console.log("date", currentDate);
+           
+    //     })
+        
+    // }
 
     const boardStyle = { backgroundColor: "#fff", margin:'auto' };
     const laneStyle = { backgroundColor: "rgb(243 243 243)" };
@@ -161,6 +171,8 @@ const WbsBoard = () => {
     const [modal, setModal] = useState(false);
     const [modalData, setModalData] = useState(null);
     const [timeCardListData, setTimeCardListData] = useState([]);
+
+    
     const exportToCSV = () => {
         console.log(fetchData)
 
@@ -183,6 +195,7 @@ const WbsBoard = () => {
         }
         const current = new Date();
         const date = `${current.getDate()}/${current.getMonth()+1}/${current.getFullYear()}`;
+      //  console.log("date is", date);
         fileName= 'WBS'+date;
         const ws = XLSX.utils.json_to_sheet(xlData);
         const wb = { Sheets: { 'data': ws }, SheetNames: ['data'] };

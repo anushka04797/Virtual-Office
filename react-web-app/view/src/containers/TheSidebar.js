@@ -17,16 +17,33 @@ import CIcon from '@coreui/icons-react'
 import { has_permission } from '../helper';
 // sidebar nav config
 import { useHistory } from 'react-router';
-import { API, USER_ID } from '../Config'
+import { API, USER_ID } from '../Config';
+import {useLocation} from "react-router-dom";
+
 const TheSidebar = () => {
   const dispatch = useDispatch()
   let history = useHistory()
   const show = useSelector(state => state.sidebar.sidebarShow)
 
-
+  const location = useLocation()
   React.useEffect(() => {
-     
-  }, [])
+
+    const path = location.pathname
+    console.log(path);
+     if (path.match("/dashboard/Projects/"))
+     {
+       console.log(path);
+     }
+     if (path.match("/dashboard/WBS/"))
+     {
+       console.log(path);
+     }
+     if (path.match("/dashboard/EVMS/"))
+     {
+       console.log(path);
+     }
+
+  }, [location])
 
 
   const logout = () => {
@@ -84,7 +101,7 @@ const TheSidebar = () => {
 
           {has_permission('projects.add_projects') && <CSidebarNavItem to="/dashboard/Projects/create-new-project" name="Create New Project" className="vo-navItem" ></CSidebarNavItem>}
           {has_permission('projects.add_projects') && <CSidebarNavItem to="/dashboard/Projects/my-projects" name="My Projects" className="vo-navItem"></CSidebarNavItem>}
-          <CSidebarNavItem to="/dashboard/Projects/assigned-projects" name="Assigned Projects" icon="cil-speedometer" className="vo-navItem"  ></CSidebarNavItem>
+          <CSidebarNavItem to="/dashboard/Projects/assigned-projects" name="Assigned Projects" className="vo-navItem"  ></CSidebarNavItem>
           <CSidebarNavItem to="/dashboard/Projects/completed-projects" name="Completed Projects" className="vo-navItem" ></CSidebarNavItem>
 
 
@@ -98,7 +115,7 @@ const TheSidebar = () => {
         </CSidebarNavDropdown>
         {/**EVMS */}
         {/* <CSidebarNavItem to="/dashboard/EVMS"name="EVMS" icon="cil-chart-line" className="vo-navItem"></CSidebarNavItem> */}
-        {has_permission('evms.view_evms') && <CSidebarNavDropdown icon="cil-chart-line" name="EVMS" className="vo-navItem">
+        {has_permission('evms.view_evms') && <CSidebarNavDropdown icon="cil-chart-line"  name="EVMS" className="vo-navItem">
           <CSidebarNavItem to="/dashboard/EVMS/create" name="Create EVMS" className="vo-navItem"></CSidebarNavItem>
           <CSidebarNavItem to="/dashboard/EVMS/view" name="View EVMS" className="vo-navItem"></CSidebarNavItem>
         </CSidebarNavDropdown>}
