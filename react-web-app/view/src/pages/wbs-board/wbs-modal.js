@@ -7,6 +7,7 @@ import swal from 'sweetalert';
 import { fetchProjectsForPMThunk, fetchProjectsThunk } from '../../store/slices/ProjectsSlice';
 import { fetchWbsThunk } from '../../store/slices/WbsSlice';
 import LinearProgress from '@mui/material/LinearProgress';
+import { useSnackbar } from "notistack";
 
 const WbsModal = (props) => {
     console.log('props wbs modal: ', props)
@@ -24,9 +25,26 @@ const WbsModal = (props) => {
         "title": "Done",
         "status": 3
     }]
-
-    const updateWbs = (data) => {
+    
+    // const reset_form = () => {
+    //     formWbsUpdate.resetForm();
+    //     selectProjectRef.current.select.clearValue();
+    //     selectAssigneRef.current.select.clearValue();
+    //     selectTaskTitleRef.current.select.clearValue();
+    //     setAssigneeList([]);
+    //   };
+    
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+    const updateWbs = (data,{setSubmitting}) => {
         console.log("formWbsUpdate:", data.remaining_hours)
+        
+        const lastDate= new Date(props.data.end_date);
+        console.log("last Date", lastDate);
+        const currentDate = new Date();
+       
+
+        if(lastDate>currentDate){
+
         data.remaining_hours = props.data.project.remaining_hours - formWbsUpdate.values.hours_worked;
         API.put('wbs/update/' + props.data.id + '/', formWbsUpdate.values).then((res) => {
             console.log('update result', res)
@@ -43,6 +61,15 @@ const WbsModal = (props) => {
             }
         })
     }
+     else{
+         setSubmitting(false);
+        enqueueSnackbar("Planned Delivery date is over! ", {  variant: "warning"});
+
+       // props.onClose();
+        //props.toggle();
+     }
+
+    }
 
     const validateWbsCreateForm = (values) => {
         const errors = {};
@@ -51,7 +78,11 @@ const WbsModal = (props) => {
         return errors;
     }
 
-    const formWbsUpdate = useFormik({
+    const formWbsUpdate = 
+   
+    useFormik({
+
+        
         initialValues: {
             project: props.data.project.id,
             assignee: props.data.assignee.id,
@@ -71,8 +102,10 @@ const WbsModal = (props) => {
         validateOnChange: true,
         validateOnBlur: true,
         validate: validateWbsCreateForm,
-        onSubmit: (values) => updateWbs(values)
+        onSubmit:  updateWbs
     })
+    
+
 
     function is_form_submitting() {
         console.log(formWbsUpdate.isSubmitting, formWbsUpdate.isValidating)
@@ -84,7 +117,7 @@ const WbsModal = (props) => {
 
     return (
         <>
-            <CModal closeOnBackdrop={false} closeOnBackdrop={false} show={props.show} onClose={props.toggle} size="xl">
+            <CModal closeOnBackdrop={false} show={props.show} onClose={props.toggle} size="xl">
                 <CModalHeader closeButton>
                     {props.data.project && props.data.project.task_delivery_order.title + " / "}
                     {props.data.project && props.data.project.sub_task + " / "}
