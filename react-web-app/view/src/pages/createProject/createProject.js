@@ -39,6 +39,7 @@ const CreateNewProject = () => {
   const [work_package_numbers, setWorkPackageNumbers] = useState([])
   const [existing_sub_tasks, setExistingSubTasks] = useState([])
   const [isWpInputdisabled, setIsWpInputdisabled] = useState(false)
+  const [selectedAssigneeExistingEP,setSelectedAssigneeExistingEP]=useState(0)
   //tdo list states and functions
   const tdo_list = useSelector(state => state.projects.tdo_list)
   const new_tdo_list = useSelector(state => sortBy(state.tdo.data, 'label'))
@@ -891,7 +892,7 @@ const CreateNewProject = () => {
                                 placeholder="Select from list"
                                 isClearable={false}
                                 isMulti={false}
-                                onChange={(v, i) => { setSelectedAssignees(v); setSelectedAssigneesEP(remaining_EP) }}
+                                onChange={(v, i) => { setSelectedAssignees(v); setSelectedAssigneesEP(remaining_EP); setSelectedAssigneeExistingEP(v.data.total_ep) }}
                                 classNamePrefix="custom-forminput-6"
                                 value={selectedAssignees}
                                 options={assignees ? assignees : []}
@@ -900,13 +901,17 @@ const CreateNewProject = () => {
                             </div>
                             <div className="col-lg-2 mb-3">
                               <CLabel className="custom-label-5">
-                                EP
+                                Assigned EP
                               </CLabel>
-                              <CInput id="estimated_person" type="number" name="estimated_person" min="0" max={remaining_EP} step="0.1" value={selectedAssigneesEP} onChange={(e) => { if(e.target.value.match("^(0(\.[0-9]+)?|1(\.0+)?)$")!=null){ setSelectedAssigneesEP(e.target.value) }}} className="custom-forminput-6"></CInput>
+                              <CInput type="number" value={selectedAssigneeExistingEP} readOnly className="custom-forminput-6"></CInput>
+                              <CLabel className="custom-label-5">
+                              <small>(Total from assigned projects)</small>
+                              </CLabel>
+                              
                             </div>
                             <div className="col-lg-2 mb-3">
                               <CLabel className="custom-label-5">
-                                Remaining EP
+                                EP
                               </CLabel>
                               <CInput id="estimated_person" type="number" name="estimated_person" min="0" max={remaining_EP} step="0.1" value={selectedAssigneesEP} onChange={(e) => { if(e.target.value.match("^(0(\.[0-9]+)?|1(\.0+)?)$")!=null){ setSelectedAssigneesEP(e.target.value) }}} className="custom-forminput-6"></CInput>
                             </div>

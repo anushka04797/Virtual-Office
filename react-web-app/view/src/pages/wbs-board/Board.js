@@ -30,6 +30,7 @@ const WbsBoard = () => {
     const [wbsList, setWbsList] = useState([])
     const [projects, setProjects] = useState([])
     const [checked, setChecked] = useState({'all':true})
+    const [selectedAssignee, setSelectedAssignee] = useState('')
     const tempAssigneList = [];
     const [wbsAssigneeList, setWbsAssigneeList] = useState([]);
     const dispatch = useDispatch()
@@ -93,16 +94,8 @@ const WbsBoard = () => {
         }
         
         if (data != undefined) {
-            // exportToCSV(data);
             data.forEach(element => {
-                // if (!tempAssigneList.find(item => item.value === element.assignee.id)) {
-                //     var temp = {
-                //         value: element.assignee.id,
-                //         label: element.assignee.first_name + " " + element.assignee.last_name
-                //     }
-                //     tempAssigneList.push(temp)
-                // }
-                
+                console.log('element',element)
                 if (element.status === 1) {
                     // console.log("1st cond", data.lanes[0])
                     temp_data.lanes[0].cards.push({
@@ -141,7 +134,7 @@ const WbsBoard = () => {
             // setWbsAssigneeList(sortBy(tempAssigneList, 'first_name'))
             // setResetAssigneeSelectValue({value:sessionStorage.getItem(USER_ID), label:profile.first_name+' '+profile.last_name})
         }
-        // console.log('temp data', temp_data)
+        console.log('temp data', temp_data)
         setBoardData(temp_data)
         
     }
@@ -275,17 +268,7 @@ const WbsBoard = () => {
         setResetAssigneeSelectValue(newValue)
         setShowClearBtn(true);
     }
-    const filter_wbs_project_wise=()=>{
-        let temp_wbs_list=[]
-        for(const name in checked){
-            if(name != 'all' && checked[name]!=false){
-                temp_wbs_list.push(wbsList.filter(item => item.project.sub_task === name))
-            }
-        }
-        console.log(temp_wbs_list)
-        // let temWbsList = wbsList.filter(item => item.assignee.id === newValue.value)
-        // populate_data(temp_wbs_list)
-    }
+    
     const [showClearBtn, setShowClearBtn] = useState(false);
     const [resetAssigneeSelectValue, setResetAssigneeSelectValue] = useState()
     function clearFilter() {
@@ -296,18 +279,32 @@ const WbsBoard = () => {
     }
     
     useEffect(()=>{
-        for (const property in checked) {
-            console.log(`${property}: ${checked[property]}`);
-        }
+        // for (const property in checked) {
+        //     console.log(`${property}: ${checked[property]}`);
+        // }
+        // filter_wbs_project_wise(checked)
     },[checked])
-
+    const filter_wbs_project_wise=(options)=>{
+        let temp_wbs_list=[]
+        for(const name in options){
+            if(name != 'all' && options[name]!=false){
+                for(let index=0;index<wbsList.length;index++){
+                    if(wbsList[index].project.sub_task == name && wbsList[index].assignee.id==resetAssigneeSelectValue.value){
+                        console.log(wbsList[index].project.sub_task)
+                        temp_wbs_list.push(wbsList[index])
+                    }
+                }
+            }
+        }
+        console.log(temp_wbs_list)
+        // let temWbsList = wbsList.filter(item => item.assignee.id === newValue.value)
+        populate_data(temp_wbs_list)
+    }
     const handleCheckBoxChange=(event,item,idx)=>{
-        console.log(checked)
         setChecked({...checked,[item]:event.target.checked,['all']:false})
-        filter_wbs_project_wise()
+        filter_wbs_project_wise({...checked,[item]:event.target.checked,['all']:false})
     }
     const handleAllCheck=(event)=>{
-        console.log(event.target.checked)
         let temp_chekced={'all':event.target.checked}
         for(const item in checked){
             if(item!='all'){
@@ -346,7 +343,7 @@ const WbsBoard = () => {
                     return new Date(item.date_created)
                 }]).reverse()
 
-                populate_data(pre_selected_items)
+                populate_data(uniq(pre_selected_items))
                 getAssigneeList(res.data.data)
                 setResetAssigneeSelectValue({ value: sessionStorage.getItem(USER_ID), label: profile.first_name + ' ' + profile.last_name })
             })
@@ -378,7 +375,7 @@ const WbsBoard = () => {
                 pre_selected_items = sortBy(pre_selected_items, [function (item) {
                     return new Date(item.date_created)
                 }]).reverse()
-                populate_data(pre_selected_items)
+                populate_data(uniq(pre_selected_items))
                 getAssigneeList(res.data.data)
                 setResetAssigneeSelectValue({ value: sessionStorage.getItem(USER_ID), label: profile.first_name + ' ' + profile.last_name })
             })
@@ -435,7 +432,7 @@ const WbsBoard = () => {
                             <FormControlLabel
                                 label={item}
                                 control={<Checkbox
-                                    
+                                    checked={checked[item]}
                                     onChange={(e) => {handleCheckBoxChange(e,item,idx)}}
                                     inputProps={{ 'aria-label': 'controlled' }}
                                     size="small"
