@@ -879,7 +879,7 @@ const CreateNewProject = () => {
                                 </li>
                               ))}
                             </ul>
-                            <div className="col-lg-4 mb-3">
+                            <div className="col-lg-5 mb-3">
                               <CLabel className="custom-label-5" htmlFor="workerBees" aria-labelledby="workerBees">
                                 Assignee
                               </CLabel>
@@ -898,7 +898,13 @@ const CreateNewProject = () => {
                                 styles={colourStyles} />
                               {formCreateProject.touched.assignee && formCreateProject.errors.assignee && <small style={{ color: 'red' }}>{formCreateProject.errors.assignee}</small>}
                             </div>
-                            <div className="col-lg-3 mb-3">
+                            <div className="col-lg-2 mb-3">
+                              <CLabel className="custom-label-5">
+                                EP
+                              </CLabel>
+                              <CInput id="estimated_person" type="number" name="estimated_person" min="0" max={remaining_EP} step="0.1" value={selectedAssigneesEP} onChange={(e) => { if(e.target.value.match("^(0(\.[0-9]+)?|1(\.0+)?)$")!=null){ setSelectedAssigneesEP(e.target.value) }}} className="custom-forminput-6"></CInput>
+                            </div>
+                            <div className="col-lg-2 mb-3">
                               <CLabel className="custom-label-5">
                                 Remaining EP
                               </CLabel>

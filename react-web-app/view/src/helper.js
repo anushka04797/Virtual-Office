@@ -42,3 +42,7 @@ export function capitalize(string) {
 export function capitalizeFirstLetter(string="") {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
+
+export function unique_elements(array){
+    return array.filter((v, i, a) => a.indexOf(v) == i);
+}

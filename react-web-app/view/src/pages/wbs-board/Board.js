@@ -15,7 +15,10 @@ import * as FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
 import { getStepLabelUtilityClass } from '@material-ui/core';
 import sortBy from 'lodash/sortBy';
-import {has_permission} from '../../helper.js';
+import uniq from 'lodash/uniq';
+import { has_permission, unique_elements } from '../../helper.js';
+import CommentIcon from '@mui/icons-material/Comment';
+import { Checkbox, FormControlLabel, FormGroup, Grid, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 
 
 const WbsBoard = () => {
@@ -25,6 +28,8 @@ const WbsBoard = () => {
     var fileName;
     const xlData = [];
     const [wbsList, setWbsList] = useState([])
+    const [projects, setProjects] = useState([])
+    const [checked, setChecked] = useState({'all':true})
     const tempAssigneList = [];
     const [wbsAssigneeList, setWbsAssigneeList] = useState([]);
     const dispatch = useDispatch()
@@ -58,7 +63,7 @@ const WbsBoard = () => {
         }
         return ''
     }
-    
+
     const profile = useSelector(state => state.profile.data)
     const populate_data = (data) => {
 
@@ -86,6 +91,7 @@ const WbsBoard = () => {
                 }
             ]
         }
+        
         if (data != undefined) {
             // exportToCSV(data);
             data.forEach(element => {
@@ -96,6 +102,7 @@ const WbsBoard = () => {
                 //     }
                 //     tempAssigneList.push(temp)
                 // }
+                
                 if (element.status === 1) {
                     // console.log("1st cond", data.lanes[0])
                     temp_data.lanes[0].cards.push({
@@ -136,6 +143,7 @@ const WbsBoard = () => {
         }
         // console.log('temp data', temp_data)
         setBoardData(temp_data)
+        
     }
 
     function getAssigneeList(data) {
@@ -159,12 +167,12 @@ const WbsBoard = () => {
     //     data.forEach(element => {
     //         const currentDate= new Date();
     //         console.log("date", currentDate);
-           
+
     //     })
-        
+
     // }
 
-    const boardStyle = { backgroundColor: "#fff", margin:'auto' };
+    const boardStyle = { backgroundColor: "#fff", margin: 'auto' };
     const laneStyle = { backgroundColor: "rgb(243 243 243)" };
     let currentLaneId, currentCardId = '';
 
@@ -172,31 +180,31 @@ const WbsBoard = () => {
     const [modalData, setModalData] = useState(null);
     const [timeCardListData, setTimeCardListData] = useState([]);
 
-    
+
     const exportToCSV = () => {
         console.log(fetchData)
 
         for (let i = 0; i < fetchData.length; i++) {
             const item = fetchData[i];
-            function getStatus(info){
-                if (info =='1'){
+            function getStatus(info) {
+                if (info == '1') {
                     return 'To Do'
                 }
-                else if (info == '2'){
+                else if (info == '2') {
                     return 'In Progress'
-                
+
                 }
-                else if (info == '3'){
+                else if (info == '3') {
                     return 'Done'
                 }
             }
-            xlData.push({'Sl. No.': i+1,'TDO':item.project.task_delivery_order.title,'Project':item.project.sub_task,'Task Title':item.project.task_title,'Assignee':item.assignee.first_name + ' '+ item.assignee.last_name,'WBS Title':item.title,'WBS Description':item.description,'Hrs Worked':item.hours_worked,'Date Updated':item.date_updated,'Progress(%)':item.progress+'%','Status':getStatus(item.status) ,'Reporter':item.reporter.first_name+ ' ' + item.reporter.last_name})
-          
+            xlData.push({ 'Sl. No.': i + 1, 'TDO': item.project.task_delivery_order.title, 'Project': item.project.sub_task, 'Task Title': item.project.task_title, 'Assignee': item.assignee.first_name + ' ' + item.assignee.last_name, 'WBS Title': item.title, 'WBS Description': item.description, 'Hrs Worked': item.hours_worked, 'Date Updated': item.date_updated, 'Progress(%)': item.progress + '%', 'Status': getStatus(item.status), 'Reporter': item.reporter.first_name + ' ' + item.reporter.last_name })
+
         }
         const current = new Date();
-        const date = `${current.getDate()}/${current.getMonth()+1}/${current.getFullYear()}`;
-      //  console.log("date is", date);
-        fileName= 'WBS'+date;
+        const date = `${current.getDate()}/${current.getMonth() + 1}/${current.getFullYear()}`;
+        //  console.log("date is", date);
+        fileName = 'WBS' + date;
         const ws = XLSX.utils.json_to_sheet(xlData);
         const wb = { Sheets: { 'data': ws }, SheetNames: ['data'] };
         const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
@@ -267,7 +275,17 @@ const WbsBoard = () => {
         setResetAssigneeSelectValue(newValue)
         setShowClearBtn(true);
     }
-
+    const filter_wbs_project_wise=()=>{
+        let temp_wbs_list=[]
+        for(const name in checked){
+            if(name != 'all' && checked[name]!=false){
+                temp_wbs_list.push(wbsList.filter(item => item.project.sub_task === name))
+            }
+        }
+        console.log(temp_wbs_list)
+        // let temWbsList = wbsList.filter(item => item.assignee.id === newValue.value)
+        // populate_data(temp_wbs_list)
+    }
     const [showClearBtn, setShowClearBtn] = useState(false);
     const [resetAssigneeSelectValue, setResetAssigneeSelectValue] = useState()
     function clearFilter() {
@@ -276,30 +294,65 @@ const WbsBoard = () => {
         getAssigneeList(wbsList)
         setResetAssigneeSelectValue(null)
     }
-    console.log('BOard', boardData)
+    
+    useEffect(()=>{
+        for (const property in checked) {
+            console.log(`${property}: ${checked[property]}`);
+        }
+    },[checked])
+
+    const handleCheckBoxChange=(event,item,idx)=>{
+        console.log(checked)
+        setChecked({...checked,[item]:event.target.checked,['all']:false})
+        filter_wbs_project_wise()
+    }
+    const handleAllCheck=(event)=>{
+        console.log(event.target.checked)
+        let temp_chekced={'all':event.target.checked}
+        for(const item in checked){
+            if(item!='all'){
+                temp_chekced[item]=false
+                // console.log('checked array value for all',temp_chekced[item],'event value',event.target.checked)
+            }
+            
+        }
+        setChecked(temp_chekced)
+    }
     React.useEffect(() => {
         // dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)))
         window.scrollTo(0, 0);
-        if (has_permission("projects.add_projects")){
-            
+        if (has_permission("projects.add_projects")) {
+
             API.get('wbs/pm/all/' + sessionStorage.getItem(USER_ID) + '/').then((res) => {
                 setWbsList(res.data.data)
                 let pre_selected_items = []
+                let temp_projects = []
+                let temp_checks={'all':true}
+
                 Array.from(res.data.data).forEach((item, idx) => {
                     if (item.assignee.id === profile.id) {
                         pre_selected_items.push(item)
                     }
+                    temp_projects.push(item.project.sub_task)
+                    temp_checks[item.project.sub_task]=false
                 })
-                pre_selected_items=sortBy(pre_selected_items,[function(item){
+                // Array.from(uniq(temp_projects)).forEach((item, idx) => {
+                //     temp_checks[item]=false
+                // })
+                setProjects(uniq(temp_projects))
+                setChecked(temp_checks)
+
+                pre_selected_items = sortBy(pre_selected_items, [function (item) {
                     return new Date(item.date_created)
                 }]).reverse()
+
                 populate_data(pre_selected_items)
                 getAssigneeList(res.data.data)
                 setResetAssigneeSelectValue({ value: sessionStorage.getItem(USER_ID), label: profile.first_name + ' ' + profile.last_name })
             })
-        }else {
+        } else {
             API.get('wbs/all/' + sessionStorage.getItem(USER_ID) + '/').then((res) => {
-                console.log("true",res.data.data)
+                console.log("true", res.data.data)
                 setWbsList(res.data.data)
                 let pre_selected_items = []
                 Array.from(res.data.data).forEach((item, idx) => {
@@ -307,7 +360,22 @@ const WbsBoard = () => {
                         pre_selected_items.push(item)
                     }
                 })
-                pre_selected_items=sortBy(pre_selected_items,[function(item){
+                let temp_projects = []
+                let temp_checks={'all':true}
+
+                Array.from(res.data.data).forEach((item, idx) => {
+                    if (item.assignee.id === profile.id) {
+                        pre_selected_items.push(item)
+                    }
+                    temp_projects.push(item.project.sub_task)
+                    temp_checks[item.project.sub_task]=false
+                })
+                // Array.from(uniq(temp_projects)).forEach((item, idx) => {
+                //     temp_checks[item]=false
+                // })
+                setProjects(uniq(temp_projects))
+                setChecked(temp_checks)
+                pre_selected_items = sortBy(pre_selected_items, [function (item) {
                     return new Date(item.date_created)
                 }]).reverse()
                 populate_data(pre_selected_items)
@@ -319,27 +387,69 @@ const WbsBoard = () => {
     return (
         <>
             <CContainer>
-            <CRow>
-                <CCol lg="6" className="mb-3 pl-4">
-                    <Select
-                        value={resetAssigneeSelectValue}
-                        placeholder="Filter by assignee"
-                        options={wbsAssigneeList}
-                        onChange={filterWbs}
-                    />
-                </CCol>
-                <CCol lg="3" md="6" sm="6" className="mb-3">
-                    <CButton type="button" className="clear-filter-wbs" onClick={() => clearFilter()}>clear filter</CButton>
-                </CCol>
-                <CCol lg="3" md="6" sm="6" className="mb-3">
-                    <CButton className="export-project-list" style={{float:'right'}} onClick={() => exportToCSV()}><CIcon name="cil-spreadsheet" className="mr-2" />Export to excel</CButton>
-                </CCol>
-            </CRow>
-            <CRow>
-                <CCol lg="12">
-                    <Board data={boardData} hideCardDeleteIcon handleDragEnd={updateStatus} onCardClick={editWbs} style={boardStyle} laneStyle={laneStyle} />
-                </CCol>
-            </CRow>
+                <CRow>
+                    <CCol lg="6" className="mb-3 pl-4">
+                        <Select
+                            value={resetAssigneeSelectValue}
+                            placeholder="Filter by assignee"
+                            options={wbsAssigneeList}
+                            onChange={filterWbs}
+                        />
+                    </CCol>
+                    <CCol lg="3" md="6" sm="6" className="mb-3">
+                        <CButton type="button" className="clear-filter-wbs" onClick={() => clearFilter()}>clear filter</CButton>
+                    </CCol>
+                    <CCol lg="3" md="6" sm="6" className="mb-3">
+                        <CButton className="export-project-list" style={{ float: 'right' }} onClick={() => exportToCSV()}><CIcon name="cil-spreadsheet" className="mr-2" />Export to excel</CButton>
+                    </CCol>
+                </CRow>
+                {/* */}
+                
+                <Grid fluid direction="column" justifyContent="flex-start" alignItems="flex-start" sx={{
+                    height: '100px',
+                    width: '300px',
+                    overflowY: "auto",
+                    '& .MuiCheckbox-root': {
+                        paddingLeft: '9px',
+                        paddingTop: '0px',
+                        paddingRight: '0px',
+                        paddingBottom: '0px'
+                    },
+                    '& .MuiFormControlLabel-root': {
+                        marginLeft: '0px'
+                    }
+                }}>
+                    <Grid item xs={6} sm={2}>
+                        <FormControlLabel
+                            label={'All'}
+                            control={<Checkbox
+                                checked={checked['all']}
+                                onChange={(e) => {handleAllCheck(e) }}
+                                inputProps={{ 'aria-label': 'controlled' }}
+                                size="small"
+                            />}
+                        />
+                    </Grid>
+                    {Array.from(projects).map((item, idx) => (
+                        <Grid item xs={6} sm={2} key={idx}>
+                            <FormControlLabel
+                                label={item}
+                                control={<Checkbox
+                                    
+                                    onChange={(e) => {handleCheckBoxChange(e,item,idx)}}
+                                    inputProps={{ 'aria-label': 'controlled' }}
+                                    size="small"
+                                />}
+                            />
+                        </Grid>
+                    ))}
+                </Grid>
+
+                <CRow>
+                    <CCol lg="12">
+                        <Board data={boardData} hideCardDeleteIcon handleDragEnd={updateStatus} onCardClick={editWbs} style={boardStyle} laneStyle={laneStyle} />
+                    </CCol>
+                </CRow>
             </CContainer>
             {modalData != null && <WbsModal show={modal} onClose={onWbsUpdate} toggle={toggle} data={modalData} timeCardList={timeCardListData}></WbsModal>}
         </>
