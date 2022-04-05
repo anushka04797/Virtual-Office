@@ -293,6 +293,7 @@ const MyProjectsDetailsView = () => {
     function removeAssignee(item) {
         console.log('item',item,'assignee',selectedAssignees)
         // setSelectedAssignees(selectedAssignees.filter(assignee=>assignee.data.id!=item.assignee.id))
+        setAssignees(sortBy([...assignees,{ value: item.assignee.id.toString(), label: item.assignee.first_name + ' ' + item.assignee.last_name, data: item.assignee }],'label'))
         setInputList(arrayRemoveItem(inputList, item));
         populate_planned_value_and_hours(arrayRemoveItem(inputList, item))
         setRemaining_EP((parseFloat(remaining_EP) + parseFloat(item.estimated_person)).toFixed(1))

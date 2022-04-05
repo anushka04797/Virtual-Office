@@ -16,13 +16,13 @@ const CustomSearch = (props) => {
     const [showSearchInput,setShowSearchInput]=useState(false)
     const [open,setOpen]=useState(false)
     const [result,setResult]=useState([])
-    const search = () => {
-        props.search()
+    const search = (text) => {
+        props.search(text)
     }
     const handleKeyPress=(event)=>{
-        
+        // setShowSearchInput(event.target.value)
         if(event.key === 'Enter'){
-            search()
+            search(event.target.value)
           }
     }
     return (

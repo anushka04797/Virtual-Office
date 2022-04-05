@@ -26,6 +26,8 @@ import * as FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
 import capitalize from '@material-ui/utils/capitalize';
 import CustomSearch from '../../components/CustomSearch/CustomSearch';
+import SearchResult from './inc/SearchResult'
+
 const MyProjects = () => {
     let history = useHistory();
     const dispatch = useDispatch();
@@ -207,8 +209,31 @@ const MyProjects = () => {
         const data = new Blob([excelBuffer], { type: fileType });
         FileSaver.saveAs(data, fileName + fileExtension);
     }
+    const [searchText,setSearchText]=useState('')
+    const [searchResultShow,setSearchResultShow]=useState(false)
+    const search=(text)=>{
+        setSearchText(text)
+        console.log(projects)
+        let result=[]
+        for(let index=0;index<projects.length;index++){
+            for(let index2=0;index2<projects[index].assignees.length;index2++){
+                if(projects[index].assignees[index2].first_name.includes(text)){
+                    
+                }
+            }
+        }
+        setSearchResultShow(true)
+    }
+    
     return (
         <>
+            <SearchResult open={searchResultShow} handleClose={()=>setSearchResultShow(false)} searchText={searchText} result={[]}/>
+                {/* <DraggableSearchResultTab open={open} handleClose={()=>setOpen(false)} searchText={searchText} result={result}/> */}
+                {/* <MatFullScreenSearchResult open={open} handleClose={()=>setOpen(false)}/> */}
+                {/* <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" /> */}
+                {/* <IconButton color="primary" sx={{ p: '10px' }} aria-label="directions">
+                    <DirectionsIcon />
+            </IconButton> */}
             {selectedSubTask && <CModal closeOnBackdrop={false} size="lg" alignment="center" show={show_sub_task_details} onClose={() => { setShowSubTaskDetails(!show_sub_task_details) }}>
                 <CModalHeader onClose={() => setShowSubTaskDetails(!show_sub_task_details)} closeButton>
                     <CModalTitle className="modal-title-projects">
@@ -313,7 +338,7 @@ const MyProjects = () => {
 
                 <div className="row">
                     <div className="col-md-12 col-lg-11 col-sm-12 col-xs-12 mt-1">
-                        <h4 className="dash-header">My Projects({Array.from(projects).length}) <CButton className="export-project-list" onClick={() => exportToCSV()}><CIcon name="cil-spreadsheet" className="mr-2" />Export to excel</CButton><CustomSearch/></h4>
+                        <h4 className="dash-header">My Projects({Array.from(projects).length}) <CButton className="export-project-list" onClick={() => exportToCSV()}><CIcon name="cil-spreadsheet" className="mr-2" />Export to excel</CButton><CustomSearch search={search}/></h4>
                         {projects != undefined &&
                             <Accordion allowMultipleExpanded={false} className="remove-acc-bg  mb-3" allowZeroExpanded>
                                 {Array.from(projects).map((project, idx) => (

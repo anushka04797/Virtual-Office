@@ -283,6 +283,7 @@ const WbsBoard = () => {
         //     console.log(`${property}: ${checked[property]}`);
         // }
         // filter_wbs_project_wise(checked)
+        console.log(checked)
     },[checked])
     const filter_wbs_project_wise=(options)=>{
         let temp_wbs_list=[]
@@ -305,15 +306,19 @@ const WbsBoard = () => {
         filter_wbs_project_wise({...checked,[item]:event.target.checked,['all']:false})
     }
     const handleAllCheck=(event)=>{
-        let temp_chekced={'all':event.target.checked}
+        let temp_checked={'all':event.target.checked}
         for(const item in checked){
             if(item!='all'){
-                temp_chekced[item]=false
-                // console.log('checked array value for all',temp_chekced[item],'event value',event.target.checked)
+                temp_checked[item]=false
+                // console.log('checked array value for all',temp_checked[item],'event value',event.target.checked)
             }
             
         }
-        setChecked(temp_chekced)
+        console.log(temp_checked)
+        setChecked(temp_checked)
+        let temp=wbsList
+        temp = temp.filter(item=> item.assignee.id == profile.id)
+        populate_data(temp)
     }
     React.useEffect(() => {
         // dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)))
