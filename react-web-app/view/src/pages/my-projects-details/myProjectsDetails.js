@@ -45,6 +45,7 @@ const MyProjectsDetailsView = () => {
     const [selectedAssigneesEP, setSelectedAssigneesEP] = useState([])
     const profile_details = useSelector(state => state.profile.data)
     const [remaining_EP, setRemaining_EP] = useState(1)
+    const [selectedAssigneeTotalEP,setSelectedAssigneeTotalEP]=useState(0)
     const [total_ep,setTotalEp]=useState(0)
     const radioHandler = (status, titleStatus) => {
         setStatus(status);
@@ -130,7 +131,10 @@ const MyProjectsDetailsView = () => {
                 })
                 dtem.push(assignee.assignee.id.toString())
                 preset_assignees.push({ value: String(assignee.assignee.id).toString(), label: assignee.assignee.first_name + ' ' + assignee.assignee.last_name, data: assignee.assignee })
-                temp = arrayRemoveItem(temp, { value: String(assignee.assignee.id).toString(), label: assignee.assignee.first_name + ' ' + assignee.assignee.last_name, data: assignee.assignee })
+                temp=temp.filter(function (ele) {
+                    // console.log('ele **',ele,'value',value)
+                    return ele.value != String(assignee.assignee.id).toString();
+                });
             })
             setInputList(sortBy(temp_inputList,'sorter'));
             setAssignees(sortBy(temp, 'label'))
@@ -615,7 +619,7 @@ const MyProjectsDetailsView = () => {
                                                         </li>
                                                     ))}
                                                 </ul>
-                                                <div className="col-lg-4 mb-3">
+                                                <div className="col-lg-6 mb-3">
                                                     <CLabel className="custom-label-5" htmlFor="workerBees" aria-labelledby="workerBees">
                                                         Assignee
                                                     </CLabel>
@@ -627,20 +631,27 @@ const MyProjectsDetailsView = () => {
                                                         placeholder="Select from list"
                                                         isClearable={false}
                                                         isMulti={false}
-                                                        onChange={(v, i) => { setSelectedAssignees(v); setSelectedAssigneesEP(remaining_EP) }}
+                                                        onChange={(v, i) => { setSelectedAssignees(v); setSelectedAssigneesEP(remaining_EP); setSelectedAssigneeTotalEP(v.data.total_ep); setAssignees(arrayRemoveItem(assignees,v)) }}
                                                         classNamePrefix="custom-forminput-6"
                                                         value={selectedAssignees}
                                                         options={assignees ? assignees : []}
                                                         styles={colourStyles} />
                                                     {editForm.touched.assignee && editForm.errors.assignee && <small style={{ color: 'red' }}>{editForm.errors.assignee}</small>}
                                                 </div>
-                                                <div className="col-lg-3 mb-3">
+                                                <div className="col-lg-2 mb-3">
                                                     <CLabel className="custom-label-5">
-                                                        Remaining EP
+                                                        Assigned EP
+                                                    </CLabel>
+                                                    <CInput type="number" value={selectedAssigneeTotalEP} readOnly className="custom-forminput-6"></CInput>
+                                                    <small>(Total EP of assigned projects)</small>
+                                                </div>
+                                                <div className="col-lg-2 mb-3">
+                                                    <CLabel className="custom-label-5">
+                                                        EP
                                                     </CLabel>
                                                     <CInput id="estimated_person" type="number" name="estimated_person" min="0" step="0.1" value={selectedAssigneesEP} onChange={(e) => { if (e.target.value.match("^(0(\.[0-9]+)?|1(\.0+)?)$") != null) { setSelectedAssigneesEP(e.target.value) } }} className="custom-forminput-6"></CInput>
                                                 </div>
-                                                <div className="col-lg-3 mb-3">
+                                                <div className="col-lg-2 mb-3">
                                                     <CButton color="primary" type='button' className="ar-btn" onClick={handleAddPerson} disabled={selectedAssigneesEP == 0}>+ Add</CButton>
                                                 </div>
                                             </div>

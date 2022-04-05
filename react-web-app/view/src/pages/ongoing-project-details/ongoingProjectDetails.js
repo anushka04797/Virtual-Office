@@ -43,7 +43,6 @@ export const can_create_wbs=(assignees)=>{
 const OngoingProjectDetails = () => {
     let history = useHistory();
     const dispatch = useDispatch();
-
     
     const [pmStatus, setPmStatus] = useState(1);
     const [status, setStatus] = useState(0);
@@ -173,6 +172,13 @@ const OngoingProjectDetails = () => {
     }
     return (
         <>
+            {/* <MatResult open={open} handleClose={()=>setOpen(false)} searchText={searchText} result={result}/> */}
+                {/* <DraggableSearchResultTab open={open} handleClose={()=>setOpen(false)} searchText={searchText} result={result}/> */}
+                {/* <MatFullScreenSearchResult open={open} handleClose={()=>setOpen(false)}/> */}
+                {/* <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" /> */}
+                {/* <IconButton color="primary" sx={{ p: '10px' }} aria-label="directions">
+                    <DirectionsIcon />
+            </IconButton> */}
             {selectedSubTask && <CModal closeOnBackdrop={false} size="lg" alignment="center" show={show_sub_task_details} onClose={() => { setShowSubTaskDetails(!show_sub_task_details) }}>
                 <CModalHeader onClose={() => setShowSubTaskDetails(!show_sub_task_details)} closeButton>
                     <CModalTitle className="modal-title-projects">
