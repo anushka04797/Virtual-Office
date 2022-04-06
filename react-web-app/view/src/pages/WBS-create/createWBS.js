@@ -133,16 +133,7 @@ const CreateNewWBS = () => {
   const [selectedTask, setSelectedTask] = useState(null);
   const [selectedSubTask, setSelectedSubTask] = useState({});
   const [selectedProjectEndDate, setSelectedProjectEndDate] = useState("");
-
-  const getAssigneeList = (option) => {
-    dispatch(fetchProjectsAssigneeThunk(option?.work_package_index));
-    var temp_array = [];
-    option.assignees.forEach((item) => {
-      temp_array.push(item.assignee);
-    });
-    setAssigneeList(sortBy(temp_array, "first_name"));
-    console.log("assignees", option);
-  };
+  const [selectedAssignee, setselectedAssignee] = useState([]);
 
   const handleProjectChange = (newValue, actionMeta) => {
     console.log(`action: ${actionMeta.action}`);
@@ -172,13 +163,73 @@ const CreateNewWBS = () => {
     }
   };
 
+  const getAssigneeList = (option) => {
+    dispatch(fetchProjectsAssigneeThunk(option?.work_package_index));
+
+    var temp_array = [];
+
+    option.assignees.forEach((item) => {
+      temp_array.push({
+        value: item.assignee.id,
+        label: item.assignee.first_name + " " + item.assignee.last_name,
+        data: item.assignee,
+      });
+    });
+
+    sortBy(temp_array, "label");
+    temp_array.unshift({
+      value: "All",
+      label: "Select All",
+    });
+    setAssigneeList(temp_array);
+
+    console.log("array", temp_array);
+    console.log("assignees", option);
+  };
+
   const handleAssigneeChange = (value, actionMeta) => {
     let assigneeArray = [];
+    let arr = [];
+    if(actionMeta.action=='select-option'){
+    console.log("action", actionMeta)
+    setselectedAssignee(value); //1 less value
+    console.log("rats", selectedAssignee);
     value.forEach((item) => {
-      assigneeArray.push(item.id);
+      if (item.value == "All") {
+        arr = [...assigneeList];
+        arr.shift();
+        setselectedAssignee(arr);
+        console.log("arr", arr)
+        console.log("len", arr.length)
+        for (let i = 0; i < arr.length; i++) 
+            assigneeArray[i] = arr[i].value;
+       
+        console.log("assinearray", assigneeArray);
+        
+      }
+       else {
+        assigneeArray.push(item.value);
+      } 
     });
-    formCreateWbs.setFieldValue("assignee", assigneeArray);
-  };
+   }
+   else if(actionMeta.action=='remove-value'){
+    console.log("removed", actionMeta.removedValue)
+    arr = [...selectedAssignee]
+    console.log("arr", arr)
+    for(let i=0;i<arr.length;i++)
+    {
+      if(actionMeta.removedValue == arr[i])
+       {
+           arr.splice(i, 1);
+       }
+    }  
+    setselectedAssignee(arr);
+    for (let i = 0; i < arr.length; i++) 
+            assigneeArray[i] = arr[i].value;
+  }
+  console.log("after removed ", assigneeArray);
+  formCreateWbs.setFieldValue("assignee", assigneeArray);
+};
 
   // form validation for WBS create
   const is_before_start_date = (start_date, end_date) => {
@@ -216,7 +267,7 @@ const CreateNewWBS = () => {
     // console.log("date", selectedProjectEndDate);
     // console.log("curr", currentDate);
     // console.log("type" , typeof selectedProjectEndDate);
-    if (endDate > currentDate) {
+    if (endDate - currentDate >= 0) {
       console.log("values", JSON.stringify(formCreateWbs.values));
       API.post("wbs/create/", formCreateWbs.values)
         .then((res) => {
@@ -278,6 +329,7 @@ const CreateNewWBS = () => {
   const handleTaskTitleChange = (newValue, actionMeta) => {
     if (newValue != null) {
       getAssigneeList(newValue);
+      //console.log(assigneeList);
       setSelectedTask(newValue);
       setSelectedProjectEndDate(newValue?.planned_delivery_date);
     }
@@ -325,6 +377,7 @@ const CreateNewWBS = () => {
       set_selected_project(task.sub_task);
       setSelectedTask(task);
       getAssigneeList(task);
+      setselectedAssignee(task);
       setSelectedProjectEndDate(task.planned_delivery_date);
 
       formCreateWbs.setValues({
@@ -388,7 +441,7 @@ const CreateNewWBS = () => {
                             </small>
                           )}
                       </div>
-                       {/*selectedSubTask != null ?
+                      {/*selectedSubTask != null ?
                                                 <div className="col-lg-12 mb-3">
                                                     <CAlert color="primary">
                                                         <small>
@@ -528,10 +581,7 @@ const CreateNewWBS = () => {
                           options={assigneeList}
                           isMulti
                           onChange={handleAssigneeChange}
-                          getOptionLabel={(option) =>
-                            option.first_name + " " + option.last_name
-                          }
-                          getOptionValue={(option) => option.id}
+                          value={selectedAssignee}
                         />
                         {formCreateWbs.touched.assignee &&
                           formCreateWbs.errors.assignee && (
