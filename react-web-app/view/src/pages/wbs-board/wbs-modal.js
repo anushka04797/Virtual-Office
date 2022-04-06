@@ -43,14 +43,23 @@ const WbsModal = (props) => {
         const currentDate = new Date();
        
 
-        if(lastDate>currentDate){
+        if(lastDate - currentDate >= 0 ){
 
         data.remaining_hours = props.data.project.remaining_hours - formWbsUpdate.values.hours_worked;
         API.put('wbs/update/' + props.data.id + '/', formWbsUpdate.values).then((res) => {
+
             console.log('update result', res)
+            console.log('data', res.data);
+            console.log("status", res.status); //200
+            console.log("success", res.data.success); //undefined
+            console.log("text", res.data.message); //undefined
+
             if (res.status == 200 && res.data.success == 'True') {
+               // console.log("text", res.data.message);
                 dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)))
                 dispatch(fetchProjectsThunk(sessionStorage.getItem(USER_ID)))
+
+
                 dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)))
                 swal({
                     title: "Good job!",
