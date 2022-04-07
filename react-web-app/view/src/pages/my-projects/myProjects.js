@@ -223,12 +223,25 @@ const MyProjects = () => {
         for(let index=0;index<projects.length;index++){
             for(let index2=0;index2<projects[index].assignees.length;index2++){
                 if(String(projects[index].assignees[index2].first_name).toLowerCase().includes(text) || String(projects[index].assignees[index2].last_name).toLowerCase().includes(text)){
-                    result.push({'sorter':projects[index].assignees[index2].first_name,'employee':projects[index].assignees[index2],'projects':[projects[index].project]})
+                    // result.push({'sorter':projects[index].assignees[index2].first_name,'employee':projects[index].assignees[index2],'projects':[projects[index].project]})
+                    let found_index = -1
+                    for(let temp_index=0;temp_index<result.length;temp_index++){
+                        if(result[temp_index].employee.id == projects[index].assignees[index2].id){
+                            found_index=temp_index
+                        }
+                    }
+                    if(found_index!= -1){
+                        result[found_index].projects.push(projects[index].project)
+                    }
+                    else{
+                        result.push({'sorter':projects[index].assignees[index2].first_name,'employee':projects[index].assignees[index2],'projects':[projects[index].project]})
+                    }
+                    
                 }
             }
         }
         console.log(result)
-        setResult(uniq(result))
+        setResult(result)
         setSearchResultShow(true)
     }
     

@@ -41,9 +41,10 @@ function ProjectAccordion(props) {
         console.log(props.projects.length)
     },[])
     return (
-        <div>
+        <CRow>
             {props.projects.length>0 ? (Array.from(props.projects).map((item,idx)=>(
-                <Accordion key={idx}> 
+                <CCol md="6" key={idx}>
+                <Accordion> 
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls="panel1bh-content"
@@ -69,9 +70,10 @@ function ProjectAccordion(props) {
                         </List>
                     </AccordionDetails>
                 </Accordion>
+                </CCol>
             ))):(<CAlert>No Project</CAlert>)}
             
-        </div>
+        </CRow>
     )
 }
 const Item = styled(Paper)(({ theme }) => ({
@@ -120,6 +122,9 @@ export default function DraggableSearchResult(props) {
                     <Typography sx={{ fontSize: 14, fontWeight: 'bold', marginBottom: 3 }} color="#000000" >
                         You searched for '{props.searchText}'
                     </Typography>
+                    <Typography sx={{ fontSize: 14, fontWeight: 'bold', marginTop: 5,marginBottom: 3 }} color="#000000" >
+                        Employees
+                    </Typography>
                     <CRow>
                     {props.result.length>0 && Array.from(props.result).map((item,idx)=>(
                         <Accordion key={idx}>  
@@ -134,11 +139,7 @@ export default function DraggableSearchResult(props) {
                                 {/* <Typography sx={{ color: 'text.secondary' }}>I am an accordion</Typography> */}
                             </AccordionSummary>
                             <AccordionDetails>
-                                <CRow>
-                                    <CCol md="6">
-                                        <ProjectAccordion projects={item.projects}/>
-                                    </CCol>
-                                </CRow>
+                                <ProjectAccordion projects={item.projects}/>
                             </AccordionDetails>
                         </Accordion>
                     ))}
