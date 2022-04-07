@@ -11,7 +11,7 @@ import Slide from '@mui/material/Slide';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import { CRow, CCol } from '@coreui/react';
+import { CRow, CCol, CAlert } from '@coreui/react';
 import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
@@ -37,31 +37,41 @@ function PaperComponent(props) {
     );
 }
 function ProjectAccordion(props) {
+    React.useEffect(()=>{
+        console.log(props.projects.length)
+    },[])
     return (
-        <Accordion >
-            <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1bh-content"
-                id="panel1bh-header"
-            >
-                <Typography sx={{ width: '33%', flexShrink: 0 }}>
-                    WASA
-                </Typography>
-                {/* <Typography sx={{ color: 'text.secondary' }}>I am an accordion</Typography> */}
-            </AccordionSummary>
-            <AccordionDetails>
-                <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-                    <ListItem>
-                        <ListItemAvatar>
-                            <Avatar>
-                                <ImageIcon />
-                            </Avatar>
-                        </ListItemAvatar>
-                        <ListItemText primary={'Fix 100 Meters'} secondary="Planned End Date Jan 9, 2014" />
-                    </ListItem>
-                </List>
-            </AccordionDetails>
-        </Accordion>
+        <div>
+            {props.projects.length>0 ? (Array.from(props.projects).map((item,idx)=>(
+                <Accordion key={idx}> 
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="panel1bh-content"
+                        id="panel1bh-header"
+                    >
+                    <Typography sx={{ width: '63%', flexShrink: 0 }}>
+                        {item.sub_task}
+                    </Typography>
+                    
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+                            {item.wbs_list.length>0 ? (Array.from(item.wbs_list).map((wbs,idx)=>(
+                                <ListItem>
+                                    <ListItemAvatar>
+                                        <Avatar>
+                                            <ImageIcon />
+                                        </Avatar>
+                                    </ListItemAvatar>
+                                    <ListItemText primary={wbs.title} secondary={'Planned End Date '+wbs.end_date} />
+                                </ListItem>
+                            ))):(<CAlert>No WBS</CAlert>)}
+                        </List>
+                    </AccordionDetails>
+                </Accordion>
+            ))):(<CAlert>No Project</CAlert>)}
+            
+        </div>
     )
 }
 const Item = styled(Paper)(({ theme }) => ({
@@ -86,8 +96,11 @@ export default function DraggableSearchResult(props) {
     const handleClose = () => {
         setOpen(false);
     };
-
+    React.useEffect(()=>{
+        console.log('search result',props.result)
+    },[])
     return (
+        <>
         <div>
 
             <Dialog
@@ -108,26 +121,27 @@ export default function DraggableSearchResult(props) {
                         You searched for '{props.searchText}'
                     </Typography>
                     <CRow>
-                        <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
+                    {props.result.length>0 && Array.from(props.result).map((item,idx)=>(
+                        <Accordion key={idx}>  
                             <AccordionSummary
                                 expandIcon={<ExpandMoreIcon />}
                                 aria-controls="panel1bh-content"
                                 id="panel1bh-header"
                             >
-                                <Typography sx={{ width: '33%', flexShrink: 0 }}>
-                                    Golam Kibria Papel
+                                <Typography sx={{ width: '63%', flexShrink: 0 }}>
+                                    {item.employee.first_name+' '+item.employee.last_name}
                                 </Typography>
                                 {/* <Typography sx={{ color: 'text.secondary' }}>I am an accordion</Typography> */}
                             </AccordionSummary>
                             <AccordionDetails>
                                 <CRow>
                                     <CCol md="6">
-                                        <ProjectAccordion/>
+                                        <ProjectAccordion projects={item.projects}/>
                                     </CCol>
                                 </CRow>
-                                
                             </AccordionDetails>
                         </Accordion>
+                    ))}
                     </CRow>
 
                     {/* <CRow className="mt-2">
@@ -148,5 +162,6 @@ export default function DraggableSearchResult(props) {
                 </DialogActions>
             </Dialog>
         </div>
+        </>
     );
 }

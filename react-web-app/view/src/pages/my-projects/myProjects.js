@@ -12,6 +12,7 @@ import { API } from '../../Config';
 import swal from 'sweetalert'
 import Select from "react-select";
 import { has_permission } from '../../helper';
+import uniq from 'lodash/uniq';
 import {
     Accordion,
     AccordionItem,
@@ -211,23 +212,29 @@ const MyProjects = () => {
     }
     const [searchText,setSearchText]=useState('')
     const [searchResultShow,setSearchResultShow]=useState(false)
+    const [result,setResult] = useState([])
+    const add_item_to_search_result=(arr,emp,project)=>{
+
+    }
     const search=(text)=>{
         setSearchText(text)
-        console.log(projects)
+        
         let result=[]
         for(let index=0;index<projects.length;index++){
             for(let index2=0;index2<projects[index].assignees.length;index2++){
-                if(projects[index].assignees[index2].first_name.includes(text)){
-                    
+                if(String(projects[index].assignees[index2].first_name).toLowerCase().includes(text) || String(projects[index].assignees[index2].last_name).toLowerCase().includes(text)){
+                    result.push({'sorter':projects[index].assignees[index2].first_name,'employee':projects[index].assignees[index2],'projects':[projects[index].project]})
                 }
             }
         }
+        console.log(result)
+        setResult(uniq(result))
         setSearchResultShow(true)
     }
     
     return (
         <>
-            <SearchResult open={searchResultShow} handleClose={()=>setSearchResultShow(false)} searchText={searchText} result={[]}/>
+            <SearchResult open={searchResultShow} handleClose={()=>setSearchResultShow(false)} searchText={searchText} result={result}/>
                 {/* <DraggableSearchResultTab open={open} handleClose={()=>setOpen(false)} searchText={searchText} result={result}/> */}
                 {/* <MatFullScreenSearchResult open={open} handleClose={()=>setOpen(false)}/> */}
                 {/* <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" /> */}

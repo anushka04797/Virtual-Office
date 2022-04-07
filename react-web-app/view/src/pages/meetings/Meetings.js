@@ -13,7 +13,7 @@ import moment from 'moment'
 import { fetchMeetingList } from '../../store/slices/MeetingSlice';
 
 const OurMeetings = () => {
-    const [meeting, setMeeting] = useState(true)
+    const [meeting, setMeeting] = useState(false)
     const dispatch = useDispatch()
     // const [roomName,setRoomName]=useState('')
     // const [username,setUserName] = useState('')
