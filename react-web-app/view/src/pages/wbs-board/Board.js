@@ -321,7 +321,7 @@ const WbsBoard = () => {
         temp = temp.filter(item => item.assignee.id == profile.id)
         populate_data(temp)
     }
-    const [selectedProjects,setSelectedProjects]=useState([])
+    const [selectedProjects,setSelectedProjects]=useState([{label:'Select All',value:'all',data:{}}])
     const handleProjectChange=(value,actionMeta)=>{
         setSelectedProjects(value)
         filter_wbs_project_wise(value)
