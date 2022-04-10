@@ -227,6 +227,12 @@ const CreateNewWBS = () => {
     for (let i = 0; i < arr.length; i++) 
             assigneeArray[i] = arr[i].value;
   }
+
+  console.log("action ", actionMeta);
+
+  if( actionMeta.action=='clear'){
+    setselectedAssignee(null);
+  }
   console.log("after removed ", assigneeArray);
   formCreateWbs.setFieldValue("assignee", assigneeArray);
 };
