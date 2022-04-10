@@ -11,7 +11,7 @@ import { BASE_URL, USER_ID } from '../../Config';
 import { API } from '../../Config';
 import swal from 'sweetalert'
 import Select from "react-select";
-import { has_permission } from '../../helper';
+import { arrayRemoveItem, has_permission } from '../../helper';
 import uniq from 'lodash/uniq';
 import {
     Accordion,
@@ -216,33 +216,53 @@ const MyProjects = () => {
     const add_item_to_search_result=(arr,emp,project)=>{
 
     }
-    const search=(text)=>{
-        setSearchText(text)
-        
-        let result=[]
-        for(let index=0;index<projects.length;index++){
-            for(let index2=0;index2<projects[index].assignees.length;index2++){
-                if(String(projects[index].assignees[index2].first_name).toLowerCase().includes(text) || String(projects[index].assignees[index2].last_name).toLowerCase().includes(text)){
-                    // result.push({'sorter':projects[index].assignees[index2].first_name,'employee':projects[index].assignees[index2],'projects':[projects[index].project]})
-                    let found_index = -1
-                    for(let temp_index=0;temp_index<result.length;temp_index++){
-                        if(result[temp_index].employee.id == projects[index].assignees[index2].id){
-                            found_index=temp_index
-                        }
-                    }
-                    if(found_index!= -1){
-                        result[found_index].projects.push(projects[index].project)
-                    }
-                    else{
-                        result.push({'sorter':projects[index].assignees[index2].first_name,'employee':projects[index].assignees[index2],'projects':[projects[index].project]})
-                    }
-                    
-                }
+    const resize_project=(project,employee_id)=>{
+        let temp={
+            sub_task:project.sub_task,
+            planned_delivery_date:project.planned_delivery_date
+        }
+        // temp.wbs_list=[]
+        Object.defineProperty(temp, 'wbs_list', {
+            value: [],
+            writable: true
+        });
+        for(let index=0;index<project.wbs_list.length;index++){
+            if(employee_id == project.wbs_list[index].assignee_id){
+                temp.wbs_list.push(project.wbs_list[index])   
             }
         }
-        console.log(result)
-        setResult(result)
-        setSearchResultShow(true)
+        return temp
+    }
+    const search=(text)=>{
+        if(String(text).length>0){
+            setSearchText(text)
+            let result=[]
+            for(let index=0;index<projects.length;index++){
+                for(let index2=0;index2<projects[index].assignees.length;index2++){
+                    if(String(projects[index].assignees[index2].first_name).toLowerCase().includes(text) || String(projects[index].assignees[index2].last_name).toLowerCase().includes(text)){
+                        // result.push({'sorter':projects[index].assignees[index2].first_name,'employee':projects[index].assignees[index2],'projects':[projects[index].project]})
+                        let found_index = -1
+                        for(let temp_index=0;temp_index<result.length;temp_index++){
+                            if(result[temp_index].employee.id == projects[index].assignees[index2].id){
+                                found_index=temp_index
+                            }
+                        }
+                        let temp_project = resize_project(projects[index].project,projects[index].assignees[index2].id)
+                        if(found_index!= -1){
+                            
+                            result[found_index].projects.push(temp_project)
+                        }
+                        else{
+                            result.push({'sorter':projects[index].assignees[index2].first_name,'employee':projects[index].assignees[index2],'projects':[temp_project]})
+                        }
+                        
+                    }
+                }
+            }
+            console.log(result)
+            setResult(result)
+            setSearchResultShow(true)
+        }
     }
     
     return (

@@ -16,6 +16,7 @@ import * as XLSX from 'xlsx';
 import { getStepLabelUtilityClass } from '@material-ui/core';
 import sortBy from 'lodash/sortBy';
 import uniq from 'lodash/uniq';
+import uniqBy from 'lodash/uniqBy';
 import { has_permission, unique_elements } from '../../helper.js';
 import CommentIcon from '@mui/icons-material/Comment';
 import { Checkbox, FormControlLabel, FormGroup, Grid, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
@@ -29,7 +30,7 @@ const WbsBoard = () => {
     const xlData = [];
     const [wbsList, setWbsList] = useState([])
     const [projects, setProjects] = useState([])
-    const [checked, setChecked] = useState({'all':true})
+    const [checked, setChecked] = useState({ 'all': true })
     const [selectedAssignee, setSelectedAssignee] = useState('')
     const tempAssigneList = [];
     const [wbsAssigneeList, setWbsAssigneeList] = useState([]);
@@ -92,10 +93,10 @@ const WbsBoard = () => {
                 }
             ]
         }
-        
+
         if (data != undefined) {
             data.forEach(element => {
-                console.log('element',element)
+                console.log('element', element)
                 if (element.status === 1) {
                     // console.log("1st cond", data.lanes[0])
                     temp_data.lanes[0].cards.push({
@@ -136,7 +137,7 @@ const WbsBoard = () => {
         }
         console.log('temp data', temp_data)
         setBoardData(temp_data)
-        
+
     }
 
     function getAssigneeList(data) {
@@ -268,7 +269,7 @@ const WbsBoard = () => {
         setResetAssigneeSelectValue(newValue)
         setShowClearBtn(true);
     }
-    
+
     const [showClearBtn, setShowClearBtn] = useState(false);
     const [resetAssigneeSelectValue, setResetAssigneeSelectValue] = useState()
     function clearFilter() {
@@ -277,23 +278,23 @@ const WbsBoard = () => {
         getAssigneeList(wbsList)
         setResetAssigneeSelectValue(null)
     }
-    
-    useEffect(()=>{
+
+    useEffect(() => {
         // for (const property in checked) {
         //     console.log(`${property}: ${checked[property]}`);
         // }
         // filter_wbs_project_wise(checked)
         console.log(checked)
-    },[checked])
-    const filter_wbs_project_wise=(options)=>{
-        let temp_wbs_list=[]
-        for(const name in options){
-            if(name != 'all' && options[name]!=false){
-                for(let index=0;index<wbsList.length;index++){
-                    if(wbsList[index].project.sub_task == name && wbsList[index].assignee.id==resetAssigneeSelectValue.value){
-                        console.log(wbsList[index].project.sub_task)
-                        temp_wbs_list.push(wbsList[index])
-                    }
+    }, [checked])
+    const filter_wbs_project_wise = (options) => {
+        let temp_wbs_list = []
+        for (let index=0;index<options.length;index++) {
+            console.log('option 1',options[index].value)
+            for (let index1 = 0; index1 < wbsList.length; index1++) {
+                console.log('option 2',wbsList[index1].project.sub_task)
+                if (wbsList[index1].project.sub_task == options[index].value && wbsList[index1].assignee.id == resetAssigneeSelectValue.value) {
+                    
+                    temp_wbs_list.push(wbsList[index1])
                 }
             }
         }
@@ -301,24 +302,35 @@ const WbsBoard = () => {
         // let temWbsList = wbsList.filter(item => item.assignee.id === newValue.value)
         populate_data(temp_wbs_list)
     }
-    const handleCheckBoxChange=(event,item,idx)=>{
-        setChecked({...checked,[item]:event.target.checked,['all']:false})
-        filter_wbs_project_wise({...checked,[item]:event.target.checked,['all']:false})
+    const handleCheckBoxChange = (event, item, idx) => {
+        setChecked({ ...checked, [item]: event.target.checked, ['all']: false })
+        filter_wbs_project_wise({ ...checked, [item]: event.target.checked, ['all']: false })
     }
-    const handleAllCheck=(event)=>{
-        let temp_checked={'all':event.target.checked}
-        for(const item in checked){
-            if(item!='all'){
-                temp_checked[item]=false
+    const handleAllCheck = (event) => {
+        let temp_checked = { 'all': event.target.checked }
+        for (const item in checked) {
+            if (item != 'all') {
+                temp_checked[item] = false
                 // console.log('checked array value for all',temp_checked[item],'event value',event.target.checked)
             }
-            
+
         }
         console.log(temp_checked)
         setChecked(temp_checked)
-        let temp=wbsList
-        temp = temp.filter(item=> item.assignee.id == profile.id)
+        let temp = wbsList
+        temp = temp.filter(item => item.assignee.id == profile.id)
         populate_data(temp)
+    }
+    const [selectedProjects,setSelectedProjects]=useState([])
+    const handleProjectChange=(value,actionMeta)=>{
+        setSelectedProjects(value)
+        filter_wbs_project_wise(value)
+        // if(actionMeta.action == 'select-option'){
+        //     setSelectedProjects(value)
+        // }
+        // else if(actionMeta.action == 'clear'){
+        //     setSelectedProjects([])
+        // }
     }
     React.useEffect(() => {
         // dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)))
@@ -329,19 +341,17 @@ const WbsBoard = () => {
                 setWbsList(res.data.data)
                 let pre_selected_items = []
                 let temp_projects = []
-                let temp_checks={'all':true}
+                let temp_checks = { 'all': true }
 
                 Array.from(res.data.data).forEach((item, idx) => {
                     if (item.assignee.id === profile.id) {
                         pre_selected_items.push(item)
                     }
-                    temp_projects.push(item.project.sub_task)
-                    temp_checks[item.project.sub_task]=false
+                    temp_projects.push({label:item.project.sub_task,value:item.project.sub_task,data:item.project})
+                    temp_checks[item.project.sub_task] = false
                 })
-                // Array.from(uniq(temp_projects)).forEach((item, idx) => {
-                //     temp_checks[item]=false
-                // })
-                setProjects(uniq(temp_projects))
+                temp_projects.unshift({label:'Select All',value:'all',data:{}})
+                setProjects(uniqBy(temp_projects,'value'))
                 setChecked(temp_checks)
 
                 pre_selected_items = sortBy(pre_selected_items, [function (item) {
@@ -357,25 +367,21 @@ const WbsBoard = () => {
                 console.log("true", res.data.data)
                 setWbsList(res.data.data)
                 let pre_selected_items = []
-                Array.from(res.data.data).forEach((item, idx) => {
-                    if (item.assignee.id === profile.id) {
-                        pre_selected_items.push(item)
-                    }
-                })
                 let temp_projects = []
-                let temp_checks={'all':true}
+                let temp_checks = { 'all': true }
 
                 Array.from(res.data.data).forEach((item, idx) => {
                     if (item.assignee.id === profile.id) {
                         pre_selected_items.push(item)
                     }
-                    temp_projects.push(item.project.sub_task)
-                    temp_checks[item.project.sub_task]=false
+                    temp_projects.push({label:item.project.sub_task,value:item.project.sub_task,data:item.project})
+                    temp_checks[item.project.sub_task] = false
                 })
                 // Array.from(uniq(temp_projects)).forEach((item, idx) => {
                 //     temp_checks[item]=false
                 // })
-                setProjects(uniq(temp_projects))
+                temp_projects.unshift({label:'Select All',value:'all',data:{}})
+                setProjects(uniqBy(temp_projects,'value'))
                 setChecked(temp_checks)
                 pre_selected_items = sortBy(pre_selected_items, [function (item) {
                     return new Date(item.date_created)
@@ -390,12 +396,22 @@ const WbsBoard = () => {
         <>
             <CContainer>
                 <CRow>
-                    <CCol lg="6" className="mb-3 pl-4">
+                    <CCol lg="3" className="mb-3 pl-4">
                         <Select
                             value={resetAssigneeSelectValue}
                             placeholder="Filter by assignee"
                             options={wbsAssigneeList}
                             onChange={filterWbs}
+                        />
+                    </CCol>
+                    <CCol lg="3" className="mb-3 pl-4">
+                        <Select
+                            className="custom-forminput-6"
+                            placeholder="Filter by project"
+                            options={projects}
+                            isMulti
+                            onChange={handleProjectChange}
+                            value={selectedProjects}
                         />
                     </CCol>
                     <CCol lg="3" md="6" sm="6" className="mb-3">
@@ -406,8 +422,8 @@ const WbsBoard = () => {
                     </CCol>
                 </CRow>
                 {/* */}
-                
-                <Grid fluid direction="column" justifyContent="flex-start" alignItems="flex-start" sx={{
+
+                {/* <Grid fluid direction="column" justifyContent="flex-start" alignItems="flex-start" sx={{
                     height: '100px',
                     width: '300px',
                     overflowY: "auto",
@@ -426,7 +442,7 @@ const WbsBoard = () => {
                             label={'All'}
                             control={<Checkbox
                                 checked={checked['all']}
-                                onChange={(e) => {handleAllCheck(e) }}
+                                onChange={(e) => { handleAllCheck(e) }}
                                 inputProps={{ 'aria-label': 'controlled' }}
                                 size="small"
                             />}
@@ -438,14 +454,14 @@ const WbsBoard = () => {
                                 label={item}
                                 control={<Checkbox
                                     checked={checked[item]}
-                                    onChange={(e) => {handleCheckBoxChange(e,item,idx)}}
+                                    onChange={(e) => { handleCheckBoxChange(e, item, idx) }}
                                     inputProps={{ 'aria-label': 'controlled' }}
                                     size="small"
                                 />}
                             />
                         </Grid>
                     ))}
-                </Grid>
+                </Grid> */}
 
                 <CRow>
                     <CCol lg="12">

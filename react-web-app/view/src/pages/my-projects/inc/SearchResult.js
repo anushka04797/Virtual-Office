@@ -43,7 +43,7 @@ function ProjectAccordion(props) {
     return (
         <CRow>
             {props.projects.length>0 ? (Array.from(props.projects).map((item,idx)=>(
-                <CCol md="6" key={idx}>
+                <CCol md="6" key={idx} className="mt-3">
                 <Accordion> 
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
@@ -106,7 +106,7 @@ export default function DraggableSearchResult(props) {
         <div>
 
             <Dialog
-                maxWidth={"sm"}
+                maxWidth={"lg"}
                 fullWidth={true}
                 open={props.open}
                 onClose={props.handleClose}
@@ -133,7 +133,7 @@ export default function DraggableSearchResult(props) {
                                 aria-controls="panel1bh-content"
                                 id="panel1bh-header"
                             >
-                                <Typography sx={{ width: '63%', flexShrink: 0 }}>
+                                <Typography sx={{ width: '63%', flexShrink: 0, fontWeight: 'bold' }}>
                                     {item.employee.first_name+' '+item.employee.last_name}
                                 </Typography>
                                 {/* <Typography sx={{ color: 'text.secondary' }}>I am an accordion</Typography> */}
