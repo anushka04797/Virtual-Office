@@ -284,19 +284,24 @@ const WbsBoard = () => {
         //     console.log(`${property}: ${checked[property]}`);
         // }
         // filter_wbs_project_wise(checked)
-        console.log(checked)
-    }, [checked])
+        console.log('assignee changed')
+    }, [resetAssigneeSelectValue])
     const filter_wbs_project_wise = (options) => {
         let temp_wbs_list = []
-        for (let index=0;index<options.length;index++) {
-            console.log('option 1',options[index].value)
-            for (let index1 = 0; index1 < wbsList.length; index1++) {
-                console.log('option 2',wbsList[index1].project.sub_task)
-                if (wbsList[index1].project.sub_task == options[index].value && wbsList[index1].assignee.id == resetAssigneeSelectValue.value) {
-                    
-                    temp_wbs_list.push(wbsList[index1])
+        if(options.find(item => item.value == 'all')){
+            temp_wbs_list=wbsList.filter(item=> item.assignee.id == resetAssigneeSelectValue.value)
+        }
+        else{
+            for (let index=0;index<options.length;index++) {
+                console.log('option 1',options[index].value)
+                for (let index1 = 0; index1 < wbsList.length; index1++) {
+                    console.log('option 2',wbsList[index1].project.sub_task)
+                    if (wbsList[index1].project.sub_task == options[index].value && wbsList[index1].assignee.id == resetAssigneeSelectValue.value) {
+                        temp_wbs_list.push(wbsList[index1])
+                    }
                 }
             }
+            
         }
         console.log(temp_wbs_list)
         // let temWbsList = wbsList.filter(item => item.assignee.id === newValue.value)
@@ -323,18 +328,32 @@ const WbsBoard = () => {
     }
     const [selectedProjects,setSelectedProjects]=useState([{label:'Select All',value:'all',data:{}}])
     const handleProjectChange=(value,actionMeta)=>{
-        setSelectedProjects(value)
-        filter_wbs_project_wise(value)
-        // if(actionMeta.action == 'select-option'){
-        //     setSelectedProjects(value)
-        // }
-        // else if(actionMeta.action == 'clear'){
-        //     setSelectedProjects([])
-        // }
+        
+        if(actionMeta.action == 'select-option'){
+            if(value.find(item=>item.value == 'all') || value.length == 0){
+                console.log('because of all',projects.slice(1))
+                setSelectedProjects(projects.slice(1))
+                filter_wbs_project_wise(projects.slice(1))
+            }
+            else{
+                setSelectedProjects(value)
+                filter_wbs_project_wise(value)
+            }
+        }
+        else if(actionMeta.action == 'clear'){
+            setSelectedProjects([{label:'Select All',value:'all',data:{}}])
+            filter_wbs_project_wise(projects.slice(1))
+        }
+        else if(actionMeta.action == 'remove-value'){
+            setSelectedProjects(value)
+            filter_wbs_project_wise(value)
+        }
     }
     React.useEffect(() => {
         // dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)))
         window.scrollTo(0, 0);
+        setSelectedProjects([])
+        console.log('profile changed')
         if (has_permission("projects.add_projects")) {
 
             API.get('wbs/pm/all/' + sessionStorage.getItem(USER_ID) + '/').then((res) => {
