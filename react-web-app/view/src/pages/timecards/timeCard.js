@@ -59,12 +59,12 @@ const TimeCards = () => {
                 setTotalHrs(temp_hrs);
                 setUsersData(tableData)
             })
-            editForm.setValues({
-                assigneeSelect: '',
-                assigneeSelectPM: values.assigneeSelectPM,
-                startDate: '',
-                todate: ''
-            })
+            // editForm.setValues({
+            //     assigneeSelect: '',
+            //     assigneeSelectPM: values.assigneeSelectPM,
+            //     startDate: '',
+            //     todate: ''
+            // })
         }
         else {
             // console.log('values from timecards', values)
@@ -88,12 +88,12 @@ const TimeCards = () => {
                 setUsersData(tableData);
                 setTotalHrs(temp_hrs);
             })
-            editForm.setValues({
-                assigneeSelect: values.assigneeSelect,
-                assigneeSelectPM: '',
-                startDate: '',
-                todate: ''
-            })
+            // editForm.setValues({
+            //     assigneeSelect: values.assigneeSelect,
+            //     assigneeSelectPM: '',
+            //     startDate: '',
+            //     todate: ''
+            // })
         }
 
 
@@ -144,7 +144,9 @@ const TimeCards = () => {
     const getAssigneeList = (option) => {
         setAssigneeValue(option)
         editForm.setValues({
-            assigneeSelectPM: option.value
+            assigneeSelectPM: option.value,
+            startDate:'',
+            todate:''
         })
         setPdfTitle(option.label)
     }
@@ -283,7 +285,7 @@ const TimeCards = () => {
                         </CCol >
                         <CCol xl="3" lg="3" md="6">
                             <div className="button-holder--3">
-                                <CButton className="generate-card-button" onClick={editForm.handleSubmit}>Get Data</CButton>
+                                <CButton className="generate-card-button" onClick={editForm.handleSubmit}>Get TimeCards</CButton>
                             </div>
                         </CCol>
                         {/**buttons for format of timecard */}

@@ -335,7 +335,7 @@ const CreateNewWBS = () => {
   const handleTaskTitleChange = (newValue, actionMeta) => {
     if (newValue != null) {
       getAssigneeList(newValue);
-      //console.log(assigneeList);
+      console.log('task',newValue);
       setSelectedTask(newValue);
       setSelectedProjectEndDate(newValue?.planned_delivery_date);
     }
