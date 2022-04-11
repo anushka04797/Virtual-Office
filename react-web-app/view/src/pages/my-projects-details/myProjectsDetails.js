@@ -632,7 +632,7 @@ const MyProjectsDetailsView = () => {
                                                         placeholder="Select from list"
                                                         isClearable={false}
                                                         isMulti={false}
-                                                        onChange={(v, i) => { setSelectedAssignees(v); setSelectedAssigneesEP(remaining_EP); setSelectedAssigneeTotalEP(v.data.total_ep); setAssignees(arrayRemoveItem(assignees,v)) }}
+                                                        onChange={(v, i) => { setSelectedAssignees(v); setSelectedAssigneesEP(1); setSelectedAssigneeTotalEP(v.data.total_ep); setAssignees(arrayRemoveItem(assignees,v)) }}
                                                         classNamePrefix="custom-forminput-6"
                                                         value={selectedAssignees}
                                                         options={assignees ? assignees : []}
