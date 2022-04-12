@@ -31,6 +31,7 @@
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.5.23",
     "material-ui-popup-state": "^2.0.0",
+    "moment": "^2.29.2",
     "notistack": "^2.0.2",
     "prop-types": "^15.8.1",
     "react": "^17.0.2",
@@ -89,5 +90,5 @@
       "last 1 safari version"
     ]
   },
-  "buildDate": 1649668427862
+  "buildDate": 1649319284406
 }

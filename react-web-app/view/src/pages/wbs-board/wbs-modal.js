@@ -8,6 +8,7 @@ import { fetchProjectsForPMThunk, fetchProjectsThunk } from '../../store/slices/
 import { fetchWbsThunk } from '../../store/slices/WbsSlice';
 import LinearProgress from '@mui/material/LinearProgress';
 import { useSnackbar } from "notistack";
+import moment from "moment";
 
 const WbsModal = (props) => {
     console.log('props wbs modal: ', props)
@@ -38,12 +39,32 @@ const WbsModal = (props) => {
     const updateWbs = (data,{setSubmitting}) => {
         console.log("formWbsUpdate:", data.remaining_hours)
         
-        const lastDate= new Date(props.data.end_date);
+        const lastDate = props.data.end_date ;
+
         console.log("last Date", lastDate);
         const currentDate = new Date();
+
+        const day = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()}`;
+        
+        const cday = day.split("-")
+
+        console.log("cdayyyy", cday);
        
 
-        if(lastDate - currentDate >= 0 ){
+
+        const endDateArray = lastDate.split("-");
+        console.log("edate", endDateArray);
+
+        let cdate = moment([parseInt(cday[0]), parseInt(cday[1]), parseInt(cday[2])])
+
+        let edate = moment([parseInt(endDateArray[0]), parseInt(endDateArray[1])-1, parseInt(endDateArray[2])])
+        const difference = cdate.diff(edate, 'days');
+
+       console.log("date1", cdate);
+       console.log("date2", edate);
+        console.log("difference", difference);
+
+        if(difference <= 0 ){
 
         data.remaining_hours = props.data.project.remaining_hours - formWbsUpdate.values.hours_worked;
         API.put('wbs/update/' + props.data.id + '/', formWbsUpdate.values).then((res) => {

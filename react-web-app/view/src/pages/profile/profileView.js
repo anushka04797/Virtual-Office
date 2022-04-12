@@ -19,6 +19,7 @@ import {
     CModalBody,
     CForm,
     CInput,
+    CAlert,
 } from "@coreui/react";
 import Select from 'react-select'
 import React, { useEffect, useRef, useState } from "react";
@@ -32,7 +33,12 @@ import swal from "sweetalert";
 import hidePwdImg from '../../assets/icons/Showpass-show.svg';
 import showPwdImg from '../../assets/icons/Hide.svg';
 import { useParams } from 'react-router-dom';
+import { useHistory } from "react-router-dom";
+import LinearWithValueLabel from '../../components/linear-progress-bar/linear-progress-bar';
+import { has_permission } from "../../helper.js";
+
 const UserProfile = () => {
+    let history = useHistory();
     const onButtonClick = () => {
         // `current` points to the mounted file input element
     };
@@ -203,6 +209,68 @@ const UserProfile = () => {
         }
         return ''
     }
+
+    // const projects = useSelector(state => {
+    //     let temp = []
+    //     let subtask =[] 
+    //     state.projects.data.forEach((item, idx) => {
+    //         if (item.project.status == 0) {
+    //             temp.push(item)
+    //             console.log("subtask", item.sub_task)
+    //             subtask.push(item.sub_task)
+    //         }
+    //     })
+    //      console.log("projects", state) 
+    //     console.log('temp', temp)
+    //     console.log("task", subtask)
+
+    //     return temp;
+
+    // })
+    const projects = useSelector(state => state.projects.data);
+    useEffect(() => {
+        console.log("ProjectsList", projects)
+    }, [projects])
+
+    const remaining_hours = (projects) => {
+        let remaining_hours = 0;
+        projects.forEach(item => {
+            console.log(item.remaining_hours)
+            remaining_hours += parseFloat(item.remaining_hours);
+        })
+        return remaining_hours;
+    }
+
+    function totalProjectHrs(projects) {
+        let total_hours = 0;
+        projects.forEach(item => {
+            console.log(item.planned_hours)
+            total_hours += parseFloat(item.planned_hours);
+        })
+        return total_hours;
+    }
+
+    function calculate_progress_in_percentage(total_hours, remaining_hours) {
+        let worked_hours = parseFloat(total_hours) - parseFloat(remaining_hours)
+        return (100 * worked_hours) / parseFloat(total_hours)
+    }
+    
+    const pmprojects = useSelector(state => {
+        
+        let temp = []
+        if(has_permission){
+        state.projects.pm_projects.forEach((item, idx) => {
+            if (item.project.status == 0) {
+                temp.push(item)
+                // temp_statues.push(false)
+            }
+        })
+    }
+        // setStatuses(temp_statues)
+         console.log('pmtemp', temp)
+        return temp
+    })
+
     return (
         <>
             <CContainer>
@@ -413,6 +481,75 @@ const UserProfile = () => {
                                                             {profile_details.blood_group}
                                                         </h5>
                                                     </div>
+                                                    
+                                                <div className="main-holder-projects">
+                                                        <h3 className="projectsHeader">
+                                                          Working On
+                                                       </h3>
+
+                                                      <div className="card-holder1">
+                                                        {projects != undefined && Array.from(projects).slice(0, 3).map((item, idx) => (
+
+                                                            <CCard className="project-card1" key={idx} onClick={() => history.push({ pathname: '/dashboard/Projects/assigned-projects/details/' + item.project.work_package_number + '/' })}>
+                                                                <CCardBody>
+                                                                    {/* <h6 className="id-no1">Work Package Number: # {item.project.work_package_number}</h6> */}
+                                                                    <h5 className="card-details1"><span className="p-header-3">Project Name: </span> {item.project.sub_task}</h5>
+                                                                    
+                                                                    <h5 className="card-details1"><span className="p-header-3">Planned Delivery Date : </span>{item.project.planned_delivery_date}</h5>
+                                                                    <div>
+                                                                    <h5 className="card-details1"><span className="p-header-3">Progress : 
+                                                                     <LinearWithValueLabel progress={() => calculate_progress_in_percentage(totalProjectHrs(item.subtasks), remaining_hours(item.subtasks))} />
+                                                                     </span></h5>
+                                                                   </div>
+                                                                </CCardBody>
+                                                            </CCard>
+                                                        ))}
+                                                        { /**If no projects */}
+                                                        {projects == '' || projects == undefined ? (
+                                                            <CAlert className="no-value-show-alert" color="primary">Currently there are no projects assigned to you</CAlert>
+                                                        ) : null
+                                                        }
+                                                    </div>
+                                                    {projects != undefined && <div className="button-holder3"><CButton className="tiny-buttons1" onClick={() => history.push({ pathname: '/dashboard/Projects/assigned-projects' })}>View all</CButton></div>}
+
+
+                                                 </div>
+                               
+                                                 {/* <div className="main-holder-projects">
+                                                        <h3 className="projectsHeader">
+                                                         Managing
+                                                       </h3>
+
+                                                      <div className="card-holder1">
+                                                        {pmprojects != undefined && Array.from(pmprojects).slice(0, 3).map((item, idx) => (
+
+                                                            <CCard className="project-card1" key={idx} onClick={() => history.push({ pathname: '/dashboard/Projects/my-projects/details/' + item.project.work_package_number + '/' })}>
+                                                                <CCardBody>
+                                                                    {/* <h6 className="id-no1">Work Package Number: # {item.project.work_package_number}</h6> */}
+                                                                    {/* <h5 className="card-details1"><span className="p-header-3">Project Name: </span> {item.project.sub_task}</h5>
+                                                                    
+                                                                    <h5 className="card-details1"><span className="p-header-3">Planned Delivery Date : </span>{item.project.planned_delivery_date}</h5>
+                                                                    <div>
+                                                                    <h5 className="card-details1"><span className="p-header-3">Progress : 
+                                                                     <LinearWithValueLabel progress={() => calculate_progress_in_percentage(totalProjectHrs(item.subtasks), remaining_hours(item.subtasks))} />
+                                                                     </span></h5>
+                                                                   </div>
+                                                                </CCardBody>
+                                                            </CCard>
+                                                //         ))}
+                                                //         { /**If no projects */}
+                                                        {/*} {pmprojects == '' || pmprojects == undefined ? (
+                                                //             <CAlert className="no-value-show-alert" color="primary">Currently there are no projects you are managing</CAlert>
+                                                //         ) : null
+                                                //         }
+                                                //     </div>
+                                                //     {pmprojects != undefined && <div className="button-holder3"><CButton className="tiny-buttons1" onClick={() => history.push({ pathname: '/dashboard/Projects/my-projects' })}>View all</CButton></div>}
+
+
+                                                //  </div>
+                                                //      */}
+                                                
+
                                                 </div>
 
                                                 {/* <div className="all-da-buttons-1">

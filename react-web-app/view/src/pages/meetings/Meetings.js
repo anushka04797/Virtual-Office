@@ -217,6 +217,14 @@ const OurMeetings = () => {
                                     <CForm>
                                         {/**Project Name */}
                                         <div className="mb-3">
+                                            <CLabel
+                                                htmlFor="agendaItem"
+                                                className="custom-label-5"
+                                            >Meeting Title</CLabel>
+                                            <CInput type="text" id="title" name="title" placeholder='Enter Meeting Title'  className="custom-forminput-6" />
+                                             </div>
+
+                                        <div className="mb-3">
                                             <CLabel className="custom-label-5" htmlFor ="medium">Meeting Location</CLabel>
                                            
                                             <Select
@@ -280,7 +288,7 @@ const OurMeetings = () => {
                                                 htmlFor="hostName"
                                                 className="custom-label-5"
                                             >Host</CLabel>
-                                            <CInput type="text" id="host" name="host" value={user.first_name+' '+user.last_name} type="text" className="custom-forminput-6" readOnly/>
+                                            <CInput type="text" id="host" name="host" value={user.first_name+' '+user.last_name}  className="custom-forminput-6" readOnly/>
 
                                         </div>
                                         {/*agenda*/}

@@ -33,6 +33,7 @@ import { has_permission } from "../../helper.js";
 import { useLocation } from "react-router-dom";
 import store from "../../store/Store";
 import { useSnackbar } from "notistack";
+import moment from "moment";
 
 const CreateNewWBS = () => {
   const dispatch = useDispatch();
@@ -90,6 +91,7 @@ const CreateNewWBS = () => {
       }
     });
     if (has_permission("projects.add_projects")) {
+      
       Array.from(store.getState().projects.pm_projects).forEach((item, idx) => {
         if (parseFloat(item.project.remaining_hours) > 0) {
           // console.log(tempitem.label === item.project.sub_task))
@@ -264,7 +266,26 @@ const CreateNewWBS = () => {
   const create_wbs = (values, { setSubmitting }) => {
     const currentDate = new Date();
 
+    const day = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()}`;
+
+    const cday = day.split("-")
+
+   
+
     const endDate = new Date(selectedProjectEndDate);
+
+    const endDateArray = selectedProjectEndDate.split("-");
+    console.log("arrayyyyyy", endDateArray);
+
+    let cdate = moment([parseInt(cday[0]), parseInt(cday[1]), parseInt(cday[2])])
+    let edate = moment([parseInt(endDateArray[0]), parseInt(endDateArray[1]), parseInt(endDateArray[2])])
+
+    console.log("day1", cdate);
+    console.log("day2", edate);
+
+    const difference = cdate.diff(edate, 'days');
+
+    console.log("difference", difference);
 
     // console.log("end", endDate);
 
@@ -273,7 +294,7 @@ const CreateNewWBS = () => {
     // console.log("date", selectedProjectEndDate);
     // console.log("curr", currentDate);
     // console.log("type" , typeof selectedProjectEndDate);
-    if (endDate - currentDate >= 0) {
+    if (difference <= 0) {
       console.log("values", JSON.stringify(formCreateWbs.values));
       API.post("wbs/create/", formCreateWbs.values)
         .then((res) => {
