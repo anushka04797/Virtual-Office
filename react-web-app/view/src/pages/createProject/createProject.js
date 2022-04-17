@@ -17,6 +17,8 @@ import { arrayRemoveItem, capitalizeFirstLetter, has_permission } from '../../he
 import sortBy from 'lodash/sortBy';
 import AssignedProjectsPopover from './inc/AssignedProjectsPopover';
 import { useHistory } from 'react-router';
+import { useSnackbar } from "notistack";
+
 
 
 const CreateNewProject = () => {
@@ -44,7 +46,7 @@ const CreateNewProject = () => {
   const tdo_list = useSelector(state => state.projects.tdo_list)
   const new_tdo_list = useSelector(state => sortBy(state.tdo.data, 'label'))
   const [remaining_EP, setRemaining_EP] = useState(1)
-
+  
   const handleTDOChange = (newValue, actionMeta) => {
     console.log("TDO details: ", newValue.value.details);
     if (actionMeta.action == 'select-option') {
@@ -688,8 +690,12 @@ const CreateNewProject = () => {
   }
 
   // handle click event of the Add button
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const handleAddClick = () => {
-    console.log('selectedAssignees',selectedAssignees)
+    if(selectedAssignees.data.slc_details?.hourly_rate != null && selectedAssignees.data.slc_details?.hourly_rate!= undefined ){
+      
+    console.log('selectedAssignees',selectedAssignees.data.slc_details)
+    
     populate_planned_value_and_hours([...inputList, { assignee: selectedAssignees, estimated_person: selectedAssigneesEP }])
     setInputList([
       ...inputList, 
@@ -705,7 +711,17 @@ const CreateNewProject = () => {
     setSelectedAssigneesEP(0)
     setSelectedAssigneeExistingEP(0)
     console.log("inputList", inputList)
-  };
+  }
+  else {
+   
+      enqueueSnackbar("Assignee details not available ! ", {
+        variant: "warning",
+      });
+      reset_form();
+    }
+
+  
+};
 
   function removeAssignee(item) {
     console.log('EP to remove',remaining_EP)
