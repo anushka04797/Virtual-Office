@@ -136,7 +136,7 @@ const TimeCards = () => {
             var tableData = [];
             for (let index = 0; index < filteredData.length; index++) {
                 const element = filteredData[index];
-                tableData.push({ '#': index + 1, "Project Name (Work Package)": element.data.project.sub_task + ' (' + element.data.project.work_package_number + ')', "Task Title": element.data.project.task_title, "Actual Work Done": element.data.actual_work_done, "Hour(s)": element.data.hours_today, "Date Created": element.data.date_created })
+                tableData.push({ '#': index + 1, "Project Name (Work Package)": element.data.project.sub_task + ' (' + element.data.project.work_package_number + ')', "Task Title": element.data.project.task_title, "Actual Work Done": element.data.actual_work_done, "Hour(s)": element.data.hours_today, "Type":element.data.time_type,"Date Created": element.data.date_created })
             }
             setUsersData(tableData)
         })
@@ -316,6 +316,7 @@ const TimeCards = () => {
                                     'Task Title',
                                     'Actual Work Done',
                                     'Hour(s)',
+                                    'Type',
                                     'Date Created',
                                 ]}
                                     primary

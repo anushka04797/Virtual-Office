@@ -227,6 +227,8 @@ const UserProfile = () => {
     //     return temp;
 
     // })
+
+
     const projects = useSelector(state => state.projects.data);
     useEffect(() => {
         console.log("ProjectsList", projects)
@@ -254,22 +256,23 @@ const UserProfile = () => {
         let worked_hours = parseFloat(total_hours) - parseFloat(remaining_hours)
         return (100 * worked_hours) / parseFloat(total_hours)
     }
-    
+
     const pmprojects = useSelector(state => {
-        
+
         let temp = []
-        if(has_permission){
-        state.projects.pm_projects.forEach((item, idx) => {
-            if (item.project.status == 0) {
-                temp.push(item)
-                // temp_statues.push(false)
-            }
-        })
-    }
+        if (has_permission("projects.add_projects")) {
+            state.projects.pm_projects.forEach((item, idx) => {
+                if (item.project.status == 0) {
+                    temp.push(item)
+                    // temp_statues.push(false)
+                }
+            })
+        }
         // setStatuses(temp_statues)
-         console.log('pmtemp', temp)
+        console.log('pmtemp', temp)
         return temp
     })
+    const [activeKey, setActiveKey] = useState(1)
 
     return (
         <>
@@ -481,76 +484,108 @@ const UserProfile = () => {
                                                             {profile_details.blood_group}
                                                         </h5>
                                                     </div>
-                                                    
-                                                <div className="main-holder-projects">
-                                                        <h3 className="projectsHeader">
-                                                          Working On
-                                                       </h3>
 
-                                                      <div className="card-holder1">
-                                                        {projects != undefined && Array.from(projects).slice(0, 3).map((item, idx) => (
-
-                                                            <CCard className="project-card1" key={idx} onClick={() => history.push({ pathname: '/dashboard/Projects/assigned-projects/details/' + item.project.work_package_number + '/' })}>
-                                                                <CCardBody>
-                                                                    {/* <h6 className="id-no1">Work Package Number: # {item.project.work_package_number}</h6> */}
-                                                                    <h5 className="card-details1"><span className="p-header-3">Project Name: </span> {item.project.sub_task}</h5>
+                                                    <CRow className="mt-5">
+                                                    <CTabs activeTab="workingon">
+                                                        <CNav variant="tabs"  >
+                                                            {/**View Profile */}
+                                                            <CNavItem>
+                                                                <CNavLink data-tab="workingon"  >
+                                                                
+                                                                     Working On
+                                                                </CNavLink>
+                                                            </CNavItem>
+                                                            {/* working on */}
+                                                            {has_permission("projects.add_projects") && 
+                                                            <CNavItem>
+                                                                <CNavLink  data-tab="managing"  >
                                                                     
-                                                                    <h5 className="card-details1"><span className="p-header-3">Planned Delivery Date : </span>{item.project.planned_delivery_date}</h5>
-                                                                    <div>
-                                                                    <h5 className="card-details1"><span className="p-header-3">Progress : 
-                                                                     <LinearWithValueLabel progress={() => calculate_progress_in_percentage(totalProjectHrs(item.subtasks), remaining_hours(item.subtasks))} />
-                                                                     </span></h5>
-                                                                   </div>
-                                                                </CCardBody>
-                                                            </CCard>
-                                                        ))}
-                                                        { /**If no projects */}
-                                                        {projects == '' || projects == undefined ? (
-                                                            <CAlert className="no-value-show-alert" color="primary">Currently there are no projects assigned to you</CAlert>
-                                                        ) : null
-                                                        }
-                                                    </div>
-                                                    {projects != undefined && <div className="button-holder3"><CButton className="tiny-buttons1" onClick={() => history.push({ pathname: '/dashboard/Projects/assigned-projects' })}>View all</CButton></div>}
+                                                                    Managing
+                                                                </CNavLink>
+                                                            </CNavItem>}
+                                                        </CNav>
+                                                        {/**___________working on tab details______ */}
+                                                <CTabContent>
+                                                   {/**_____WORKING ON____ */}
+                                                    <CTabPane data-tab="workingon" >
+                                                        
+                                                        <div className="mt-4" >
+                                                            {/* <h3 className="projectsHeader">
+                                                                Working On
+                                                            </h3> */}
+                                                            
+                                                            <div className="card-holder1">
+                                                                {projects != undefined && Array.from(projects).slice(0, 3).map((item, idx) => (
+
+                                                                    <CCard className="project-card1" key={idx} onClick={() => history.push({ pathname: '/dashboard/Projects/assigned-projects/details/' + item.project.work_package_number + '/' })}>
+                                                                        <CCardBody>
+                                                                            {/* <h6 className="id-no1">Work Package Number: # {item.project.work_package_number}</h6> */}
+                                                                            <h5 className="card-details1"><span className="p-header-3">Project Name: </span> {item.project.sub_task}</h5>
+
+                                                                            <h5 className="card-details1"><span className="p-header-3">Planned Delivery Date : </span>{item.project.planned_delivery_date}</h5>
+                                                                            <div>
+                                                                                <h5 className="card-details1"><span className="p-header-3">Progress :
+                                                                                    <LinearWithValueLabel progress={() => calculate_progress_in_percentage(totalProjectHrs(item.subtasks), remaining_hours(item.subtasks))} />
+                                                                                </span></h5>
+                                                                            </div>
+                                                                        </CCardBody>
+                                                                    </CCard>
+                                                                ))}
+                                                                { /**If no projects */}
+                                                                {projects == '' || projects == undefined ? (
+                                                                    <CAlert className="no-value-show-alert" color="primary">Currently there are no projects assigned to you</CAlert>
+                                                                ) : null
+                                                                }
+                                                            </div>
+                                                            {projects != undefined && <div className="button-holder3"><CButton className="tiny-buttons1" onClick={() => history.push({ pathname: '/dashboard/Projects/assigned-projects' })}>View all</CButton></div>}
 
 
-                                                 </div>
-                               
-                                                 {/* <div className="main-holder-projects">
-                                                        <h3 className="projectsHeader">
-                                                         Managing
-                                                       </h3>
+                                                          </div>
+                                                        </CTabPane>
 
-                                                      <div className="card-holder1">
-                                                        {pmprojects != undefined && Array.from(pmprojects).slice(0, 3).map((item, idx) => (
+                                                        
+                                                        {has_permission("projects.add_projects") && 
 
-                                                            <CCard className="project-card1" key={idx} onClick={() => history.push({ pathname: '/dashboard/Projects/my-projects/details/' + item.project.work_package_number + '/' })}>
-                                                                <CCardBody>
-                                                                    {/* <h6 className="id-no1">Work Package Number: # {item.project.work_package_number}</h6> */}
-                                                                    {/* <h5 className="card-details1"><span className="p-header-3">Project Name: </span> {item.project.sub_task}</h5>
-                                                                    
-                                                                    <h5 className="card-details1"><span className="p-header-3">Planned Delivery Date : </span>{item.project.planned_delivery_date}</h5>
-                                                                    <div>
-                                                                    <h5 className="card-details1"><span className="p-header-3">Progress : 
-                                                                     <LinearWithValueLabel progress={() => calculate_progress_in_percentage(totalProjectHrs(item.subtasks), remaining_hours(item.subtasks))} />
-                                                                     </span></h5>
-                                                                   </div>
-                                                                </CCardBody>
-                                                            </CCard>
-                                                //         ))}
-                                                //         { /**If no projects */}
-                                                        {/*} {pmprojects == '' || pmprojects == undefined ? (
-                                                //             <CAlert className="no-value-show-alert" color="primary">Currently there are no projects you are managing</CAlert>
-                                                //         ) : null
-                                                //         }
-                                                //     </div>
-                                                //     {pmprojects != undefined && <div className="button-holder3"><CButton className="tiny-buttons1" onClick={() => history.push({ pathname: '/dashboard/Projects/my-projects' })}>View all</CButton></div>}
+                                                        <CTabPane data-tab="managing" >
+                                                        <div className="mt-4">
+                                                            {/* <h3 className="projectsHeader">
+                                                                Managing
+                                                            </h3> */}
+
+                                                            <div className="card-holder1">
+                                                                {pmprojects != undefined && Array.from(pmprojects).slice(0, 3).map((item, idx) => (
+
+                                                                    <CCard className="project-card1" key={idx} onClick={() => history.push({ pathname: '/dashboard/Projects/my-projects/details/' + item.project.work_package_number + '/' })}>
+                                                                        <CCardBody>
+                                                                           
+                                                                            <h5 className="card-details1"><span className="p-header-3">Project Name: </span> {item.project.sub_task}</h5>
+
+                                                                            <h5 className="card-details1"><span className="p-header-3">Planned Delivery Date : </span>{item.project.planned_delivery_date}</h5>
+                                                                            <div>
+                                                                                <h5 className="card-details1"><span className="p-header-3">Progress :
+                                                                                    <LinearWithValueLabel progress={() => calculate_progress_in_percentage(totalProjectHrs(item.subtasks), remaining_hours(item.subtasks))} />
+                                                                                </span></h5>
+                                                                            </div>
+                                                                        </CCardBody>
+                                                                    </CCard>
+                                                                ))}
+                                                                { /**If no projects */}
+                                                                {pmprojects == '' || pmprojects == undefined ? (
+                                                                    <CAlert className="no-value-show-alert" color="primary">Currently there are no projects you are managing</CAlert>
+                                                                ) : null
+                                                                }
+                                                            </div>
+                                                            {pmprojects != undefined && <div className="button-holder3"><CButton className="tiny-buttons1" onClick={() => history.push({ pathname: '/dashboard/Projects/my-projects' })}>View all</CButton></div>}
 
 
-                                                //  </div>
-                                                //      */}
-                                                
+                                                        </div>
+                                                        </CTabPane>}
+                                                    </CTabContent>
+                                                   </CTabs>
+                                                   </CRow>
 
                                                 </div>
+
 
                                                 {/* <div className="all-da-buttons-1">
                                                 <CLabel>Assigned Projects</CLabel>
@@ -566,6 +601,7 @@ const UserProfile = () => {
                                     </div>
                                 </CRow>
                             </CContainer>}
+
                         </CTabPane>
                         {/**_____Change Password___ */}
                         <CTabPane data-tab="changePassword">

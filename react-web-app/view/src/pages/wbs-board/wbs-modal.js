@@ -26,7 +26,7 @@ const WbsModal = (props) => {
         "title": "Done",
         "status": 3
     }]
-    
+
     // const reset_form = () => {
     //     formWbsUpdate.resetForm();
     //     selectProjectRef.current.select.clearValue();
@@ -34,70 +34,68 @@ const WbsModal = (props) => {
     //     selectTaskTitleRef.current.select.clearValue();
     //     setAssigneeList([]);
     //   };
-    
+
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-    const updateWbs = (data,{setSubmitting}) => {
+    const updateWbs = (data, { setSubmitting }) => {
         console.log("formWbsUpdate:", data.remaining_hours)
-        
-        const lastDate = props.data.end_date ;
+
+        const lastDate = props.data.end_date;
 
         console.log("last Date", lastDate);
         const currentDate = new Date();
 
         const day = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()}`;
-        
+
         const cday = day.split("-")
 
         console.log("cdayyyy", cday);
-       
-
 
         const endDateArray = lastDate.split("-");
         console.log("edate", endDateArray);
 
         let cdate = moment([parseInt(cday[0]), parseInt(cday[1]), parseInt(cday[2])])
 
-        let edate = moment([parseInt(endDateArray[0]), parseInt(endDateArray[1])-1, parseInt(endDateArray[2])])
+        let edate = moment([parseInt(endDateArray[0]), parseInt(endDateArray[1]) - 1, parseInt(endDateArray[2])])
         const difference = cdate.diff(edate, 'days');
 
-       console.log("date1", cdate);
-       console.log("date2", edate);
+        console.log("date1", cdate);
+        console.log("date2", edate);
         console.log("difference", difference);
 
-        if(difference <= 0 ){
+        if (difference >= 0) {
 
-        data.remaining_hours = props.data.project.remaining_hours - formWbsUpdate.values.hours_worked;
-        API.put('wbs/update/' + props.data.id + '/', formWbsUpdate.values).then((res) => {
+            data.remaining_hours = props.data.project.remaining_hours - formWbsUpdate.values.hours_worked;
+            API.put('wbs/update/' + props.data.id + '/', formWbsUpdate.values).then((res) => {
 
-            console.log('update result', res)
-            console.log('data', res.data);
-            console.log("status", res.status); //200
-            console.log("success", res.data.success); //undefined
-            console.log("text", res.data.message); //undefined
+                console.log('update result', res)
+                console.log('data', res.data);
+                console.log("status", res.status); //200
+                console.log("success", res.data.success); //undefined
+                console.log("text", res.data.message); //undefined
 
-            if (res.status == 200 && res.data.success == 'True') {
-               // console.log("text", res.data.message);
-                dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)))
-                dispatch(fetchProjectsThunk(sessionStorage.getItem(USER_ID)))
+                if (res.status == 200 && res.data.success == 'True') {
+                    // console.log("text", res.data.message);
+                    dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)))
+                    dispatch(fetchProjectsThunk(sessionStorage.getItem(USER_ID)))
 
 
-                dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)))
-                swal({
-                    title: "Good job!",
-                    text: res.data.message,
-                    icon: "success",
-                });
-                props.onClose()
-            }
-        })
-    }
-     else{
-         setSubmitting(false);
-        enqueueSnackbar("Planned Delivery date is over! ", {  variant: "warning"});
+                    dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)))
+                    swal({
+                        title: "Good job!",
+                        text: res.data.message,
+                        icon: "success",
+                    });
+                    props.onClose()
+                }
+            })
+        }
+        else {
+            setSubmitting(false);
+            enqueueSnackbar("Planned Delivery date is over! ", { variant: "warning" });
 
-       // props.onClose();
-        //props.toggle();
-     }
+            // props.onClose();
+            //props.toggle();
+        }
 
     }
 
@@ -108,33 +106,33 @@ const WbsModal = (props) => {
         return errors;
     }
 
-    const formWbsUpdate = 
-   
-    useFormik({
+    const formWbsUpdate =
 
-        
-        initialValues: {
-            project: props.data.project.id,
-            assignee: props.data.assignee.id,
-            title: props.data.title,
-            status: props.data.status,
-            description: props.data.description,
-            start_date: props.data.start_date,
-            end_date: props.data.end_date,
-            hours_worked: props.data.hours_worked,
-            progress: props.data.progress,
-            comments: props.data.comments,
-            deliverable: props.data.deliverable,
-            date_updated: '',
-            actual_work_done: '',
-            remaining_hours: ''
-        },
-        validateOnChange: true,
-        validateOnBlur: true,
-        validate: validateWbsCreateForm,
-        onSubmit:  updateWbs
-    })
-    
+        useFormik({
+
+
+            initialValues: {
+                project: props.data.project.id,
+                assignee: props.data.assignee.id,
+                title: props.data.title,
+                status: props.data.status,
+                description: props.data.description,
+                start_date: props.data.start_date,
+                end_date: props.data.end_date,
+                hours_worked: props.data.hours_worked,
+                progress: props.data.progress,
+                comments: props.data.comments,
+                deliverable: props.data.deliverable,
+                date_updated: '',
+                actual_work_done: '',
+                remaining_hours: ''
+            },
+            validateOnChange: true,
+            validateOnBlur: true,
+            validate: validateWbsCreateForm,
+            onSubmit: updateWbs
+        })
+
 
 
     function is_form_submitting() {
@@ -284,7 +282,7 @@ const WbsModal = (props) => {
                                         {props.timeCardList?.data != undefined ? (Array.from(props.timeCardList.data).map((item) => (
                                             <li className="task-list-show-item">
                                                 {item.actual_work_done + " ➤ " + item.hours_today + " hr(s)"}
-                                                 {/* By {item.time_card_assignee.first_name + " " + item.time_card_assignee.last_name}  */}
+                                                {/* By {item.time_card_assignee.first_name + " " + item.time_card_assignee.last_name}  */}
                                                 <p><small>@ {item.date_updated} </small></p>
                                             </li>
                                         ))) : ("No task has been done so far.")}

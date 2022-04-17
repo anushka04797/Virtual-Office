@@ -703,6 +703,7 @@ const CreateNewProject = () => {
     // setRemaining_EP((remaining_EP - selectedAssigneesEP).toFixed(1))
     setSelectedAssignees(null)
     setSelectedAssigneesEP(0)
+    setSelectedAssigneeExistingEP(0)
     console.log("inputList", inputList)
   };
 
