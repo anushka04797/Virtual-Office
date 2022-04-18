@@ -1,4 +1,4 @@
-import { CContainer, CRow, CCol, CForm, CLabel, CInput, CButton, CDataTable } from '@coreui/react';
+import { CContainer, CRow, CCol, CForm, CLabel, CInput, CButton, CDataTable,CBadge } from '@coreui/react';
 import React, { useState, useEffect } from 'react'
 import "./timeCards.css"
 import Select from "react-select";
@@ -15,9 +15,12 @@ import { fetchPersonalDetails } from "../../store/slices/ProfileSlice";
 import CIcon from '@coreui/icons-react';
 import moment from "moment";
 import ReactDOM from 'react-dom'; // you used 'react-dom' as 'ReactDOM'
+import swal from 'sweetalert'
+import { useHistory } from 'react-router-dom';
 
 const TimeCards = () => {
     const profile_details = useSelector(state => state.profile.data)
+    const history = useHistory()
     // console.log(profile_details)
     const [usersData, setUsersData] = useState([])
     const [pdfData, setPdfData] = useState([])
@@ -318,6 +321,7 @@ const TimeCards = () => {
                                     'Hour(s)',
                                     'Type',
                                     'Date Created',
+                                    'Action'
                                 ]}
                                     primary
                                     hover
@@ -329,6 +333,17 @@ const TimeCards = () => {
                                     size="sm"
                                     itemsPerPage={10}
                                     pagination
+                                    scopedSlots = {{
+                                        'Action':
+                                        (item)=>(
+                                            <td>
+                                                <CBadge>
+                                                    <CButton onClick={()=>{}} size="sm" type="button" color="primary">Edit</CButton>
+                                                </CBadge>
+                                            </td>
+                                        )
+                                    }}
+            
                                 >
                                 </CDataTable>
                             </div>
