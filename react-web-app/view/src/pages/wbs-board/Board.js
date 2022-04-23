@@ -55,6 +55,12 @@ const WbsBoard = () => {
                 title: 'DONE',
                 label: '',
                 cards: []
+            },
+            {
+                id: 'lane4',
+                title: 'DELINQUENT',
+                label: '',
+                cards: []
             }
         ]
     })
@@ -88,6 +94,12 @@ const WbsBoard = () => {
                 {
                     id: 'lane3',
                     title: 'DONE',
+                    label: '',
+                    cards: []
+                },
+                {
+                    id: 'lane4',
+                    title: 'DELINQUENT',
                     label: '',
                     cards: []
                 }
