@@ -24,7 +24,7 @@ import {
   fetchProjectsForPMThunk,
 } from "../../store/slices/ProjectsSlice";
 import Select from "react-select";
-import { API, USER_ID } from "../../Config";
+import { API, FILE_API, USER_ID } from "../../Config";
 import { useFormik } from "formik";
 import swal from "sweetalert";
 import LinearProgress from "@mui/material/LinearProgress";
@@ -34,6 +34,7 @@ import { useLocation } from "react-router-dom";
 import store from "../../store/Store";
 import { useSnackbar } from "notistack";
 import moment from "moment";
+import WBSFileUpload from "../../components/wbs-docs-upload/WBSFileUpload";
 
 const CreateNewWBS = () => {
   const dispatch = useDispatch();
@@ -263,15 +264,17 @@ const CreateNewWBS = () => {
 
   //   create wbs method
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const [files,setFiles]=useState([])
+  const setDocFiles=(files)=>{
+    setFiles(files)
+  }
+  const removeUploadedFiles=()=>{
+    setFiles([])
+  }
   const create_wbs = (values, { setSubmitting }) => {
     const currentDate = new Date();
-
     const day = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()}`;
-
     const cday = day.split("-")
-
-   
-
     const endDate = new Date(selectedProjectEndDate);
 
     const endDateArray = selectedProjectEndDate.split("-");
@@ -286,27 +289,23 @@ const CreateNewWBS = () => {
     const difference = cdate.diff(edate, 'days');
 
     console.log("difference", difference);
-
-    // console.log("end", endDate);
-
-    //  console.log("difference", endDate - currentDate);
-
-    // console.log("date", selectedProjectEndDate);
-    // console.log("curr", currentDate);
-    // console.log("type" , typeof selectedProjectEndDate);
     if (difference <= 0) {
       console.log("values", JSON.stringify(formCreateWbs.values));
-      API.post("wbs/create/", formCreateWbs.values)
-        .then((res) => {
+      API.post("wbs/create/", formCreateWbs.values).then((res) => {
           // setSubmitting(false)
           console.log(res);
           if (res.status === 200 && res.data.success === "True") {
-            reset_form();
-            setTaskList([]);
-            dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)));
-            dispatch(fetchProjectsThunk(sessionStorage.getItem(USER_ID)));
-            dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)));
-            swal("Created!", "Successfuly Created", "success");
+            // FILE_API.post('wbs/docs/upload/',{wbs_id}).then(res=>{
+            //   if(res.status === 200 && res.data.success === 'True'){
+            //     reset_form();
+            //     setTaskList([]);
+            //     removeUploadedFiles()
+            //     dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)));
+            //     dispatch(fetchProjectsThunk(sessionStorage.getItem(USER_ID)));
+            //     dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)));
+            //     swal("Created!", "Successfuly Created", "success");
+            //   }
+            // })
           }
         })
         .catch((err) => {
@@ -616,6 +615,10 @@ const CreateNewWBS = () => {
                               {formCreateWbs.errors.assignee}
                             </small>
                           )}
+                      </div>
+                      <div className="col-lg-12">
+                        {/* <CLabel className="custom-label-wbs5">Upload Documents</CLabel> */}
+                        <WBSFileUpload files={files} setFiles={setDocFiles}/>
                       </div>
                       {/**submit buttons */}
                       <div className="col-md-12">

@@ -316,9 +316,9 @@ const TimeCards = () => {
     const uData = pdfData.map((elt, idx) => [
       idx + 1,
       elt.data.project.sub_task +
-        " (" +
-        elt.data.project.work_package_number +
-        ")",
+      " (" +
+      elt.data.project.work_package_number +
+      ")",
       elt.data?.project.task_title,
       elt.data.actual_work_done,
       elt.data.hours_today,
@@ -398,19 +398,76 @@ const TimeCards = () => {
     //dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)))
   };
 
-  const onSubmit = ()=> {
-      let temp =[]; 
-     for(let i =0;i<usersData.length;i++){
-         //console.log("data", usersData[i]);
-         temp[i] = usersData[i].data.id;
-     } 
-    console.log("id", temp )
-
-    API.put("wbs/time-card/submit/", {time_cards:temp}).then(res=>{
-       console.log(res.data)
+  const onSubmit = () => {
+    swal({
+      title: "Are you sure?",
+      text: "Once submitted, you will not be able to revert!",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
     })
+      .then((willDelete) => {
+        if (willDelete) {
+          let temp = [];
+          for (let i = 0; i < usersData.length; i++) {
+            //console.log("data", usersData[i]);
+            temp[i] = usersData[i].data.id;
+          }
+          console.log("id", temp)
 
-  } 
+          API.put("wbs/time-card/submit/", { time_cards: temp }).then(res => {
+            console.log(res.data)
+            const unit = "pt";
+            const size = "A4"; // Use A1, A2, A3 or A4
+            const orientation = "portrait"; // portrait or landscape
+
+            const marginLeft = 40;
+            const doc = new jsPDF(orientation, unit, size);
+            doc.setFontSize(15);
+            const title = "Timecard of" + " " + pdfTitle + '\n From ' + startDate + ' to ' + endDate;
+            const headers = [
+              [
+                "#",
+                "Project Name (Work Package)",
+                "Task Title",
+                "Actual Work Done",
+                "Hour(s)",
+                "Date Created",
+              ],
+            ];
+            const uData = usersData.map((elt, idx) => [
+              idx + 1,
+              elt.data.project.sub_task +
+              " (" +
+              elt.data.project.work_package_number +
+              ")",
+              elt.data?.project.task_title,
+              elt.data.actual_work_done,
+              elt.data.hours_today,
+              elt.data.date_created,
+            ]);
+            let content = {
+              startY: 50,
+              head: headers,
+              body: uData,
+            };
+
+            doc.text(title, marginLeft, 30);
+            doc.autoTable(content);
+            doc.save("Timecard of" + " " + pdfTitle + ".pdf");
+
+            swal('Submitted', 'Your selected time cards are submitted!', 'success')
+          })
+
+        }
+      });
+
+
+
+
+
+
+  }
 
   return (
     <>
@@ -688,7 +745,7 @@ const TimeCards = () => {
                     {" "}
                     + Add Item
                   </CButton>
-                  <CButton className="file-format-download" onClick ={onSubmit}>Submit </CButton>
+                  <CButton className="file-format-download" onClick={onSubmit}>Submit </CButton>
                   {/* <CButton className="file-format-download">Print</CButton> */}
                 </div>
               </div>
