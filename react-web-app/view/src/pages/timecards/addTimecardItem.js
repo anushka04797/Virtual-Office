@@ -103,17 +103,17 @@ const AddTimecardItms = (props) => {
 
     let wbslistArray = [];
     for (let i = 0; i < newValue.data.project.wbs_list.length; i++) {
-      // if (
+      if (
 
-      //   parseInt(newValue.data.project.wbs_list[i].id) == parseInt(sessionStorage.getItem(USER_ID))
-      // ) {
+        parseInt(newValue.data.project.wbs_list[i].assignee_id) == parseInt(sessionStorage.getItem(USER_ID))
+      ) {
         wbslistArray.push({
           value: newValue.data.project.wbs_list[i].id,
           label: newValue.data.project.wbs_list[i].title,
           data: newValue.data.project.wbs_list[i],
         });
         setWbsList(wbslistArray);
-      //}
+      }
     }
 
     //setSelectedProject(newValue.data.project.wbs_list)
@@ -267,9 +267,10 @@ const AddTimecardItms = (props) => {
           <CButton color="primary" onClick={formAddTimecard.handleSubmit}>
             save
           </CButton>{" "}
-          <CButton color="secondary" onClick={props.toggleModal}>
+          {/* <CButton color="secondary" onClick={props.toggleModal}>
             Cancel
-          </CButton>
+
+          </CButton> */}
         </CModalFooter>
       </CModal>
     </>
