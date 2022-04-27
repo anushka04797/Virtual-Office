@@ -28,6 +28,7 @@ import { fetchWbsThunk } from "../../store/slices/WbsSlice";
 import LinearProgress from "@mui/material/LinearProgress";
 import { useSnackbar } from "notistack";
 import moment from "moment";
+import { has_permission } from "../../helper.js";
 
 const WbsModal = (props) => {
   console.log("props wbs modal: ", props);
@@ -60,15 +61,17 @@ const WbsModal = (props) => {
 
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const updateWbs = (data, { setSubmitting }) => {
-    console.log("formWbsUpdate:", data.remaining_hours);
+    console.log("formWbsUpdate:", props.data);
 
     const lastDate = props.data.end_date;
+    
 
     console.log("last Date", lastDate);
     const currentDate = new Date();
 
-    const day = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1
-      }-${currentDate.getDate()}`;
+    const day = `${currentDate.getFullYear()}-${
+      currentDate.getMonth() + 1
+    }-${currentDate.getDate()}`;
 
     const cday = day.split("-");
 
@@ -93,6 +96,9 @@ const WbsModal = (props) => {
     console.log("date1", cdate);
     console.log("date2", edate);
     console.log("difference", difference);
+
+    
+  
 
     if (difference >= 0) {
       data.remaining_hours =
@@ -163,13 +169,71 @@ const WbsModal = (props) => {
     onSubmit: updateWbs,
   });
 
+  const total_hours =() => {
+ 
+    const start = props.data.start_date; 
+    const end = props.data.end_date;
+    
+    const moment = require('moment');
+    const total_days= moment(end).diff(moment(start), 'days');
+
+    console.log("dddddddd", total_days);
+
+    let total_hrs =  total_days*24;
+
+    console.log("11111",total_hrs)
+    console.log("1", end);
+    
+    const startd= (new Date(start)).toString();
+    console.log("string", startd);
+    const tomorrow = new Date(start);   
+
+    let count = 0;
+    for(let i = 0;i<total_days ;i++)
+    {
+     tomorrow.setDate(tomorrow.getDate() + 1 );
+      //console.log("tomorrow",tomorrow.getDay());
+
+      if(tomorrow.getDay()==5||tomorrow.getDay()==6){
+         count=count+1;
+      }
+
+
+    }
+   
+    console.log("********************");
+    count = count*24;
+    total_hrs = total_hrs-count;
+    let total_spent=0
+    for(const item in props.timeCardList.data){
+      console.log(props.timeCardList.data[item].hours_today)
+      total_spent+=parseInt(props.timeCardList.data[item].hours_today)
+    }
+    console.log('spent',total_spent)
+    //const le= Array.from(props.timeCardList.data).length();
+    // console.log("list", typeof(props.timeCardList.data));
+
+    //const hours_worked = props.data.project. props.data.project.remaining_hours 
+    let spent_hours = 0;
+    // for(let i = 0;i<(props.timeCardList.data).length();i++)
+    // {
+    //        spent_hours=spent_hours+ props.timeCardList.data[i].hours_worked;
+    // }
+    //  console.log("worked", spent_hours);
+  }
+
   function is_form_submitting() {
     console.log(formWbsUpdate.isSubmitting, formWbsUpdate.isValidating);
+    total_hours();
     if (formWbsUpdate.isSubmitting && !formWbsUpdate.isValidating) {
       return true;
     }
     return false;
+
+    
   }
+
+  
 
   return (
     <>
@@ -232,28 +296,65 @@ const WbsModal = (props) => {
                   </div>
                 </CRow>
                 <CRow>
-                  <div className="col-lg-6 mb-3">
-                    <CLabel className="custom-label-wbs5">Start date</CLabel>
-                    <CInput
-                      id="start_date"
-                      name="start_date"
-                      type="date"
-                      className="custom-forminput-5"
-                      onChange={formWbsUpdate.handleChange}
-                      value={formWbsUpdate.values.start_date}
-                    ></CInput>
-                  </div>
-                  <div className="col-lg-6 mb-3">
-                    <CLabel className="custom-label-wbs5">End date</CLabel>
-                    <CInput
-                      id="end_date"
-                      name="end_date"
-                      type="date"
-                      className="custom-forminput-5"
-                      onChange={formWbsUpdate.handleChange}
-                      value={formWbsUpdate.values.end_date}
-                    ></CInput>
-                  </div>
+                  {has_permission("projects.add_projects") && (
+                    <div className="col-lg-6 mb-3">
+                      <CLabel className="custom-label-wbs5">Start date</CLabel>
+                      <CInput
+                        id="start_date"
+                        name="start_date"
+                        type="date"
+                        className="custom-forminput-5"
+                        onChange={formWbsUpdate.handleChange}
+                        value={formWbsUpdate.values.start_date}
+
+                        //disabled
+                      ></CInput>
+                    </div>
+                  )}
+                  {has_permission("projects.add_projects") && (
+                    <div className="col-lg-6 mb-3">
+                      <CLabel className="custom-label-wbs5">End date</CLabel>
+                      <CInput
+                        id="end_date"
+                        name="end_date"
+                        type="date"
+                        className="custom-forminput-5"
+                        onChange={formWbsUpdate.handleChange}
+                        value={formWbsUpdate.values.end_date}
+                        // disabled
+                      ></CInput>
+                    </div>
+                  )}
+
+                  {!has_permission("projects.add_projects") && (
+                    <div className="col-lg-6 mb-3">
+                      <CLabel className="custom-label-wbs5">Start date</CLabel>
+                      <CInput
+                        id="start_date"
+                        name="start_date"
+                        type="date"
+                        className="custom-forminput-5"
+                        onChange={formWbsUpdate.handleChange}
+                        value={formWbsUpdate.values.start_date}
+
+                        disabled
+                      ></CInput>
+                    </div>
+                  )}
+                  {!has_permission("projects.add_projects") && (
+                    <div className="col-lg-6 mb-3">
+                      <CLabel className="custom-label-wbs5">End date</CLabel>
+                      <CInput
+                        id="end_date"
+                        name="end_date"
+                        type="date"
+                        className="custom-forminput-5"
+                        onChange={formWbsUpdate.handleChange}
+                        value={formWbsUpdate.values.end_date}
+                         disabled
+                      ></CInput>
+                    </div>
+                  )}
                 </CRow>
                 {/*Actual work today */}
                 <CRow>
@@ -293,7 +394,7 @@ const WbsModal = (props) => {
                   </div>
                 </CRow>
                 <CRow>
-                  <div className="col-lg-6 mb-3">
+                  <div className="col-lg-12 mb-3">
                     <CLabel className="custom-label-wbs5">Hours worked</CLabel>
                     <CInput
                       id="hours_worked"
@@ -305,7 +406,7 @@ const WbsModal = (props) => {
                       disabled={hrsWorked}
                     ></CInput>
                   </div>
-                  <div className="col-lg-6 mb-3">
+                  {/* <div className="col-lg-6 mb-3">
                     <CLabel className="custom-label-wbs5">Progress(%)</CLabel>
                     <CInput
                       id="progress"
@@ -328,7 +429,7 @@ const WbsModal = (props) => {
                       }}
                       value={formWbsUpdate.values.progress}
                     ></CInput>
-                  </div>
+                  </div> */}
                 </CRow>
                 <CRow>
                   <div className="col-lg-12 mb-3">
@@ -386,8 +487,8 @@ const WbsModal = (props) => {
                   <span className="wbs-reporter-name">
                     {props.data.assignee?.first_name != undefined &&
                       props.data.assignee.first_name +
-                      " " +
-                      props.data.assignee.last_name}
+                        " " +
+                        props.data.assignee.last_name}
                   </span>
                 </p>
                 <p>
@@ -397,12 +498,12 @@ const WbsModal = (props) => {
                   <span className="wbs-reporter-name">
                     {props.data.reporter?.first_name != undefined &&
                       props.data.reporter.first_name +
-                      " " +
-                      props.data.reporter.last_name}
+                        " " +
+                        props.data.reporter.last_name}
                   </span>
                 </p>
                 <p>
-                  Remaining hours:
+                  Allocated hours:
                   <br></br>
                   {props.data.project?.remaining_hours}
                 </p>
@@ -412,17 +513,17 @@ const WbsModal = (props) => {
                   <ol className="task-list-show">
                     {props.timeCardList?.data != undefined
                       ? Array.from(props.timeCardList.data).map((item) => (
-                        <li className="task-list-show-item">
-                          {item.actual_work_done +
-                            " ➤ " +
-                            item.hours_today +
-                            " hr(s)"}
-                          {/* By {item.time_card_assignee.first_name + " " + item.time_card_assignee.last_name}  */}
-                          <p>
-                            <small>@ {item.date_updated} </small>
-                          </p>
-                        </li>
-                      ))
+                          <li className="task-list-show-item">
+                            {item.actual_work_done +
+                              " ➤ " +
+                              item.hours_today +
+                              " hr(s)"}
+                            {/* By {item.time_card_assignee.first_name + " " + item.time_card_assignee.last_name}  */}
+                            <p>
+                              <small>@ {item.date_updated} </small>
+                            </p>
+                          </li>
+                        ))
                       : "No task has been done so far."}
                   </ol>
                 </div>

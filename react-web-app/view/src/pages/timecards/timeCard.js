@@ -88,9 +88,17 @@ const TimeCards = () => {
             temp_hrs += parseFloat(element.data.hours_today);
             tableData.push({
               "#": index + 1,
-              "Project Name (Work Package)":element.data.project!=null?(element.data.project?.sub_task+' ('+element.data.project.work_package_number+')'):'N/A' ,
-              "Task Title": element.data.project!=null? element.data.project.task_title:'N/A',
-              "Description": element.data.actual_work_done!=null? element.data.actual_work_done:'N/A',
+              "Project Name (Work Package)": element.data.project?.sub_task
+                ? element.data.project.sub_task
+                : "N/A" + " (" + element.data.project?.work_package_number
+                ? element.data.project.work_package_number
+                : "-" + ")",
+              "Task Title": element.data.project.task_title
+                ? element.data.project.task_title
+                : "N/A",
+              Description: element.data.actual_work_done
+                ? element.data.actual_work_done
+                : "N/A",
               "Hour(s)": element.data.hours_today,
               "Date Created": element.data.date_created,
               data: element.data,
@@ -289,9 +297,9 @@ const TimeCards = () => {
     const uData = pdfData.map((elt, idx) => [
       idx + 1,
       elt.data.project.sub_task +
-      " (" +
-      elt.data.project.work_package_number +
-      ")",
+        " (" +
+        elt.data.project.work_package_number +
+        ")",
       elt.data?.project.task_title,
       elt.data.actual_work_done,
       elt.data.hours_today,
@@ -457,7 +465,7 @@ const TimeCards = () => {
         onAdd={editForm.handleSubmit}
       ></AddTimecardItms>
       <CContainer>
-        <h3 className="timecards-page-header mb-3">Actual Work Done</h3>
+        <h3 className="timecards-page-header mb-3">Actual Hours</h3>
         <CForm>
           <CRow>
             {/**assignees */}
@@ -565,44 +573,47 @@ const TimeCards = () => {
             </CCol>
             {/**buttons for format of timecard */}
             {usersData != 0 && (
-              <CCol md="12" id="tableRef">
-                <h5 className="tiny-header--5 mt-3">Export</h5>
-                <div className="format-buttons mt-3 mb-3">
-                  <CButton
-                    className="file-format-download"
-                    onClick={() => exportPDF()}
-                  >
-                    <CIcon name="cil-description" className="mr-2" /> PDF
-                  </CButton>
-                  <CButton
-                    className="file-format-download"
-                    onClick={() =>
-                      exportToCSV(usersData, "Timecard of" + " " + pdfTitle)
-                    }
-                  >
-                    <CIcon name="cil-spreadsheet" className="mr-2" />
-                    Excel
-                  </CButton>
-                  {/* <CButton className="file-format-download">Print</CButton> */}
-                </div>
-                {totalHrs != 0 && (
-                  <div class="alert alert-info" role="alert">
-                    {
-                      <small>
-                        Total <b>{totalHrs.toFixed(1)}hrs&nbsp;</b>
-                      </small>
-                    }
-                    {
-                      <small>
-                        {" "}
-                        from <b>
-                          {moment(startDate).format("DD-MMM-YY")}
-                        </b> to <b>{moment(endDate).format("DD-MMM-YY")}</b>
-                      </small>
-                    }
+              <CRow className="mt-4">
+                <CCol md="4">
+                  <CLabel className="custom-label-5" htmlFor="assigneeSelect">
+                    Employee Name :{" "}
+                    {capitalize(profile_details.first_name) +
+                      " " +
+                      capitalize(profile_details.last_name)}
+                  </CLabel>
+                </CCol>
+                <div class="w-100"></div>
+                <CCol md="4">
+                  <CLabel className="custom-label-5" htmlFor="assigneeSelect">
+                    Weekending :
+                  </CLabel>
+                </CCol>
+                <CCol
+                  md="8"
+                  id="tableRef"
+                  className="d-flex justify-content-end"
+                >
+                  <h5 className="tiny-header--5 mt-3 mr-2">Export </h5>
+                  <div className="format-buttons mt-3 mb-3 ">
+                    <CButton
+                      className="file-format-download"
+                      onClick={() => exportPDF()}
+                    >
+                      <CIcon name="cil-description" className="mr-2" /> PDF
+                    </CButton>
+                    <CButton
+                      className="file-format-download"
+                      onClick={() =>
+                        exportToCSV(usersData, "Timecard of" + " " + pdfTitle)
+                      }
+                    >
+                      <CIcon name="cil-spreadsheet" className="mr-2" />
+                      Excel
+                    </CButton>
+                    {/* <CButton className="file-format-download">Print</CButton> */}
                   </div>
-                )}
-              </CCol>
+                </CCol>
+              </CRow>
             )}
             {/**table for displaying all the entries */}
             <CCol md="12">
@@ -667,21 +678,30 @@ const TimeCards = () => {
                   {/* <CButton className="file-format-download">Print</CButton> */}
                 </div>}
               </div>
+
               {totalHrs != 0 && (
                 <div class="alert alert-info" role="alert">
-                  {
-                    <small>
-                      Total <b>{totalHrs.toFixed(1)}hrs&nbsp;</b>
-                    </small>
-                  }
-                  {
-                    <small>
-                      {" "}
-                      from <b>
-                        {moment(startDate).format("DD-MMM-YY")}
-                      </b> to <b>{moment(endDate).format("DD-MMM-YY")}</b>
-                    </small>
-                  }
+                  <CRow>
+                    <CCol md="5"></CCol>
+                    <CCol md="3">
+                      {
+                        <small>
+                          {"     "}
+                          From <b>
+                            {moment(startDate).format("DD-MMM-YY")}
+                          </b> to <b>{moment(endDate).format("DD-MMM-YY")}</b>
+                        </small>
+                      }
+                    </CCol>
+                    <CCol md="4">
+                      {
+                        <small>
+                          {"   "}
+                          Total <b>{totalHrs.toFixed(1)}hrs&nbsp;</b>
+                        </small>
+                      }
+                    </CCol>
+                  </CRow>
                 </div>
               )}
             </CCol>
