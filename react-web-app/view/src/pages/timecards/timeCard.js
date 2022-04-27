@@ -57,19 +57,17 @@ const TimeCards = () => {
   const [timecardmodal, settimecardModal] = useState(false);
 
   const getTimeCards = (values) => {
+    console.log('working')
     setStartDate(values.startDate);
     setEndDate(values.todate);
     var temp_hrs = 0;
-    const section = document.querySelector("#tableRef");
-    section.scrollIntoView({ behavior: "smooth", block: "start" });
-    if (
-      has_permission("projects.add_projects") &&
-      has_permission("wbs.change_timecard") &&
-      has_permission("wbs.add_timecard")
-    ) {
+    // const section = document.querySelector("#tableRef");
+    // section.scrollIntoView({ behavior: "smooth", block: "start" });
+    if ( has_permission("projects.add_projects") && has_permission("wbs.change_timecard") && has_permission("wbs.add_timecard") ) {
       // console.log('values from timecards', values)
       API.get("wbs/user/time-card/list/" + values.assigneeSelectPM + "/").then(
         (res) => {
+          console.log(res.data.data)
           let temp = [];
           Array.from(res.data.data).forEach((item, idx) => {
             temp.push({ data: item });
@@ -89,13 +87,9 @@ const TimeCards = () => {
             temp_hrs += parseFloat(element.data.hours_today);
             tableData.push({
               "#": index + 1,
-              "Project Name (Work Package)":
-                element.data.project?.sub_task?element.data.project.sub_task:'N/A' +
-                " (" +
-                element.data.project?.work_package_number?element.data.project.work_package_number:'-' +
-                ")",
-              "Task Title": element.data.project.task_title?element.data.project.task_title:'N/A',
-              "Description": element.data.actual_work_done?element.data.actual_work_done:'N/A',
+              "Project Name (Work Package)":element.data.project!=null?(element.data.project?.sub_task+' ('+element.data.project.work_package_number+')'):'N/A' ,
+              "Task Title": element.data.project!=null? element.data.project.task_title:'N/A',
+              "Description": element.data.actual_work_done!=null? element.data.actual_work_done:'N/A',
               "Hour(s)": element.data.hours_today,
               "Date Created": element.data.date_created,
               data: element.data,
@@ -105,12 +99,7 @@ const TimeCards = () => {
           setUsersData(tableData);
         }
       );
-      // editForm.setValues({
-      //     assigneeSelect: '',
-      //     assigneeSelectPM: values.assigneeSelectPM,
-      //     startDate: '',
-      //     todate: ''
-      // })
+      
     } else {
       // console.log('values from timecards', values)
       API.get("wbs/user/time-card/list/" + values.assigneeSelect + "/").then(
@@ -141,12 +130,8 @@ const TimeCards = () => {
             temp_hrs += parseFloat(element.data.hours_today);
             tableData.push({
               "#": index + 1,
-              "Project Name (Work Package)":
-                element.data.project.sub_task +
-                " (" +
-                element.data.project.work_package_number +
-                ")",
-              "Task Title": element.data.project.task_title,
+              "Project Name (Work Package)":element.data.project!=null?(element.data.project?.sub_task+' ('+element.data.project.work_package_number+')'):'N/A' ,
+              "Task Title": element.data.project!=null?element.data.project.task_title:'N/A',
               "Description": element.data.actual_work_done?element.data.actual_work_done:'',
               "Hour(s)": element.data.hours_today,
               "Date Created": element.data.date_created,
@@ -159,12 +144,6 @@ const TimeCards = () => {
           setTotalHrs(temp_hrs);
         }
       );
-      // editForm.setValues({
-      //     assigneeSelect: values.assigneeSelect,
-      //     assigneeSelectPM: '',
-      //     startDate: '',
-      //     todate: ''
-      // })
     }
   };
 
@@ -177,14 +156,11 @@ const TimeCards = () => {
   {
     /**fetch all assignees for PM */
   }
-
+  const [modaladdItem, setmodalAddItem] = useState(false);
   React.useEffect(() => {
     window.scrollTo(0, 0);
     setTotalHrs(0);
-    if (
-      has_permission("projects.change_projectassignee") ||
-      has_permission("projects.add_projectassignee")
-    ) {
+    if (has_permission("projects.change_projectassignee") || has_permission("projects.add_projectassignee")) {
       API.get(
         "project/assignees/all/" + sessionStorage.getItem(USER_ID) + "/"
       ).then((res) => {
@@ -211,27 +187,21 @@ const TimeCards = () => {
         setAssigneeList(temp);
       });
     }
-    API.get(
-      "wbs/user/time-card/list/" + sessionStorage.getItem(USER_ID) + "/"
-    ).then((res) => {
+    API.get("wbs/user/time-card/list/" + sessionStorage.getItem(USER_ID) + "/").then((res) => {
       let temp = [];
       Array.from(res.data.data).forEach((item, idx) => {
         temp.push({ data: item });
       });
-      let filteredData = [];
-      filteredData = temp;
+      let filteredData = temp;
+      
       setPdfData(filteredData);
       var tableData = [];
       for (let index = 0; index < filteredData.length; index++) {
         const element = filteredData[index];
         tableData.push({
           "#": index + 1,
-          "Project Name (Work Package)":
-            element.data.project?.sub_task?element.data.project?.sub_task:'N/A' +
-            " (" +
-            element.data.project?.work_package_number +
-            ")",
-          "Task Title": element.data.project?.task_title?element.data.project?.task_title:'N/A',
+          "Project Name (Work Package)": element.data.project!=null?(element.data.project?.sub_task+' ('+element.data.project.work_package_number+')'):'N/A' ,
+          "Task Title": element.data.project!=null?element.data.project?.task_title:'N/A',
           "Description": element.data?.actual_work_done?element.data?.actual_work_done:'N/A',
           "Hour(s)": element.data.hours_today,
           Type: element.data.time_type,
@@ -241,7 +211,7 @@ const TimeCards = () => {
       }
       setUsersData(tableData);
     });
-  }, []);
+  }, [modaladdItem]);
   const getAssigneeList = (option) => {
     setAssigneeValue(option);
     editForm.setValues({
@@ -341,7 +311,7 @@ const TimeCards = () => {
   const [actualWorkDone, setActualWorkDone] = useState();
   const [hour, sethour] = useState();
   const [row, setRow] = useState();
-  const [modaladdItem, setmodalAddItem] = useState(false);
+  
 
   const toggleModal = () => {
     setmodalAddItem(!modaladdItem);
@@ -397,7 +367,6 @@ const TimeCards = () => {
   // }
   const onAddItem = () => {
     setmodalAddItem(false);
-    //dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)))
   };
 
   const onSubmit = () => {
@@ -432,14 +401,14 @@ const TimeCards = () => {
                 "#",
                 "Project Name (Work Package)",
                 "Task Title",
-                "Actual Work Done",
+                "Description",
                 "Hour(s)",
                 "Date Created",
               ],
             ];
             const uData = usersData.map((elt, idx) => [
               idx + 1,
-              elt.data.project.sub_task +
+              elt.data.project?.sub_task?elt.data.project.sub_task:'N/A' +
               " (" +
               elt.data.project.work_package_number +
               ")",
@@ -463,22 +432,26 @@ const TimeCards = () => {
 
         }
       });
-
-
-
-
-
-
   }
 
   const dateRange =() => {
-    
     const today = new Date();
     const date = today.getDate();
     console.log("date", date );
-
   }
 
+  const show_submit=()=>{
+    if(editForm.values.startDate && editForm.values.todate){
+      return true
+    }
+    else return false
+  }
+  const show_add_item_btn=()=>{
+    if(editForm.values.assigneeSelectPM == sessionStorage.getItem(USER_ID)){
+      return true
+    }
+    return false
+  }
   return (
     <>
       <CModal
@@ -552,9 +525,10 @@ const TimeCards = () => {
       </CModal>
 
       <AddTimecardItms
-       toggle={toggleModal}
+        // toggle={toggleModal}
         show={modaladdItem}
         onClose={onAddItem}
+        onAdd={editForm.handleSubmit}
       ></AddTimecardItms>
       <CContainer>
         <h3 className="timecards-page-header mb-3">Actual Work Done</h3>
@@ -717,7 +691,7 @@ const TimeCards = () => {
                     },
                     "Project Name (Work Package)",
                     "Task Title",
-                    "Actual Work Done",
+                    "Description",
                     "Hour(s)",
                     "Type",
                     "Date Created",
@@ -751,10 +725,11 @@ const TimeCards = () => {
                       </td>
                     ),
                   }}
-                ></CDataTable>
-                <div className="format-buttons mt-3 mb-3">
+                />
+                {show_add_item_btn() == true && <div className="format-buttons mt-3 mb-3">
                   <CButton
                     className="file-format-download"
+                    type="button"
                     onClick={() => {
                       setmodalAddItem(true);
                     }}
@@ -762,9 +737,9 @@ const TimeCards = () => {
                     {" "}
                     + Add Item
                   </CButton>
-                  <CButton className="file-format-download" onClick={onSubmit}>Submit </CButton>
+                  <CButton className="file-format-download" type="button" onClick={onSubmit}>Submit </CButton>
                   {/* <CButton className="file-format-download">Print</CButton> */}
-                </div>
+                </div>}
               </div>
               {totalHrs != 0 && (
                 <div class="alert alert-info" role="alert">

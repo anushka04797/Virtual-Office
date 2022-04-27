@@ -36,6 +36,10 @@ const AddTimecardItms = (props) => {
 
     API.post('wbs/time-card/add/', formAddTimecard.values).then((res) => {
       console.log(res.data)
+      props.onClose()
+      // props.onAdd()
+      toggleModal()
+      formAddTimecard.resetForm()
       swal('Added!', 'Successfuly Added', 'success')
     })
     setModal(false)
@@ -84,7 +88,8 @@ const AddTimecardItms = (props) => {
       option.label == "OTO" ||
       option.label == "OTS" ||
       option.label == "RHR" ||
-      option.label == "COM"
+      option.label == "COM" ||
+      option.label == "WFH"
     )
       return true;
     else if (
@@ -143,23 +148,7 @@ const AddTimecardItms = (props) => {
 
     //console.log("aaa", formAddTimecard.values.project)
   };
-  // useEffect(() => {
-  //   console.log("aa", formAddTimecard.values.project);
-  // }, [formAddTimecard]);
-
-  // const wbslist =()=>{
-  //   let wbslistArray =[];
-  //   for(let i = 0;i<selectedProject.length;i++)
-  //   {
-  //     wbslistArray.push({
-  //       value: selectedProject[i].id,
-  //       label: selectedProject[i].title,
-  //       data:selectedProject[i],
-
-  //     })
-  //   }
-  //  return wbslistArray;
-  // }
+  
 
   const projects = useSelector((state) => {
     let projectsArray = [];
@@ -181,6 +170,7 @@ const AddTimecardItms = (props) => {
         closeOnBackdrop={false}
         show={props.show}
         onClose={props.toggle}
+        size="lg"
       >
         <CForm>
           <CModalHeader closeButton>
@@ -300,7 +290,7 @@ const AddTimecardItms = (props) => {
           <CButton color="primary" onClick={formAddTimecard.handleSubmit}>
             save
           </CButton>{" "}
-          <CButton color="secondary" onClick={props.toggle}>
+          <CButton color="secondary" onClick={props.onClose}>
             Cancel
 
           </CButton>
