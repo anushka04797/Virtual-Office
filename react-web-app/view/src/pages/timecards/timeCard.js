@@ -13,6 +13,7 @@ import {
   CModalHeader,
   CModalFooter,
   CModalTitle,
+  CTextarea,
 } from "@coreui/react";
 
 import React, { useState, useEffect } from "react";
@@ -359,6 +360,7 @@ const TimeCards = () => {
     setRow(null);
     setActualWorkDone(null);
     sethour(null);
+    dateRange();
   };
 
   const onSave = () => {
@@ -469,6 +471,14 @@ const TimeCards = () => {
 
   }
 
+  const dateRange =() => {
+    
+    const today = new Date();
+    const date = today.getDate();
+    console.log("date", date );
+
+  }
+
   return (
     <>
       <CModal
@@ -484,11 +494,16 @@ const TimeCards = () => {
         </CModalHeader>
         <CModalBody>
           <CRow>
-            <CCol>Task Title : {row?.project.task_title}</CCol>
-            <CCol md="12">
-              <div class="mb-3">
-                <label class="form-label">Actual Work Done :</label>
-                <textarea
+            <CCol className="col-md-12 mb-3">
+            <CLabel class="form-label">  Task Title : </CLabel>
+            <CInput  value= {row?.project.task_title} disabled >
+            
+            </CInput>
+          </CCol>
+            <CCol className="col-md-12 mb-3">
+              
+                <CLabel class="form-label">Actual Work Done :</CLabel>
+                <CTextarea
                   class="form-control"
                   id="exampleFormControlTextarea1"
                   rows="3"
@@ -496,21 +511,22 @@ const TimeCards = () => {
                   onChange={(e) => setActualWorkDone(e.target.value)}
                 >
                   {" "}
-                </textarea>
-              </div>
+                </CTextarea>
+              
             </CCol>
-            <CCol md="12">
-              Hour(s):
-              <input
+            <CCol className="col-md-12 mb-3" >
+            <CLabel class="form-label"> Hour(s):</CLabel>
+             
+              <CInput
                 className="custom-forminput-5"
                 type="number"
                 aria-label="default input example"
                 value={hour}
                 onChange={(e) => sethour(e.target.value)}
-              ></input>
+              ></CInput>
               {/*{sethour(row?.sethour)}*/}
             </CCol>
-            <CCol md="12">
+            <CCol className="col-md-12 mb-3">
               {/*Type : {row?.time_type}*/}
               <CLabel
                 className="custom-label-5"
@@ -536,6 +552,7 @@ const TimeCards = () => {
       </CModal>
 
       <AddTimecardItms
+       toggle={toggleModal}
         show={modaladdItem}
         onClose={onAddItem}
       ></AddTimecardItms>

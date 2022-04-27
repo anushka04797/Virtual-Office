@@ -21,13 +21,26 @@ import "./timeCards.css";
 import { useDispatch, useSelector } from "react-redux";
 import Select from "react-select";
 import { API, USER_ID } from "../../Config";
+import swal from 'sweetalert'
 
 const AddTimecardItms = (props) => {
+
   const [modal, setModal] = useState(false);
 
   const toggleModal = () => {
     setModal(!modal);
   };
+
+  const onSave = (values) =>{
+    console.log("values", formAddTimecard.values);
+
+    API.post('wbs/time-card/add/', formAddTimecard.values).then((res) => {
+      
+      swal('Added!', 'Successfuly Added', 'success')
+    })
+    setModal(false)
+  }
+
 
   const formAddTimecard = useFormik({
     initialValues: {
@@ -36,13 +49,13 @@ const AddTimecardItms = (props) => {
       actual_work_done: "",
       hours: "",
       hours_type: "",
-      date_created: "",
+     
       wbs: "",
     },
     validateOnChange: true,
     validateOnBlur: true,
     //validate: validateWbsCreateForm,
-    //onSubmit: ,
+    onSubmit: onSave,
   });
 
   useEffect(() => {
@@ -84,17 +97,28 @@ const AddTimecardItms = (props) => {
       return false;
   };
 
-  const handleSelectChange = (option) => {
+  const handleHoursTypeChange = (option) => {
     setSelectedType(option);
+    formAddTimecard.setFieldValue(
+      "hours_type",
+      option.label,
+      
+    );
     console.log("Type", option.label);
   };
 
-  const handlewbsChange = (w) => {
-    setSelectedWbs(w);
-    console.log("WBS", w);
+  const handlewbsChange = (option) => {
+    setSelectedWbs(option);
+    console.log("WBS", option);
+    formAddTimecard.setFieldValue(
+      "wbs",
+      option.label,
+    );
   };
 
   const handleProjectChange = (newValue, actionMeta) => {
+
+    
     formAddTimecard.setFieldValue("project", newValue.value);
     console.log(`action: ${actionMeta.action}`);
     console.log("newValue: ", newValue.data.project.wbs_list);
@@ -121,9 +145,9 @@ const AddTimecardItms = (props) => {
 
     //console.log("aaa", formAddTimecard.values.project)
   };
-  useEffect(() => {
-    console.log("aa", formAddTimecard.values.project);
-  }, [formAddTimecard]);
+  // useEffect(() => {
+  //   console.log("aa", formAddTimecard.values.project);
+  // }, [formAddTimecard]);
 
   // const wbslist =()=>{
   //   let wbslistArray =[];
@@ -152,12 +176,13 @@ const AddTimecardItms = (props) => {
     return projectsArray;
   });
 
+  
   return (
     <>
       <CModal
         closeOnBackdrop={false}
         show={props.show}
-        onClose={props.toggleModal}
+        onClose={props.toggle}
       >
         <CForm>
           <CModalHeader closeButton>
@@ -180,7 +205,9 @@ const AddTimecardItms = (props) => {
                   id="hours_type"
                   name="hours_type"
                   options={types}
-                  onChange={handleSelectChange}
+                  onChange={handleHoursTypeChange}
+                  value={formAddTimecard.values.hours_type}
+
                 />
               </CCol>
               <CCol className="col-md-12 mb-3">
@@ -193,7 +220,13 @@ const AddTimecardItms = (props) => {
                   name="hours"
                   className="custom-forminput-5"
                   placeholder="0.00"
-                  onChange={formAddTimecard.handleChange}
+                  //onChange={formAddTimecard.handleChange}
+                  onChange={(e) => {
+                    formAddTimecard.setFieldValue(
+                      "hours",
+                      e.target.value
+                    );
+                  }}
                   value={formAddTimecard.values.hours}
                 />
               </CCol>
@@ -238,6 +271,8 @@ const AddTimecardItms = (props) => {
                     className="custom-forminput-5"
                     options={wbsList}
                     onChange={handlewbsChange}
+                   
+                    value={formAddTimecard.values.wbs}
                   />
                 </CCol>
               )}
@@ -267,10 +302,10 @@ const AddTimecardItms = (props) => {
           <CButton color="primary" onClick={formAddTimecard.handleSubmit}>
             save
           </CButton>{" "}
-          {/* <CButton color="secondary" onClick={props.toggleModal}>
+          <CButton color="secondary" onClick={props.toggle}>
             Cancel
 
-          </CButton> */}
+          </CButton>
         </CModalFooter>
       </CModal>
     </>
