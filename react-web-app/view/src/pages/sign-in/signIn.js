@@ -20,7 +20,7 @@ import { LinearProgress } from "@mui/material";
 import swal from "sweetalert";
 const SignIn = () => {
   let history = useHistory();
-  const [intended_route,setIntendedRoute]=useState('/dashboard')
+  const [intended_route,setIntendedRoute]=useState('/dashboard/WBS/board')
   let location = useLocation()
   const validate_login_form = (values) => {
     console.log(values);

@@ -67,9 +67,8 @@ const WbsModal = (props) => {
     console.log("last Date", lastDate);
     const currentDate = new Date();
 
-    const day = `${currentDate.getFullYear()}-${
-      currentDate.getMonth() + 1
-    }-${currentDate.getDate()}`;
+    const day = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1
+      }-${currentDate.getDate()}`;
 
     const cday = day.split("-");
 
@@ -387,8 +386,8 @@ const WbsModal = (props) => {
                   <span className="wbs-reporter-name">
                     {props.data.assignee?.first_name != undefined &&
                       props.data.assignee.first_name +
-                        " " +
-                        props.data.assignee.last_name}
+                      " " +
+                      props.data.assignee.last_name}
                   </span>
                 </p>
                 <p>
@@ -398,8 +397,8 @@ const WbsModal = (props) => {
                   <span className="wbs-reporter-name">
                     {props.data.reporter?.first_name != undefined &&
                       props.data.reporter.first_name +
-                        " " +
-                        props.data.reporter.last_name}
+                      " " +
+                      props.data.reporter.last_name}
                   </span>
                 </p>
                 <p>
@@ -413,17 +412,17 @@ const WbsModal = (props) => {
                   <ol className="task-list-show">
                     {props.timeCardList?.data != undefined
                       ? Array.from(props.timeCardList.data).map((item) => (
-                          <li className="task-list-show-item">
-                            {item.actual_work_done +
-                              " ➤ " +
-                              item.hours_today +
-                              " hr(s)"}
-                            {/* By {item.time_card_assignee.first_name + " " + item.time_card_assignee.last_name}  */}
-                            <p>
-                              <small>@ {item.date_updated} </small>
-                            </p>
-                          </li>
-                        ))
+                        <li className="task-list-show-item">
+                          {item.actual_work_done +
+                            " ➤ " +
+                            item.hours_today +
+                            " hr(s)"}
+                          {/* By {item.time_card_assignee.first_name + " " + item.time_card_assignee.last_name}  */}
+                          <p>
+                            <small>@ {item.date_updated} </small>
+                          </p>
+                        </li>
+                      ))
                       : "No task has been done so far."}
                   </ol>
                 </div>

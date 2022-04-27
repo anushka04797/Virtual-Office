@@ -31,11 +31,11 @@ const AddTimecardItms = (props) => {
     setModal(!modal);
   };
 
-  const onSave = (values) =>{
+  const onSave = (values) => {
     console.log("values", formAddTimecard.values);
 
     API.post('wbs/time-card/add/', formAddTimecard.values).then((res) => {
-      
+      console.log(res.data)
       swal('Added!', 'Successfuly Added', 'success')
     })
     setModal(false)
@@ -49,8 +49,8 @@ const AddTimecardItms = (props) => {
       actual_work_done: "",
       hours: "",
       hours_type: "",
-     
       wbs: "",
+      assignee: sessionStorage.getItem(USER_ID)
     },
     validateOnChange: true,
     validateOnBlur: true,
@@ -67,16 +67,16 @@ const AddTimecardItms = (props) => {
   const [selectedWbs, setSelectedWbs] = useState();
 
   const types = [
-    { label: "RHR", value: 1 },
-    { label: "SIC", value: 2 },
-    { label: "VAC", value: 3 },
-    { label: "OTS", value: 4 },
-    { label: "OTO", value: 5 },
-    { label: "HOL", value: 6 },
-    { label: "WFH", value: 7 },
-    { label: "COM", value: 8 },
-    { label: "PB1", value: 9 },
-    { label: "PB2", value: 10 },
+    { label: "RHR", value: "RHR" },
+    { label: "SIC", value: "SIC" },
+    { label: "VAC", value: "VAC" },
+    { label: "OTS", value: "OTS" },
+    { label: "OTO", value: "OTO" },
+    { label: "HOL", value: "HOL" },
+    { label: "WFH", value: "WFH" },
+    { label: "COM", value: "COM" },
+    { label: "PB1", value: "PB1" },
+    { label: "PB2", value: "PB2" },
   ];
 
   const hourtype = (option) => {
@@ -102,7 +102,7 @@ const AddTimecardItms = (props) => {
     formAddTimecard.setFieldValue(
       "hours_type",
       option.label,
-      
+
     );
     console.log("Type", option.label);
   };
@@ -118,27 +118,25 @@ const AddTimecardItms = (props) => {
 
   const handleProjectChange = (newValue, actionMeta) => {
 
-    
+
     formAddTimecard.setFieldValue("project", newValue.value);
-    console.log(`action: ${actionMeta.action}`);
-    console.log("newValue: ", newValue.data.project.wbs_list);
-    console.log("id", (parseInt(sessionStorage.getItem(USER_ID))));
-    console.log("type", ( parseInt(newValue.data.project.wbs_list[0].id)))
+    // console.log(`action: ${actionMeta.action}`);
+    // console.log("newValue: ", newValue.data.project.wbs_list);
+    // console.log("id", (parseInt(sessionStorage.getItem(USER_ID))));
+    // console.log("type", (parseInt(newValue.data.project.wbs_list[0].id)))
 
     let wbslistArray = [];
     for (let i = 0; i < newValue.data.project.wbs_list.length; i++) {
-      if (
-
-        parseInt(newValue.data.project.wbs_list[i].assignee_id) == parseInt(sessionStorage.getItem(USER_ID))
-      ) {
+      if (parseInt(newValue.data.project.wbs_list[i].assignee_id) == parseInt(sessionStorage.getItem(USER_ID))) {
         wbslistArray.push({
           value: newValue.data.project.wbs_list[i].id,
           label: newValue.data.project.wbs_list[i].title,
           data: newValue.data.project.wbs_list[i],
         });
-        setWbsList(wbslistArray);
+        
       }
     }
+    setWbsList(wbslistArray);
 
     //setSelectedProject(newValue.data.project.wbs_list)
     //console.log(selectedProject);
@@ -176,7 +174,7 @@ const AddTimecardItms = (props) => {
     return projectsArray;
   });
 
-  
+
   return (
     <>
       <CModal
@@ -206,7 +204,7 @@ const AddTimecardItms = (props) => {
                   name="hours_type"
                   options={types}
                   onChange={handleHoursTypeChange}
-                  value={formAddTimecard.values.hours_type}
+                  // value={formAddTimecard.values.hours_type}
 
                 />
               </CCol>
@@ -271,7 +269,7 @@ const AddTimecardItms = (props) => {
                     className="custom-forminput-5"
                     options={wbsList}
                     onChange={handlewbsChange}
-                   
+
                     value={formAddTimecard.values.wbs}
                   />
                 </CCol>

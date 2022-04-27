@@ -20,6 +20,8 @@ import uniqBy from 'lodash/uniqBy';
 import { has_permission, unique_elements } from '../../helper.js';
 import CommentIcon from '@mui/icons-material/Comment';
 import { Checkbox, FormControlLabel, FormGroup, Grid, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
+import { useSnackbar } from 'notistack';
+import { useLocation } from 'react-router';
 
 
 const WbsBoard = () => {
@@ -34,6 +36,7 @@ const WbsBoard = () => {
     const [selectedAssignee, setSelectedAssignee] = useState('')
     const tempAssigneList = [];
     const [wbsAssigneeList, setWbsAssigneeList] = useState([]);
+    let location = useLocation()
     const dispatch = useDispatch()
     const [fetchData, setFetchedData] = useState([])
     const [boardData, setBoardData] = useState({
@@ -338,6 +341,19 @@ const WbsBoard = () => {
         temp = temp.filter(item => item.assignee.id == profile.id)
         populate_data(temp)
     }
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+    React.useEffect(()=>{
+        window.scrollTo(0, 0);
+        console.log('dashboard mounted',location.state)
+        if(location.state?.from == 'login'){
+            enqueueSnackbar('Welcome ',{variant:'success'})
+        }
+        if(location.state?.message){
+            console.log('message',location.state.message)
+            enqueueSnackbar(location.state.message,{variant:'warning'})
+        }
+        //console.log(new Date(JSON.parse(sessionStorage.getItem('TOKEN')).time).toISOString())
+    },[])
     const [selectedProjects,setSelectedProjects]=useState([{label:'Select All',value:'all',data:{}}])
     const handleProjectChange=(value,actionMeta)=>{
         
