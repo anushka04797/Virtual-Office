@@ -28,13 +28,14 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
-import { fetchPersonalDetails } from "../../store/slices/ProfileSlice";
+
 import CIcon from "@coreui/icons-react";
 import moment from "moment";
 import ReactDOM from "react-dom"; // you used 'react-dom' as 'ReactDOM'
 import swal from "sweetalert";
 import { useHistory } from "react-router-dom";
 import AddTimecardItms from "./addTimecardItem";
+import EditTimeCard from "./Edit";
 
 const TimeCards = () => {
   const profile_details = useSelector((state) => state.profile.data);
@@ -157,6 +158,7 @@ const TimeCards = () => {
     /**fetch all assignees for PM */
   }
   const [modaladdItem, setmodalAddItem] = useState(false);
+  const [show_edit_modal, setShowEditModal] = useState(false);
   React.useEffect(() => {
     window.scrollTo(0, 0);
     setTotalHrs(0);
@@ -211,7 +213,7 @@ const TimeCards = () => {
       }
       setUsersData(tableData);
     });
-  }, [modaladdItem]);
+  }, [modaladdItem,show_edit_modal]);
   const getAssigneeList = (option) => {
     setAssigneeValue(option);
     editForm.setValues({
@@ -320,8 +322,9 @@ const TimeCards = () => {
   const showModal = (tableItem) => {
     //setModal(!row);
     setRow(tableItem.data);
-    setActualWorkDone(tableItem.data.actual_work_done);
-    sethour(tableItem.data.hours_today);
+    setShowEditModal(true)
+    // setActualWorkDone(tableItem.data.actual_work_done);
+    // sethour(tableItem.data.hours_today);
 
     console.log("table", tableItem.data);
   };
@@ -341,15 +344,7 @@ const TimeCards = () => {
   };
 
   const [selectedType, setSelectedType] = useState();
-  const types = [
-    { label: "RHR", value: 1 },
-    { label: "SIC", value: 2 },
-    { label: "VAC", value: 3 },
-    { label: "OTS", value: 4 },
-    { label: "OTO", value: 5 },
-    { label: "HOL", value: 6 },
-    { label: "WFH", value: 7 },
-  ];
+  
 
   const handleSelectChange = (option) => {
     setSelectedType(option);
@@ -454,76 +449,7 @@ const TimeCards = () => {
   }
   return (
     <>
-      <CModal
-        //show={showModal}
-        show={row == undefined ? false : true}
-        onClose={hideModal}
-        toggle={toggleModal}
-      >
-        <CModalHeader closeButton>
-          {" "}
-          Project Name (Work Package) : {row?.project.sub_task} (
-          {row?.project.work_package_number}){" "}
-        </CModalHeader>
-        <CModalBody>
-          <CRow>
-            <CCol className="col-md-12 mb-3">
-            <CLabel class="form-label">  Task Title : </CLabel>
-            <CInput  value= {row?.project.task_title} disabled >
-            
-            </CInput>
-          </CCol>
-            <CCol className="col-md-12 mb-3">
-              
-                <CLabel class="form-label">Actual Work Done :</CLabel>
-                <CTextarea
-                  class="form-control"
-                  id="exampleFormControlTextarea1"
-                  rows="3"
-                  value={actualWorkDone}
-                  onChange={(e) => setActualWorkDone(e.target.value)}
-                >
-                  {" "}
-                </CTextarea>
-              
-            </CCol>
-            <CCol className="col-md-12 mb-3" >
-            <CLabel class="form-label"> Hour(s):</CLabel>
-             
-              <CInput
-                className="custom-forminput-5"
-                type="number"
-                aria-label="default input example"
-                value={hour}
-                onChange={(e) => sethour(e.target.value)}
-              ></CInput>
-              {/*{sethour(row?.sethour)}*/}
-            </CCol>
-            <CCol className="col-md-12 mb-3">
-              {/*Type : {row?.time_type}*/}
-              <CLabel
-                className="custom-label-5"
-                htmlFor="assigneeSelectPM"
-                loseMenuOnSelect={true}
-                isClearable={false}
-                isMulti={false}
-              >
-                Type :
-              </CLabel>
-              <Select options={types} onChange={handleSelectChange} />
-            </CCol>
-          </CRow>
-        </CModalBody>
-        <CModalFooter>
-          <CButton color="primary" onClick={onSave}>
-            save
-          </CButton>{" "}
-          <CButton color="secondary" onClick={hideModal}>
-            Cancel
-          </CButton>
-        </CModalFooter>
-      </CModal>
-
+      {row!=null && row!=undefined && <EditTimeCard data={row} show={show_edit_modal} onClose={()=>{setShowEditModal(false)}}/>}
       <AddTimecardItms
         // toggle={toggleModal}
         show={modaladdItem}
