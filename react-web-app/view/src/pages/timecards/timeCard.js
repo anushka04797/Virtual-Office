@@ -90,12 +90,12 @@ const TimeCards = () => {
             tableData.push({
               "#": index + 1,
               "Project Name (Work Package)":
-                element.data.project.sub_task +
+                element.data.project?.sub_task?element.data.project.sub_task:'N/A' +
                 " (" +
-                element.data.project.work_package_number +
+                element.data.project?.work_package_number?element.data.project.work_package_number:'-' +
                 ")",
-              "Task Title": element.data.project.task_title,
-              "Actual Work Done": element.data.actual_work_done,
+              "Task Title": element.data.project.task_title?element.data.project.task_title:'N/A',
+              "Description": element.data.actual_work_done?element.data.actual_work_done:'N/A',
               "Hour(s)": element.data.hours_today,
               "Date Created": element.data.date_created,
               data: element.data,
