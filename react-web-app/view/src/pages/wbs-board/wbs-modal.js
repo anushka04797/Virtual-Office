@@ -204,22 +204,23 @@ const WbsModal = (props) => {
     console.log("********************");
     count = count*24;
     total_hrs = total_hrs-count;
+
     let total_spent=0
     for(const item in props.timeCardList.data){
       console.log(props.timeCardList.data[item].hours_today)
       total_spent+=parseInt(props.timeCardList.data[item].hours_today)
     }
     console.log('spent',total_spent)
-    //const le= Array.from(props.timeCardList.data).length();
-    // console.log("list", typeof(props.timeCardList.data));
+   
+    const remaining_hrs = total_hrs - total_spent ;
+    const hours = {
+      allocated_hours : total_hrs,
+      spent_hours : total_spent, 
+      remaining_hours : remaining_hrs, 
+    }
 
-    //const hours_worked = props.data.project. props.data.project.remaining_hours 
-    let spent_hours = 0;
-    // for(let i = 0;i<(props.timeCardList.data).length();i++)
-    // {
-    //        spent_hours=spent_hours+ props.timeCardList.data[i].hours_worked;
-    // }
-    //  console.log("worked", spent_hours);
+    return hours;
+    
   }
 
   function is_form_submitting() {
@@ -478,8 +479,10 @@ const WbsModal = (props) => {
                 )}
               </CForm>
             </div>
-            <div className="col-lg-4 mb-3">
+
+            <CRow className="col-lg-4 mb-3">
               <div>
+                <CCol md="12">
                 <p>
                   Assignee:
                   <br></br>
@@ -491,6 +494,8 @@ const WbsModal = (props) => {
                         props.data.assignee.last_name}
                   </span>
                 </p>
+                </CCol>
+                <CCol md="12">
                 <p>
                   Reporter:
                   <br></br>
@@ -502,12 +507,30 @@ const WbsModal = (props) => {
                         props.data.reporter.last_name}
                   </span>
                 </p>
-                <p>
+                </CCol>
+                <CCol md="12">
+                <p className="custom-label-wbs5">
                   Allocated hours:
                   <br></br>
-                  {props.data.project?.remaining_hours}
+                   {total_hours().allocated_hours}   {/*{props.data.project?.remaining_hours}*/}
                 </p>
+                </CCol>
+                <CCol md="12">
+                <p>
+                  Hours Worked:
+                  <br></br>
+                  {total_hours().spent_hours}
+                </p>
+                </CCol>
+                <CCol md="12">
+                <p>
+                 Remaining hours:
+                  <br></br>
+                  {total_hours().remaining_hours}
+                </p>
+                </CCol>
                 {/**task list show */}
+                <CCol md="12">
                 <div className="task-list">
                   <p>Task List:</p>
                   <ol className="task-list-show">
@@ -527,8 +550,9 @@ const WbsModal = (props) => {
                       : "No task has been done so far."}
                   </ol>
                 </div>
+                </CCol>
               </div>
-            </div>
+            </CRow>
           </CRow>
         </CModalBody>
       </CModal>

@@ -58,17 +58,21 @@ const TimeCards = () => {
   const [timecardmodal, settimecardModal] = useState(false);
 
   const getTimeCards = (values) => {
-    console.log('working')
+    console.log("working");
     setStartDate(values.startDate);
     setEndDate(values.todate);
     var temp_hrs = 0;
     // const section = document.querySelector("#tableRef");
     // section.scrollIntoView({ behavior: "smooth", block: "start" });
-    if ( has_permission("projects.add_projects") && has_permission("wbs.change_timecard") && has_permission("wbs.add_timecard") ) {
+    if (
+      has_permission("projects.add_projects") &&
+      has_permission("wbs.change_timecard") &&
+      has_permission("wbs.add_timecard")
+    ) {
       // console.log('values from timecards', values)
       API.get("wbs/user/time-card/list/" + values.assigneeSelectPM + "/").then(
         (res) => {
-          console.log(res.data.data)
+          console.log(res.data.data);
           let temp = [];
           Array.from(res.data.data).forEach((item, idx) => {
             temp.push({ data: item });
@@ -108,7 +112,6 @@ const TimeCards = () => {
           setUsersData(tableData);
         }
       );
-      
     } else {
       // console.log('values from timecards', values)
       API.get("wbs/user/time-card/list/" + values.assigneeSelect + "/").then(
@@ -139,9 +142,20 @@ const TimeCards = () => {
             temp_hrs += parseFloat(element.data.hours_today);
             tableData.push({
               "#": index + 1,
-              "Project Name (Work Package)":element.data.project!=null?(element.data.project?.sub_task+' ('+element.data.project.work_package_number+')'):'N/A' ,
-              "Task Title": element.data.project!=null?element.data.project.task_title:'N/A',
-              "Description": element.data.actual_work_done?element.data.actual_work_done:'',
+              "Project Name (Work Package)":
+                element.data.project != null
+                  ? element.data.project?.sub_task +
+                    " (" +
+                    element.data.project.work_package_number +
+                    ")"
+                  : "N/A",
+              "Task Title":
+                element.data.project != null
+                  ? element.data.project.task_title
+                  : "N/A",
+              Description: element.data.actual_work_done
+                ? element.data.actual_work_done
+                : "",
               "Hour(s)": element.data.hours_today,
               "Date Created": element.data.date_created,
               data: element.data,
@@ -170,7 +184,10 @@ const TimeCards = () => {
   React.useEffect(() => {
     window.scrollTo(0, 0);
     setTotalHrs(0);
-    if (has_permission("projects.change_projectassignee") || has_permission("projects.add_projectassignee")) {
+    if (
+      has_permission("projects.change_projectassignee") ||
+      has_permission("projects.add_projectassignee")
+    ) {
       API.get(
         "project/assignees/all/" + sessionStorage.getItem(USER_ID) + "/"
       ).then((res) => {
@@ -197,22 +214,35 @@ const TimeCards = () => {
         setAssigneeList(temp);
       });
     }
-    API.get("wbs/user/time-card/list/" + sessionStorage.getItem(USER_ID) + "/").then((res) => {
+    API.get(
+      "wbs/user/time-card/list/" + sessionStorage.getItem(USER_ID) + "/"
+    ).then((res) => {
       let temp = [];
       Array.from(res.data.data).forEach((item, idx) => {
         temp.push({ data: item });
       });
       let filteredData = temp;
-      
+
       setPdfData(filteredData);
       var tableData = [];
       for (let index = 0; index < filteredData.length; index++) {
         const element = filteredData[index];
         tableData.push({
           "#": index + 1,
-          "Project Name (Work Package)": element.data.project!=null?(element.data.project?.sub_task+' ('+element.data.project.work_package_number+')'):'N/A' ,
-          "Task Title": element.data.project!=null?element.data.project?.task_title:'N/A',
-          "Description": element.data?.actual_work_done?element.data?.actual_work_done:'N/A',
+          "Project Name (Work Package)":
+            element.data.project != null
+              ? element.data.project?.sub_task +
+                " (" +
+                element.data.project.work_package_number +
+                ")"
+              : "N/A",
+          "Task Title":
+            element.data.project != null
+              ? element.data.project?.task_title
+              : "N/A",
+          Description: element.data?.actual_work_done
+            ? element.data?.actual_work_done
+            : "N/A",
           "Hour(s)": element.data.hours_today,
           Type: element.data.time_type,
           "Date Created": element.data.date_created,
@@ -221,7 +251,7 @@ const TimeCards = () => {
       }
       setUsersData(tableData);
     });
-  }, [modaladdItem,show_edit_modal]);
+  }, [modaladdItem, show_edit_modal]);
   const getAssigneeList = (option) => {
     setAssigneeValue(option);
     editForm.setValues({
@@ -321,7 +351,6 @@ const TimeCards = () => {
   const [actualWorkDone, setActualWorkDone] = useState();
   const [hour, sethour] = useState();
   const [row, setRow] = useState();
-  
 
   const toggleModal = () => {
     setmodalAddItem(!modaladdItem);
@@ -330,7 +359,7 @@ const TimeCards = () => {
   const showModal = (tableItem) => {
     //setModal(!row);
     setRow(tableItem.data);
-    setShowEditModal(true)
+    setShowEditModal(true);
     // setActualWorkDone(tableItem.data.actual_work_done);
     // sethour(tableItem.data.hours_today);
 
@@ -341,7 +370,6 @@ const TimeCards = () => {
     setRow(null);
     setActualWorkDone(null);
     sethour(null);
-    dateRange();
   };
 
   const onSave = () => {
@@ -352,7 +380,6 @@ const TimeCards = () => {
   };
 
   const [selectedType, setSelectedType] = useState();
-  
 
   const handleSelectChange = (option) => {
     setSelectedType(option);
@@ -379,85 +406,114 @@ const TimeCards = () => {
       icon: "warning",
       buttons: true,
       dangerMode: true,
-    })
-      .then((willDelete) => {
-        if (willDelete) {
-          let temp = [];
-          for (let i = 0; i < usersData.length; i++) {
-            //console.log("data", usersData[i]);
-            temp[i] = usersData[i].data.id;
-          }
-          console.log("id", temp)
-
-          API.put("wbs/time-card/submit/", { time_cards: temp }).then(res => {
-            console.log(res.data)
-            const unit = "pt";
-            const size = "A4"; // Use A1, A2, A3 or A4
-            const orientation = "portrait"; // portrait or landscape
-
-            const marginLeft = 40;
-            const doc = new jsPDF(orientation, unit, size);
-            doc.setFontSize(15);
-            const title = "Timecard of" + " " + pdfTitle + '\n From ' + startDate + ' to ' + endDate;
-            const headers = [
-              [
-                "#",
-                "Project Name (Work Package)",
-                "Task Title",
-                "Description",
-                "Hour(s)",
-                "Date Created",
-              ],
-            ];
-            const uData = usersData.map((elt, idx) => [
-              idx + 1,
-              elt.data.project?.sub_task?elt.data.project.sub_task:'N/A' +
-              " (" +
-              elt.data.project.work_package_number +
-              ")",
-              elt.data?.project.task_title,
-              elt.data.actual_work_done,
-              elt.data.hours_today,
-              elt.data.date_created,
-            ]);
-            let content = {
-              startY: 50,
-              head: headers,
-              body: uData,
-            };
-
-            doc.text(title, marginLeft, 30);
-            doc.autoTable(content);
-            doc.save("Timecard of" + " " + pdfTitle + ".pdf");
-
-            swal('Submitted', 'Your selected time cards are submitted!', 'success')
-          })
-
+    }).then((willDelete) => {
+      if (willDelete) {
+        let temp = [];
+        for (let i = 0; i < usersData.length; i++) {
+          //console.log("data", usersData[i]);
+          temp[i] = usersData[i].data.id;
         }
-      });
-  }
+        console.log("id", temp);
 
-  const dateRange =() => {
-    const today = new Date();
-    const date = today.getDate();
-    console.log("date", date );
-  }
+        API.put("wbs/time-card/submit/", { time_cards: temp }).then((res) => {
+          console.log(res.data);
+          const unit = "pt";
+          const size = "A4"; // Use A1, A2, A3 or A4
+          const orientation = "portrait"; // portrait or landscape
 
-  const show_submit=()=>{
-    if(editForm.values.startDate && editForm.values.todate){
-      return true
+          const marginLeft = 40;
+          const doc = new jsPDF(orientation, unit, size);
+          doc.setFontSize(15);
+          const title =
+            "Timecard of" +
+            " " +
+            pdfTitle +
+            "\n From " +
+            startDate +
+            " to " +
+            endDate;
+          const headers = [
+            [
+              "#",
+              "Project Name (Work Package)",
+              "Task Title",
+              "Description",
+              "Hour(s)",
+              "Date Created",
+            ],
+          ];
+          const uData = usersData.map((elt, idx) => [
+            idx + 1,
+            elt.data.project?.sub_task
+              ? elt.data.project.sub_task
+              : "N/A" + " (" + elt.data.project.work_package_number + ")",
+            elt.data?.project.task_title,
+            elt.data.actual_work_done,
+            elt.data.hours_today,
+            elt.data.date_created,
+          ]);
+          let content = {
+            startY: 50,
+            head: headers,
+            body: uData,
+          };
+
+          doc.text(title, marginLeft, 30);
+          doc.autoTable(content);
+          doc.save("Timecard of" + " " + pdfTitle + ".pdf");
+
+          swal(
+            "Submitted",
+            "Your selected time cards are submitted!",
+            "success"
+          );
+        });
+      }
+    });
+  };
+  const dateRange = () => {
+    var edate = new Date()
+
+    for (let i = 0; i < 7; i++) {
+      if (edate.getDay() === 6) {
+        console.log("end", edate);
+
+        break;
+      } else {
+        edate = moment(edate).subtract(1, "day").toDate()
+      }
     }
-    else return false
+    console.log("end date", edate)
+    const sdate = moment(edate).subtract(6, "day").toDate()
+
+    console.log("start date", sdate)
   }
-  const show_add_item_btn=()=>{
-    if(editForm.values.assigneeSelectPM == sessionStorage.getItem(USER_ID)){
-      return true
+  React.useEffect(()=>{
+    dateRange()
+  },[])
+
+  const show_submit = () => {
+    if (editForm.values.startDate && editForm.values.todate) {
+      return true;
+    } else return false;
+  };
+  const show_add_item_btn = () => {
+    if (editForm.values.assigneeSelectPM == sessionStorage.getItem(USER_ID)) {
+      return true;
     }
-    return false
-  }
+    return false;
+  };
   return (
     <>
-      {row!=null && row!=undefined && <EditTimeCard data={row} show={show_edit_modal} onClose={()=>{setShowEditModal(false)}}/>}
+      {row != null && row != undefined && (
+        <EditTimeCard
+          data={row}
+          show={show_edit_modal}
+          onClose={() => {
+            setShowEditModal(false);
+          }}
+        />
+      )}
       <AddTimecardItms
         // toggle={toggleModal}
         show={modaladdItem}
@@ -663,20 +719,28 @@ const TimeCards = () => {
                     ),
                   }}
                 />
-                {show_add_item_btn() == true && <div className="format-buttons mt-3 mb-3">
-                  <CButton
-                    className="file-format-download"
-                    type="button"
-                    onClick={() => {
-                      setmodalAddItem(true);
-                    }}
-                  >
-                    {" "}
-                    + Add Item
-                  </CButton>
-                  <CButton className="file-format-download" type="button" onClick={onSubmit}>Submit </CButton>
-                  {/* <CButton className="file-format-download">Print</CButton> */}
-                </div>}
+                {show_add_item_btn() == true && (
+                  <div className="format-buttons mt-3 mb-3">
+                    <CButton
+                      className="file-format-download"
+                      type="button"
+                      onClick={() => {
+                        setmodalAddItem(true);
+                      }}
+                    >
+                      {" "}
+                      + Add Item
+                    </CButton>
+                    <CButton
+                      className="file-format-download"
+                      type="button"
+                      onClick={onSubmit}
+                    >
+                      Submit{" "}
+                    </CButton>
+                    {/* <CButton className="file-format-download">Print</CButton> */}
+                  </div>
+                )}
               </div>
 
               {totalHrs != 0 && (
