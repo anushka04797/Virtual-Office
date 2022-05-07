@@ -19,10 +19,12 @@ import uniq from 'lodash/uniq';
 import uniqBy from 'lodash/uniqBy';
 import { has_permission, unique_elements } from '../../helper.js';
 import CommentIcon from '@mui/icons-material/Comment';
+import { styled } from '@mui/material/styles';
 import { Checkbox, FormControlLabel, FormGroup, Grid, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import { useLocation } from 'react-router';
-
+import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const WbsBoard = () => {
     {/**export in excel */ }
@@ -39,6 +41,8 @@ const WbsBoard = () => {
     let location = useLocation()
     const dispatch = useDispatch()
     const [fetchData, setFetchedData] = useState([])
+    const [assignees_loaded,setAssigneesLoaded]=useState(false)
+    const [data_loaded,setDataLoaded]=useState(false)
     const [boardData, setBoardData] = useState({
         lanes: [
             {
@@ -77,7 +81,6 @@ const WbsBoard = () => {
 
     const profile = useSelector(state => state.profile.data)
     const populate_data = (data) => {
-
         console.log('populating data', data)
         setFetchedData(data);
         let temp_data = {
@@ -283,6 +286,7 @@ const WbsBoard = () => {
         getAssigneeList(wbsList)
         setResetAssigneeSelectValue(newValue)
         setShowClearBtn(true);
+        // setDataLoaded(false)
     }
 
     const [showClearBtn, setShowClearBtn] = useState(false);
@@ -322,10 +326,7 @@ const WbsBoard = () => {
         // let temWbsList = wbsList.filter(item => item.assignee.id === newValue.value)
         populate_data(temp_wbs_list)
     }
-    const handleCheckBoxChange = (event, item, idx) => {
-        setChecked({ ...checked, [item]: event.target.checked, ['all']: false })
-        filter_wbs_project_wise({ ...checked, [item]: event.target.checked, ['all']: false })
-    }
+    
     const handleAllCheck = (event) => {
         let temp_checked = { 'all': event.target.checked }
         for (const item in checked) {
@@ -383,7 +384,6 @@ const WbsBoard = () => {
         setSelectedProjects([])
         console.log('profile changed')
         if (has_permission("projects.add_projects")) {
-
             API.get('wbs/pm/all/' + sessionStorage.getItem(USER_ID) + '/').then((res) => {
                 setWbsList(res.data.data)
                 let pre_selected_items = []
@@ -408,6 +408,9 @@ const WbsBoard = () => {
                 populate_data(uniq(pre_selected_items))
                 getAssigneeList(res.data.data)
                 setResetAssigneeSelectValue({ value: sessionStorage.getItem(USER_ID), label: profile.first_name + ' ' + profile.last_name })
+                setDataLoaded(true)
+            }).catch(err=>{
+                setDataLoaded(true)
             })
         } else {
             API.get('wbs/all/' + sessionStorage.getItem(USER_ID) + '/').then((res) => {
@@ -436,9 +439,16 @@ const WbsBoard = () => {
                 populate_data(uniq(pre_selected_items))
                 getAssigneeList(res.data.data)
                 setResetAssigneeSelectValue({ value: sessionStorage.getItem(USER_ID), label: profile.first_name + ' ' + profile.last_name })
+                setDataLoaded(true)
+            }).catch(err=>{
+                setDataLoaded(true)
             })
         }
     }, [profile])
+    const custom_progress_style = {
+        height: 5,
+        borderRadius: 3,
+      };
     return (
         <>
             <CContainer>
@@ -511,9 +521,12 @@ const WbsBoard = () => {
                 </Grid> */}
 
                 <CRow>
-                    <CCol lg="12">
+                    {data_loaded===false?(<CCol lg="8" md="8" sm="8" className="mt-4 offset-md-2 offset-lg-2 offset-sm-2">
+                        <LinearProgress sx={custom_progress_style}/>
+                    </CCol>):(<CCol lg="12">
                         <Board data={boardData} hideCardDeleteIcon handleDragEnd={updateStatus} onCardClick={editWbs} style={boardStyle} laneStyle={laneStyle} />
-                    </CCol>
+                    </CCol>)}
+                    
                 </CRow>
             </CContainer>
             {modalData != null && <WbsModal show={modal} onClose={onWbsUpdate} toggle={toggle} data={modalData} timeCardList={timeCardListData}></WbsModal>}

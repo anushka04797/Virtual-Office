@@ -29,6 +29,7 @@ import LinearProgress from "@mui/material/LinearProgress";
 import { useSnackbar } from "notistack";
 import moment from "moment";
 import { has_permission } from "../../helper.js";
+import WBSFileUpload from "../../components/wbs-docs-upload/WBSFileUpload";
 
 const WbsModal = (props) => {
   console.log("props wbs modal: ", props);
@@ -64,14 +65,12 @@ const WbsModal = (props) => {
     console.log("formWbsUpdate:", props.data);
 
     const lastDate = props.data.end_date;
-    
+
 
     console.log("last Date", lastDate);
     const currentDate = new Date();
 
-    const day = `${currentDate.getFullYear()}-${
-      currentDate.getMonth() + 1
-    }-${currentDate.getDate()}`;
+    const day = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()}`;
 
     const cday = day.split("-");
 
@@ -96,9 +95,6 @@ const WbsModal = (props) => {
     console.log("date1", cdate);
     console.log("date2", edate);
     console.log("difference", difference);
-
-    
-  
 
     if (difference >= 0) {
       data.remaining_hours =
@@ -145,7 +141,10 @@ const WbsModal = (props) => {
         "Actual work done today is required! (250 charracters)";
     return errors;
   };
-
+  const [files, setFiles] = useState([])
+  const setDocFiles = (files) => {
+    setFiles(files)
+  }
   const formWbsUpdate = useFormik({
     initialValues: {
       project: props.data.project.id,
@@ -169,58 +168,57 @@ const WbsModal = (props) => {
     onSubmit: updateWbs,
   });
 
-  const total_hours =() => {
- 
-    const start = props.data.start_date; 
+  const total_hours = () => {
+
+    const start = props.data.start_date;
     const end = props.data.end_date;
-    
+
     const moment = require('moment');
-    const total_days= moment(end).diff(moment(start), 'days');
+    const total_days = moment(end).diff(moment(start), 'days');
 
     console.log("dddddddd", total_days);
 
-    let total_hrs =  total_days*24;
+    let total_hrs = total_days * 24;
 
-    console.log("11111",total_hrs)
+    console.log("11111", total_hrs)
     console.log("1", end);
-    
-    const startd= (new Date(start)).toString();
+
+    const startd = (new Date(start)).toString();
     console.log("string", startd);
-    const tomorrow = new Date(start);   
+    const tomorrow = new Date(start);
 
     let count = 0;
-    for(let i = 0;i<total_days ;i++)
-    {
-     tomorrow.setDate(tomorrow.getDate() + 1 );
+    for (let i = 0; i < total_days; i++) {
+      tomorrow.setDate(tomorrow.getDate() + 1);
       //console.log("tomorrow",tomorrow.getDay());
 
-      if(tomorrow.getDay()==5||tomorrow.getDay()==6){
-         count=count+1;
+      if (tomorrow.getDay() == 5 || tomorrow.getDay() == 6) {
+        count = count + 1;
       }
 
 
     }
-   
-    console.log("********************");
-    count = count*24;
-    total_hrs = total_hrs-count;
 
-    let total_spent=0
-    for(const item in props.timeCardList.data){
+    console.log("********************");
+    count = count * 24;
+    total_hrs = total_hrs - count;
+
+    let total_spent = 0
+    for (const item in props.timeCardList.data) {
       console.log(props.timeCardList.data[item].hours_today)
-      total_spent+=parseInt(props.timeCardList.data[item].hours_today)
+      total_spent += parseInt(props.timeCardList.data[item].hours_today)
     }
-    console.log('spent',total_spent)
-   
-    const remaining_hrs = total_hrs - total_spent ;
+    console.log('spent', total_spent)
+
+    const remaining_hrs = total_hrs - total_spent;
     const hours = {
-      allocated_hours : total_hrs,
-      spent_hours : total_spent, 
-      remaining_hours : remaining_hrs, 
+      allocated_hours: total_hrs,
+      spent_hours: total_spent,
+      remaining_hours: remaining_hrs,
     }
 
     return hours;
-    
+
   }
 
   function is_form_submitting() {
@@ -231,10 +229,10 @@ const WbsModal = (props) => {
     }
     return false;
 
-    
+
   }
 
-  
+
 
   return (
     <>
@@ -308,7 +306,7 @@ const WbsModal = (props) => {
                         onChange={formWbsUpdate.handleChange}
                         value={formWbsUpdate.values.start_date}
 
-                        //disabled
+                      //disabled
                       ></CInput>
                     </div>
                   )}
@@ -322,7 +320,7 @@ const WbsModal = (props) => {
                         className="custom-forminput-5"
                         onChange={formWbsUpdate.handleChange}
                         value={formWbsUpdate.values.end_date}
-                        // disabled
+                      // disabled
                       ></CInput>
                     </div>
                   )}
@@ -352,7 +350,7 @@ const WbsModal = (props) => {
                         className="custom-forminput-5"
                         onChange={formWbsUpdate.handleChange}
                         value={formWbsUpdate.values.end_date}
-                         disabled
+                        disabled
                       ></CInput>
                     </div>
                   )}
@@ -445,7 +443,7 @@ const WbsModal = (props) => {
                   </div>
                 </CRow>
                 <CRow>
-                  <div className="col-lg-12 mb-3">
+                  {/* <div className="col-lg-12 mb-3">
                     <CLabel className="custom-label-wbs5">Deliverable</CLabel>
                     <CInput
                       id="deliverable"
@@ -455,6 +453,9 @@ const WbsModal = (props) => {
                       value={formWbsUpdate.values.deliverable}
                       disabled={deliverableView}
                     ></CInput>
+                  </div> */}
+                  <div className="col-lg-12">
+                    <WBSFileUpload files={files} setFiles={setDocFiles} />
                   </div>
                 </CRow>
                 {props.data.assignee.id == sessionStorage.getItem(USER_ID) && (
@@ -483,59 +484,59 @@ const WbsModal = (props) => {
             <CRow className="col-lg-4 mb-3">
               <div>
                 <CCol md="12">
-                <p>
-                  Assignee:
-                  <br></br>
-                  {/* Pial Noman */}
-                  <span className="wbs-reporter-name">
-                    {props.data.assignee?.first_name != undefined &&
-                      props.data.assignee.first_name +
+                  <p>
+                    Assignee:
+                    <br></br>
+                    {/* Pial Noman */}
+                    <span className="wbs-reporter-name">
+                      {props.data.assignee?.first_name != undefined &&
+                        props.data.assignee.first_name +
                         " " +
                         props.data.assignee.last_name}
-                  </span>
-                </p>
+                    </span>
+                  </p>
                 </CCol>
                 <CCol md="12">
-                <p>
-                  Reporter:
-                  <br></br>
-                  {/* Pial Noman */}
-                  <span className="wbs-reporter-name">
-                    {props.data.reporter?.first_name != undefined &&
-                      props.data.reporter.first_name +
+                  <p>
+                    Created By:
+                    <br></br>
+                    {/* Pial Noman */}
+                    <span className="wbs-reporter-name">
+                      {props.data.reporter?.first_name != undefined &&
+                        props.data.reporter.first_name +
                         " " +
                         props.data.reporter.last_name}
-                  </span>
-                </p>
+                    </span>
+                  </p>
                 </CCol>
                 <CCol md="12">
-                <p className="custom-label-wbs5">
-                  Allocated hours:
-                  <br></br>
-                   {total_hours().allocated_hours}   {/*{props.data.project?.remaining_hours}*/}
-                </p>
+                  <p className="custom-label-wbs5">
+                    Allocated hours:
+                    <br></br>
+                    {total_hours().allocated_hours}   {/*{props.data.project?.remaining_hours}*/}
+                  </p>
                 </CCol>
                 <CCol md="12">
-                <p>
-                  Hours Worked:
-                  <br></br>
-                  {total_hours().spent_hours}
-                </p>
+                  <p>
+                    Hours Worked:
+                    <br></br>
+                    {total_hours().spent_hours}
+                  </p>
                 </CCol>
                 <CCol md="12">
-                <p>
-                 Remaining hours:
-                  <br></br>
-                  {total_hours().remaining_hours}
-                </p>
+                  <p>
+                    Remaining hours:
+                    <br></br>
+                    {total_hours().remaining_hours}
+                  </p>
                 </CCol>
                 {/**task list show */}
                 <CCol md="12">
-                <div className="task-list">
-                  <p>Task List:</p>
-                  <ol className="task-list-show">
-                    {props.timeCardList?.data != undefined
-                      ? Array.from(props.timeCardList.data).map((item) => (
+                  <div className="task-list">
+                    <p>Task List:</p>
+                    <ol className="task-list-show">
+                      {props.timeCardList?.data != undefined
+                        ? Array.from(props.timeCardList.data).map((item) => (
                           <li className="task-list-show-item">
                             {item.actual_work_done +
                               " ➤ " +
@@ -547,9 +548,9 @@ const WbsModal = (props) => {
                             </p>
                           </li>
                         ))
-                      : "No task has been done so far."}
-                  </ol>
-                </div>
+                        : "No task has been done so far."}
+                    </ol>
+                  </div>
                 </CCol>
               </div>
             </CRow>

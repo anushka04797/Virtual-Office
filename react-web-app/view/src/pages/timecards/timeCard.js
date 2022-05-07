@@ -55,7 +55,11 @@ const TimeCards = () => {
   const [endDate, setEndDate] = useState("");
   const [totalHrs, setTotalHrs] = useState(0);
   const [modalData, setModalData] = useState("");
-  const [timecardmodal, settimecardModal] = useState(false);
+  
+  const [modal, setModal] = useState();
+  const [actualWorkDone, setActualWorkDone] = useState();
+  const [hour, sethour] = useState();
+  const [row, setRow] = useState();
 
   const getTimeCards = (values) => {
     console.log("working");
@@ -95,8 +99,8 @@ const TimeCards = () => {
               "Project Name (Work Package)": element.data.project?.sub_task
                 ? element.data.project.sub_task
                 : "N/A" + " (" + element.data.project?.work_package_number
-                ? element.data.project.work_package_number
-                : "-" + ")",
+                  ? element.data.project.work_package_number
+                  : "-" + ")",
               "Task Title": element.data.project.task_title
                 ? element.data.project.task_title
                 : "N/A",
@@ -104,6 +108,7 @@ const TimeCards = () => {
                 ? element.data.actual_work_done
                 : "N/A",
               "Hour(s)": element.data.hours_today,
+              "Type": element.data.time_type,
               "Date Created": element.data.date_created,
               data: element.data,
             });
@@ -145,9 +150,9 @@ const TimeCards = () => {
               "Project Name (Work Package)":
                 element.data.project != null
                   ? element.data.project?.sub_task +
-                    " (" +
-                    element.data.project.work_package_number +
-                    ")"
+                  " (" +
+                  element.data.project.work_package_number +
+                  ")"
                   : "N/A",
               "Task Title":
                 element.data.project != null
@@ -157,6 +162,7 @@ const TimeCards = () => {
                 ? element.data.actual_work_done
                 : "",
               "Hour(s)": element.data.hours_today,
+              "Type": element.data.time_type,
               "Date Created": element.data.date_created,
               data: element.data,
             });
@@ -183,6 +189,7 @@ const TimeCards = () => {
   const [show_edit_modal, setShowEditModal] = useState(false);
   React.useEffect(() => {
     window.scrollTo(0, 0);
+    const {start,end}=dateRange()
     setTotalHrs(0);
     if (
       has_permission("projects.change_projectassignee") ||
@@ -221,8 +228,13 @@ const TimeCards = () => {
       Array.from(res.data.data).forEach((item, idx) => {
         temp.push({ data: item });
       });
-      let filteredData = temp;
-
+      let filteredData = temp
+      console.log('start',start)
+      filteredData = temp.filter(
+        (p) =>
+          p.data.date_updated >= start &&
+          p.data.date_updated <= end
+      );
       setPdfData(filteredData);
       var tableData = [];
       for (let index = 0; index < filteredData.length; index++) {
@@ -232,9 +244,9 @@ const TimeCards = () => {
           "Project Name (Work Package)":
             element.data.project != null
               ? element.data.project?.sub_task +
-                " (" +
-                element.data.project.work_package_number +
-                ")"
+              " (" +
+              element.data.project.work_package_number +
+              ")"
               : "N/A",
           "Task Title":
             element.data.project != null
@@ -244,7 +256,7 @@ const TimeCards = () => {
             ? element.data?.actual_work_done
             : "N/A",
           "Hour(s)": element.data.hours_today,
-          Type: element.data.time_type,
+          'Type': element.data.time_type,
           "Date Created": element.data.date_created,
           data: element.data,
         });
@@ -327,9 +339,9 @@ const TimeCards = () => {
     const uData = pdfData.map((elt, idx) => [
       idx + 1,
       elt.data.project.sub_task +
-        " (" +
-        elt.data.project.work_package_number +
-        ")",
+      " (" +
+      elt.data.project.work_package_number +
+      ")",
       elt.data?.project.task_title,
       elt.data.actual_work_done,
       elt.data.hours_today,
@@ -346,37 +358,21 @@ const TimeCards = () => {
     doc.save("Timecard of" + " " + pdfTitle + ".pdf");
   };
 
-  const profile = useSelector((state) => state.profile.data);
-  const [modal, setModal] = useState();
-  const [actualWorkDone, setActualWorkDone] = useState();
-  const [hour, sethour] = useState();
-  const [row, setRow] = useState();
+  
 
   const toggleModal = () => {
     setmodalAddItem(!modaladdItem);
   };
 
   const showModal = (tableItem) => {
-    //setModal(!row);
     setRow(tableItem.data);
     setShowEditModal(true);
-    // setActualWorkDone(tableItem.data.actual_work_done);
-    // sethour(tableItem.data.hours_today);
-
-    console.log("table", tableItem.data);
   };
   const hideModal = (tableItem) => {
     setModal(!row);
     setRow(null);
     setActualWorkDone(null);
     sethour(null);
-  };
-
-  const onSave = () => {
-    //setActualWorkDone();
-    //sethour();
-    console.log("work ", actualWorkDone);
-    hideModal();
   };
 
   const [selectedType, setSelectedType] = useState();
@@ -477,7 +473,6 @@ const TimeCards = () => {
     for (let i = 0; i < 7; i++) {
       if (edate.getDay() === 6) {
         console.log("end", edate);
-
         break;
       } else {
         edate = moment(edate).subtract(1, "day").toDate()
@@ -485,24 +480,35 @@ const TimeCards = () => {
     }
     console.log("end date", edate)
     const sdate = moment(edate).subtract(6, "day").toDate()
-
     console.log("start date", sdate)
+    setStartDate(moment(sdate).format('YYYY-MM-DD'))
+    setEndDate(moment(edate).format('YYYY-MM-DD'))
+    // editForm.setValues({
+    //   assigneeSelect: sessionStorage.getItem(USER_ID),
+    //   assigneeSelectPM: sessionStorage.getItem(USER_ID),
+    //   startDate: moment(sdate).format('YYYY-MM-DD'),
+    //   todate:  moment(edate).format('YYYY-MM-DD'),
+    // })
+    return {start:moment(sdate).format('YYYY-MM-DD'),end:moment(edate).format('YYYY-MM-DD')}
   }
-  React.useEffect(()=>{
-    dateRange()
-  },[])
+  React.useEffect(() => {
+    console.log('values',editForm)
+    // dateRange()
+  }, [])
 
   const show_submit = () => {
     if (editForm.values.startDate && editForm.values.todate) {
       return true;
     } else return false;
   };
+
   const show_add_item_btn = () => {
     if (editForm.values.assigneeSelectPM == sessionStorage.getItem(USER_ID)) {
       return true;
     }
     return false;
   };
+
   return (
     <>
       {row != null && row != undefined && (
@@ -628,7 +634,7 @@ const TimeCards = () => {
               </div>
             </CCol>
             {/**buttons for format of timecard */}
-            {usersData != 0 && (
+            {usersData.length != 0 && (
               <CRow className="mt-4">
                 <CCol md="4">
                   <CLabel className="custom-label-5" htmlFor="assigneeSelect">
@@ -641,7 +647,7 @@ const TimeCards = () => {
                 <div class="w-100"></div>
                 <CCol md="4">
                   <CLabel className="custom-label-5" htmlFor="assigneeSelect">
-                    Weekending :
+                    Weekending : 
                   </CLabel>
                 </CCol>
                 <CCol
@@ -671,6 +677,9 @@ const TimeCards = () => {
                 </CCol>
               </CRow>
             )}
+            {usersData.length>0 && <div className="alert alert-info" role="alert">
+                Showing data from {moment(startDate).format('DD-MM-YYYY')} to {moment(endDate).format('DD-MM-YYYY')}
+            </div>}
             {/**table for displaying all the entries */}
             <CCol md="12">
               <div className="">
@@ -703,7 +712,7 @@ const TimeCards = () => {
                   scopedSlots={{
                     Action: (item) => (
                       <td>
-                        <CBadge>
+                        {item.data.submitted == false?(<CBadge>
                           <CButton
                             onClick={() => {
                               showModal(item);
@@ -714,7 +723,7 @@ const TimeCards = () => {
                           >
                             Edit
                           </CButton>
-                        </CBadge>
+                        </CBadge>):('N/A')}
                       </td>
                     ),
                   }}
