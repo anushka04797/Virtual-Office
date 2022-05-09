@@ -55,7 +55,7 @@ const TimeCards = () => {
   const [endDate, setEndDate] = useState("");
   const [totalHrs, setTotalHrs] = useState(0);
   const [modalData, setModalData] = useState("");
-  
+
   const [modal, setModal] = useState();
   const [actualWorkDone, setActualWorkDone] = useState();
   const [hour, sethour] = useState();
@@ -99,8 +99,8 @@ const TimeCards = () => {
               "Project Name (Work Package)": element.data.project?.sub_task
                 ? element.data.project.sub_task
                 : "N/A" + " (" + element.data.project?.work_package_number
-                  ? element.data.project.work_package_number
-                  : "-" + ")",
+                ? element.data.project.work_package_number
+                : "-" + ")",
               "Task Title": element.data.project.task_title
                 ? element.data.project.task_title
                 : "N/A",
@@ -108,7 +108,7 @@ const TimeCards = () => {
                 ? element.data.actual_work_done
                 : "N/A",
               "Hour(s)": element.data.hours_today,
-              "Type": element.data.time_type,
+              Type: element.data.time_type,
               "Date Created": element.data.date_created,
               data: element.data,
             });
@@ -150,9 +150,9 @@ const TimeCards = () => {
               "Project Name (Work Package)":
                 element.data.project != null
                   ? element.data.project?.sub_task +
-                  " (" +
-                  element.data.project.work_package_number +
-                  ")"
+                    " (" +
+                    element.data.project.work_package_number +
+                    ")"
                   : "N/A",
               "Task Title":
                 element.data.project != null
@@ -162,7 +162,7 @@ const TimeCards = () => {
                 ? element.data.actual_work_done
                 : "",
               "Hour(s)": element.data.hours_today,
-              "Type": element.data.time_type,
+              Type: element.data.time_type,
               "Date Created": element.data.date_created,
               data: element.data,
             });
@@ -189,7 +189,7 @@ const TimeCards = () => {
   const [show_edit_modal, setShowEditModal] = useState(false);
   React.useEffect(() => {
     window.scrollTo(0, 0);
-    const {start,end}=dateRange()
+    const { start, end } = dateRange();
     setTotalHrs(0);
     if (
       has_permission("projects.change_projectassignee") ||
@@ -228,12 +228,10 @@ const TimeCards = () => {
       Array.from(res.data.data).forEach((item, idx) => {
         temp.push({ data: item });
       });
-      let filteredData = temp
-      console.log('start',start)
+      let filteredData = temp;
+      console.log("start", start);
       filteredData = temp.filter(
-        (p) =>
-          p.data.date_updated >= start &&
-          p.data.date_updated <= end
+        (p) => p.data.date_updated >= start && p.data.date_updated <= end
       );
       setPdfData(filteredData);
       var tableData = [];
@@ -244,9 +242,9 @@ const TimeCards = () => {
           "Project Name (Work Package)":
             element.data.project != null
               ? element.data.project?.sub_task +
-              " (" +
-              element.data.project.work_package_number +
-              ")"
+                " (" +
+                element.data.project.work_package_number +
+                ")"
               : "N/A",
           "Task Title":
             element.data.project != null
@@ -256,7 +254,7 @@ const TimeCards = () => {
             ? element.data?.actual_work_done
             : "N/A",
           "Hour(s)": element.data.hours_today,
-          'Type': element.data.time_type,
+          Type: element.data.time_type,
           "Date Created": element.data.date_created,
           data: element.data,
         });
@@ -339,9 +337,9 @@ const TimeCards = () => {
     const uData = pdfData.map((elt, idx) => [
       idx + 1,
       elt.data.project.sub_task +
-      " (" +
-      elt.data.project.work_package_number +
-      ")",
+        " (" +
+        elt.data.project.work_package_number +
+        ")",
       elt.data?.project.task_title,
       elt.data.actual_work_done,
       elt.data.hours_today,
@@ -357,8 +355,6 @@ const TimeCards = () => {
     doc.autoTable(content);
     doc.save("Timecard of" + " " + pdfTitle + ".pdf");
   };
-
-  
 
   const toggleModal = () => {
     setmodalAddItem(!modaladdItem);
@@ -468,33 +464,58 @@ const TimeCards = () => {
     });
   };
   const dateRange = () => {
-    var edate = new Date()
+    var sdate = new Date();
+    var edate = new Date();
 
     for (let i = 0; i < 7; i++) {
-      if (edate.getDay() === 6) {
-        console.log("end", edate);
+      if (sdate.getDay() === 0) {
+        console.log("start", sdate);
         break;
       } else {
-        edate = moment(edate).subtract(1, "day").toDate()
+        sdate = moment(sdate).subtract(1, "day").toDate();
       }
     }
-    console.log("end date", edate)
-    const sdate = moment(edate).subtract(6, "day").toDate()
-    console.log("start date", sdate)
-    setStartDate(moment(sdate).format('YYYY-MM-DD'))
-    setEndDate(moment(edate).format('YYYY-MM-DD'))
+    console.log("end date", edate);
+    // const sdate = moment(sdate).subtract(6, "day").toDate()
+    console.log("start date", sdate);
+    setStartDate(moment(sdate).format("YYYY-MM-DD"));
+    setEndDate(moment(edate).format("YYYY-MM-DD"));
     // editForm.setValues({
     //   assigneeSelect: sessionStorage.getItem(USER_ID),
     //   assigneeSelectPM: sessionStorage.getItem(USER_ID),
     //   startDate: moment(sdate).format('YYYY-MM-DD'),
     //   todate:  moment(edate).format('YYYY-MM-DD'),
     // })
-    return {start:moment(sdate).format('YYYY-MM-DD'),end:moment(edate).format('YYYY-MM-DD')}
-  }
+    return {
+      start: moment(sdate).format("YYYY-MM-DD"),
+      end: moment(edate).format("YYYY-MM-DD"),
+    };
+  };
+  const nextSatDay = () => {
+    var satday = new Date();
+    for (let i = 0; i < 7; i++) {
+      if (satday.getDay() === 6) {
+        console.log("sat", satday);
+        break;
+      } else {
+        satday = moment(satday).add(1, "day").toDate();
+      }
+    }
+
+    satday =
+      satday.getDate() +
+      "/" +
+      (satday.getMonth() + 1) +
+      "/" +
+      satday.getFullYear();
+    //console.log("zzzzzzzzzzzzz", satday)
+    return satday;
+  };
   React.useEffect(() => {
-    console.log('values',editForm)
-    // dateRange()
-  }, [])
+    console.log("values", editForm);
+    //dateRange()
+    nextSatDay();
+  }, []);
 
   const show_submit = () => {
     if (editForm.values.startDate && editForm.values.todate) {
@@ -532,7 +553,7 @@ const TimeCards = () => {
           <CRow>
             {/**assignees */}
             <CCol xl="3" lg="3" md="6">
-              {!has_permission("projects.add_projects") && (
+              {/* {!has_permission("projects.add_projects") && (
                 <div>
                   <CLabel className="custom-label-5" htmlFor="assigneeSelect">
                     Select Employee
@@ -549,7 +570,7 @@ const TimeCards = () => {
                     readOnly
                   />
                 </div>
-              )}
+              )} */}
               {/**IF PM */}
               {has_permission("projects.add_projects") && (
                 <div>
@@ -583,8 +604,10 @@ const TimeCards = () => {
                                 </div>
                             } */}
             </CCol>
+
+            {/***********for archive***********/}
             {/**start date */}
-            <CCol xl="3" lg="3" md="6">
+            {/* <CCol xl="3" lg="3" md="6">
               <CLabel className="custom-label-5" htmlFor="startDate">
                 From Date
               </CLabel>
@@ -597,14 +620,14 @@ const TimeCards = () => {
                 onChange={editForm.handleChange}
               />
               {/**Error show */}
-              {editForm.errors.startDate && (
+              {/* {editForm.errors.startDate && (
                 <p className="error mt-0 mb-0">
                   <small>{editForm.errors.startDate}</small>
                 </p>
               )}
-            </CCol>
+            </CCol> */} 
             {/**END DATE */}
-            <CCol xl="3" lg="3" md="6">
+            {/* <CCol xl="3" lg="3" md="6">
               <CLabel className="custom-label-5" htmlFor="todate">
                 To Date
               </CLabel>
@@ -617,21 +640,23 @@ const TimeCards = () => {
                 onChange={editForm.handleChange}
               />
               {/**Error show */}
-              {editForm.errors.todate && (
+              {/* {editForm.errors.todate && (
                 <p className="error mt-0 mb-0">
                   <small>{editForm.errors.todate}</small>
                 </p>
               )}
-            </CCol>
+            </CCol>  */}
+
+
             <CCol xl="3" lg="3" md="6">
-              <div className="button-holder--3">
+              {/* <div className="button-holder--3">
                 <CButton
                   className="generate-card-button"
                   onClick={editForm.handleSubmit}
                 >
                   Get TimeCards
                 </CButton>
-              </div>
+              </div> */}
             </CCol>
             {/**buttons for format of timecard */}
             {usersData.length != 0 && (
@@ -647,7 +672,7 @@ const TimeCards = () => {
                 <div class="w-100"></div>
                 <CCol md="4">
                   <CLabel className="custom-label-5" htmlFor="assigneeSelect">
-                    Weekending : 
+                    Weekending : {nextSatDay()}
                   </CLabel>
                 </CCol>
                 <CCol
@@ -677,9 +702,27 @@ const TimeCards = () => {
                 </CCol>
               </CRow>
             )}
-            {usersData.length>0 && <div className="alert alert-info" role="alert">
-                Showing data from {moment(startDate).format('DD-MM-YYYY')} to {moment(endDate).format('DD-MM-YYYY')}
-            </div>}
+            {usersData.length > 0 && (
+              <div className="alert alert-info" role="alert">
+                Showing data from {moment(startDate).format("DD-MM-YYYY")} to{" "}
+                {moment(endDate).format("DD-MM-YYYY")}
+              </div>
+            )}
+            {show_add_item_btn() == true && (
+              <div className="format-buttons mt-3 mb-3">
+                <CButton
+                  className="file-format-download"
+                  type="button"
+                  onClick={() => {
+                    setmodalAddItem(true);
+                  }}
+                >
+                  {" "}
+                  + Add Item
+                </CButton>
+              </div>
+            )}
+
             {/**table for displaying all the entries */}
             <CCol md="12">
               <div className="">
@@ -712,34 +755,31 @@ const TimeCards = () => {
                   scopedSlots={{
                     Action: (item) => (
                       <td>
-                        {item.data.submitted == false?(<CBadge>
-                          <CButton
-                            onClick={() => {
-                              showModal(item);
-                            }}
-                            size="sm"
-                            type="button"
-                            color="primary"
-                          >
-                            Edit
-                          </CButton>
-                        </CBadge>):('N/A')}
+                        {item.data.submitted == false ? (
+                          <CBadge>
+                            <CButton
+                              onClick={() => {
+                                showModal(item);
+                              }}
+                              size="sm"
+                              type="button"
+                              color="primary"
+                            >
+                              Edit
+                            </CButton>
+                          </CBadge>
+                        ) : (
+                          "N/A"
+                        )}
                       </td>
                     ),
                   }}
                 />
-                {show_add_item_btn() == true && (
+               
                   <div className="format-buttons mt-3 mb-3">
-                    <CButton
-                      className="file-format-download"
-                      type="button"
-                      onClick={() => {
-                        setmodalAddItem(true);
-                      }}
-                    >
-                      {" "}
-                      + Add Item
-                    </CButton>
+                    <CRow>
+                      <CCol md = "11"></CCol>
+                      <CCol md = "1">
                     <CButton
                       className="file-format-download"
                       type="button"
@@ -748,8 +788,10 @@ const TimeCards = () => {
                       Submit{" "}
                     </CButton>
                     {/* <CButton className="file-format-download">Print</CButton> */}
+                    </CCol>
+                    </CRow>
                   </div>
-                )}
+               
               </div>
 
               {totalHrs != 0 && (

@@ -266,7 +266,7 @@ const AddTimecardItms = (props) => {
               )}
               {hourtype(selectedType) && (
                 <CCol className="col-md-12 mb-3">
-                  <CLabel>Actual Work Done :</CLabel>
+                  <CLabel>Actual Work :</CLabel>
                   <CTextarea
                     type="text"
                     id="actual_work_done"

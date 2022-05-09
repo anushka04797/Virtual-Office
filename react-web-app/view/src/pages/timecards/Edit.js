@@ -87,7 +87,7 @@ const EditTimeCard = (props) => {
                             <CInput value={props.data?.project!=null?props.data.project.task_title:'N/A'} disabled ></CInput>
                         </CCol>
                         <CCol className="col-md-12 mb-3">
-                            <CLabel class="form-label">Actual Work Done :</CLabel>
+                            <CLabel class="form-label">Actual Work :</CLabel>
                             <CTextarea
                                 class="form-control"
                                 id="actual_work_done"
