@@ -92,7 +92,7 @@ const CreateNewWBS = () => {
       }
     });
     if (has_permission("projects.add_projects")) {
-      
+
       Array.from(store.getState().projects.pm_projects).forEach((item, idx) => {
         if (parseFloat(item.project.remaining_hours) > 0) {
           // console.log(tempitem.label === item.project.sub_task))
@@ -170,8 +170,10 @@ const CreateNewWBS = () => {
     dispatch(fetchProjectsAssigneeThunk(option?.work_package_index));
 
     var temp_array = [];
+    let assignee_ids=[]
 
     option.assignees.forEach((item) => {
+      assignee_ids.push(item.assignee.id)
       temp_array.push({
         value: item.assignee.id,
         label: item.assignee.first_name + " " + item.assignee.last_name,
@@ -185,60 +187,55 @@ const CreateNewWBS = () => {
       label: "Select All",
     });
     setAssigneeList(temp_array);
-
-    console.log("array", temp_array);
-    console.log("assignees", option);
+    return {assignees:temp_array,assignee_ids:assignee_ids}
   };
 
   const handleAssigneeChange = (value, actionMeta) => {
     let assigneeArray = [];
     let arr = [];
-    if(actionMeta.action=='select-option'){
-    console.log("action", actionMeta)
-    setselectedAssignee(value); //1 less value
-    console.log("rats", selectedAssignee);
-    value.forEach((item) => {
-      if (item.value == "All") {
-        arr = [...assigneeList];
-        arr.shift();
-        setselectedAssignee(arr);
-        console.log("arr", arr)
-        console.log("len", arr.length)
-        for (let i = 0; i < arr.length; i++) 
+    if (actionMeta.action == 'select-option') {
+      console.log("action", actionMeta)
+      setselectedAssignee(value); //1 less value
+      console.log("rats", selectedAssignee);
+      value.forEach((item) => {
+        if (item.value == "All") {
+          arr = [...assigneeList];
+          arr.shift();
+          setselectedAssignee(arr);
+          console.log("arr", arr)
+          console.log("len", arr.length)
+          for (let i = 0; i < arr.length; i++)
             assigneeArray[i] = arr[i].value;
-       
-        console.log("assinearray", assigneeArray);
-        
+
+          console.log("assinearray", assigneeArray);
+        }
+        else {
+          assigneeArray.push(item.value);
+        }
+      });
+    }
+    else if (actionMeta.action == 'remove-value') {
+      console.log("removed", actionMeta.removedValue)
+      arr = [...selectedAssignee]
+      console.log("arr", arr)
+      for (let i = 0; i < arr.length; i++) {
+        if (actionMeta.removedValue == arr[i]) {
+          arr.splice(i, 1);
+        }
       }
-       else {
-        assigneeArray.push(item.value);
-      } 
-    });
-   }
-   else if(actionMeta.action=='remove-value'){
-    console.log("removed", actionMeta.removedValue)
-    arr = [...selectedAssignee]
-    console.log("arr", arr)
-    for(let i=0;i<arr.length;i++)
-    {
-      if(actionMeta.removedValue == arr[i])
-       {
-           arr.splice(i, 1);
-       }
-    }  
-    setselectedAssignee(arr);
-    for (let i = 0; i < arr.length; i++) 
-            assigneeArray[i] = arr[i].value;
-  }
+      setselectedAssignee(arr);
+      for (let i = 0; i < arr.length; i++)
+        assigneeArray[i] = arr[i].value;
+    }
 
-  console.log("action ", actionMeta);
+    console.log("action ", actionMeta);
 
-  if( actionMeta.action=='clear'){
-    setselectedAssignee(null);
-  }
-  console.log("after removed ", assigneeArray);
-  formCreateWbs.setFieldValue("assignee", assigneeArray);
-};
+    if (actionMeta.action == 'clear') {
+      setselectedAssignee(null);
+    }
+    console.log("after removed ", assigneeArray);
+    formCreateWbs.setFieldValue("assignee", assigneeArray);
+  };
 
   // form validation for WBS create
   const is_before_start_date = (start_date, end_date) => {
@@ -264,27 +261,25 @@ const CreateNewWBS = () => {
 
   //   create wbs method
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-  const [files,setFiles]=useState([])
-  const setDocFiles=(files)=>{
+  const [files, setFiles] = useState([])
+  const setDocFiles = (files) => {
     setFiles(files)
   }
-  const removeUploadedFiles=()=>{
+  const removeUploadedFiles = () => {
     setFiles([])
   }
   const create_wbs = (values, { setSubmitting }) => {
+    console.log('end date',selectedProjectEndDate)
     const currentDate = new Date();
     const day = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()}`;
     const cday = day.split("-")
-    const endDate = new Date(selectedProjectEndDate);
-
     const endDateArray = selectedProjectEndDate.split("-");
-    console.log("arrayyyyyy", endDateArray);
+    console.log('end date',endDateArray)
+    let cdate = moment([parseInt(cday[0]), parseInt(cday[1])-1, parseInt(cday[2])])
+    let edate = moment(selectedProjectEndDate);
 
-    let cdate = moment([parseInt(cday[0]), parseInt(cday[1]), parseInt(cday[2])])
-    let edate = moment([parseInt(endDateArray[0]), parseInt(endDateArray[1]), parseInt(endDateArray[2])])
-
-    console.log("day1", cdate);
-    console.log("day2", edate);
+    console.log("day1", moment(cdate).format('YYYY-MM-DD'))
+    console.log("day2", moment(edate).format('YYYY-MM-DD'))
 
     const difference = cdate.diff(edate, 'days');
 
@@ -292,22 +287,24 @@ const CreateNewWBS = () => {
     if (difference <= 0) {
       console.log("values", JSON.stringify(formCreateWbs.values));
       API.post("wbs/create/", formCreateWbs.values).then((res) => {
-          // setSubmitting(false)
-          console.log(res);
-          if (res.status === 200 && res.data.success === "True") {
-            // FILE_API.post('wbs/docs/upload/',{wbs_id}).then(res=>{
-            //   if(res.status === 200 && res.data.success === 'True'){
-            //     reset_form();
-            //     setTaskList([]);
-            //     removeUploadedFiles()
-            //     dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)));
-            //     dispatch(fetchProjectsThunk(sessionStorage.getItem(USER_ID)));
-            //     dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)));
-            //     swal("Created!", "Successfuly Created", "success");
-            //   }
-            // })
-          }
-        })
+        // setSubmitting(false)
+        console.log(res);
+        if (res.status === 200 && res.data.success === "True") {
+          // FILE_API.post('wbs/docs/upload/',{wbs_id}).then(res=>{
+          //   if(res.status === 200 && res.data.success === 'True'){
+          //     reset_form();
+          //     setTaskList([]);
+          //     removeUploadedFiles()
+          //     dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)));
+          //     dispatch(fetchProjectsThunk(sessionStorage.getItem(USER_ID)));
+          //     dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)));
+          //     swal("Created!", "Successfuly Created", "success");
+          //   }
+          // })
+        }
+        reset_form();
+        setSelectedTask(null)
+      })
         .catch((err) => {
           console.log(err);
           setSubmitting(false);
@@ -316,7 +313,9 @@ const CreateNewWBS = () => {
       enqueueSnackbar("Planned Delivery date is over! ", {
         variant: "warning",
       });
-      reset_form();
+      setSubmitting(false)
+      // reset_form();
+      // setSelectedTask(null)
     }
   };
 
@@ -355,7 +354,7 @@ const CreateNewWBS = () => {
   const handleTaskTitleChange = (newValue, actionMeta) => {
     if (newValue != null) {
       getAssigneeList(newValue);
-      console.log('task',newValue);
+      console.log('task', newValue);
       setSelectedTask(newValue);
       setSelectedProjectEndDate(newValue?.planned_delivery_date);
     }
@@ -402,14 +401,16 @@ const CreateNewWBS = () => {
       console.log("location data if block", task);
       set_selected_project(task.sub_task);
       setSelectedTask(task);
-      getAssigneeList(task);
-      setselectedAssignee(task);
+      let result=getAssigneeList(task);
+      console.log('shifted result',result.assignees.slice(1))
+      setselectedAssignee(result.assignees.slice(1));
+      
       setSelectedProjectEndDate(task.planned_delivery_date);
 
       formCreateWbs.setValues({
         project: task.id,
         work_package_number: task.work_package_number,
-        assignee: formCreateWbs.values.assignee,
+        assignee: result.assignee_ids,
         reporter: sessionStorage.getItem(USER_ID),
         title: formCreateWbs.values.title,
         description: formCreateWbs.values.description,
@@ -618,7 +619,7 @@ const CreateNewWBS = () => {
                       </div>
                       <div className="col-lg-12">
                         {/* <CLabel className="custom-label-wbs5">Upload Documents</CLabel> */}
-                        <WBSFileUpload files={files} setFiles={setDocFiles}/>
+                        <WBSFileUpload files={files} setFiles={setDocFiles} />
                       </div>
                       {/**submit buttons */}
                       <div className="col-md-12">
