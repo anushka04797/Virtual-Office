@@ -95,12 +95,12 @@ const TimeCards = () => {
             const element = filteredData[index];
             temp_hrs += parseFloat(element.data.hours_today);
             tableData.push({
-              "#": index + 1,
-              "Project Name (Work Package)": element.data.project?.sub_task
-                ? element.data.project.sub_task
-                : "N/A" + " (" + element.data.project?.work_package_number
+              WP: element.data.project?.work_package_number
                 ? element.data.project.work_package_number
-                : "-" + ")",
+                : "-",
+              "Project Name": element.data.project?.sub_task
+                ? element.data.project.sub_task
+                : "N/A",
               "Task Title": element.data.project.task_title
                 ? element.data.project.task_title
                 : "N/A",
@@ -122,6 +122,7 @@ const TimeCards = () => {
       API.get("wbs/user/time-card/list/" + values.assigneeSelect + "/").then(
         (res) => {
           let temp = [];
+          console.log("zzzzzzzz", profile_details);
           setPdfTitle(
             profile_details.first_name + " " + profile_details.last_name
           );
@@ -146,13 +147,12 @@ const TimeCards = () => {
             const element = filteredData[index];
             temp_hrs += parseFloat(element.data.hours_today);
             tableData.push({
-              "#": index + 1,
-              "Project Name (Work Package)":
+              WP: element.data.project
+                ? element.data.project.work_package_number
+                : "-",
+              "Project Name":
                 element.data.project != null
-                  ? element.data.project?.sub_task +
-                    " (" +
-                    element.data.project.work_package_number +
-                    ")"
+                  ? element.data.project?.sub_task
                   : "N/A",
               "Task Title":
                 element.data.project != null
@@ -224,6 +224,9 @@ const TimeCards = () => {
     API.get(
       "wbs/user/time-card/list/" + sessionStorage.getItem(USER_ID) + "/"
     ).then((res) => {
+      setPdfTitle(
+        profile_details.first_name + " " + profile_details.last_name
+      );
       let temp = [];
       Array.from(res.data.data).forEach((item, idx) => {
         temp.push({ data: item });
@@ -238,13 +241,12 @@ const TimeCards = () => {
       for (let index = 0; index < filteredData.length; index++) {
         const element = filteredData[index];
         tableData.push({
-          "#": index + 1,
-          "Project Name (Work Package)":
+          WP: element.data.project
+            ? element.data.project.work_package_number
+            : "-",
+          "Project Name":
             element.data.project != null
-              ? element.data.project?.sub_task +
-                " (" +
-                element.data.project.work_package_number +
-                ")"
+              ? element.data.project?.sub_task
               : "N/A",
           "Task Title":
             element.data.project != null
@@ -326,8 +328,8 @@ const TimeCards = () => {
     const title = "Timecard of" + " " + pdfTitle;
     const headers = [
       [
-        "#",
-        "Project Name (Work Package)",
+        "WP",
+        "Project Name",
         "Task Title",
         "Actual Work Done",
         "Hour(s)",
@@ -335,11 +337,8 @@ const TimeCards = () => {
       ],
     ];
     const uData = pdfData.map((elt, idx) => [
-      idx + 1,
-      elt.data.project.sub_task +
-        " (" +
-        elt.data.project.work_package_number +
-        ")",
+      elt.data.project.work_package_number,
+      elt.data.project.sub_task,
       elt.data?.project.task_title,
       elt.data.actual_work_done,
       elt.data.hours_today,
@@ -426,8 +425,8 @@ const TimeCards = () => {
             endDate;
           const headers = [
             [
-              "#",
-              "Project Name (Work Package)",
+              "WP",
+              "Project Name ",
               "Task Title",
               "Description",
               "Hour(s)",
@@ -435,10 +434,8 @@ const TimeCards = () => {
             ],
           ];
           const uData = usersData.map((elt, idx) => [
-            idx + 1,
-            elt.data.project?.sub_task
-              ? elt.data.project.sub_task
-              : "N/A" + " (" + elt.data.project.work_package_number + ")",
+            elt.data.project.work_package_number,
+            elt.data.project?.sub_task ? elt.data.project.sub_task : "N/A",
             elt.data?.project.task_title,
             elt.data.actual_work_done,
             elt.data.hours_today,
@@ -582,14 +579,23 @@ const TimeCards = () => {
                     aria-labelledby="assigneeSelectPM"
                     id="assigneeSelectPM"
                     minHeight="35px"
-                    // value={}
-                    placeholder="Select from list"
+                    placeholder={capitalize(profile_details.first_name) +
+                      " " +
+                      capitalize(profile_details.last_name)}
                     isClearable={false}
                     isMulti={false}
+                    // value={{value:capitalize(profile_details.first_name) +
+                    //      " " +
+                    //      capitalize(profile_details.last_name), //label: capitalize(profile_details.first_name) +
+                    //     //  " " +
+                    //     //  capitalize(profile_details.last_name) 
+                    //     }}
                     onChange={getAssigneeList}
                     classNamePrefix="custom-forminput-6"
                     options={assigneeList}
                     styles={colourStyles}
+                    
+                    
                   />
                   {/* {editForm.errors.assigneeSelectPM && <p className="error mt-1">{editForm.errors.assigneeSelectPM}</p>} */}
                 </div>
@@ -620,12 +626,12 @@ const TimeCards = () => {
                 onChange={editForm.handleChange}
               />
               {/**Error show */}
-              {/* {editForm.errors.startDate && (
+            {/* {editForm.errors.startDate && (
                 <p className="error mt-0 mb-0">
                   <small>{editForm.errors.startDate}</small>
                 </p>
               )}
-            </CCol> */} 
+            </CCol> */}
             {/**END DATE */}
             {/* <CCol xl="3" lg="3" md="6">
               <CLabel className="custom-label-5" htmlFor="todate">
@@ -640,13 +646,12 @@ const TimeCards = () => {
                 onChange={editForm.handleChange}
               />
               {/**Error show */}
-              {/* {editForm.errors.todate && (
+            {/* {editForm.errors.todate && (
                 <p className="error mt-0 mb-0">
                   <small>{editForm.errors.todate}</small>
                 </p>
               )}
             </CCol>  */}
-
 
             <CCol xl="3" lg="3" md="6">
               {/* <div className="button-holder--3">
@@ -730,11 +735,11 @@ const TimeCards = () => {
                   items={usersData}
                   fields={[
                     {
-                      key: "#",
+                      key: "WP",
                       _style: { width: "5%" },
                       _classes: "font-weight-bold",
                     },
-                    "Project Name (Work Package)",
+                    "Project Name",
                     "Task Title",
                     "Description",
                     "Hour(s)",
@@ -775,23 +780,22 @@ const TimeCards = () => {
                     ),
                   }}
                 />
-               
-                  <div className="format-buttons mt-3 mb-3">
-                    <CRow>
-                      <CCol md = "11"></CCol>
-                      <CCol md = "1">
-                    <CButton
-                      className="file-format-download"
-                      type="button"
-                      onClick={onSubmit}
-                    >
-                      Submit{" "}
-                    </CButton>
-                    {/* <CButton className="file-format-download">Print</CButton> */}
+
+                <div className="format-buttons mt-3 mb-3">
+                  <CRow>
+                    <CCol md="11"></CCol>
+                    <CCol md="1">
+                      <CButton
+                        className="file-format-download"
+                        type="button"
+                        onClick={onSubmit}
+                      >
+                        Submit{" "}
+                      </CButton>
+                      {/* <CButton className="file-format-download">Print</CButton> */}
                     </CCol>
-                    </CRow>
-                  </div>
-               
+                  </CRow>
+                </div>
               </div>
 
               {totalHrs != 0 && (

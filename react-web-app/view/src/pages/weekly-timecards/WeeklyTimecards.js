@@ -66,11 +66,11 @@ const WeeklyTimecards = () => {
                 for (let index = 0; index < newArray.length; index++) {
                     const element = newArray[index];
                     temp_totalHrs += parseFloat(element.hours_today);
-                    console.log(element.date_updated)
+                    console.log("ddddddddd",element.project.work_package_number)
                     var weekday = moment(element.date_updated).weekday();
                     {/**final push to gtable */ }
                     temp_array.push({
-                        'No.': index + 1,
+                        'WP': element.project.work_package_number ,
                         'id': element.id,
                         'WBS': element.actual_work_done,
                         'Time': element.time_type,
@@ -86,7 +86,7 @@ const WeeklyTimecards = () => {
                     console.log(moment(element.date_updated).weekday())
                 }
                 temp_array.push({
-                    'No.': '',
+                    'WP': '',
                     'id': '',
                     'WBS': '',
                     'Time': '',
@@ -147,7 +147,7 @@ const WeeklyTimecards = () => {
         doc.setFontSize(12);
         const title = profile_details.first_name + "_" + profile_details.last_name + "_" + "Timecard_" + moment(startDate).format("DD/MM/YYYY") + "-" + moment(endDate).format("DD/MM/YYYY");
         const headers = [[
-            "No.",
+            "WP",
             "WBS",
             "Time",
             "Sunday",
@@ -160,8 +160,10 @@ const WeeklyTimecards = () => {
             "Total"
         ]];
         console.log("pdfData", pdfData)
+
         const uData = tableData.map((elt, idx) => [
-            idx + 1,
+            //console.log(elt.WP), 
+            elt.WP,
             elt.WBS,
             elt.Time,
             elt.Sunday,
@@ -254,7 +256,7 @@ const WeeklyTimecards = () => {
                         <div className="mt-4 mb-2">
                             <CDataTable items={tableData} fields={[
                                 {
-                                    key: "No.",
+                                    key: "WP",
                                     _style: { width: "auto" },
                                     _classes: "font-weight-bold",
                                 },
