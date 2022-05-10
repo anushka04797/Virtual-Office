@@ -292,13 +292,13 @@ const CreateNewWBS = () => {
         if (res.status === 200 && res.data.success === "True") {
           // FILE_API.post('wbs/docs/upload/',{wbs_id}).then(res=>{
           //   if(res.status === 200 && res.data.success === 'True'){
-          //     reset_form();
-          //     setTaskList([]);
-          //     removeUploadedFiles()
-          //     dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)));
-          //     dispatch(fetchProjectsThunk(sessionStorage.getItem(USER_ID)));
-          //     dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)));
-          //     swal("Created!", "Successfuly Created", "success");
+              reset_form();
+              setTaskList([]);
+              removeUploadedFiles()
+              dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)));
+              dispatch(fetchProjectsThunk(sessionStorage.getItem(USER_ID)));
+              dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)));
+              swal("Created!", "Successfuly Created", "success");
           //   }
           // })
         }
@@ -617,10 +617,9 @@ const CreateNewWBS = () => {
                             </small>
                           )}
                       </div>
-                      <div className="col-lg-12">
-                        {/* <CLabel className="custom-label-wbs5">Upload Documents</CLabel> */}
+                      {/* <div className="col-lg-12">
                         <WBSFileUpload files={files} setFiles={setDocFiles} />
-                      </div>
+                      </div> */}
                       {/**submit buttons */}
                       <div className="col-md-12">
                         {is_form_submitting() == true ? (

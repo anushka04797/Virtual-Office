@@ -473,10 +473,9 @@ const TimeCards = () => {
       }
     }
     console.log("end date", edate);
-    // const sdate = moment(sdate).subtract(6, "day").toDate()
-    console.log("start date", sdate);
+    
     setStartDate(moment(sdate).format("YYYY-MM-DD"));
-    setEndDate(moment(edate).format("YYYY-MM-DD"));
+    setEndDate(nextSatDay());
     // editForm.setValues({
     //   assigneeSelect: sessionStorage.getItem(USER_ID),
     //   assigneeSelectPM: sessionStorage.getItem(USER_ID),
@@ -485,7 +484,8 @@ const TimeCards = () => {
     // })
     return {
       start: moment(sdate).format("YYYY-MM-DD"),
-      end: moment(edate).format("YYYY-MM-DD"),
+      // end: moment(edate).format("YYYY-MM-DD"),
+      end: nextSatDay(),
     };
   };
   const nextSatDay = () => {
@@ -498,19 +498,19 @@ const TimeCards = () => {
         satday = moment(satday).add(1, "day").toDate();
       }
     }
-
-    satday =
-      satday.getDate() +
-      "/" +
-      (satday.getMonth() + 1) +
-      "/" +
-      satday.getFullYear();
-    //console.log("zzzzzzzzzzzzz", satday)
+  satday=moment(satday).format('YYYY-MM-DD')
+    // satday =
+    //   satday.getDate() +
+    //   "/" +
+    //   (satday.getMonth() + 1) +
+    //   "/" +
+    //   satday.getFullYear();
+    
     return satday;
   };
   React.useEffect(() => {
     console.log("values", editForm);
-    //dateRange()
+    dateRange()
     nextSatDay();
   }, []);
 
