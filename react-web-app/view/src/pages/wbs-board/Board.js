@@ -357,13 +357,13 @@ const WbsBoard = () => {
     },[])
     const [selectedProjects,setSelectedProjects]=useState([{label:'Select All',value:'all',data:{}}])
     const handleProjectChange=(value,actionMeta)=>{
-        
         if(actionMeta.action == 'select-option'){
-            if(value.find(item=>item.value == 'all') || value.length == 0){
+            if(value.find(item=>item.value == 'all')){
                 console.log('because of all',projects.slice(1))
-                setSelectedProjects(projects.slice(1))
+                setSelectedProjects([{label:'Select All',value:'all',data:{}}])
                 filter_wbs_project_wise(projects.slice(1))
             }
+            
             else{
                 setSelectedProjects(value)
                 filter_wbs_project_wise(value)
@@ -381,7 +381,7 @@ const WbsBoard = () => {
     React.useEffect(() => {
         // dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)))
         window.scrollTo(0, 0);
-        setSelectedProjects([])
+        setSelectedProjects([{label:'Select All',value:'all',data:{}}])
         console.log('profile changed')
         if (has_permission("projects.add_projects")) {
             API.get('wbs/pm/all/' + sessionStorage.getItem(USER_ID) + '/').then((res) => {

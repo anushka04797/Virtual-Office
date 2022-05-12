@@ -119,7 +119,10 @@ const TheSidebar = () => {
         {/*<CSidebarNavItem to="/dashboard/employees" name="Employees" icon="cil-people" className="vo-navItem"></CSidebarNavItem> */}
         
         {/**Timecards */}
-        {!has_permission('projects.add_projects') && <CSidebarNavItem to="/dashboard/timecard/generate-timecard" name="Generate Timecard" icon="cil-library" className="vo-navItem"></CSidebarNavItem>}
+        
+        {!has_permission('projects.add_projects') && <CSidebarNavDropdown icon="cil-library" name="Timecards" className="vo-navItem">
+          <CSidebarNavItem to="/dashboard/timecard/generate-timecard" name="This Week" className="vo-navItem"></CSidebarNavItem>
+        </CSidebarNavDropdown>}
         {/**timecards if PM */}
         {has_permission('projects.add_projects') && <CSidebarNavDropdown icon="cil-library" name="Timecards" className="vo-navItem">
           <CSidebarNavItem to="/dashboard/timecard/generate-timecard" name="Actual Work Done" className="vo-navItem"></CSidebarNavItem>

@@ -28,6 +28,7 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
+import * as fs from 'fs';
 
 import CIcon from "@coreui/icons-react";
 import moment from "moment";
@@ -307,11 +308,59 @@ const TimeCards = () => {
   const fileExtension = ".xlsx";
   const exportToCSV = (csvData, fileName) => {
     const ws = XLSX.utils.json_to_sheet(csvData);
-    const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
+    const wb = { Sheets: { data: ws }, SheetNames: ["" + startDate + ' - ' + endDate] };
     const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
     const data = new Blob([excelBuffer], { type: fileType });
     FileSaver.saveAs(data, fileName + fileExtension);
+  }
+  const exportToCSV_new = (dat,title) {
+
+    this.parseExcel = function(file) {
+      var reader = new FileReader();
+  
+      reader.onload = function(e) {
+        var data = e.target.result;
+        var workbook = XLSX.read(data, {
+          type: 'binary'
+        });
+  
+        workbook.SheetNames.forEach(function(sheetName) {
+          // Here is your object
+          var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+          var json_object = JSON.stringify(XL_row_object);
+          console.log(json_object);
+  
+        })
+  
+      };
+  
+      reader.onerror = function(ex) {
+        console.log(ex);
+      };
+  
+      reader.readAsBinaryString(file);
+    };
   };
+  const exportToCSV_new2 = (data, title) => {
+    // const wb = XLSX.utils.book_new();
+    let file = new File(["foo"], "foo.txt", {
+      type: "text/plain",
+    });
+    const file = XLSX.readFile('../../assets/Sample-TimeCard.xlsx')
+    let file_data = []
+
+    const sheets = file.SheetNames
+
+    for (let i = 0; i < sheets.length; i++) {
+      const temp = XLSX.utils.sheet_to_json(file.Sheets[file.SheetNames[i]])
+      temp.forEach((res) => {
+        file_data.push(res)
+      })
+    }
+
+    // Printing file_data
+    console.log(data)
+  }
   {
     /**export data as pdf */
   }
@@ -473,7 +522,7 @@ const TimeCards = () => {
       }
     }
     console.log("end date", edate);
-    
+
     setStartDate(moment(sdate).format("YYYY-MM-DD"));
     setEndDate(nextSatDay());
     // editForm.setValues({
@@ -498,14 +547,7 @@ const TimeCards = () => {
         satday = moment(satday).add(1, "day").toDate();
       }
     }
-  satday=moment(satday).format('YYYY-MM-DD')
-    // satday =
-    //   satday.getDate() +
-    //   "/" +
-    //   (satday.getMonth() + 1) +
-    //   "/" +
-    //   satday.getFullYear();
-    
+    satday = moment(satday).format('YYYY-MM-DD')
     return satday;
   };
   React.useEffect(() => {
@@ -545,7 +587,37 @@ const TimeCards = () => {
         onAdd={editForm.handleSubmit}
       ></AddTimecardItms>
       <CContainer>
-        <h3 className="timecards-page-header mb-3">Actual Hours</h3>
+
+        <CRow className="justify-content-between">
+          <CCol>
+            <h3 className="timecards-page-header mb-3">Actual Hours</h3>
+          </CCol>
+          <CCol
+            md="8"
+            id="tableRef"
+            className="d-flex justify-content-end"
+          >
+            <h5 className="tiny-header--5 mt-3 mr-2">Export </h5>
+            <div className="format-buttons mt-3 mb-3 ">
+              <CButton
+                className="file-format-download"
+                onClick={() => exportPDF()}
+              >
+                <CIcon name="cil-description" className="mr-2" /> PDF
+              </CButton>
+              <CButton
+                className="file-format-download"
+                onClick={() =>
+                  exportToCSV_new(usersData, "Timecard of" + " " + pdfTitle)
+                }
+              >
+                <CIcon name="cil-spreadsheet" className="mr-2" />
+                Excel
+              </CButton>
+              {/* <CButton className="file-format-download">Print</CButton> */}
+            </div>
+          </CCol>
+        </CRow>
         <CForm>
           <CRow>
             {/**assignees */}
@@ -594,8 +666,8 @@ const TimeCards = () => {
                     classNamePrefix="custom-forminput-6"
                     options={assigneeList}
                     styles={colourStyles}
-                    
-                    
+
+
                   />
                   {/* {editForm.errors.assigneeSelectPM && <p className="error mt-1">{editForm.errors.assigneeSelectPM}</p>} */}
                 </div>
@@ -664,52 +736,28 @@ const TimeCards = () => {
               </div> */}
             </CCol>
             {/**buttons for format of timecard */}
-            {usersData.length != 0 && (
-              <CRow className="mt-4">
-                <CCol md="4">
-                  <CLabel className="custom-label-5" htmlFor="assigneeSelect">
-                    Employee Name :{" "}
-                    {capitalize(profile_details.first_name) +
-                      " " +
-                      capitalize(profile_details.last_name)}
-                  </CLabel>
-                </CCol>
-                <div class="w-100"></div>
-                <CCol md="4">
-                  <CLabel className="custom-label-5" htmlFor="assigneeSelect">
-                    Weekending : {nextSatDay()}
-                  </CLabel>
-                </CCol>
-                <CCol
-                  md="8"
-                  id="tableRef"
-                  className="d-flex justify-content-end"
-                >
-                  <h5 className="tiny-header--5 mt-3 mr-2">Export </h5>
-                  <div className="format-buttons mt-3 mb-3 ">
-                    <CButton
-                      className="file-format-download"
-                      onClick={() => exportPDF()}
-                    >
-                      <CIcon name="cil-description" className="mr-2" /> PDF
-                    </CButton>
-                    <CButton
-                      className="file-format-download"
-                      onClick={() =>
-                        exportToCSV(usersData, "Timecard of" + " " + pdfTitle)
-                      }
-                    >
-                      <CIcon name="cil-spreadsheet" className="mr-2" />
-                      Excel
-                    </CButton>
-                    {/* <CButton className="file-format-download">Print</CButton> */}
-                  </div>
-                </CCol>
-              </CRow>
-            )}
+
+            <CRow className="mt-4">
+              <CCol md="4">
+                <CLabel className="custom-label-5" htmlFor="assigneeSelect">
+                  Employee Name :{" "}
+                  {capitalize(profile_details.first_name) +
+                    " " +
+                    capitalize(profile_details.last_name)}
+                </CLabel>
+              </CCol>
+              <div class="w-100"></div>
+              <CCol md="4">
+                <CLabel className="custom-label-5" htmlFor="assigneeSelect">
+                  Weekending : {moment(nextSatDay()).format('dddd, DD MMMM YYYY')}
+                </CLabel>
+              </CCol>
+
+            </CRow>
+
             {usersData.length > 0 && (
               <div className="alert alert-info" role="alert">
-                Showing data from {moment(startDate).format("DD-MM-YYYY")} to{" "}
+                Showing actual hours from {moment(startDate).format("DD-MM-YYYY")} to{" "}
                 {moment(endDate).format("DD-MM-YYYY")}
               </div>
             )}
@@ -781,21 +829,18 @@ const TimeCards = () => {
                   }}
                 />
 
-                <div className="format-buttons mt-3 mb-3">
-                  <CRow>
-                    <CCol md="11"></CCol>
-                    <CCol md="1">
-                      <CButton
-                        className="file-format-download"
-                        type="button"
-                        onClick={onSubmit}
-                      >
-                        Submit{" "}
-                      </CButton>
-                      {/* <CButton className="file-format-download">Print</CButton> */}
-                    </CCol>
-                  </CRow>
-                </div>
+                <CRow className="justify-content-end">
+                  <CCol md="1" className="justify-content-end">
+                    <CButton
+                      className="file-format-download"
+                      type="button"
+                      onClick={onSubmit}
+                    >
+                      Submit{" "}
+                    </CButton>
+                    {/* <CButton className="file-format-download">Print</CButton> */}
+                  </CCol>
+                </CRow>
               </div>
 
               {totalHrs != 0 && (
