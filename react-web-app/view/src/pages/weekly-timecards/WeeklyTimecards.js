@@ -39,9 +39,11 @@ const WeeklyTimecards = () => {
         API.get('wbs/user-wise/weekly-time-card/' + sessionStorage.getItem(USER_ID) + '/').then((res) => {
             setStartDate(res.data.start_date);
             setEndDate(res.data.end_date);
+
             if (res.data.data != undefined) {
                 res.data.data.forEach((item, idx) => {
                     project.push(item.project.sub_task)
+                    console.log("subtask",item.project.task_title)
                     var newItem = {
                         id: item.id,
                         project: item.project,
@@ -51,7 +53,8 @@ const WeeklyTimecards = () => {
                         submitted: item.submitted,
                         hours_today: item.hours_today,
                         date_created: item.date_created,
-                        date_updated: item.date_updated
+                        date_updated: item.date_updated, 
+                        task_title: item.project.task_title
                     };
                     newArray.push(newItem);
                 });
@@ -66,10 +69,16 @@ const WeeklyTimecards = () => {
                 for (let index = 0; index < newArray.length; index++) {
                     const element = newArray[index];
                     temp_totalHrs += parseFloat(element.hours_today);
-                    console.log("ddddddddd",element.project.work_package_number)
+                    console.log("ddddddddd",element)
                     var weekday = moment(element.date_updated).weekday();
+                    const days = ['Sunday', 'Monday', 'Thursday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+                    const week = dates()
+
                     {/**final push to gtable */ }
                     temp_array.push({
+                        'Date':week[index],
+                        'Days': days[index],
+                        'Task':element.task_title,
                         'WP': element.project.work_package_number ,
                         'id': element.id,
                         'WBS': element.actual_work_done,
@@ -86,6 +95,9 @@ const WeeklyTimecards = () => {
                     console.log(moment(element.date_updated).weekday())
                 }
                 temp_array.push({
+                    'Date':'',
+                    'Days':'',
+                    'Task':'', 
                     'WP': '',
                     'id': '',
                     'WBS': '',
@@ -102,6 +114,7 @@ const WeeklyTimecards = () => {
                 setTabledata(temp_array)
                 setUserData(temp_array)
                 setTotalHrs(temp_totalHrs.toFixed(1))
+                console.log("table", temp_array)
                 console.log("tabledata from weekly timecard", totalHrs)
             }
         })
@@ -136,51 +149,80 @@ const WeeklyTimecards = () => {
         const data = new Blob([excelBuffer], { type: fileType });
         FileSaver.saveAs(data, fileName + fileExtension);
     }
+   
+    const dates =()=>{
+        var day = new Date ();
+        for(let i =0;i<7;i++){
+            if(day.getDay()===0){
+                day = moment(day).toDate();
+            }
+            else{
+                const sub = day.getDay()
+                day = moment(day).subtract(sub, "day").toDate();
+            }
+             
+           
+        }
+        const days=[]
+        days[0]=day.getDate()+'/'+day.getMonth()+'/'+day.getFullYear()
+
+        for(let i=1;i<7;i++){
+
+              var d = moment(day).add(i, "day").toDate();
+              console.log("dd", d)
+              days.push( d.getDate()+'/'+d.getMonth()+'/'+d.getFullYear())
+        }
+        day = day.getDate()+'/'+day.getMonth()+'/'+day.getFullYear()
+        console.log("week", days);
+        return days;
+    }
+
+    React.useEffect(() => {console.log("weeeeeeeek", dates())},[]);
+
 
     /**export fetched data to pdf */
     const exportPDF = () => {
         const unit = "pt";
         const size = "A4"; // Use A1, A2, A3 or A4
-        const orientation = "landscape"; // portrait or landscape
+        const orientation = "portrait"; // portrait or landscape
         const marginLeft = 40;
         const doc = new jsPDF(orientation, unit, size);
         doc.setFontSize(12);
+      //  doc.rect(130, 30, 600, 40);
+        
         const title = profile_details.first_name + "_" + profile_details.last_name + "_" + "Timecard_" + moment(startDate).format("DD/MM/YYYY") + "-" + moment(endDate).format("DD/MM/YYYY");
         const headers = [[
-            "WP",
-            "WBS",
-            "Time",
-            "Sunday",
-            "Monday",
-            "Tuesday",
-            "Wednesday",
-            "Thursday",
-            "Friday",
-            "Saturday",
-            "Total"
+           
+            "Date",
+            "Days",
+            "Task Title",
+            "Hours", 
+            "Hours Type"
+           
         ]];
         console.log("pdfData", pdfData)
-
+        //console.log("table1111111", tableData.Task)
         const uData = tableData.map((elt, idx) => [
-            //console.log(elt.WP), 
-            elt.WP,
-            elt.WBS,
+           
+            elt.Date,
+            elt.Days,
+            elt.Task,
+            elt.Total,
             elt.Time,
-            elt.Sunday,
-            elt.Monday,
-            elt.Tuesday,
-            elt.Wednesday,
-            elt.Thursday,
-            elt.Friday,
-            elt.Saturday,
-            elt.Total
         ])
         let content = {
-            startY: 50,
+            startY: 120,
             head: headers,
             body: uData
         };
-        doc.text(title, marginLeft, 30);
+        const edate= moment(endDate).format("DD/MM/YYYY")
+        const name =profile_details.first_name + " " + profile_details.last_name 
+        doc.text(150, 50, "Datasoft Manufacturing & Assembly Gulshan Branch")
+        doc.text(42,80, "Emplyee Time card")
+        doc.text(420, 80, "Week-Ending: "+ edate)
+        doc.text(42, 100, "Name: "+ name)
+        doc.text(420, 100, "NID: ")   
+        doc.text(42, 330, "Submitted : (date & Time)")
         doc.autoTable(content);
         doc.save(profile_details.first_name + "_" + profile_details.last_name + "_" + "Timecard_" + moment(startDate).format("DD/MM/YYYY") + "-" + moment(endDate).format("DD/MM/YYYY") + ".pdf")
     }

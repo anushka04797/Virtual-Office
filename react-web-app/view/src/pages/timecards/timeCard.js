@@ -147,7 +147,7 @@ const TimeCards = () => {
             const element = filteredData[index];
             temp_hrs += parseFloat(element.data.hours_today);
             tableData.push({
-              WP: element.data.project
+              "WP": element.data.project
                 ? element.data.project.work_package_number
                 : "-",
               "Project Name":
@@ -326,25 +326,28 @@ const TimeCards = () => {
     const doc = new jsPDF(orientation, unit, size);
 
     doc.setFontSize(15);
+    
 
     const title = "Timecard of" + " " + pdfTitle;
     const headers = [
       [
+        "Date",
         "WP",
         "Project Name",
         "Task Title",
-        "Actual Work Done",
         "Hour(s)",
-        "Date Created",
+        "Type",
+        
       ],
     ];
     const uData = pdfData.map((elt, idx) => [
+      elt.data.date_created,
       elt.data.project.work_package_number,
       elt.data.project.sub_task,
       elt.data?.project.task_title,
-      elt.data.actual_work_done,
       elt.data.hours_today,
-      elt.data.date_created,
+      elt.data.time_type,
+      
     ]);
     let content = {
       startY: 50,
