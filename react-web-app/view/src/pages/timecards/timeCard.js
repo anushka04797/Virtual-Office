@@ -313,54 +313,8 @@ const TimeCards = () => {
     const data = new Blob([excelBuffer], { type: fileType });
     FileSaver.saveAs(data, fileName + fileExtension);
   }
-  const exportToCSV_new = (dat,title) {
-
-    this.parseExcel = function(file) {
-      var reader = new FileReader();
   
-      reader.onload = function(e) {
-        var data = e.target.result;
-        var workbook = XLSX.read(data, {
-          type: 'binary'
-        });
   
-        workbook.SheetNames.forEach(function(sheetName) {
-          // Here is your object
-          var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
-          var json_object = JSON.stringify(XL_row_object);
-          console.log(json_object);
-  
-        })
-  
-      };
-  
-      reader.onerror = function(ex) {
-        console.log(ex);
-      };
-  
-      reader.readAsBinaryString(file);
-    };
-  };
-  const exportToCSV_new2 = (data, title) => {
-    // const wb = XLSX.utils.book_new();
-    let file = new File(["foo"], "foo.txt", {
-      type: "text/plain",
-    });
-    const file = XLSX.readFile('../../assets/Sample-TimeCard.xlsx')
-    let file_data = []
-
-    const sheets = file.SheetNames
-
-    for (let i = 0; i < sheets.length; i++) {
-      const temp = XLSX.utils.sheet_to_json(file.Sheets[file.SheetNames[i]])
-      temp.forEach((res) => {
-        file_data.push(res)
-      })
-    }
-
-    // Printing file_data
-    console.log(data)
-  }
   {
     /**export data as pdf */
   }
@@ -608,7 +562,7 @@ const TimeCards = () => {
               <CButton
                 className="file-format-download"
                 onClick={() =>
-                  exportToCSV_new(usersData, "Timecard of" + " " + pdfTitle)
+                  exportToCSV(usersData, "Timecard of" + " " + pdfTitle)
                 }
               >
                 <CIcon name="cil-spreadsheet" className="mr-2" />
