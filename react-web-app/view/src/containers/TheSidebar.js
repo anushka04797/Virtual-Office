@@ -120,8 +120,9 @@ const TheSidebar = () => {
         
         {/**Timecards */}
         
-        {!has_permission('projects.add_projects') && <CSidebarNavDropdown icon="cil-library" name="Timecards" className="vo-navItem">
+        {!has_permission('projects.add_projects') && <CSidebarNavDropdown icon="cil-library" name="Actual Hours" className="vo-navItem">
           <CSidebarNavItem to="/dashboard/timecard/generate-timecard" name="This Week" className="vo-navItem"></CSidebarNavItem>
+          <CSidebarNavItem to="/dashboard/timecard/view-timecards" name="View Hours" className="vo-navItem"></CSidebarNavItem>
         </CSidebarNavDropdown>}
         {/**timecards if PM */}
         {has_permission('projects.add_projects') && <CSidebarNavDropdown icon="cil-library" name="Timecards" className="vo-navItem">

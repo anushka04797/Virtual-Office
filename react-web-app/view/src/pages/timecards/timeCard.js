@@ -34,13 +34,12 @@ import CIcon from "@coreui/icons-react";
 import moment from "moment";
 import ReactDOM from "react-dom"; // you used 'react-dom' as 'ReactDOM'
 import swal from "sweetalert";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import AddTimecardItms from "./addTimecardItem";
 import EditTimeCard from "./Edit";
 
 const TimeCards = () => {
   const profile_details = useSelector((state) => state.profile.data);
-  const history = useHistory();
   // console.log(profile_details)
   const [usersData, setUsersData] = useState([]);
   const [pdfData, setPdfData] = useState([]);
@@ -313,8 +312,8 @@ const TimeCards = () => {
     const data = new Blob([excelBuffer], { type: fileType });
     FileSaver.saveAs(data, fileName + fileExtension);
   }
-  
-  
+
+
   {
     /**export data as pdf */
   }
@@ -544,7 +543,7 @@ const TimeCards = () => {
 
         <CRow className="justify-content-between">
           <CCol>
-            <h3 className="timecards-page-header mb-3">Actual Hours</h3>
+            <h3 className="timecards-page-header mb-3">Actual Hours of this week</h3>
           </CCol>
           <CCol
             md="8"
@@ -575,7 +574,7 @@ const TimeCards = () => {
         <CForm>
           <CRow>
             {/**assignees */}
-            <CCol xl="3" lg="3" md="6">
+              <CCol xl="3" lg="3" md="6">
               {/* {!has_permission("projects.add_projects") && (
                 <div>
                   <CLabel className="custom-label-5" htmlFor="assigneeSelect">
@@ -620,76 +619,20 @@ const TimeCards = () => {
                     classNamePrefix="custom-forminput-6"
                     options={assigneeList}
                     styles={colourStyles}
-
-
                   />
                   {/* {editForm.errors.assigneeSelectPM && <p className="error mt-1">{editForm.errors.assigneeSelectPM}</p>} */}
                 </div>
               )}
               {/**If PM but no assignee list **/}
               {/* {has_group('pm')&& (assigneeList.length == 0) &&
-                                <div>
-                                    <CLabel className="custom-label-5" htmlFor="assigneeSelect">
-                                        Select Employee
-                                    </CLabel>
-                                    <CInput name="assigneeSelect" type="text" value={capitalize(profile_details.first_name) + ' ' + capitalize(profile_details.last_name)} onChange={editForm.handleChange} readOnly />
-                                </div>
-                            } */}
+                  <div>
+                      <CLabel className="custom-label-5" htmlFor="assigneeSelect">
+                          Select Employee
+                      </CLabel>
+                      <CInput name="assigneeSelect" type="text" value={capitalize(profile_details.first_name) + ' ' + capitalize(profile_details.last_name)} onChange={editForm.handleChange} readOnly />
+                  </div>
+              } */}
             </CCol>
-
-            {/***********for archive***********/}
-            {/**start date */}
-            {/* <CCol xl="3" lg="3" md="6">
-              <CLabel className="custom-label-5" htmlFor="startDate">
-                From Date
-              </CLabel>
-              <CInput
-                className="custom-forminput-6  w-100"
-                type="date"
-                name="startDate"
-                id="startDate"
-                value={editForm.values.startDate}
-                onChange={editForm.handleChange}
-              />
-              {/**Error show */}
-            {/* {editForm.errors.startDate && (
-                <p className="error mt-0 mb-0">
-                  <small>{editForm.errors.startDate}</small>
-                </p>
-              )}
-            </CCol> */}
-            {/**END DATE */}
-            {/* <CCol xl="3" lg="3" md="6">
-              <CLabel className="custom-label-5" htmlFor="todate">
-                To Date
-              </CLabel>
-              <CInput
-                className="custom-forminput-6  w-100"
-                type="date"
-                name="todate"
-                id="todate"
-                value={editForm.values.todate}
-                onChange={editForm.handleChange}
-              />
-              {/**Error show */}
-            {/* {editForm.errors.todate && (
-                <p className="error mt-0 mb-0">
-                  <small>{editForm.errors.todate}</small>
-                </p>
-              )}
-            </CCol>  */}
-
-            <CCol xl="3" lg="3" md="6">
-              {/* <div className="button-holder--3">
-                <CButton
-                  className="generate-card-button"
-                  onClick={editForm.handleSubmit}
-                >
-                  Get TimeCards
-                </CButton>
-              </div> */}
-            </CCol>
-            {/**buttons for format of timecard */}
 
             <CRow className="mt-4">
               <CCol md="4">
@@ -709,12 +652,12 @@ const TimeCards = () => {
 
             </CRow>
 
-            {usersData.length > 0 && (
+            {/* {usersData.length > 0 && (
               <div className="alert alert-info" role="alert">
                 Showing actual hours from {moment(startDate).format("DD-MM-YYYY")} to{" "}
                 {moment(endDate).format("DD-MM-YYYY")}
               </div>
-            )}
+            )} */}
             {show_add_item_btn() == true && (
               <div className="format-buttons mt-3 mb-3">
                 <CButton
@@ -783,7 +726,7 @@ const TimeCards = () => {
                   }}
                 />
 
-                <CRow className="justify-content-end">
+                <CRow className="justify-content-end mb-5">
                   <CCol md="1" className="justify-content-end">
                     <CButton
                       className="file-format-download"
