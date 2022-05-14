@@ -100,13 +100,13 @@ const TimeCards = () => {
                 : "-",
               "Project Name": element.data.project?.sub_task
                 ? element.data.project.sub_task
-                : "N/A",
+                : "-",
               "Task Title": element.data.project.task_title
                 ? element.data.project.task_title
-                : "N/A",
+                : "-",
               Description: element.data.actual_work_done
                 ? element.data.actual_work_done
-                : "N/A",
+                : "-",
               "Hour(s)": element.data.hours_today,
               Type: element.data.time_type,
               "Date Created": element.data.date_created,
@@ -153,11 +153,11 @@ const TimeCards = () => {
               "Project Name":
                 element.data.project != null
                   ? element.data.project?.sub_task
-                  : "N/A",
+                  : "-",
               "Task Title":
                 element.data.project != null
                   ? element.data.project.task_title
-                  : "N/A",
+                  : "-",
               Description: element.data.actual_work_done
                 ? element.data.actual_work_done
                 : "",
@@ -247,14 +247,14 @@ const TimeCards = () => {
           "Project Name":
             element.data.project != null
               ? element.data.project?.sub_task
-              : "N/A",
+              : "-",
           "Task Title":
             element.data.project != null
               ? element.data.project?.task_title
-              : "N/A",
+              : "-",
           Description: element.data?.actual_work_done
             ? element.data?.actual_work_done
-            : "N/A",
+            : "-",
           "Hour(s)": element.data.hours_today,
           Type: element.data.time_type,
           "Date Created": element.data.date_created,
@@ -440,7 +440,7 @@ const TimeCards = () => {
           ];
           const uData = usersData.map((elt, idx) => [
             elt.data.project.work_package_number,
-            elt.data.project?.sub_task ? elt.data.project.sub_task : "N/A",
+            elt.data.project?.sub_task ? elt.data.project.sub_task : "-",
             elt.data?.project.task_title,
             elt.data.actual_work_done,
             elt.data.hours_today,
@@ -697,7 +697,6 @@ const TimeCards = () => {
                   ]}
                   primary
                   hover
-                  tableFilter
                   striped
                   bordered
                   sorter
