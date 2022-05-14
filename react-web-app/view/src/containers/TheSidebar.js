@@ -120,16 +120,16 @@ const TheSidebar = () => {
         
         {/**Timecards */}
         
-        {!has_permission('projects.add_projects') && <CSidebarNavDropdown icon="cil-library" name="Actual Hours" className="vo-navItem">
+        {!has_permission('projects.add_projects') && <CSidebarNavDropdown icon="cib-cirrusci" name="Actual Hours" className="vo-navItem">
           <CSidebarNavItem to="/dashboard/timecard/generate-timecard" name="This Week" className="vo-navItem"></CSidebarNavItem>
-          <CSidebarNavItem to="/dashboard/timecard/view-timecards" name="View Hours" className="vo-navItem"></CSidebarNavItem>
+          <CSidebarNavItem to="/dashboard/timecard/view-timecards" name="Previous Hours" className="vo-navItem"></CSidebarNavItem>
         </CSidebarNavDropdown>}
         {/**timecards if PM */}
-        {has_permission('projects.add_projects') && <CSidebarNavDropdown icon="cil-library" name="Timecards" className="vo-navItem">
+        <CSidebarNavDropdown icon="cil-library" name="Timecards" className="vo-navItem">
           <CSidebarNavItem to="/dashboard/timecard/generate-timecard" name="Actual Work Done" className="vo-navItem"></CSidebarNavItem>
-          <CSidebarNavItem to="/dashboard/timecard/weekly-timecards" name="Weekly Timecard" className="vo-navItem"></CSidebarNavItem>
-          <CSidebarNavItem to="/dashboard/timecard/weekly-timecards" name="Report" className="vo-navItem"></CSidebarNavItem>
-        </CSidebarNavDropdown>}
+          {has_permission('projects.add_projects') && <CSidebarNavItem to="/dashboard/timecard/weekly-timecards" name="Weekly Timecard" className="vo-navItem"></CSidebarNavItem>}
+          {has_permission('projects.add_projects') && <CSidebarNavItem to="/dashboard/timecard/weekly-timecards" name="Report" className="vo-navItem"></CSidebarNavItem>}
+        </CSidebarNavDropdown>
         {/**Meetings */}
         <CSidebarNavItem to="/dashboard/meetings" icon="cil-group" name="Meetings" className="vo-navItem"></CSidebarNavItem>
         {/**Shared Docs */}
