@@ -77,6 +77,19 @@ margin-bottom: 20px;
     background-color: #0065ff;
     color: white;
 }
+.mark-ongoing-completed {
+    font-style: normal;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 18px;
+    padding: 5px 10px;
+    margin-right: 10px;
+    border-color: transparent;
+    margin-top: 10px;
+    position: relative;
+    background-color: #B22222;
+    color: #FAFBFC;
+}
 .file-format-download{
     border-width: 0px;
     border-radius: 3px;
