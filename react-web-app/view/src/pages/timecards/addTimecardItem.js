@@ -71,16 +71,16 @@ const AddTimecardItms = (props) => {
   const [selectedWbs, setSelectedWbs] = useState();
 
   const types = [
-    { label: "RHR", value: "RHR" },
-    { label: "SIC", value: "SIC" },
-    { label: "VAC", value: "VAC" },
-    { label: "OTS", value: "OTS" },
-    { label: "OTO", value: "OTO" },
-    { label: "HOL", value: "HOL" },
-    { label: "WFH", value: "WFH" },
-    { label: "COM", value: "COM" },
-    { label: "PB1", value: "PB1" },
-    { label: "PB2", value: "PB2" },
+    { label: "RHR", value: "RHR", description:"Regular Hour" },
+    { label: "SIC", value: "SIC", description:"Sick Leave"},
+    { label: "VAC", value: "VAC", description:"Vacation" },
+    { label: "OTS", value: "OTS", description:"Over time With pay" },
+    { label: "OTO", value: "OTO", description:"Over time Without pay" },
+    { label: "HOL", value: "HOL", description:"Holiday" },
+    { label: "WFH", value: "WFH", description:"Work From Home" },
+    { label: "COM", value: "COM", description:"Compensatory time" },
+    { label: "PB1", value: "PB1", description:"Personal Buisness type 1"},
+    { label: "PB2", value: "PB2", description:"Personal Buisness type 2"},
   ];
 
   const hourtype = (option) => {
@@ -107,7 +107,6 @@ const AddTimecardItms = (props) => {
     formAddTimecard.setFieldValue(
       "hours_type",
       option.label,
-
     );
     console.log("Type", option.label);
   };
@@ -117,13 +116,11 @@ const AddTimecardItms = (props) => {
     console.log("WBS", option);
     formAddTimecard.setFieldValue(
       "wbs",
-      option.label,
+      option.value,
     );
   };
 
   const handleProjectChange = (newValue, actionMeta) => {
-
-
     formAddTimecard.setFieldValue("project", newValue.value);
     // console.log(`action: ${actionMeta.action}`);
     // console.log("newValue: ", newValue.data.project.wbs_list);
@@ -195,12 +192,20 @@ const AddTimecardItms = (props) => {
                   options={types}
                   onChange={handleHoursTypeChange}
                   // value={formAddTimecard.values.hours_type}
-
                 />
               </CCol>
+              {selectedType.label == 'HOL' && <CCol className="col-md-12 mb-3">
+                <CLabel className="custom-label-wbs5"> Select Holiday : </CLabel>
+                <Select
+                  id="project"
+                  name="project"
+                  className="custom-forminput-5"
+                  onChange={handleProjectChange}
+                  options={projects}
+                />
+              </CCol>}
               <CCol className="col-md-12 mb-3">
                 <CLabel className="custom-label-wbs5"> Hours : </CLabel>
-
                 <CInput
                   type="number"
                   aria-label="default input example"
@@ -219,8 +224,7 @@ const AddTimecardItms = (props) => {
                 />
               </CCol>
 
-              {hourtype(selectedType) && (
-                <CCol className="col-md-12 mb-3">
+              <CCol className="col-md-12 mb-3">
                   <CLabel
                     className="custom-label-wbs5"
                     htmlFor="assigneeSelectPM"
@@ -239,9 +243,7 @@ const AddTimecardItms = (props) => {
                     options={projects}
                   />
                 </CCol>
-              )}
 
-              {hourtype(selectedType) && (
                 <CCol className="col-md-12 mb-3">
                   {/*Type : {row?.time_type}*/}
                   <CLabel
@@ -259,12 +261,9 @@ const AddTimecardItms = (props) => {
                     className="custom-forminput-5"
                     options={wbsList}
                     onChange={handlewbsChange}
-
-                    value={formAddTimecard.values.wbs}
+                    value={selectedWbs}
                   />
                 </CCol>
-              )}
-              {hourtype(selectedType) && (
                 <CCol className="col-md-12 mb-3">
                   <CLabel>Actual Work :</CLabel>
                   <CTextarea
@@ -282,7 +281,6 @@ const AddTimecardItms = (props) => {
                     value={formAddTimecard.values.actual_work_done}
                   />
                 </CCol>
-              )}
             </CRow>
           </CModalBody>
         </CForm>

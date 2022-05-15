@@ -1,0 +1,2 @@
+(this.webpackJsonpvirtual_office=this.webpackJsonpvirtual_office||[]).push([[40],{1001:function(e,c,t){"use strict";t.r(c);var s=t(491),i=(t(0),t(3));c.default=function(){return Object(i.jsx)(i.Fragment,{children:Object(i.jsxs)(s.l,{children:[Object(i.jsx)(s.K,{children:Object(i.jsx)(s.k,{children:Object(i.jsx)("h3",{className:"timecards-page-header mb-3",children:"Submitted Timecards"})})}),Object(i.jsx)(s.K,{children:Object(i.jsx)(s.k,{})})]})})}}}]);
+//# sourceMappingURL=40.221c4cf5.chunk.js.map

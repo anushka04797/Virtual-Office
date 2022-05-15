@@ -21,7 +21,8 @@ const routes = [
     { path: '/dashboard/WBS/board', exact: true, name: 'Board', component: React.lazy(() => import('../pages/wbs-board/Board')) },
 
     { path: '/dashboard/timecard/generate-timecard', exact: true, name: 'Generate Timecard', component: React.lazy(() => import('../pages/timecards/timeCard')) },
-    { path: '/dashboard/timecard/view-timecards', exact: true, name: 'View Timecards', component: React.lazy(() => import('../pages/timecards/ViewTimeCards')) },
+    { path: '/dashboard/timecard/view-previous-hours', exact: true, name: 'Previous Weeks', component: React.lazy(() => import('../pages/timecards/PreviousWeeks')) },
+    { path: '/dashboard/timecard/submitted-timecards', exact: true, name: 'Submitted Timecards', component: React.lazy(() => import('../pages/timecards/SubmittedTimecards')) },
     { path: '/dashboard/timecard/weekly-timecards', exact: true, name: 'Weekly Timecard', component: React.lazy(() => import('../pages/weekly-timecards/WeeklyTimecards')) },
     { path: '/dashboard/profile/:id?', exact: true, name: 'Profile', component: React.lazy(() => import('../pages/profile/profileView')) },
     { path: '/dashboard/shared-documents', exact: true, name: 'Shared Documents', component: React.lazy(() => import('../pages/shared-docs/sharedDocs')) }
