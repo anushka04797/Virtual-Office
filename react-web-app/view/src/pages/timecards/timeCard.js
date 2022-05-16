@@ -22,13 +22,12 @@ import Select from "react-select";
 import { useDispatch, useSelector } from "react-redux";
 import { BASE_URL, USER_ID } from "../../Config";
 import { API } from "../../Config";
-import { exportPDF, has_permission } from "../../helper";
+import { has_permission } from "../../helper";
 import { useFormik } from "formik";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
-import * as fs from 'fs';
 
 import CIcon from "@coreui/icons-react";
 import moment from "moment";
@@ -232,14 +231,15 @@ const TimeCards = () => {
         temp.push({ data: item });
       });
       let filteredData = temp;
-      console.log("start", start);
       filteredData = temp.filter(
         (p) => p.data.date_updated >= start && p.data.date_updated <= end
       );
       setPdfData(filteredData);
       var tableData = [];
+      let hours_total=0
       for (let index = 0; index < filteredData.length; index++) {
         const element = filteredData[index];
+        hours_total+=element.data.hours_today
         tableData.push({
           WP: element.data.project
             ? element.data.project.work_package_number
@@ -261,6 +261,7 @@ const TimeCards = () => {
           data: element.data,
         });
       }
+      setTotalHrs(hours_total)
       setUsersData(tableData);
     });
   }, [modaladdItem, show_edit_modal]);
@@ -302,8 +303,7 @@ const TimeCards = () => {
   {
     /**export fetched tabledata to excel */
   }
-  const fileType =
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
+  const fileType ="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
   const fileExtension = ".xlsx";
   const exportToCSV = (csvData, fileName) => {
     const ws = XLSX.utils.json_to_sheet(csvData);
@@ -317,47 +317,46 @@ const TimeCards = () => {
   {
     /**export data as pdf */
   }
-  const exportPDF_new = () => {
-    exportPDF(profile_details,startDate,endDate,pdfData,[])
-    // const unit = "pt";
-    // const size = "A4"; // Use A1, A2, A3 or A4
-    // const orientation = "portrait"; // portrait or landscape
+  const exportPDF = () => {
+    const unit = "pt";
+    const size = "A4"; // Use A1, A2, A3 or A4
+    const orientation = "portrait"; // portrait or landscape
 
-    // const marginLeft = 40;
-    // const doc = new jsPDF(orientation, unit, size);
+    const marginLeft = 40;
+    const doc = new jsPDF(orientation, unit, size);
 
-    // doc.setFontSize(15);
+    doc.setFontSize(15);
     
 
-    // const title = "Timecard of" + " " + pdfTitle;
-    // const headers = [
-    //   [
-    //     "Date",
-    //     "WP",
-    //     "Project Name",
-    //     "Task Title",
-    //     "Hour(s)",
-    //     "Type",
+    const title = "Timecard of" + " " + pdfTitle;
+    const headers = [
+      [
+        "Date",
+        "WP",
+        "Project Name",
+        "Task Title",
+        "Hour(s)",
+        "Type",
         
-    //   ],
-    // ];
-    // const uData = pdfData.map((elt, idx) => [
-    //   elt.data.date_created,
-    //   elt.data.project.work_package_number,
-    //   elt.data.project.sub_task,
-    //   elt.data?.project.task_title,
-    //   elt.data.hours_today,
-    //   elt.data.time_type,
-    // ]);
-    // let content = {
-    //   startY: 50,
-    //   head: headers,
-    //   body: uData,
-    // };
+      ],
+    ];
+    const uData = pdfData.map((elt, idx) => [
+      elt.data.date_created,
+      elt.data.project.work_package_number,
+      elt.data.project.sub_task,
+      elt.data?.project.task_title,
+      elt.data.hours_today,
+      elt.data.time_type,
+    ]);
+    let content = {
+      startY: 50,
+      head: headers,
+      body: uData,
+    };
 
-    // doc.text(title, marginLeft, 30);
-    // doc.autoTable(content);
-    // doc.save("Timecard of" + " " + pdfTitle + ".pdf");
+    doc.text(title, marginLeft, 30);
+    doc.autoTable(content);
+    doc.save("Timecard of" + " " + pdfTitle + ".pdf");
   };
 
   const toggleModal = () => {
@@ -557,7 +556,7 @@ const TimeCards = () => {
             <div className="format-buttons mt-3 mb-3 ">
               <CButton
                 className="file-format-download"
-                onClick={() => exportPDF_new()}
+                onClick={() => exportPDF()}
               >
                 <CIcon name="cil-description" className="mr-2" /> PDF
               </CButton>
@@ -727,23 +726,7 @@ const TimeCards = () => {
                     ),
                   }}
                 />
-
-                <CRow className="justify-content-end mb-5">
-                  <CCol md="1" className="justify-content-end">
-                    <CButton
-                      className="file-format-download"
-                      type="button"
-                      onClick={onSubmit}
-                      style={{backgroundColor:'#e55353'}}
-                    >
-                      Submit{" "}
-                    </CButton>
-                    {/* <CButton className="file-format-download">Print</CButton> */}
-                  </CCol>
-                </CRow>
-              </div>
-
-              {totalHrs != 0 && (
+                {totalHrs != 0 && (
                 <div class="alert alert-info" role="alert">
                   <CRow>
                     <CCol md="5"></CCol>
@@ -761,13 +744,29 @@ const TimeCards = () => {
                       {
                         <small>
                           {"   "}
-                          Total <b>{totalHrs.toFixed(1)}hrs&nbsp;</b>
+                          Total <b>{Number(totalHrs).toFixed(2)} {Number(totalHrs).toFixed(2)>1?'hours':'hour'}&nbsp;</b>
                         </small>
                       }
                     </CCol>
                   </CRow>
                 </div>
               )}
+                <CRow className="justify-content-end mb-5">
+                  <CCol md="1" className="justify-content-end">
+                    <CButton
+                      className="file-format-download"
+                      type="button"
+                      onClick={onSubmit}
+                      style={{backgroundColor:'#e55353'}}
+                    >
+                      Submit{" "}
+                    </CButton>
+                    {/* <CButton className="file-format-download">Print</CButton> */}
+                  </CCol>
+                </CRow>
+              </div>
+
+              
             </CCol>
           </CRow>
         </CForm>

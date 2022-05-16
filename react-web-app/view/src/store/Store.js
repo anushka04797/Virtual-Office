@@ -10,6 +10,7 @@ import EvmsSlice from './slices/EvmsSlice'
 import TdoSlice from './slices/TdoSlice'
 import TimecardSlice from './slices/TimecardSlice'
 import searchSlice from './slices/searchSlice'
+import holidaySlice from './slices/HolidaySlice'
 
 export default configureStore({
   reducer: {
@@ -23,6 +24,7 @@ export default configureStore({
     evmsList:EvmsSlice,
     tdo : TdoSlice,
     timecardList:TimecardSlice,
-    search : searchSlice
+    search : searchSlice,
+    holidays:holidaySlice
   },
 })

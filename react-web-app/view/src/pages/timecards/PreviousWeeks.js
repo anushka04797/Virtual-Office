@@ -756,7 +756,7 @@ import {
                   />
                 </div>
   
-                {totalHrs != 0 && (
+                {/* {totalHrs != 0 && (
                   <div class="alert alert-info" role="alert">
                     <CRow>
                       <CCol md="5"></CCol>
@@ -780,7 +780,7 @@ import {
                       </CCol>
                     </CRow>
                   </div>
-                )}
+                )} */}
               </CRow>
             </CRow>
           </CForm>

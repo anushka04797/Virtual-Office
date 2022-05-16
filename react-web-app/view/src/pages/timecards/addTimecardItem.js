@@ -22,6 +22,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Select from "react-select";
 import { API, USER_ID } from "../../Config";
 import swal from 'sweetalert'
+import { fetchHolidays } from "../../store/slices/HolidaySlice";
 
 const AddTimecardItms = (props) => {
 
@@ -30,7 +31,14 @@ const AddTimecardItms = (props) => {
   const toggleModal = () => {
     setModal(!modal);
   };
-
+  const holidays=useSelector((state)=>{
+    let items=[]
+    Array.from(state.holidays.data).forEach((item,idx)=>{
+      items.push({label:item.holiday_title,value:item.id,data:item})
+    })
+    return items
+  })
+  const dispatch = useDispatch()
   const onSave = (values) => {
     console.log("values", formAddTimecard.values);
 
@@ -64,6 +72,7 @@ const AddTimecardItms = (props) => {
 
   useEffect(() => {
     console.log(props.show);
+    dispatch(fetchHolidays());
   }, []);
 
   const [selectedType, setSelectedType] = useState({ label: "RHR", value: 1 });
@@ -104,12 +113,27 @@ const AddTimecardItms = (props) => {
 
   const handleHoursTypeChange = (option) => {
     setSelectedType(option);
-    formAddTimecard.setFieldValue(
-      "hours_type",
-      option.label,
-    );
-    console.log("Type", option.label);
+    
+    if(option.label != 'RHR' && option.label != 'WFH' && option.label != 'OTO' && option.label != 'OTS'){
+      console.log('if')
+      
+      formAddTimecard.setValues({
+        hours_type:option.value,
+        actual_work_done:option.description,
+      });
+    }
+    else{
+      console.log('else')
+      formAddTimecard.setValues({
+        hours_type:option.value,
+        actual_work_done:'',
+      });
+    }
   };
+
+  const handleHolidayChange=(value,actionMeta)=>{
+
+  }
 
   const handlewbsChange = (option) => {
     setSelectedWbs(option);
@@ -200,8 +224,8 @@ const AddTimecardItms = (props) => {
                   id="project"
                   name="project"
                   className="custom-forminput-5"
-                  onChange={handleProjectChange}
-                  options={projects}
+                  onChange={handleHolidayChange}
+                  options={holidays}
                 />
               </CCol>}
               <CCol className="col-md-12 mb-3">
