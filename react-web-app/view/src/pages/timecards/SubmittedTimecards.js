@@ -51,12 +51,11 @@ const SubmittedTimecards=()=>{
                     fields={[
                         {
                           key: "Week",
-                        //   _style: { width: "5%" },
+                          _style: { width: "45%" },
                           _classes: "font-weight-bold",
                         },
-                        "Total Hours",
                         "Files",
-                        "Submitted At"
+                        "Submitted"
                       ]}
                     />
                 </CCol>

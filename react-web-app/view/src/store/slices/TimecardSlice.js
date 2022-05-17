@@ -5,6 +5,7 @@ import { JsonClient } from '../../Config'
 const initialState ={
     data:[],
     pm_timecards:[],
+    user_hours_used_left:{},
     status:'idle',
     error:''
 }
@@ -17,6 +18,12 @@ export const fetchAllTimecardsPmThunk= createAsyncThunk('timecard/fetchAllTimeca
     const response = await JsonClient.get('wbs/user-wise/weekly-time-card/'+user_id+'/')
     console.log('pm',response.data[0])
     return response.data[0]
+})
+
+export const fetchUserHoursUsedAndLeft= createAsyncThunk('timecard/fetchUserHoursUsedAndLeft',async(user_id) =>{
+    const response = await JsonClient.get('wbs/user/hours/used-left/')
+    console.log('hours used and left',response.data)
+    return response.data
 })
 
 export const timecardSlice = createSlice({
@@ -46,7 +53,18 @@ export const timecardSlice = createSlice({
         [fetchAllTimecardsPmThunk.rejected]:(state,action)=>{
             state.status='failed'
             state.error = action.error.message
-        }
+        },
+        [fetchUserHoursUsedAndLeft.pending]:(state,action) =>{
+            state.status = 'loading'
+        },
+        [fetchUserHoursUsedAndLeft.fulfilled]:(state,action) =>{
+            state.status = 'succeeded'
+            state.user_hours_used_left = action.payload
+        },
+        [fetchUserHoursUsedAndLeft.rejected]:(state,action) =>{
+            state.status = 'failed'
+            state.error = action.error.message
+        },
     }
 })
 export default timecardSlice.reducer

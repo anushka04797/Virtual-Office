@@ -239,7 +239,7 @@ const TimeCards = () => {
       let hours_total=0
       for (let index = 0; index < filteredData.length; index++) {
         const element = filteredData[index];
-        hours_total+=element.data.hours_today
+        hours_total+=parseFloat(element.data.hours_today)
         tableData.push({
           WP: element.data.project
             ? element.data.project.work_package_number
@@ -375,11 +375,6 @@ const TimeCards = () => {
   };
 
   const [selectedType, setSelectedType] = useState();
-
-  const handleSelectChange = (option) => {
-    setSelectedType(option);
-    console.log(selectedType);
-  };
 
   // const getAssigneeList = (option) => {
   //     setAssigneeValue(option)
@@ -635,8 +630,14 @@ const TimeCards = () => {
                   </div>
               } */}
             </CCol>
-
             <CRow className="mt-4">
+              <CCol>
+              <CLabel className="custom-label-5" htmlFor="assigneeSelect">
+                  Company : {profile_details.slc_details.slc.department.company.name}
+                </CLabel>
+              </CCol>
+            </CRow>
+            <CRow>
               <CCol md="4">
                 <CLabel className="custom-label-5" htmlFor="assigneeSelect">
                   Employee Name :{" "}
@@ -645,13 +646,13 @@ const TimeCards = () => {
                     capitalize(profile_details.last_name)}
                 </CLabel>
               </CCol>
-              <div class="w-100"></div>
-              <CCol md="4">
-                <CLabel className="custom-label-5" htmlFor="assigneeSelect">
+            </CRow>
+            <CRow>
+              <CCol>
+              <CLabel className="custom-label-5" htmlFor="assigneeSelect">
                   Weekending : {moment(nextSatDay()).format('dddd, DD MMMM YYYY')}
                 </CLabel>
               </CCol>
-
             </CRow>
 
             {/* {usersData.length > 0 && (

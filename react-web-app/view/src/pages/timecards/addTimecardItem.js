@@ -23,6 +23,7 @@ import Select from "react-select";
 import { API, USER_ID } from "../../Config";
 import swal from 'sweetalert'
 import { fetchHolidays } from "../../store/slices/HolidaySlice";
+import { fetchUserHoursUsedAndLeft } from "../../store/slices/TimecardSlice";
 
 const AddTimecardItms = (props) => {
 
@@ -41,8 +42,17 @@ const AddTimecardItms = (props) => {
   const dispatch = useDispatch()
   const onSave = (values) => {
     console.log("values", formAddTimecard.values);
-
-    API.post('wbs/time-card/add/', formAddTimecard.values).then((res) => {
+    const data={
+      hours_type:formAddTimecard.values.hours_type,
+      hours:formAddTimecard.values.hours,
+      hour_description:formAddTimecard.values.hour_description?formAddTimecard.values.hour_description:'',
+      assignee:sessionStorage.getItem(USER_ID),
+      actual_work_done:formAddTimecard.values.actual_work_done,
+      project:formAddTimecard.values.project,
+      wbs:formAddTimecard.values.wbs,
+      task_title:formAddTimecard.values.task_title
+    }
+    API.post('wbs/time-card/add/', data).then((res) => {
       console.log(res.data)
       props.onClose()
       // props.onAdd()
@@ -62,6 +72,7 @@ const AddTimecardItms = (props) => {
       hours: "",
       hours_type: "",
       wbs: "",
+      hour_description:"",
       assignee: sessionStorage.getItem(USER_ID)
     },
     validateOnChange: true,
@@ -73,6 +84,7 @@ const AddTimecardItms = (props) => {
   useEffect(() => {
     console.log(props.show);
     dispatch(fetchHolidays());
+    dispatch(fetchUserHoursUsedAndLeft())
   }, []);
 
   const [selectedType, setSelectedType] = useState({ label: "RHR", value: 1 });
