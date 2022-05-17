@@ -405,7 +405,7 @@ const TimeCards = () => {
         }
         console.log("id", temp);
 
-        API.put("wbs/time-card/submit/", { time_cards: temp }).then((res) => {
+        API.put("wbs/time-card/submit/", { time_cards: temp,week_start:startDate,week_end:endDate}).then((res) => {
           console.log(res.data);
           const unit = "pt";
           const size = "A4"; // Use A1, A2, A3 or A4
@@ -633,7 +633,7 @@ const TimeCards = () => {
             <CRow className="mt-4">
               <CCol>
               <CLabel className="custom-label-5" htmlFor="assigneeSelect">
-                  Company : {profile_details.slc_details.slc.department.company.name}
+                  Company : {profile_details.slc_details?.slc?.department?.company?.name}
                 </CLabel>
               </CCol>
             </CRow>
