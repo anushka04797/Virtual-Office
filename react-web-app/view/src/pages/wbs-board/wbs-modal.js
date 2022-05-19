@@ -527,7 +527,7 @@ const WbsModal = (props) => {
                   <p>
                     Remaining hours:
                     <br></br>
-                    {total_hours().remaining_hours}
+                    {total_hours().remaining_hours>-1?total_hours().remaining_hours:0}
                   </p>
                 </CCol>
                 {/**task list show */}
