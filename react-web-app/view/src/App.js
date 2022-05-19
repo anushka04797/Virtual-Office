@@ -12,6 +12,7 @@ import { HashRouter, Route, Switch, Redirect } from 'react-router-dom';
 import ProtectedRoute from './components/protected-route/ProtectedRoute'
 import { ThemeProvider, createTheme } from '@material-ui/core/styles';
 import { PALETTE_MODE } from './Config';
+import withClearCache from './ClearCache'
 
 
 const Login = React.lazy(() => import('./pages/sign-in/signIn'));
@@ -36,24 +37,10 @@ const theme = createTheme({
 
   },
 });
-
+const ClearCacheComponent = withClearCache()
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <HashRouter>
-        <React.Suspense fallback={loading}>
-          <Switch>
-
-            <Route exact path="/"><Redirect to="/login"></Redirect></Route>
-            <Route exact path="/login" name="Sign in" render={props => <Login {...props} />} />
-            <Route exact path="/register" name="Sign up" render={props => <Register {...props} />} />
-            <Route exact path="/forgot-password" name="Forgot Password" render={props => <ForgotPass {...props} />} />
-            <ProtectedRoute path="/dashboard" name="Dashboard" component={TheLayout} />
-          </Switch>
-        </React.Suspense>
-        {/* <AuthVerify logOut={logOut}/> */}
-      </HashRouter>
-    </ThemeProvider>
+    <ClearCacheComponent/>
   );
 }
 

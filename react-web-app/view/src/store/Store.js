@@ -11,6 +11,7 @@ import TdoSlice from './slices/TdoSlice'
 import TimecardSlice from './slices/TimecardSlice'
 import searchSlice from './slices/searchSlice'
 import holidaySlice from './slices/HolidaySlice'
+import worktypeSlice from './slices/WorkTypeSlice'
 
 export default configureStore({
   reducer: {
@@ -25,6 +26,7 @@ export default configureStore({
     tdo : TdoSlice,
     timecardList:TimecardSlice,
     search : searchSlice,
-    holidays:holidaySlice
+    holidays:holidaySlice,
+    worktypes:worktypeSlice
   },
 })

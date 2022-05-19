@@ -267,7 +267,7 @@ const TimeCards = () => {
       setTotalHrs(hours_total)
       setUsersData(tableData);
     });
-  }, [modaladdItem, show_edit_modal,update]);
+  }, [modaladdItem, show_edit_modal]);
   const getAssigneeList = (option) => {
     setAssigneeValue(option);
     editForm.setValues({
@@ -816,15 +816,14 @@ const TimeCards = () => {
                       type="button"
                       onClick={onSubmit}
                       style={{ backgroundColor: '#e55353' }}
+                      disabled={usersData.filter(item=>item.submitted == false).length>0}
                     >
-                      Submit{" "}
+                      Submit
                     </CButton>
                     {/* <CButton className="file-format-download">Print</CButton> */}
                   </CCol>
                 </CRow>
               </div>
-
-
             </CCol>
           </CRow>
         </CForm>

@@ -39,6 +39,13 @@ const AddTimecardItms = (props) => {
     })
     return items
   })
+  const worktypes= useSelector(state=>{
+    let temp=[]
+    Array.from(state.worktypes.data).forEach((item,idx)=>{
+      temp.push({label:item.title,value:item.title,description:item.description,data:item})
+    })
+    return temp
+  })
   const dispatch = useDispatch()
   const onSave = (values) => {
     console.log("values", formAddTimecard.values);
@@ -99,18 +106,18 @@ const AddTimecardItms = (props) => {
   const [wbsList, setWbsList] = useState();
   const [selectedWbs, setSelectedWbs] = useState();
 
-  const types = [
-    { label: "RHR", value: "RHR", description:"Regular Hour" },
-    { label: "SIC", value: "SIC", description:"Sick Leave"},
-    { label: "VAC", value: "VAC", description:"Vacation" },
-    { label: "OTS", value: "OTS", description:"Over time With pay" },
-    { label: "OTO", value: "OTO", description:"Over time Without pay" },
-    { label: "HOL", value: "HOL", description:"Holiday" },
-    { label: "WFH", value: "WFH", description:"Work From Home" },
-    { label: "COM", value: "COM", description:"Compensatory time" },
-    { label: "PB1", value: "PB1", description:"Personal Buisness type 1"},
-    { label: "PB2", value: "PB2", description:"Personal Buisness type 2"},
-  ];
+  // const types = [
+  //   { label: "RHR", value: "RHR", description:"Regular Hour" },
+  //   { label: "SIC", value: "SIC", description:"Sick Leave"},
+  //   { label: "VAC", value: "VAC", description:"Vacation" },
+  //   { label: "OTS", value: "OTS", description:"Over time With pay" },
+  //   { label: "OTO", value: "OTO", description:"Over time Without pay" },
+  //   { label: "HOL", value: "HOL", description:"Holiday" },
+  //   { label: "WFH", value: "WFH", description:"Work From Home" },
+  //   { label: "COM", value: "COM", description:"Compensatory time" },
+  //   { label: "PB1", value: "PB1", description:"Personal Buisness type 1"},
+  //   { label: "PB2", value: "PB2", description:"Personal Buisness type 2"},
+  // ];
 
   const hourtype = (option) => {
     if (
@@ -234,7 +241,7 @@ const AddTimecardItms = (props) => {
                 <Select
                   id="hours_type"
                   name="hours_type"
-                  options={types}
+                  options={worktypes}
                   onChange={handleHoursTypeChange}
                   // value={formAddTimecard.values.hours_type}
                 />

@@ -16,6 +16,7 @@ import { has_permission } from '../helper';
 import { fetchEvmsThunk } from '../store/slices/EvmsSlice';
 import { fetchMeetingList } from '../store/slices/MeetingSlice';
 import { fetchAllTimecardsPm, fetchAllTimecardsPmThunk, fetchTimecardThunk } from '../store/slices/TimecardSlice';
+import { fetchWorkTypes } from '../store/slices/WorkTypeSlice';
 const TheLayout = () => {
   const dispatch = useDispatch()
   React.useEffect(()=>{
@@ -25,6 +26,7 @@ const TheLayout = () => {
     dispatch(fetchMeetingList(sessionStorage.getItem(USER_ID)))
     dispatch(fetchTimecardThunk(sessionStorage.getItem(USER_ID)))
     dispatch(fetchAllTimecardsPmThunk(sessionStorage.getItem(USER_ID)))
+    dispatch(fetchWorkTypes())
     if(has_permission('projects.add_projects')){
       console.log('is PM')
       dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)))
