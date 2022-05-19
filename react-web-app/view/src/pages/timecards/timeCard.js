@@ -333,33 +333,52 @@ const TimeCards = () => {
 
     const title = "Timecard of" + " " + pdfTitle;
     const headers = [
-      [
-        "Date",
-        "WP",
+      [  
+        "WP", 
         "Project Name",
         "Task Title",
+        "Description",
         "Hour(s)",
         "Type",
-
+        "Date Created", 
       ],
     ];
     const uData = pdfData.map((elt, idx) => [
-      elt.data.date_created,
       elt.data.project.work_package_number,
       elt.data.project.sub_task,
-      elt.data?.project.task_title,
+      elt.data.project.task_title,
+      elt.data.actual_work_done,
       elt.data.hours_today,
       elt.data.time_type,
+      elt.data.date_created,
+      console.log("data", elt.data)
     ]);
     let content = {
-      startY: 50,
+      startY: 145,
       head: headers,
       body: uData,
     };
 
-    doc.text(title, marginLeft, 30);
-    doc.autoTable(content);
-    doc.save("Timecard of" + " " + pdfTitle + ".pdf");
+     let day = new Date();
+     let time = day.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })
+      day=moment(day).format("DD/MM/YY")
+      const edate= moment(endDate).format("DD/MM/YYYY")
+      doc.setFontSize(17)
+      doc.text(170, 50, "Datasoft Manufacturing & Assembly")
+      doc.setFontSize(13)
+      doc.text(245,75, "Gulshan Branch")
+      doc.setFontSize(11)
+      doc.text(42,105, "Employee Time Card")
+      doc.text(410, 105, "Week-Ending: "+ edate)//+ edate)
+      doc.text(42, 125, "Name: "+ pdfTitle)//+ name)
+      doc.text(410, 125, "NID: ")   
+      let date = new Date();
+      console.log("date", date)
+      doc.text(42, 355, "Submitted : " + time +"  "+day )
+    
+      doc.autoTable(content);
+      doc.save("Timecard of" + " " + pdfTitle + ".pdf");
+      console.log("data", pdfData)
   };
 
   const toggleModal = () => {
@@ -408,6 +427,13 @@ const TimeCards = () => {
       startDate +
       " to " +
       endDate;
+      doc.text(150, 50, "Datasoft Manufacturing & Assembly Gulshan Branch")
+      doc.text(42,80, "Emplyee Time card")
+      doc.text(420, 80, "Week-Ending: ")//+ edate)
+      doc.text(42, 100, "Name: ")//+ name)
+      doc.text(420, 100, "NID: ")   
+      doc.text(42, 330, "Submitted : (date & Time)")
+      doc.autoTable(content);
     const headers = [
       [
         "WP",
@@ -441,7 +467,7 @@ const TimeCards = () => {
       head: headers,
       body: uData,
     };
-    doc.autoTable(content);
+    
     doc.text(420, doc.lastAutoTable.finalY + 20, "Total : " + totalHrs + ' hours')
     return doc
   }
@@ -533,6 +559,8 @@ const TimeCards = () => {
     console.log("values", editForm);
     dateRange()
     nextSatDay();
+    
+
   }, []);
 
   const show_submit = () => {
