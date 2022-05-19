@@ -63,7 +63,15 @@ const AddTimecardItms = (props) => {
     setModal(false)
   }
 
-
+  const validateAddItemForm=(values)=>{
+    console.log(values.hours)
+    const errors = {};
+    if (!values.hours_type) errors.hours_type = "Hour Type is required!"
+    if (!values.hours) errors.hours = "Hour is required!"
+    if (parseInt(values.hours) < 1) errors.hours = "Invalid hours value!"
+    return errors;
+  }
+  
   const formAddTimecard = useFormik({
     initialValues: {
       project: "",
@@ -77,7 +85,7 @@ const AddTimecardItms = (props) => {
     },
     validateOnChange: true,
     validateOnBlur: true,
-    //validate: validateWbsCreateForm,
+    validate: validateAddItemForm,
     onSubmit: onSave,
   });
 
@@ -144,7 +152,8 @@ const AddTimecardItms = (props) => {
   };
 
   const handleHolidayChange=(value,actionMeta)=>{
-
+    console.log(value)
+    formAddTimecard.setFieldValue('hours',value.data.hours)
   }
 
   const handlewbsChange = (option) => {
@@ -229,9 +238,10 @@ const AddTimecardItms = (props) => {
                   onChange={handleHoursTypeChange}
                   // value={formAddTimecard.values.hours_type}
                 />
+                {formAddTimecard.touched.hours_type && formAddTimecard.errors.hours_type && <small style={{ color: 'red' }}>{formAddTimecard.errors.hours_type}</small>}
               </CCol>
               {selectedType.label == 'HOL' && <CCol className="col-md-12 mb-3">
-                <CLabel className="custom-label-wbs5"> Select Holiday : </CLabel>
+                <CLabel className="custom-label-wbs5">Select Holiday : </CLabel>
                 <Select
                   id="project"
                   name="project"
@@ -250,6 +260,8 @@ const AddTimecardItms = (props) => {
                   className="custom-forminput-5"
                   placeholder="0.00"
                   //onChange={formAddTimecard.handleChange}
+                  disabled={selectedType.value == 'HOL'}
+                  min="0.00"
                   onChange={(e) => {
                     formAddTimecard.setFieldValue(
                       "hours",
@@ -258,6 +270,7 @@ const AddTimecardItms = (props) => {
                   }}
                   value={formAddTimecard.values.hours}
                 />
+                {formAddTimecard.touched.hours && formAddTimecard.errors.hours && <small style={{ color: 'red' }}>{formAddTimecard.errors.hours}</small>}
               </CCol>
 
               <CCol className="col-md-12 mb-3">

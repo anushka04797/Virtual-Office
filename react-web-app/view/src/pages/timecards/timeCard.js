@@ -20,7 +20,7 @@ import React, { useState, useEffect } from "react";
 import "./timeCards.css";
 import Select from "react-select";
 import { useDispatch, useSelector } from "react-redux";
-import { BASE_URL, USER_ID } from "../../Config";
+import { BASE_URL, FILE_API, USER_ID } from "../../Config";
 import { API } from "../../Config";
 import { has_permission } from "../../helper";
 import { useFormik } from "formik";
@@ -36,9 +36,12 @@ import swal from "sweetalert";
 import { useHistory, useLocation } from "react-router-dom";
 import AddTimecardItms from "./addTimecardItem";
 import EditTimeCard from "./Edit";
+import { fetchTimecardThunk } from "../../store/slices/TimecardSlice";
 
 const TimeCards = () => {
   const profile_details = useSelector((state) => state.profile.data);
+  const dispatch = useDispatch()
+  const [update,setUpdate]=useState(0)
   // console.log(profile_details)
   const [usersData, setUsersData] = useState([]);
   const [pdfData, setPdfData] = useState([]);
@@ -236,10 +239,10 @@ const TimeCards = () => {
       );
       setPdfData(filteredData);
       var tableData = [];
-      let hours_total=0
+      let hours_total = 0
       for (let index = 0; index < filteredData.length; index++) {
         const element = filteredData[index];
-        hours_total+=parseFloat(element.data.hours_today)
+        hours_total += parseFloat(element.data.hours_today)
         tableData.push({
           WP: element.data.project
             ? element.data.project.work_package_number
@@ -264,7 +267,7 @@ const TimeCards = () => {
       setTotalHrs(hours_total)
       setUsersData(tableData);
     });
-  }, [modaladdItem, show_edit_modal]);
+  }, [modaladdItem, show_edit_modal,update]);
   const getAssigneeList = (option) => {
     setAssigneeValue(option);
     editForm.setValues({
@@ -303,7 +306,7 @@ const TimeCards = () => {
   {
     /**export fetched tabledata to excel */
   }
-  const fileType ="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
+  const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
   const fileExtension = ".xlsx";
   const exportToCSV = (csvData, fileName) => {
     const ws = XLSX.utils.json_to_sheet(csvData);
@@ -326,7 +329,7 @@ const TimeCards = () => {
     const doc = new jsPDF(orientation, unit, size);
 
     doc.setFontSize(15);
-    
+
 
     const title = "Timecard of" + " " + pdfTitle;
     const headers = [
@@ -337,7 +340,7 @@ const TimeCards = () => {
         "Task Title",
         "Hour(s)",
         "Type",
-        
+
       ],
     ];
     const uData = pdfData.map((elt, idx) => [
@@ -388,7 +391,60 @@ const TimeCards = () => {
   const onAddItem = () => {
     setmodalAddItem(false);
   };
+  const generate_pdf = () => {
+    const unit = "pt";
+    const size = "A4"; // Use A1, A2, A3 or A4
+    const orientation = "portrait"; // portrait or landscape
 
+    const marginLeft = 40;
+    const doc = new jsPDF(orientation, unit, size);
+    doc.setFontSize(15);
+    const title =
+      "Company : " + profile_details.slc_details.slc.department.company.name + "\n" +
+      "Timecard of" +
+      " " +
+      profile_details.first_name + ' ' + profile_details.last_name +
+      "\n From " +
+      startDate +
+      " to " +
+      endDate;
+    const headers = [
+      [
+        "WP",
+        "Project Name ",
+        "Task Title",
+        "Description",
+        "Hour(s)",
+        "Date Created",
+      ],
+    ];
+    const uData = usersData.map((elt, idx) => [
+      elt.data.project.work_package_number,
+      elt.data.project?.sub_task ? elt.data.project.sub_task : "-",
+      elt.data?.project.task_title,
+      elt.data.actual_work_done,
+      elt.data.hours_today,
+      elt.data.date_created,
+    ]);
+
+    doc.text(title, marginLeft, 30);
+
+    doc.setProperties({
+      title: profile_details.first_name,
+      subject: 'Submitted Timecard',
+      author: 'VO',
+      keywords: 'generated, javascript, web 2.0, ajax',
+      creator: 'VO'
+    });
+    let content = {
+      startY: 90,
+      head: headers,
+      body: uData,
+    };
+    doc.autoTable(content);
+    doc.text(420, doc.lastAutoTable.finalY + 20, "Total : " + totalHrs + ' hours')
+    return doc
+  }
   const onSubmit = () => {
     swal({
       title: "Are you sure?",
@@ -398,58 +454,31 @@ const TimeCards = () => {
       dangerMode: true,
     }).then((willDelete) => {
       if (willDelete) {
-        let temp = [];
+        let temp = '';
         for (let i = 0; i < usersData.length; i++) {
           //console.log("data", usersData[i]);
-          temp[i] = usersData[i].data.id;
+          // temp.push(usersData[i].data.id)
+          if (i == usersData.length - 1) {
+            temp += usersData[i].data.id
+          }
+          else {
+            temp += (usersData[i].data.id + ',')
+          }
         }
-        console.log("id", temp);
 
-        API.put("wbs/time-card/submit/", { time_cards: temp,week_start:startDate,week_end:endDate}).then((res) => {
+        let doc = generate_pdf()
+        let formData = new FormData()
+        formData.append('time_cards', temp)
+        formData.append('week_start', startDate)
+        formData.append('week_end', endDate)
+        formData.append('pdf_file', doc.output('datauristring'))
+
+        FILE_API.post("wbs/time-card/submit/", formData).then((res) => {
           console.log(res.data);
-          const unit = "pt";
-          const size = "A4"; // Use A1, A2, A3 or A4
-          const orientation = "portrait"; // portrait or landscape
-
-          const marginLeft = 40;
-          const doc = new jsPDF(orientation, unit, size);
-          doc.setFontSize(15);
-          const title =
-            "Timecard of" +
-            " " +
-            pdfTitle +
-            "\n From " +
-            startDate +
-            " to " +
-            endDate;
-          const headers = [
-            [
-              "WP",
-              "Project Name ",
-              "Task Title",
-              "Description",
-              "Hour(s)",
-              "Date Created",
-            ],
-          ];
-          const uData = usersData.map((elt, idx) => [
-            elt.data.project.work_package_number,
-            elt.data.project?.sub_task ? elt.data.project.sub_task : "-",
-            elt.data?.project.task_title,
-            elt.data.actual_work_done,
-            elt.data.hours_today,
-            elt.data.date_created,
-          ]);
-          let content = {
-            startY: 50,
-            head: headers,
-            body: uData,
-          };
-
-          doc.text(title, marginLeft, 30);
-          doc.autoTable(content);
-          doc.save("Timecard of" + " " + pdfTitle + ".pdf");
-
+          dispatch(fetchTimecardThunk(sessionStorage.getItem(USER_ID)))
+          setUpdate(update+1)
+          doc.save("Timecard of" + " " + profile_details.first_name + ".pdf");
+          window.open(doc.output('bloburl'), '_blank');
           swal(
             "Submitted",
             "Your selected time cards are submitted!",
@@ -571,7 +600,7 @@ const TimeCards = () => {
         <CForm>
           <CRow>
             {/**assignees */}
-              <CCol xl="3" lg="3" md="6">
+            <CCol xl="3" lg="3" md="6">
               {/* {!has_permission("projects.add_projects") && (
                 <div>
                   <CLabel className="custom-label-5" htmlFor="assigneeSelect">
@@ -632,7 +661,7 @@ const TimeCards = () => {
             </CCol>
             <CRow className="mt-4">
               <CCol>
-              <CLabel className="custom-label-5" htmlFor="assigneeSelect">
+                <CLabel className="custom-label-5" htmlFor="assigneeSelect">
                   Company : {profile_details.slc_details?.slc?.department?.company?.name}
                 </CLabel>
               </CCol>
@@ -649,7 +678,7 @@ const TimeCards = () => {
             </CRow>
             <CRow>
               <CCol>
-              <CLabel className="custom-label-5" htmlFor="assigneeSelect">
+                <CLabel className="custom-label-5" htmlFor="assigneeSelect">
                   Weekending : {moment(nextSatDay()).format('dddd, DD MMMM YYYY')}
                 </CLabel>
               </CCol>
@@ -728,37 +757,37 @@ const TimeCards = () => {
                   }}
                 />
                 {totalHrs != 0 && (
-                <div class="alert alert-info" role="alert">
-                  <CRow>
-                    <CCol md="5"></CCol>
-                    <CCol md="3">
-                      {
-                        <small>
-                          {"     "}
-                          From <b>
-                            {moment(startDate).format("DD-MMM-YY")}
-                          </b> to <b>{moment(endDate).format("DD-MMM-YY")}</b>
-                        </small>
-                      }
-                    </CCol>
-                    <CCol md="4">
-                      {
-                        <small>
-                          {"   "}
-                          Total <b>{Number(totalHrs).toFixed(2)} {Number(totalHrs).toFixed(2)>1?'hours':'hour'}&nbsp;</b>
-                        </small>
-                      }
-                    </CCol>
-                  </CRow>
-                </div>
-              )}
+                  <div class="alert alert-info" role="alert">
+                    <CRow>
+                      <CCol md="5"></CCol>
+                      <CCol md="3">
+                        {
+                          <small>
+                            {"     "}
+                            From <b>
+                              {moment(startDate).format("DD-MMM-YY")}
+                            </b> to <b>{moment(endDate).format("DD-MMM-YY")}</b>
+                          </small>
+                        }
+                      </CCol>
+                      <CCol md="4">
+                        {
+                          <small>
+                            {"   "}
+                            Total <b>{Number(totalHrs).toFixed(2)} {Number(totalHrs).toFixed(2) > 1 ? 'hours' : 'hour'}&nbsp;</b>
+                          </small>
+                        }
+                      </CCol>
+                    </CRow>
+                  </div>
+                )}
                 <CRow className="justify-content-end mb-5">
                   <CCol md="1" className="justify-content-end">
                     <CButton
                       className="file-format-download"
                       type="button"
                       onClick={onSubmit}
-                      style={{backgroundColor:'#e55353'}}
+                      style={{ backgroundColor: '#e55353' }}
                     >
                       Submit{" "}
                     </CButton>
@@ -767,7 +796,7 @@ const TimeCards = () => {
                 </CRow>
               </div>
 
-              
+
             </CCol>
           </CRow>
         </CForm>
