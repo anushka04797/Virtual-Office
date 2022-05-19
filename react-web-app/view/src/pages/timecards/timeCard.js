@@ -599,7 +599,7 @@ const TimeCards = () => {
           <CCol>
             <h3 className="timecards-page-header mb-3">Actual Hours of this week</h3>
           </CCol>
-          <CCol
+          {/* <CCol
             md="8"
             id="tableRef"
             className="d-flex justify-content-end"
@@ -621,9 +621,8 @@ const TimeCards = () => {
                 <CIcon name="cil-spreadsheet" className="mr-2" />
                 Excel
               </CButton>
-              {/* <CButton className="file-format-download">Print</CButton> */}
             </div>
-          </CCol>
+          </CCol> */}
         </CRow>
         <CForm>
           <CRow>
@@ -816,7 +815,7 @@ const TimeCards = () => {
                       type="button"
                       onClick={onSubmit}
                       style={{ backgroundColor: '#e55353' }}
-                      disabled={usersData.filter(item=>item.submitted == false).length>0}
+                      disabled={usersData.length==0}
                     >
                       Submit
                     </CButton>
