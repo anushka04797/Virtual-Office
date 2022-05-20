@@ -227,8 +227,10 @@ const WbsBoard = () => {
         // console.log("WBS edit: ", cardId, metadata, laneId);
         currentLaneId = laneId;
         currentCardId = cardId;
+        console.log(boardData.lanes.find(element => element.id == currentLaneId))
         // console.log(data.lanes.find(element => element.id == currentLaneId).cards.find(element => element.id == currentCardId).title)
         const wbsId = (boardData.lanes.find(element => element.id == currentLaneId).cards.find(element => element.id == currentCardId)).id;
+        
         API.get('wbs/time-card/list/' + wbsId + '/').then((res) => {
             console.log('time-card list result', res)
             // if (res.data.length != 0){

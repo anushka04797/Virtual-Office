@@ -49,6 +49,15 @@ const TimeCards = () => {
   const [assignee, setAssigneeValue] = useState();
   const [pdfTitle, setPdfTitle] = useState();
   const [assigneeList, setAssigneeList] = useState([]);
+  const non_submitted_tc = useSelector(state=>{
+    let length=0
+    Array.from(state.timecardList.data).forEach((item,idx)=>{
+      if(item.submitted==false){
+        length++
+      }
+    })
+    return length
+  })
   // const [selectedEmployee, setSelectedEmployee] = useState(initialState)
   {
     /**fetch all assignees for PM */
@@ -370,15 +379,15 @@ const TimeCards = () => {
       doc.setFontSize(11)
       doc.text(42,105, "Employee Time Card")
       doc.text(410, 105, "Week-Ending: "+ edate)//+ edate)
-      doc.text(42, 125, "Name: "+ pdfTitle)//+ name)
+      doc.text(42, 125, "Name: "+ profile_details.first_name+' '+profile_details.last_name)//+ name)
       doc.text(410, 125, "NID: ")   
       let date = new Date();
       console.log("date", date)
       doc.text(42, 355, "Submitted : " + time +"  "+day )
     
       doc.autoTable(content);
-      doc.save("Timecard of" + " " + pdfTitle + ".pdf");
-      console.log("data", pdfData)
+      // doc.save("Timecard of" + " " + pdfTitle + ".pdf");
+      return doc
   };
 
   const toggleModal = () => {
@@ -410,67 +419,7 @@ const TimeCards = () => {
   const onAddItem = () => {
     setmodalAddItem(false);
   };
-  const generate_pdf = () => {
-    const unit = "pt";
-    const size = "A4"; // Use A1, A2, A3 or A4
-    const orientation = "portrait"; // portrait or landscape
-
-    const marginLeft = 40;
-    const doc = new jsPDF(orientation, unit, size);
-    doc.setFontSize(15);
-    const title =
-      "Company : " + profile_details.slc_details.slc.department.company.name + "\n" +
-      "Timecard of" +
-      " " +
-      profile_details.first_name + ' ' + profile_details.last_name +
-      "\n From " +
-      startDate +
-      " to " +
-      endDate;
-      doc.text(150, 50, "Datasoft Manufacturing & Assembly Gulshan Branch")
-      doc.text(42,80, "Emplyee Time card")
-      doc.text(420, 80, "Week-Ending: ")//+ edate)
-      doc.text(42, 100, "Name: ")//+ name)
-      doc.text(420, 100, "NID: ")   
-      doc.text(42, 330, "Submitted : (date & Time)")
-      doc.autoTable(content);
-    const headers = [
-      [
-        "WP",
-        "Project Name ",
-        "Task Title",
-        "Description",
-        "Hour(s)",
-        "Date Created",
-      ],
-    ];
-    const uData = usersData.map((elt, idx) => [
-      elt.data.project.work_package_number,
-      elt.data.project?.sub_task ? elt.data.project.sub_task : "-",
-      elt.data?.project.task_title,
-      elt.data.actual_work_done,
-      elt.data.hours_today,
-      elt.data.date_created,
-    ]);
-
-    doc.text(title, marginLeft, 30);
-
-    doc.setProperties({
-      title: profile_details.first_name,
-      subject: 'Submitted Timecard',
-      author: 'VO',
-      keywords: 'generated, javascript, web 2.0, ajax',
-      creator: 'VO'
-    });
-    let content = {
-      startY: 90,
-      head: headers,
-      body: uData,
-    };
-    
-    doc.text(420, doc.lastAutoTable.finalY + 20, "Total : " + totalHrs + ' hours')
-    return doc
-  }
+ 
   const onSubmit = () => {
     swal({
       title: "Are you sure?",
@@ -492,7 +441,7 @@ const TimeCards = () => {
           }
         }
 
-        let doc = generate_pdf()
+        let doc = exportPDF()
         let formData = new FormData()
         formData.append('time_cards', temp)
         formData.append('week_start', startDate)
@@ -514,6 +463,7 @@ const TimeCards = () => {
       }
     });
   };
+  
   const dateRange = () => {
     var sdate = new Date();
     var edate = new Date();
@@ -647,7 +597,7 @@ const TimeCards = () => {
                 </div>
               )} */}
               {/**IF PM */}
-              {has_permission("projects.add_projects") && (
+              {/* {has_permission("projects.add_projects") && (
                 <div>
                   <CLabel className="custom-label-5" htmlFor="assigneeSelectPM">
                     Select Employee
@@ -662,20 +612,13 @@ const TimeCards = () => {
                       capitalize(profile_details.last_name)}
                     isClearable={false}
                     isMulti={false}
-                    // value={{value:capitalize(profile_details.first_name) +
-                    //      " " +
-                    //      capitalize(profile_details.last_name), //label: capitalize(profile_details.first_name) +
-                    //     //  " " +
-                    //     //  capitalize(profile_details.last_name) 
-                    //     }}
                     onChange={getAssigneeList}
                     classNamePrefix="custom-forminput-6"
                     options={assigneeList}
                     styles={colourStyles}
                   />
-                  {/* {editForm.errors.assigneeSelectPM && <p className="error mt-1">{editForm.errors.assigneeSelectPM}</p>} */}
                 </div>
-              )}
+              )} */}
               {/**If PM but no assignee list **/}
               {/* {has_group('pm')&& (assigneeList.length == 0) &&
                   <div>
@@ -815,7 +758,7 @@ const TimeCards = () => {
                       type="button"
                       onClick={onSubmit}
                       style={{ backgroundColor: '#e55353' }}
-                      disabled={usersData.length==0}
+                      disabled={non_submitted_tc==0}
                     >
                       Submit
                     </CButton>

@@ -1,4 +1,4 @@
-import { CContainer, CRow, CCol, CDataTable, CLabel,CButton } from '@coreui/react'
+import { CContainer, CRow, CCol, CDataTable, CLabel, CButton } from '@coreui/react'
 import CIcon from "@coreui/icons-react";
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux';
@@ -49,13 +49,13 @@ const SubmittedTimecards = () => {
             <div className="format-buttons mt-3 mb-3 ">
               <CButton
                 className="file-format-download"
-                onClick={() => {}}
+                onClick={() => { }}
               >
                 <CIcon name="cil-description" className="mr-2" /> PDF
               </CButton>
               <CButton
                 className="file-format-download"
-                onClick={() =>{}}
+                onClick={() => { }}
               >
                 <CIcon name="cil-spreadsheet" className="mr-2" />
                 Excel
@@ -63,78 +63,93 @@ const SubmittedTimecards = () => {
               {/* <CButton className="file-format-download">Print</CButton> */}
             </div>
           </CCol>
-        
-      </CRow>
-      <CRow className="mt-4">
-        <CCol>
-          <CLabel className="custom-label-5" htmlFor="assigneeSelect">
-            Company : {profile_details.slc_details?.slc?.department?.company?.name}
 
-          </CLabel>
-        </CCol>
-      </CRow>
-      <CRow>
-        <CCol>
-          <CLabel className="custom-label-5" htmlFor="assigneeSelect">
-            Employee Name :{" "}
-            {capitalize(profile_details.first_name) +
-              " " +
-              capitalize(profile_details.last_name)}
-          </CLabel>
-        </CCol>
-      </CRow>
-      <CRow className="mt-5">
-        <CCol>
-          <CDataTable
-            items={submitted_timecards}
-            fields={[
-              {
-                key: "Weekending",
-                _style: { width: "15%" },
-                _classes: "font-weight-bold",
-              },
-              "Name",
-              "Total",
-              {
-                key: "RHR",
-                sorter: false
-              },
-              {
-                key: "SIC",
-                sorter: false
-              },
-              {
-                key: "HOL",
-                sorter: false
-              },
-              {
-                key: "PB1",
-                sorter: false
-              },
-              {
-                key: "WFH",
-                sorter: false
-              },
-              {
-                key: "OTO",
-                sorter: false
-              },
-              {
-                key: "Submitted",
-                sorter: false
-              }
-            ]}
-            itemsPerPage={10}
-            pagination
-            striped
-            bordered
-            sorter
-          />
-        </CCol>
-      </CRow>
-    </CContainer>
-        </>
-    )
+        </CRow>
+        <CRow className="mt-4">
+          <CCol>
+            <CLabel className="custom-label-5" htmlFor="assigneeSelect">
+              Company : {profile_details.slc_details?.slc?.department?.company?.name}
+
+            </CLabel>
+          </CCol>
+        </CRow>
+        <CRow>
+          <CCol>
+            <CLabel className="custom-label-5" htmlFor="assigneeSelect">
+              Employee Name :{" "}
+              {capitalize(profile_details.first_name) +
+                " " +
+                capitalize(profile_details.last_name)}
+            </CLabel>
+          </CCol>
+        </CRow>
+        <CRow className="mt-5">
+          <CCol>
+            <CDataTable
+              items={submitted_timecards}
+              fields={[
+                {
+                  key: "Weekending",
+                  _style: { width: "15%" },
+                  _classes: "font-weight-bold",
+                },
+                "Name",
+                "Total",
+                {
+                  key: "RHR",
+                  sorter: false
+                },
+                {
+                  key: "SIC",
+                  sorter: false
+                },
+                {
+                  key: "HOL",
+                  sorter: false
+                },
+                {
+                  key: "PB1",
+                  sorter: false
+                },
+                {
+                  key: "WFH",
+                  sorter: false
+                },
+                {
+                  key: "OTO",
+                  sorter: false
+                },
+                {
+                  key: "Submitted",
+                  sorter: false
+                }
+              ]}
+              itemsPerPage={10}
+              pagination
+              striped
+              bordered
+              sorter
+            />
+            <div class="alert alert-info" role="alert">
+              <CRow>
+                <CCol md="5"></CCol>
+                <CCol md="3">
+                </CCol>
+                <CCol md="4">
+                  {
+                    <small>
+                      {"   "}
+                      Total <b>&nbsp;{submitted_timecards.length}&nbsp;</b> Submitted
+                    </small>
+                  }
+                </CCol>
+              </CRow>
+            </div>
+          </CCol>
+        </CRow>
+      </CContainer>
+    </>
+  )
 }
 
 export default SubmittedTimecards
