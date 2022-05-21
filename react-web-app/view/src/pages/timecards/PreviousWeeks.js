@@ -330,33 +330,78 @@ const PreviousWeeks = () => {
     doc.setFontSize(15);
 
     const title = "Timecard of" + " " + pdfTitle;
+    // const headers = [
+    //   [
+    //     "WP",
+    //     "Project Name",
+    //     "Task Title",
+    //     "Actual Work Done",
+    //     "Hour(s)",
+    //     "Date Created",
+    //   ],
+    // ];
     const headers = [
       [
-        "WP",
+        "WP", 
         "Project Name",
         "Task Title",
-        "Actual Work Done",
+        "Description",
         "Hour(s)",
-        "Date Created",
+        "Type",
+        "Date Created", 
       ],
     ];
+    // const uData = pdfData.map((elt, idx) => [
+    //   elt.data.project.work_package_number,
+    //   elt.data.project.sub_task,
+    //   elt.data?.project.task_title,
+    //   elt.data.actual_work_done,
+    //   elt.data.hours_today,
+    //   elt.data.date_created,
+    // ]);
     const uData = pdfData.map((elt, idx) => [
       elt.data.project.work_package_number,
       elt.data.project.sub_task,
-      elt.data?.project.task_title,
+      elt.data.project.task_title,
       elt.data.actual_work_done,
       elt.data.hours_today,
+      elt.data.time_type,
       elt.data.date_created,
     ]);
+
     let content = {
-      startY: 50,
+      startY: 145,
       head: headers,
       body: uData,
     };
 
-    doc.text(title, marginLeft, 30);
+     
+    let day = new Date();
+    let time = day.toLocaleString("en-US", {
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    });
+    day = moment(day).format("DD/MM/YY");
+    const edate = moment(endDate).format("DD/MM/YYYY");
+    doc.setFontSize(17);
+    doc.text(170, 50, "Datasoft Manufacturing & Assembly");
+    doc.setFontSize(13);
+    doc.text(245, 75, "Gulshan Branch");
+    doc.setFontSize(11);
+    doc.text(42, 105, "Employee Time Card");
+    doc.text(410, 105, "Week-Ending: " + edate); //+ edate)
+    doc.text(42, 125, "Name: " + pdfTitle); //+ name)
+
+    let date = new Date();
+    console.log("date", date);
+    doc.text(315, 360, "From " + startDate + " to " + endDate + "Total Hours " + Number(totalHrs).toFixed(2))
+    
+    doc.text(400, 375, "Submitted : " + time + "  " + day);
+
     doc.autoTable(content);
     doc.save("Timecard of" + " " + pdfTitle + ".pdf");
+    console.log("data", pdfData);
   };
 
   const toggleModal = () => {
@@ -390,12 +435,80 @@ const PreviousWeeks = () => {
   //     })
   //     setPdfTitle(option.label)
   // }
-  const searchTC=(event)=>{
-    editForm.handleChange(event)
-    let values = editForm.values
-    values['todate']=event.target.value
-    getTimeCards(values)
-  }
+  const onAddItem = () => {
+    setmodalAddItem(false);
+  };
+
+  const onSubmit = () => {
+    swal({
+      title: "Are you sure?",
+      text: "Once submitted, you will not be able to revert!",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then((willDelete) => {
+      if (willDelete) {
+        let temp = [];
+        for (let i = 0; i < usersData.length; i++) {
+          //console.log("data", usersData[i]);
+          temp[i] = usersData[i].data.id;
+        }
+        console.log("id", temp);
+
+        API.put("wbs/time-card/submit/", { time_cards: temp }).then((res) => {
+          console.log(res.data);
+          const unit = "pt";
+          const size = "A4"; // Use A1, A2, A3 or A4
+          const orientation = "portrait"; // portrait or landscape
+
+          const marginLeft = 40;
+          const doc = new jsPDF(orientation, unit, size);
+          doc.setFontSize(15);
+          const title =
+            "Timecard of" +
+            " " +
+            pdfTitle +
+            "\n From " +
+            startDate +
+            " to " +
+            endDate;
+          const headers = [
+            [
+              "WP",
+              "Project Name ",
+              "Task Title",
+              "Description",
+              "Hour(s)",
+              "Date Created",
+            ],
+          ];
+          const uData = usersData.map((elt, idx) => [
+            elt.data.project.work_package_number,
+            elt.data.project?.sub_task ? elt.data.project.sub_task : "-",
+            elt.data?.project.task_title,
+            elt.data.actual_work_done,
+            elt.data.hours_today,
+            elt.data.date_created,
+          ]);
+          let content = {
+            startY: 50,
+            head: headers,
+            body: uData,
+          };
+
+          doc.text(title, marginLeft, 30);
+          doc.autoTable(content);
+          doc.save("Timecard of" + " " + pdfTitle + ".pdf");
+
+          swal(
+            "Submitted",
+            "Your selected time cards are submitted!",
+            "success"
+          );
+        });
+      }
+    });
+  };
   const dateRange = () => {
     var sdate = new Date();
     var edate = new Date();
@@ -458,6 +571,21 @@ const PreviousWeeks = () => {
 
   return (
     <>
+      {row != null && row != undefined && (
+        <EditTimeCard
+          data={row}
+          show={show_edit_modal}
+          onClose={() => {
+            setShowEditModal(false);
+          }}
+        />
+      )}
+      <AddTimecardItms
+        // toggle={toggleModal}
+        show={modaladdItem}
+        onClose={onAddItem}
+        onAdd={editForm.handleSubmit}
+      ></AddTimecardItms>
       <CContainer>
 
         <CRow className="justify-content-between">
@@ -578,7 +706,7 @@ const PreviousWeeks = () => {
                 name="todate"
                 id="todate"
                 value={editForm.values.todate}
-                onChange={searchTC}
+                onChange={editForm.handleChange}
               />
               {/**Error show */}
               {editForm.errors.todate && (
@@ -588,7 +716,7 @@ const PreviousWeeks = () => {
               )}
             </CCol>
 
-            {/* <CCol xl="3" lg="3" md="6">
+            <CCol xl="3" lg="3" md="6">
               <div className="button-holder--3">
                 <CButton
                   className="generate-card-button"
@@ -597,7 +725,7 @@ const PreviousWeeks = () => {
                   Show
                 </CButton>
               </div>
-            </CCol> */}
+            </CCol>
             {/**buttons for format of timecard */}
             <CRow className="mt-4">
               <CCol>
@@ -681,7 +809,7 @@ const PreviousWeeks = () => {
                 />
               </div>
 
-              {totalHrs != 0 && (
+              {/* {totalHrs != 0 && (
                   <div class="alert alert-info" role="alert">
                     <CRow>
                       <CCol md="5"></CCol>
@@ -705,7 +833,7 @@ const PreviousWeeks = () => {
                       </CCol>
                     </CRow>
                   </div>
-                )}
+                )} */}
             </CRow>
           </CRow>
         </CForm>

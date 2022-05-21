@@ -363,10 +363,14 @@ const TimeCards = () => {
       doc.text(42,105, "Employee Time Card")
       doc.text(410, 105, "Week-Ending: "+ edate)//+ edate)
       doc.text(42, 125, "Name: "+ profile_details.first_name+' '+profile_details.last_name)//+ name)
-      doc.text(410, 125, "NID: ")   
+     
       let date = new Date();
       console.log("date", date)
-      doc.text(42, 355, "Submitted : " + time +"  "+day )
+      doc.text(315, 360, "From " + startDate + " to " + endDate + "Total Hours " + Number(totalHrs).toFixed(2))
+    
+      doc.text(400, 375, "Submitted : " + time + "  " + day);
+  
+      //doc.text(42, 355, "Submitted : " + time +"  "+day )
     
       doc.autoTable(content);
       // doc.save("Timecard of" + " " + pdfTitle + ".pdf");
