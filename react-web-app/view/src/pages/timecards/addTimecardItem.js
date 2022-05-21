@@ -71,12 +71,12 @@ const AddTimecardItms = (props) => {
   }
 
   const validateAddItemForm=(values)=>{
-    console.log(values.hours)
     const errors = {};
     if (!values.hours_type) errors.hours_type = "Hour Type is required!"
     if (!values.hours) errors.hours = "Hour is required!"
     if (!values.project) errors.project = "Project is required!"
     if (!values.wbs) errors.wbs = "Wbs is required!"
+    if (!values.actual_work_done) errors.actual_work_done = "Details is required!"
     if (parseInt(values.hours) < 1) errors.hours = "Invalid hours value!"
     return errors;
   }
@@ -107,38 +107,6 @@ const AddTimecardItms = (props) => {
   const [selectedType, setSelectedType] = useState({ label: "RHR", value: 1 });
   const [wbsList, setWbsList] = useState();
   const [selectedWbs, setSelectedWbs] = useState();
-
-  // const types = [
-  //   { label: "RHR", value: "RHR", description:"Regular Hour" },
-  //   { label: "SIC", value: "SIC", description:"Sick Leave"},
-  //   { label: "VAC", value: "VAC", description:"Vacation" },
-  //   { label: "OTS", value: "OTS", description:"Over time With pay" },
-  //   { label: "OTO", value: "OTO", description:"Over time Without pay" },
-  //   { label: "HOL", value: "HOL", description:"Holiday" },
-  //   { label: "WFH", value: "WFH", description:"Work From Home" },
-  //   { label: "COM", value: "COM", description:"Compensatory time" },
-  //   { label: "PB1", value: "PB1", description:"Personal Buisness type 1"},
-  //   { label: "PB2", value: "PB2", description:"Personal Buisness type 2"},
-  // ];
-
-  const hourtype = (option) => {
-    if (
-      option.label == "OTO" ||
-      option.label == "OTS" ||
-      option.label == "RHR" ||
-      option.label == "COM" ||
-      option.label == "WFH"
-    )
-      return true;
-    else if (
-      option.label == "SIC" ||
-      option.label == "HOL" ||
-      option.label == "VAC" ||
-      option.label == "PB1" ||
-      option.label == "PB2"
-    )
-      return false;
-  };
 
   const handleHoursTypeChange = (option) => {
     setSelectedType(option);
@@ -322,7 +290,7 @@ const AddTimecardItms = (props) => {
                     onChange={handlewbsChange}
                     value={selectedWbs}
                   />
-                  {formAddTimecard.errors.wbs && <small style={{ color: 'red' }}>{formAddTimecard.errors.wbs}</small>}
+                  {formAddTimecard.touched.wbs && formAddTimecard.errors.wbs && <small style={{ color: 'red' }}>{formAddTimecard.errors.wbs}</small>}
                 </CCol>
                 <CCol className="col-md-12 mb-3">
                   <CLabel>Actual Work :</CLabel>
@@ -340,12 +308,13 @@ const AddTimecardItms = (props) => {
                     }}
                     value={formAddTimecard.values.actual_work_done}
                   />
+                  {formAddTimecard.touched.actual_work_done && formAddTimecard.errors.actual_work_done && <small style={{ color: 'red' }}>{formAddTimecard.errors.actual_work_done}</small>}
                 </CCol>
             </CRow>
           </CModalBody>
         </CForm>
         <CModalFooter>
-          <CButton color="primary" onClick={formAddTimecard.handleSubmit}>
+          <CButton color="primary" type="button" onClick={formAddTimecard.handleSubmit}>
             save
           </CButton>{" "}
           <CButton color="secondary" type="button" onClick={()=>{props.onClose();formAddTimecard.resetForm()}}>

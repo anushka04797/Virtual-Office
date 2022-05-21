@@ -4,18 +4,11 @@ import {
   CCol,
   CForm,
   CLabel,
-  CInput,
   CButton,
   CDataTable,
-  CBadge,
-  CModal,
-  CModalBody,
-  CModalHeader,
-  CModalFooter,
-  CModalTitle,
-  CTextarea,
+  CBadge
 } from "@coreui/react";
-
+import orderBy from 'lodash/orderBy';
 import React, { useState, useEffect } from "react";
 import "./timeCards.css";
 import Select from "react-select";
@@ -31,9 +24,7 @@ import * as XLSX from "xlsx";
 
 import CIcon from "@coreui/icons-react";
 import moment from "moment";
-import ReactDOM from "react-dom"; // you used 'react-dom' as 'ReactDOM'
 import swal from "sweetalert";
-import { useHistory, useLocation } from "react-router-dom";
 import AddTimecardItms from "./addTimecardItem";
 import EditTimeCard from "./Edit";
 import { fetchTimecardThunk } from "../../store/slices/TimecardSlice";
@@ -49,15 +40,7 @@ const TimeCards = () => {
   const [assignee, setAssigneeValue] = useState();
   const [pdfTitle, setPdfTitle] = useState();
   const [assigneeList, setAssigneeList] = useState([]);
-  const non_submitted_tc = useSelector(state=>{
-    let length=0
-    Array.from(state.timecardList.data).forEach((item,idx)=>{
-      if(item.submitted==false){
-        length++
-      }
-    })
-    return length
-  })
+  const [non_submitted_total_tc,setNonSubmittedTotalTC]=useState(0)
   // const [selectedEmployee, setSelectedEmployee] = useState(initialState)
   {
     /**fetch all assignees for PM */
@@ -199,6 +182,7 @@ const TimeCards = () => {
   const [modaladdItem, setmodalAddItem] = useState(false);
   const [show_edit_modal, setShowEditModal] = useState(false);
   React.useEffect(() => {
+    console.log('executing effect')
     window.scrollTo(0, 0);
     const { start, end } = dateRange();
     setTotalHrs(0);
@@ -249,7 +233,11 @@ const TimeCards = () => {
       setPdfData(filteredData);
       var tableData = [];
       let hours_total = 0
+      let total_not_submitted=0
       for (let index = 0; index < filteredData.length; index++) {
+        if(filteredData[index].data.submitted==false){
+          total_not_submitted++;
+        }
         const element = filteredData[index];
         hours_total += parseFloat(element.data.hours_today)
         tableData.push({
@@ -271,21 +259,16 @@ const TimeCards = () => {
           Type: element.data.time_type,
           "Date Created": element.data.date_created,
           data: element.data,
+          "id":element.data.id
         });
       }
       setTotalHrs(hours_total)
-      setUsersData(tableData);
+      setUsersData(orderBy(tableData,'id','desc'));
+      console.log('data size',total_not_submitted)
+      setNonSubmittedTotalTC(total_not_submitted)
     });
-  }, [modaladdItem, show_edit_modal]);
-  const getAssigneeList = (option) => {
-    setAssigneeValue(option);
-    editForm.setValues({
-      assigneeSelectPM: option.value,
-      startDate: "",
-      todate: "",
-    });
-    setPdfTitle(option.label);
-  };
+  }, [modaladdItem, show_edit_modal,update]);
+  
   const validateEditForm = (values) => {
     const errors = {};
 
@@ -390,10 +373,6 @@ const TimeCards = () => {
       return doc
   };
 
-  const toggleModal = () => {
-    setmodalAddItem(!modaladdItem);
-  };
-
   const showModal = (tableItem) => {
     setRow(tableItem.data);
     setShowEditModal(true);
@@ -405,19 +384,9 @@ const TimeCards = () => {
     sethour(null);
   };
 
-  const [selectedType, setSelectedType] = useState();
-
-  // const getAssigneeList = (option) => {
-  //     setAssigneeValue(option)
-  //     editForm.setValues({
-  //         assigneeSelectPM: option.value,
-  //         startDate:'',
-  //         todate:''
-  //     })
-  //     setPdfTitle(option.label)
-  // }
   const onAddItem = () => {
     setmodalAddItem(false);
+    // dispatch(fetchTimecardThunk());
   };
  
   const onSubmit = () => {
@@ -509,8 +478,6 @@ const TimeCards = () => {
     console.log("values", editForm);
     dateRange()
     nextSatDay();
-    
-
   }, []);
 
   const show_submit = () => {
@@ -533,7 +500,7 @@ const TimeCards = () => {
           data={row}
           show={show_edit_modal}
           onClose={() => {
-            setShowEditModal(false);
+            setShowEditModal(false); 
           }}
         />
       )}
@@ -701,7 +668,7 @@ const TimeCards = () => {
                   sorter
                   //columnFilter
                   size="sm"
-                  itemsPerPage={10}
+                  itemsPerPage={20}
                   pagination
                   scopedSlots={{
                     Action: (item) => (
@@ -758,7 +725,7 @@ const TimeCards = () => {
                       type="button"
                       onClick={onSubmit}
                       style={{ backgroundColor: '#e55353' }}
-                      disabled={non_submitted_tc==0}
+                      disabled={non_submitted_total_tc==0}
                     >
                       Submit
                     </CButton>
