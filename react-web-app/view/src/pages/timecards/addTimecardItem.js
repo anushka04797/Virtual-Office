@@ -75,6 +75,8 @@ const AddTimecardItms = (props) => {
     const errors = {};
     if (!values.hours_type) errors.hours_type = "Hour Type is required!"
     if (!values.hours) errors.hours = "Hour is required!"
+    if (!values.project) errors.project = "Project is required!"
+    if (!values.wbs) errors.wbs = "Wbs is required!"
     if (parseInt(values.hours) < 1) errors.hours = "Invalid hours value!"
     return errors;
   }
@@ -218,7 +220,7 @@ const AddTimecardItms = (props) => {
       <CModal
         closeOnBackdrop={false}
         show={props.show}
-        onClose={props.toggle}
+        onClose={()=>{props.onClose();formAddTimecard.resetForm()}}
         size="lg"
       >
         <CForm>
@@ -298,6 +300,7 @@ const AddTimecardItms = (props) => {
                     onChange={handleProjectChange}
                     options={projects}
                   />
+                  {formAddTimecard.touched.project && formAddTimecard.errors.project && <small style={{ color: 'red' }}>{formAddTimecard.errors.project}</small>}
                 </CCol>
 
                 <CCol className="col-md-12 mb-3">
@@ -319,6 +322,7 @@ const AddTimecardItms = (props) => {
                     onChange={handlewbsChange}
                     value={selectedWbs}
                   />
+                  {formAddTimecard.errors.wbs && <small style={{ color: 'red' }}>{formAddTimecard.errors.wbs}</small>}
                 </CCol>
                 <CCol className="col-md-12 mb-3">
                   <CLabel>Actual Work :</CLabel>
@@ -344,7 +348,7 @@ const AddTimecardItms = (props) => {
           <CButton color="primary" onClick={formAddTimecard.handleSubmit}>
             save
           </CButton>{" "}
-          <CButton color="secondary" onClick={props.onClose}>
+          <CButton color="secondary" type="button" onClick={()=>{props.onClose();formAddTimecard.resetForm()}}>
             Cancel
 
           </CButton>
