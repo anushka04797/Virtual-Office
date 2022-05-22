@@ -719,8 +719,6 @@ const CreateNewProject = () => {
       });
       reset_form();
     }
-
-  
 };
 
   function removeAssignee(item) {
@@ -744,6 +742,12 @@ const CreateNewProject = () => {
                   <CForm>
                     <CRow>
                       {/**task delivery order */}
+                      <div className="col-lg-12 mb-3">
+                        <CLabel className="custom-label-5" htmlFor="tdo" aria-labelledby="tdo">
+                          Company
+                        </CLabel>
+                        <CInput readOnly type='text' value={profile_details.slc_details?.slc?.department.company.name}/>
+                      </div>
                       <div className="col-lg-12 mb-3">
                         <CLabel className="custom-label-5" htmlFor="tdo" aria-labelledby="tdo">
                           Task Delivery Order *

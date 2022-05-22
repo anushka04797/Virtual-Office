@@ -47,6 +47,7 @@ const AddTimecardItms = (props) => {
     return temp
   })
   const dispatch = useDispatch()
+  const hours_spent_left=useSelector(state=>state.timecardList.user_hours_used_left)
   const onSave = (values) => {
     console.log("values", formAddTimecard.values);
     const data={

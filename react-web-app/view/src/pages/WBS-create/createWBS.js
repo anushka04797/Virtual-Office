@@ -269,21 +269,16 @@ const CreateNewWBS = () => {
     setFiles([])
   }
   const create_wbs = (values, { setSubmitting }) => {
-    console.log('end date',selectedProjectEndDate)
+    
     const currentDate = new Date();
     const day = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()}`;
     const cday = day.split("-")
     const endDateArray = selectedProjectEndDate.split("-");
-    console.log('end date',endDateArray)
+
     let cdate = moment([parseInt(cday[0]), parseInt(cday[1])-1, parseInt(cday[2])])
     let edate = moment(selectedProjectEndDate);
-
-    console.log("day1", moment(cdate).format('YYYY-MM-DD'))
-    console.log("day2", moment(edate).format('YYYY-MM-DD'))
-
     const difference = cdate.diff(edate, 'days');
 
-    console.log("difference", difference);
     if (difference <= 0) {
       console.log("values", JSON.stringify(formCreateWbs.values));
       API.post("wbs/create/", formCreateWbs.values).then((res) => {

@@ -5,7 +5,7 @@ const TheFooter = () => {
   return (
     <CFooter fixed={false}>
       <div>
-        <a href="http://dma.com.bd:8000" target="_self" rel="noopener noreferrer">Virtual Office v2.0.0</a>
+        <a href="https://virtualoffice.com.bd" target="_self" rel="noopener noreferrer">Virtual Office v2.0.1</a>
         <span className="ml-1">&copy; DMA 2022</span>
       </div>
       <div className="mfs-auto">
