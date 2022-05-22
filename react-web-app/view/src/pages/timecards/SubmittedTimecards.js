@@ -16,6 +16,7 @@ import { fetchUserSubmittedTimecards } from "../../store/slices/TimecardSlice";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { useState } from "react";
+import { has_permission } from "../../helper.js";
 
 const SubmittedTimecards = () => {
   const [pdfData, setPdfData] = useState([]);
@@ -128,7 +129,9 @@ const SubmittedTimecards = () => {
     doc.setFontSize(11);
     doc.text(42, 105, "Submitted Time Card");
     // doc.text(410, 105, "Week-Ending: " + edate); //+ edate)
-    doc.text(42, 125, "Name: " + pdfTitle); //+ name)
+    if(!has_permission("projects.add_projects"))
+
+       {doc.text(42, 125, "Employee Name: " + pdfTitle)} //+ name)
 
     // let date = new Date();
     // console.log("date", date);
@@ -175,6 +178,7 @@ const SubmittedTimecards = () => {
           </CCol>
         </CRow>
         <CRow>
+        {!has_permission("projects.add_projects") && 
           <CCol>
             <CLabel className="custom-label-5" htmlFor="assigneeSelect">
               Employee Name :{" "}
@@ -182,7 +186,7 @@ const SubmittedTimecards = () => {
                 " " +
                 capitalize(profile_details.last_name)}
             </CLabel>
-          </CCol>
+          </CCol>}
         </CRow>
         <CRow className="mt-5">
           <CCol>

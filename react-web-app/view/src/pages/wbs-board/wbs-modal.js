@@ -87,14 +87,14 @@ const WbsModal = (props) => {
 
     let edate = moment([
       parseInt(endDateArray[0]),
-      parseInt(endDateArray[1]) - 1,
+      parseInt(endDateArray[1]) ,
       parseInt(endDateArray[2]),
     ]);
-    const difference = cdate.diff(edate, "days");
+    const difference = edate.diff(cdate, "days");
 
     console.log("date1", cdate);
     console.log("date2", edate);
-    console.log("difference", difference);
+    console.log("differenceeeeeeeeeeeeeeeeeee", difference);
 
     if (difference >= 0) {
       data.remaining_hours =
@@ -224,6 +224,7 @@ const WbsModal = (props) => {
   function is_form_submitting() {
     console.log(formWbsUpdate.isSubmitting, formWbsUpdate.isValidating);
     total_hours();
+    //updateWbs();
     if (formWbsUpdate.isSubmitting && !formWbsUpdate.isValidating) {
       return true;
     }
@@ -231,8 +232,6 @@ const WbsModal = (props) => {
 
 
   }
-
-
 
   return (
     <>
