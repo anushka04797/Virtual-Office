@@ -363,6 +363,7 @@ const TimeCards = () => {
   }
   const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
   const fileExtension = ".xlsx";
+  
   const exportToCSV = (csvData, fileName) => {
     const ws = XLSX.utils.json_to_sheet(csvData);
     const wb = { Sheets: { data: ws }, SheetNames: ["" + startDate + ' - ' + endDate] };
@@ -429,9 +430,9 @@ const TimeCards = () => {
      
       let date = new Date();
       console.log("date", date)
-      doc.text(315, 360, "From " + startDate + " to " + endDate + "Total Hours " + Number(totalHrs).toFixed(2))
+      doc.text(315, 420, "From " + startDate + " to " + endDate + "Total Hours " + Number(totalHrs).toFixed(2))
     
-      doc.text(400, 375, "Submitted : " + time + "  " + day);
+      doc.text(400, 435, "Submitted : " + time + "  " + day);
   
       //doc.text(42, 355, "Submitted : " + time +"  "+day )
     

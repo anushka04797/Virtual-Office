@@ -17,7 +17,7 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { useState } from "react";
 import { has_permission } from "../../helper.js";
-
+import * as FileSaver from "file-saver";
 const SubmittedTimecards = () => {
   const [pdfData, setPdfData] = useState([]);
   let submitted =[]
@@ -140,9 +140,20 @@ const SubmittedTimecards = () => {
     // doc.text(400, 375, "Submitted : " + time + "  " + day);
 
     doc.autoTable(content);
+
+    // var blobPDF =  new Blob([ doc.output('blob') ], { type: 'application/vnd.ms-excel' });
+
+    //let blob = new Blob([csv], { type: 'application/vnd.ms-excel' });
     doc.save("Timecard of" + " " + pdfTitle + ".pdf");
+    
+    // FileSaver.saveAs(blobPDF, "dummy.csv");
     // console.log("data", pdfData);
   };
+  const exportXL =()=>{
+    const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
+    
+
+  }
   return (
     <>
       <CContainer>
@@ -161,7 +172,7 @@ const SubmittedTimecards = () => {
               >
                 <CIcon name="cil-description" className="mr-2" /> PDF
               </CButton>
-              <CButton className="file-format-download" onClick={() => {}}>
+              <CButton className="file-format-download" onClick={() => {exportXL();}}>
                 <CIcon name="cil-spreadsheet" className="mr-2" />
                 Excel
               </CButton>

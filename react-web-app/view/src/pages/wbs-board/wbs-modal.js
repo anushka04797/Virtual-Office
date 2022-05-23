@@ -66,7 +66,7 @@ const WbsModal = (props) => {
 
     const lastDate = props.data.end_date;
 
-
+    
     console.log("last Date", lastDate);
     const currentDate = new Date();
 
@@ -95,6 +95,7 @@ const WbsModal = (props) => {
     console.log("date1", cdate);
     console.log("date2", edate);
     console.log("differenceeeeeeeeeeeeeeeeeee", difference);
+    
 
     if (difference >= 0) {
       data.remaining_hours =
@@ -150,6 +151,7 @@ const WbsModal = (props) => {
       project: props.data.project.id,
       assignee: props.data.assignee.id,
       title: props.data.title,
+      details: props.data.project.description,
       status: props.data.status,
       description: props.data.description,
       start_date: props.data.start_date,
@@ -252,6 +254,14 @@ const WbsModal = (props) => {
             <div className="col-lg-8 mb-3 border-right">
               <CForm>
                 <CRow>
+                <div className="col-lg-12 mb-3">
+                
+                  <p>
+                   <b>Project Details :</b> {props.data.project.description}
+                  </p>
+                </div>
+                </CRow>
+                <CRow>
                   <div className="col-lg-12 mb-3">
                     <CLabel className="custom-label-wbs5">Title</CLabel>
                     <CInput
@@ -270,6 +280,24 @@ const WbsModal = (props) => {
                       </p>
                     )}
                   </div>
+                  {/* <div className="col-lg-12 mb-3">
+                    <CLabel className="custom-label-wbs5">Project Details :</CLabel>
+                    <CInput
+                      id="details"
+                      name="details"
+                      className="custom-forminput-5"
+                      onChange={formWbsUpdate.handleChange}
+                      value={formWbsUpdate.values.details}
+                    />
+                    {formWbsUpdate.errors.details && (
+                      <p
+                        className="error"
+                        style={{ fontSize: "14px !important" }}
+                      >
+                        {formWbsUpdate.errors.details}
+                      </p>
+                    )}
+                  </div> */}
                   {/* <div className="col-lg-3 mb-3">
                                         <CLabel className="custom-label-wbs5">
                                             Status
@@ -510,7 +538,7 @@ const WbsModal = (props) => {
                 </CCol>
                 <CCol md="12">
                   <p className="custom-label-wbs5">
-                    Allocated hours:
+                   Project Planned Hours :
                     <br></br>
                     {total_hours().allocated_hours}   {/*{props.data.project?.remaining_hours}*/}
                   </p>
@@ -532,7 +560,7 @@ const WbsModal = (props) => {
                 {/**task list show */}
                 <CCol md="12">
                   <div className="task-list">
-                    <p>Task List:</p>
+                    <p>Actual Works :</p>
                     <ol className="task-list-show">
                       {props.timeCardList?.data != undefined
                         ? Array.from(props.timeCardList.data).map((item) => (
