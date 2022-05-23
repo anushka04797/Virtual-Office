@@ -304,15 +304,33 @@ const PreviousWeeks = () => {
   {
     /**export fetched tabledata to excel */
   }
+  
   const fileType =
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
   const fileExtension = ".xlsx";
-  const exportToCSV = (csvData, fileName) => {
-    const ws = XLSX.utils.json_to_sheet(csvData);
-    const wb = { Sheets: { data: ws }, SheetNames: ["" + startDate + ' - ' + endDate] };
-    const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
-    const data = new Blob([excelBuffer], { type: fileType });
-    FileSaver.saveAs(data, fileName + fileExtension);
+  const exportToCSV = (pdfData, pdfTitle) => {
+    
+    console.log("llllllll", usersData)
+    
+    console.log("1111111111111111111111111111111111111111", pdfData)
+    const ws = XLSX.utils.json_to_sheet(pdfData);
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "");
+    var wbout = XLSX.write(wb, {bookType:'xlsx', type:'array'});
+    FileSaver.saveAs(new Blob([wbout],{type:"application/octet-stream"}), pdfTitle + ".xlsx");
+
+    // const wb = { Sheets: { data: ws }, SheetNames: ["Sheet1"] };
+    // const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+    // const data = new Blob([excelBuffer], { type: fileType });
+
+    // require('xlsx').readFile(pdfTitle + ".xlsx").Sheets.Merge['!merges']
+    // [ { s: { c: 0, r: 0 }, e: { c: 1, r: 1 } },  // <-- The cell A1 represents the range A1:B2
+    //   { s: { c: 2, r: 0 }, e: { c: 2, r: 1 } },  // <-- The cell C1 represents the range C1:C2
+    //   { s: { c: 0, r: 2 }, e: { c: 1, r: 2 } },  // <-- The cell A3 represents the range A3:B3
+    //   { s: { c: 3, r: 0 }, e: { c: 3, r: 1 } },  // <-- The cell D1 represents the range D1:D2
+    //   { s: { c: 0, r: 3 }, e: { c: 1, r: 3 } } ] // <-- The cell A4 represents the range A4:B4
+    
+    //FileSaver.saveAs(data, fileName + fileExtension);
   }
 
 
@@ -395,9 +413,9 @@ const PreviousWeeks = () => {
 
     let date = new Date();
     console.log("date", date);
-    doc.text(315, 360, "From " + startDate + " to " + endDate + "Total Hours " + Number(totalHrs).toFixed(2))
+    doc.text(315, 420, "From " + startDate + " to " + endDate + "Total Hours " + Number(totalHrs).toFixed(2))
     
-    doc.text(400, 375, "Submitted : " + time + "  " + day);
+    doc.text(400, 435, "Submitted : " + time + "  " + day);
 
     doc.autoTable(content);
     doc.save("Timecard of" + " " + pdfTitle + ".pdf");
@@ -509,6 +527,7 @@ const PreviousWeeks = () => {
       }
     });
   };
+
   const dateRange = () => {
     var sdate = new Date();
     var edate = new Date();
@@ -551,7 +570,7 @@ const PreviousWeeks = () => {
     return satday;
   };
   React.useEffect(() => {
-    console.log("values", editForm);
+   
     dateRange()
     nextSatDay();
   }, []);
@@ -608,6 +627,7 @@ const PreviousWeeks = () => {
               <CButton
                 className="file-format-download"
                 onClick={() =>
+                  
                   exportToCSV(usersData, "Timecard of" + " " + pdfTitle)
                 }
               >
