@@ -669,7 +669,7 @@ const CreateNewProject = () => {
       assignees.push(item.assignee.data.id)
       assignee_eps.push(item.estimated_person)
       total_planned_value += parseFloat(item.assignee.data.slc_details.hourly_rate) * 8 * parseFloat(total_working_days)
-      // total_planned_hours += parseFloat(item.estimated_person) * 8 * parseFloat(total_working_days)
+      total_planned_hours += parseFloat(item.estimated_person) * 8 * parseFloat(total_working_days)
     })
     formCreateProject.setValues({
       task_delivery_order: formCreateProject.values.task_delivery_order,
@@ -683,9 +683,9 @@ const CreateNewProject = () => {
       planned_delivery_date: formCreateProject.values.planned_delivery_date,
       assignee: assignees,
       pm: sessionStorage.getItem(USER_ID),
-      planned_hours: formCreateProject.values.planned_hours,
+      planned_hours: total_planned_hours,
       planned_value: total_planned_value,
-      remaining_hours: formCreateProject.values.planned_hours
+      remaining_hours: total_planned_hours
     })
   }
 
@@ -693,27 +693,24 @@ const CreateNewProject = () => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const handleAddClick = () => {
     if(selectedAssignees.data.slc_details?.hourly_rate != null && selectedAssignees.data.slc_details?.hourly_rate!= undefined ){
-      
-    console.log('selectedAssignees',selectedAssignees.data.slc_details)
-    
-    populate_planned_value_and_hours([...inputList, { assignee: selectedAssignees, estimated_person: selectedAssigneesEP }])
-    setInputList([
-      ...inputList, 
-      { 
-        assignee: selectedAssignees,
-        estimated_person: selectedAssigneesEP, 
-        planned_value: parseFloat(selectedAssignees.data.slc_details.hourly_rate) * 8 * parseFloat(total_working_days), 
-        planned_hours: parseFloat(((total_working_days * 8) * selectedAssigneesEP).toFixed(1)) 
-      }
-    ]);
-    // setRemaining_EP((remaining_EP - selectedAssigneesEP).toFixed(1))
-    setSelectedAssignees(null)
-    setSelectedAssigneesEP(0)
-    setSelectedAssigneeExistingEP(0)
-    console.log("inputList", inputList)
-  }
-  else {
-   
+      console.log('selectedAssignees',selectedAssignees.data.slc_details)
+      populate_planned_value_and_hours([...inputList, { assignee: selectedAssignees, estimated_person: selectedAssigneesEP }])
+      setInputList([
+        ...inputList, 
+        { 
+          assignee: selectedAssignees,
+          estimated_person: selectedAssigneesEP, 
+          planned_value: parseFloat(selectedAssignees.data.slc_details.hourly_rate) * 8 * parseFloat(total_working_days), 
+          planned_hours: parseFloat(((total_working_days * 8) * selectedAssigneesEP).toFixed(1)) 
+        }
+      ]);
+      // setRemaining_EP((remaining_EP - selectedAssigneesEP).toFixed(1))
+      setSelectedAssignees(null)
+      setSelectedAssigneesEP(0)
+      setSelectedAssigneeExistingEP(0)
+      console.log("inputList", inputList)
+    }
+    else {
       enqueueSnackbar("Assignee details not available ! ", {
         variant: "warning",
       });

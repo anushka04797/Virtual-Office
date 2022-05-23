@@ -34,7 +34,7 @@ class IdleTimer {
         clearTimeout(this.timeoutTracker);
       }
       this.timeoutTracker = setTimeout(() => {
-        localStorage.setItem("_expiredTime", Date.now() + this.timeout * 1000);
+        localStorage.setItem("_expiredTime", Date.now() + this.timeout * 2000);
       }, 300);
     }
   

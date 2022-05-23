@@ -31,6 +31,7 @@ import { fetchTimecardThunk } from "../../store/slices/TimecardSlice";
 
 const TimeCards = () => {
   const profile_details = useSelector((state) => state.profile.data);
+  const [selectedAssignee,setSelectedAssignee]=useState()
   const dispatch = useDispatch()
   const [update,setUpdate]=useState(0)
   // console.log(profile_details)
@@ -169,7 +170,61 @@ const TimeCards = () => {
       );
     }
   };
-
+  const get_assignee_tc=(assignee)=>{
+    const { start, end } = dateRange();
+    setPdfTitle(assignee.data.first_name+' '+assignee.data.last_name)
+    API.get(
+      "wbs/user/time-card/list/" + assignee.value + "/"
+    ).then((res) => {
+      setPdfTitle(
+        profile_details.first_name + " " + profile_details.last_name
+      );
+      let temp = [];
+      Array.from(res.data.data).forEach((item, idx) => {
+        temp.push({ data: item });
+      });
+      let filteredData = temp;
+      filteredData = temp.filter(
+        (p) => p.data.date_updated >= start && p.data.date_updated <= end
+      );
+      setPdfData(filteredData);
+      var tableData = [];
+      let hours_total = 0
+      let total_not_submitted=0
+      for (let index = 0; index < filteredData.length; index++) {
+        if(filteredData[index].data.submitted==false){
+          total_not_submitted++;
+        }
+        const element = filteredData[index];
+        hours_total += parseFloat(element.data.hours_today)
+        tableData.push({
+          WP: element.data.project
+            ? element.data.project.work_package_number
+            : "-",
+          "Project Name":
+            element.data.project != null
+              ? element.data.project?.sub_task
+              : "-",
+          "Task Title":
+            element.data.project != null
+              ? element.data.project?.task_title
+              : "-",
+          Description: element.data?.actual_work_done
+            ? element.data?.actual_work_done
+            : "-",
+          "Hour(s)": element.data.hours_today,
+          Type: element.data.time_type,
+          "Date Created": element.data.date_created,
+          data: element.data,
+          "id":element.data.id
+        });
+      }
+      setTotalHrs(hours_total)
+      setUsersData(orderBy(tableData,'id','desc'));
+      console.log('data size',total_not_submitted)
+      setNonSubmittedTotalTC(total_not_submitted)
+    });
+  }
   function capitalize(string) {
     if (string != undefined) {
       return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
@@ -183,18 +238,16 @@ const TimeCards = () => {
   const [show_edit_modal, setShowEditModal] = useState(false);
   const getAssigneeList = (option) => {
     setAssigneeValue(option);
-    editForm.setValues({
-      assigneeSelectPM: option.value,
-      startDate: "",
-      todate: "",
-    });
+    
     setPdfTitle(option.label);
+    get_assignee_tc(option)
   };
 
   React.useEffect(() => {
     console.log('executing effect')
     window.scrollTo(0, 0);
     const { start, end } = dateRange();
+    setSelectedAssignee({label:profile_details.first_name+' '+profile_details.last_name,value:profile_details.id,data:profile_details})
     setTotalHrs(0);
     if (
       has_permission("projects.change_projectassignee") ||
