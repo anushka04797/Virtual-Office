@@ -13,7 +13,7 @@ import { process_params } from 'express/lib/router';
 
 const CustomSearch = (props) => {
     const [searchText, setSearchText] = useState('')
-    const [showSearchInput,setShowSearchInput]=useState(false)
+    const [showSearchInput,setShowSearchInput]=useState(true)
     const [open,setOpen]=useState(false)
     const [result,setResult]=useState([])
     const search = (text) => {
@@ -29,7 +29,7 @@ const CustomSearch = (props) => {
     }
     return (
         <>
-            {showSearchInput==false?<IconButton type="button" sx={{ p: '10px', color:'rgb(0 82 204)', float:'right' }} aria-label="search" onClick={()=>{setShowSearchInput(true)}}><SearchIcon/></IconButton>:
+            
             <Paper
                 component="form" variant='outlined' rounded="true" 
                 sx={{ p: '0px 0px',height:'36px',marginRight:1, display: 'flex', alignItems: 'center', width: 250,float:'right' }}
@@ -52,14 +52,8 @@ const CustomSearch = (props) => {
                 </IconButton>:<IconButton type="button" sx={{ p: '10px', color:'rgb(0 82 204)' }} aria-label="search" onClick={()=>setSearchText('')}>
                     <CloseSharpIcon/>
                 </IconButton>}
-                {/* <MatResult open={open} handleClose={()=>setOpen(false)} searchText={searchText} result={result}/> */}
-                {/* <DraggableSearchResultTab open={open} handleClose={()=>setOpen(false)} searchText={searchText} result={result}/> */}
-                {/* <MatFullScreenSearchResult open={open} handleClose={()=>setOpen(false)}/> */}
-                {/* <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" /> */}
-                {/* <IconButton color="primary" sx={{ p: '10px' }} aria-label="directions">
-                    <DirectionsIcon />
-                </IconButton> */}
-            </Paper>}
+                
+            </Paper>
         </>
     )
 }

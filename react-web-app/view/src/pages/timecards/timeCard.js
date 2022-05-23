@@ -6,7 +6,7 @@ import {
   CLabel,
   CButton,
   CDataTable,
-  CBadge
+  CBadge,CInput
 } from "@coreui/react";
 import orderBy from 'lodash/orderBy';
 import React, { useState, useEffect } from "react";
@@ -181,6 +181,16 @@ const TimeCards = () => {
   }
   const [modaladdItem, setmodalAddItem] = useState(false);
   const [show_edit_modal, setShowEditModal] = useState(false);
+  const getAssigneeList = (option) => {
+    setAssigneeValue(option);
+    editForm.setValues({
+      assigneeSelectPM: option.value,
+      startDate: "",
+      todate: "",
+    });
+    setPdfTitle(option.label);
+  };
+
   React.useEffect(() => {
     console.log('executing effect')
     window.scrollTo(0, 0);
@@ -416,6 +426,7 @@ const TimeCards = () => {
 
         let doc = exportPDF()
         let formData = new FormData()
+        formData.append('employee', sessionStorage.getItem(USER_ID))
         formData.append('time_cards', temp)
         formData.append('week_start', startDate)
         formData.append('week_end', endDate)
@@ -568,7 +579,7 @@ const TimeCards = () => {
                 </div>
               )} */}
               {/**IF PM */}
-              {/* {has_permission("projects.add_projects") && (
+              {has_permission("projects.add_projects") && (
                 <div>
                   <CLabel className="custom-label-5" htmlFor="assigneeSelectPM">
                     Select Employee
@@ -589,7 +600,7 @@ const TimeCards = () => {
                     styles={colourStyles}
                   />
                 </div>
-              )} */}
+              )}
               {/**If PM but no assignee list **/}
               {/* {has_group('pm')&& (assigneeList.length == 0) &&
                   <div>

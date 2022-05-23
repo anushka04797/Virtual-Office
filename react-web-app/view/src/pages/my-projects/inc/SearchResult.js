@@ -42,6 +42,9 @@ function ProjectAccordion(props) {
     },[])
     return (
         <CRow>
+            <Typography sx={{ fontSize: 14, fontWeight: 'bold', marginTop: 5 }} color="#000000" >
+                        Projects
+                    </Typography>
             {props.projects.length>0 ? (Array.from(props.projects).map((item,idx)=>(
                 <CCol md="6" key={idx} className="mt-3">
                 <Accordion> 

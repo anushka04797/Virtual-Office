@@ -106,8 +106,7 @@ const MyProjectsDetailsView = () => {
         setSelectedAssignees(null)
     }
     const initialize_default_assignees = (subtask) => {
-        console.log('subtask ******',subtask)
-        setTotalWorkingDays(calc(subtask.start_date, subtask.planned_delivery_date))
+        let total_days=initialize_total_working_days(subtask.start_date, subtask.planned_delivery_date)
         let preset_assignees = []
 
         API.get('auth/assignee/list/').then((res) => {
@@ -116,23 +115,25 @@ const MyProjectsDetailsView = () => {
             let dtem = []
             let temp_inputList=[]
             let total_temp_ep=0
+            let eps=[]
             Array.from(res.data.data).forEach((item, idx) => {
                 temp.push({ value: item.id.toString(), label: item.first_name + ' ' + item.last_name, data: item })
             })
 
             subtask?.assignees.forEach((assignee, idx) => {
+                console.log('asstray',total_working_days)
                 total_temp_ep+=parseFloat(assignee.estimated_person)
+                eps.push(assignee.estimated_person)
                 temp_inputList.push({ 
                     sorter: assignee.assignee.first_name,
                     assignee: assignee.assignee, 
                     estimated_person: assignee.estimated_person, 
-                    planned_value: parseFloat(assignee.assignee.slc_details.hourly_rate) * 8 * parseFloat(total_working_days)*parseFloat(assignee.estimated_person), 
-                    planned_hours: parseFloat(((total_working_days * 8) * parseFloat(assignee.estimated_person)).toFixed(1))
+                    planned_value: parseFloat(assignee.assignee.slc_details.hourly_rate) * 8 * parseFloat(total_days)*parseFloat(assignee.estimated_person), 
+                    planned_hours: parseFloat(((total_days * 8) * parseFloat(assignee.estimated_person)).toFixed(1))
                 })
                 dtem.push(assignee.assignee.id.toString())
                 preset_assignees.push({ value: String(assignee.assignee.id).toString(), label: assignee.assignee.first_name + ' ' + assignee.assignee.last_name, data: assignee.assignee })
                 temp=temp.filter(function (ele) {
-                    // console.log('ele **',ele,'value',value)
                     return ele.value != String(assignee.assignee.id).toString();
                 });
             })
@@ -140,8 +141,8 @@ const MyProjectsDetailsView = () => {
             setAssignees(sortBy(temp, 'label'))
             setTotalEp(total_temp_ep)
             // setSelectedAssignees(sortBy(preset_assignees,'label'))
+            editForm.setFieldValue('estimated_person', eps)
             editForm.setFieldValue('assignee', dtem)
-            
             return dtem
         })
 
@@ -151,13 +152,14 @@ const MyProjectsDetailsView = () => {
         setEditModal(!editModal)
         if (editForm) {
             console.log('assignee in edit form', editForm.values)
+            initialize_total_working_days(project?.project.start_date, project?.project.planned_delivery_date)
             editForm.setValues({
                 sub_task: project?.project.sub_task,
                 description: project?.project.description,
                 work_package_number: project?.project.work_package_number,
                 work_package_index: subtask?.work_package_index,
                 task_title: subtask?.task_title,
-                estimated_person: subtask ? Number(subtask.estimated_person) : 0,
+                estimated_person: editForm.values.estimated_person,
                 start_date: subtask.start_date,
                 planned_delivery_date: subtask.planned_delivery_date,
                 assignee: initialize_default_assignees(subtask),
@@ -168,7 +170,7 @@ const MyProjectsDetailsView = () => {
                 status: subtask.status,
                 sub_task_updated: ""
             })
-            initialize_total_working_days(project?.project.start_date, project?.project.planned_delivery_date)
+            
             // populate_planned_value_and_hours(inputList)
             // dateRange(project?.project.start_date,project?.project.planned_delivery_date)
         }
@@ -232,6 +234,7 @@ const MyProjectsDetailsView = () => {
         // ];
         // let total_working_days = 0
         setTotalWorkingDays(calc(startDate, endDate))
+        return calc(startDate, endDate)
     }
     const initialize = () => {
         API.get('project/details/' + work_package_number + '/').then((res) => {
@@ -263,7 +266,6 @@ const MyProjectsDetailsView = () => {
         let assignee_eps = []
         let total_temp_ep=0
         
-        console.log('current input list', inputList)
         Array.from(inputList).forEach((item, idx) => {
             assignees.push(item.assignee.id?.toString())
             assignee_eps.push(item.estimated_person)
@@ -271,7 +273,7 @@ const MyProjectsDetailsView = () => {
             total_planned_value += item.assignee.slc_details.hourly_rate * 8 * parseFloat(total_working_days)
             total_planned_hours += parseFloat(item.estimated_person) * 8 * parseFloat(total_working_days)
         })
-        console.log('total_planned_hours', total_planned_hours)
+        
         editForm.setValues({
             //   task_delivery_order: editForm.values.task_delivery_order,
             //   tdo_details: editForm.values.tdo_details,
@@ -291,8 +293,6 @@ const MyProjectsDetailsView = () => {
         })
     }
     function removeAssignee(item) {
-        console.log('item',item,'assignee',selectedAssignees)
-        // setSelectedAssignees(selectedAssignees.filter(assignee=>assignee.data.id!=item.assignee.id))
         setAssignees(sortBy([...assignees,{ value: item.assignee.id.toString(), label: item.assignee.first_name + ' ' + item.assignee.last_name, data: item.assignee }],'label'))
         setInputList(arrayRemoveItem(inputList, item));
         populate_planned_value_and_hours(arrayRemoveItem(inputList, item))
@@ -314,19 +314,15 @@ const MyProjectsDetailsView = () => {
             //history.goBack()
             initialize()
         }
-        console.log('project', project)
+        
     }, [])
     const handle_tdo_title_change = (id) => {
         console.log({ title: tdo })
         if (tdo.length > 0) {
             API.put('project/change-tdo-title/' + id + '/', { title: tdo }).then((res) => {
-                console.log('rs', res.data)
                 if (res.data.success == 'True') {
                     setStatus(0)
                     setTitleStatus(0)
-                    // let temp = project
-                    // temp.project.task_delivery_order = res.data.data
-                    // setProject(temp)
                     dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)))
                     initialize()
                     swal('Updated', 'Task Delivery Order name has been updated', 'success')
