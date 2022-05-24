@@ -37,9 +37,9 @@ const WbsModal = (props) => {
   // const modalData = useSelector(state => state.wbs.data)
   const [deliverableView, setDeliverableView] = useState(true);
   const [hrsWorked, setHrsWorked] = useState(true);
-  const [plannedHours, setPlannedHours]= useState()
-  const [actualHour, setactualHour]=useState()
-  const [remaininghrs, setremaininghrs]= useState()
+  const [plannedHours, setPlannedHours] = useState()
+  const [actualHour, setactualHour] = useState()
+  const [remaininghrs, setremaininghrs] = useState()
   const dispatch = useDispatch();
   const wbsStatusArray = [
     {
@@ -67,9 +67,9 @@ const WbsModal = (props) => {
   // const planned_hours =()=>{
 
   //   console.log('assignee id',props.data.assignee.id)
-  
+
   // API.get('project/assignee/list/'+props.data.project.work_package_index+'/').then(res=>{
-    
+
   //   console.log('blah',res.data.data[0].estimated_person)
   //   console.log('blah1',res.data.data[1].estimated_person)
   //   console.log("startend",props.data.project )
@@ -89,13 +89,13 @@ const WbsModal = (props) => {
   // })
   //   const start = props.data.project.start_date
   //   const end= props.data.project.planned_delivery_date
- 
+
   //    const moment = require('moment');
   //    const total_days = moment(end).diff(moment(start), 'days');
- 
+
   //    console.log("dddddddd", total_days);
   //    let total_hrs = total_days * 8;
-     
+
   //    const startd = (new Date(start)).toString();
   //   console.log("string", startd);
   //   const tomorrow = new Date(start);
@@ -118,112 +118,102 @@ const WbsModal = (props) => {
   //   total_hrs = total_hrs*ep
 
   //    return total_hrs
- 
+
   // }
- 
- React.useEffect(()=>{
-  console.log('assignee id',props.data.assignee.id)
 
-  console.log('assignee id',props.data.assignee.id)
-  
-  API.get('project/assignee/list/'+props.data.project.work_package_index+'/').then(res=>{
-    
-    console.log('blah',res.data.data[0].estimated_person)
-    console.log('blah1',res.data.data[1].estimated_person)
-    console.log("startend",props.data.project )
-    let ep = 0
+  React.useEffect(() => {
+    console.log('assignee id', props.data.assignee.id)
 
-    for(let i =0;i<res.data.data.length;i++)
-    {
-      console.log("id", res.data.data[i].assignee.id)
-      if(props.data.assignee.id == res.data.data[i].assignee.id){
+    console.log('assignee id', props.data.assignee.id)
 
-        console.log("matched")
-        ep= res.data.data[i].estimated_person
+    API.get('project/assignee/list/' + props.data.project.work_package_index + '/').then(res => {
 
-        console.log("eeeeeeeeeeeepppppp", ep)
-      }
-    }
-  
-    const start = props.data.project.start_date
-    const end= props.data.project.planned_delivery_date
+      console.log('blah', res.data.data[0].estimated_person)
+      console.log('blah1', res.data.data[1].estimated_person)
+      console.log("startend", props.data.project)
+      let ep = 0
 
-    
- 
-     const moment = require('moment');
-     let total_days = moment(end).diff(moment(start), 'days');
-     total_days=total_days+1
-     console.log("total days", total_days);
-     let total_hrs = total_days * 8;
-     
-     console.log("total hourssss ", total_hrs)
+      for (let i = 0; i < res.data.data.length; i++) {
+        console.log("id", res.data.data[i].assignee.id)
+        if (props.data.assignee.id == res.data.data[i].assignee.id) {
 
+          console.log("matched")
+          ep = res.data.data[i].estimated_person
 
-    //  const startd = (new Date(start)).toString();
-    // console.log("string", startd);
-    const tomorrow = new Date(start);
-
-    let count = 0;
-    for (let i = 0; i < total_days; i++) {
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      //console.log("tomorrow",tomorrow.getDay());
-
-      if (tomorrow.getDay() == 5 || tomorrow.getDay() == 6) {
-        count = count + 1;
+          console.log("eeeeeeeeeeeepppppp", ep)
+        }
       }
 
+      const start = props.data.project.start_date
+      const end = props.data.project.planned_delivery_date
 
-    }
-    console.log("weekdays", count)
 
-    count = count * 8;
 
-    total_hrs = total_hrs - count;
+      const moment = require('moment');
+      let total_days = moment(end).diff(moment(start), 'days');
+      total_days = total_days + 1
+      console.log("total days", total_days);
+      let total_hrs = total_days * 8;
 
-    let total_spent = 0
-    for (const item in props.timeCardList.data) {
-      console.log(props.timeCardList.data[item].hours_today)
-      total_spent += parseInt(props.timeCardList.data[item].hours_today)
-    }
-    console.log('spent', total_spent)
+      console.log("total hourssss ", total_hrs)
 
-    setremaininghrs(total_hrs - total_spent)
 
-    total_hrs = total_hrs*ep
-    setPlannedHours(Number(total_hrs).toFixed(2))
+      //  const startd = (new Date(start)).toString();
+      // console.log("string", startd);
+      const tomorrow = new Date(start);
 
-    
+      let count = 0;
+      for (let i = 0; i < total_days; i++) {
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        //console.log("tomorrow",tomorrow.getDay());
 
-    setactualHour(total_spent)
-    
-   
-    
-    console.log("planned hours", total_hrs)
+        if (tomorrow.getDay() == 5 || tomorrow.getDay() == 6) {
+          count = count + 1;
+        }
 
-  })
-  // API.get('project/assignee/list/'+props.data.project.work_package_index+'/').then(res=>{
-    
-  //   console.log('blah',res.data.data[0].estimated_person)
-  //   console.log('blah1',res.data.data[1].estimated_person)
-  //   console.log("startend",props.data.project )
-  //   let ep = 0
 
-  //   for(let i =0;i<res.data.data.length;i++)
-  //   {
-  //     console.log("id", res.data.data[i].assignee.id)
-  //     if(props.data.assignee.id == res.data.data[i].assignee.id){
+      }
+      console.log("weekdays", count)
 
-  //       console.log("matched")
-  //       ep= res.data.data[i].estimated_person
+      count = count * 8;
 
-  //       console.log("eeeeeeeeeeeepppppp", ep)
-  //     }
-  //   }
-  // })
+      total_hrs = total_hrs - count;
 
- }, [props]);
+      let total_spent = 0
+      for (const item in props.timeCardList.data) {
+        console.log(props.timeCardList.data[item].hours_today)
+        total_spent += parseInt(props.timeCardList.data[item].hours_today)
+      }
+      console.log('spent', total_spent)
+      setremaininghrs(Number(total_hrs - total_spent).toFixed(2))
+      total_hrs = total_hrs * ep
+      setPlannedHours(Number(total_hrs).toFixed(2))
+      setactualHour(Number(total_spent).toFixed(2))
+      console.log("planned hours", total_hrs)
+    })
+    // API.get('project/assignee/list/'+props.data.project.work_package_index+'/').then(res=>{
 
- 
+    //   console.log('blah',res.data.data[0].estimated_person)
+    //   console.log('blah1',res.data.data[1].estimated_person)
+    //   console.log("startend",props.data.project )
+    //   let ep = 0
+
+    //   for(let i =0;i<res.data.data.length;i++)
+    //   {
+    //     console.log("id", res.data.data[i].assignee.id)
+    //     if(props.data.assignee.id == res.data.data[i].assignee.id){
+
+    //       console.log("matched")
+    //       ep= res.data.data[i].estimated_person
+
+    //       console.log("eeeeeeeeeeeepppppp", ep)
+    //     }
+    //   }
+    // })
+
+  }, [props]);
+
+
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const updateWbs = (data, { setSubmitting }) => {
@@ -231,7 +221,7 @@ const WbsModal = (props) => {
 
     const lastDate = props.data.end_date;
 
-    
+
     console.log("last Date", lastDate);
     const currentDate = new Date();
 
@@ -252,7 +242,7 @@ const WbsModal = (props) => {
 
     let edate = moment([
       parseInt(endDateArray[0]),
-      parseInt(endDateArray[1]) ,
+      parseInt(endDateArray[1]),
       parseInt(endDateArray[2]),
     ]);
     const difference = edate.diff(cdate, "days");
@@ -260,13 +250,13 @@ const WbsModal = (props) => {
     console.log("date1", cdate);
     console.log("date2", edate);
     console.log("differenceeeeeeeeeeeeeeeeeee", difference);
-    
+
 
     if (difference >= 0) {
       // data.remaining_hours =
       //   props.data.project.remaining_hours - formWbsUpdate.values.hours_worked;
 
-       const remaining = plannedHours - formWbsUpdate.values.hours_worked
+      const remaining = plannedHours - formWbsUpdate.values.hours_worked
 
       API.put("wbs/update/" + props.data.id + "/", formWbsUpdate.values).then(
         (res) => {
@@ -379,11 +369,11 @@ const WbsModal = (props) => {
       total_spent += parseInt(props.timeCardList.data[item].hours_today)
     }
     console.log('spent', total_spent)
-    
-   
+
+
     const remaining_hrs = plannedHours - total_spent;
     //setVarianceHour(remaining_hrs)
-    
+
     const hours = {
       allocated_hours: total_hrs,
       spent_hours: total_spent,
@@ -420,12 +410,12 @@ const WbsModal = (props) => {
             <div className="col-lg-8 mb-3 border-right">
               <CForm>
                 <CRow>
-                <div className="col-lg-12 mb-3">
-                
-                  <p>
-                   <b>Project Details :</b> {props.data.project.description}
-                  </p>
-                </div>
+                  <div className="col-lg-12 mb-3">
+
+                    <p>
+                      <b>Project Details :</b> {props.data.project.description}
+                    </p>
+                  </div>
                 </CRow>
                 <CRow>
                   <div className="col-lg-12 mb-3">
@@ -704,9 +694,9 @@ const WbsModal = (props) => {
                 </CCol>
                 <CCol md="12">
                   <p className="custom-label-wbs5">
-                   Planned Hours :
+                    Planned Hours :
                     <br></br>
-                      {plannedHours} {/*{props.data.project?.remaining_hours}*/}
+                    {plannedHours} {/*{props.data.project?.remaining_hours}*/}
                   </p>
                 </CCol>
                 <CCol md="12">
@@ -723,7 +713,7 @@ const WbsModal = (props) => {
                     {remaininghrs}
                   </p>
                 </CCol>
-                
+
                 {/**task list show */}
                 <CCol md="12">
                   <div className="task-list">

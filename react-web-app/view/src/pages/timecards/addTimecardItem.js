@@ -39,6 +39,19 @@ const AddTimecardItms = (props) => {
     })
     return items
   })
+  const [projects,setProjects]=useState([])
+  // const projects = useSelector((state) => {
+  //   let projectsArray = [];
+
+  //   Array.from(state.projects.data).forEach((item, idx) => {
+  //     projectsArray.push({
+  //       value: item.project.id,
+  //       label: item.project.sub_task,
+  //       data: item,
+  //     });
+  //   });
+  //   return projectsArray;
+  // });
   const worktypes= useSelector(state=>{
     let temp=[]
     Array.from(state.worktypes.data).forEach((item,idx)=>{
@@ -103,6 +116,15 @@ const AddTimecardItms = (props) => {
     console.log('add tc props',props.employee);
     dispatch(fetchHolidays());
     dispatch(fetchUserHoursUsedAndLeft())
+    let temp_projects=[]
+    API.get('project/assigned/all/'+props.employee+'/').then(res=>{
+      console.log('assigned projects',res.data)
+      for(let index=0;index<res.data.data.length;index++){
+        temp_projects.push({label:res.data.data[index].project.sub_task,value:res.data.data[index].project.id,data:res.data.data[index]})
+      }
+      console.log('temp p',temp_projects)
+    })
+    setProjects(temp_projects)
   }, []);
 
   const [selectedType, setSelectedType] = useState({ label: "RHR", value: 1 });
@@ -170,18 +192,7 @@ const AddTimecardItms = (props) => {
   };
   
 
-  const projects = useSelector((state) => {
-    let projectsArray = [];
-
-    Array.from(state.projects.data).forEach((item, idx) => {
-      projectsArray.push({
-        value: item.project.id,
-        label: item.project.sub_task,
-        data: item,
-      });
-    });
-    return projectsArray;
-  });
+  
 
 
   return (
@@ -316,7 +327,7 @@ const AddTimecardItms = (props) => {
         </CForm>
         <CModalFooter>
           <CButton color="primary" type="button" onClick={formAddTimecard.handleSubmit}>
-            save
+            Add
           </CButton>{" "}
           <CButton color="secondary" type="button" onClick={()=>{props.onClose();formAddTimecard.resetForm()}}>
             Cancel
