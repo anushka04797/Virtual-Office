@@ -179,7 +179,7 @@ const WbsModal = (props) => {
     total_hrs = total_hrs - count;
     
     total_hrs = total_hrs*ep
-    setPlannedHours(total_hrs)
+    setPlannedHours(Number(total_hrs).toFixed(2))
     console.log("planned hours", total_hrs)
 
   })
