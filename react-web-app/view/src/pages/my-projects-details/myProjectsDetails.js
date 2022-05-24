@@ -686,7 +686,7 @@ const MyProjectsDetailsView = () => {
                                             Estimated Person(s)
                                         </CLabel>
                                         {/* onChange={(e) => { handleInputChange(e, i, 'ep') }} */}
-                                        <CInput readOnly id="estimated_person" type="number" name="estimated_person" min="0" max="1" step="0.1" value={total_ep} onChange={(e) => {  }} className="custom-forminput-6"></CInput>
+                                        <CInput readOnly id="estimated_person" type="number" name="estimated_person" min="0" max="1" step="0.1" value={Number(total_ep).toFixed(2)} onChange={(e) => {  }} className="custom-forminput-6"></CInput>
                                     </div>
                                     {/**planned hours */}
 

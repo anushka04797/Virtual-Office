@@ -36,10 +36,10 @@
     "static/js/13.223ea9c0.chunk.js": "/static/js/13.223ea9c0.chunk.js",
     "static/js/13.223ea9c0.chunk.js.map": "/static/js/13.223ea9c0.chunk.js.map",
     "main.css": "/static/css/main.ffc1a05b.chunk.css",
-    "main.js": "/static/js/main.5d39fd0a.chunk.js",
-    "main.js.map": "/static/js/main.5d39fd0a.chunk.js.map",
-    "runtime-main.js": "/static/js/runtime-main.b209b8bf.js",
-    "runtime-main.js.map": "/static/js/runtime-main.b209b8bf.js.map",
+    "main.js": "/static/js/main.8bd8e9f5.chunk.js",
+    "main.js.map": "/static/js/main.8bd8e9f5.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.30ac5a86.js",
+    "runtime-main.js.map": "/static/js/runtime-main.30ac5a86.js.map",
     "static/css/16.5f996a24.chunk.css": "/static/css/16.5f996a24.chunk.css",
     "static/js/16.527a6fb7.chunk.js": "/static/js/16.527a6fb7.chunk.js",
     "static/js/16.527a6fb7.chunk.js.map": "/static/js/16.527a6fb7.chunk.js.map",
@@ -61,8 +61,8 @@
     "static/js/22.21fcd3ea.chunk.js": "/static/js/22.21fcd3ea.chunk.js",
     "static/js/22.21fcd3ea.chunk.js.map": "/static/js/22.21fcd3ea.chunk.js.map",
     "static/css/23.c106f5f8.chunk.css": "/static/css/23.c106f5f8.chunk.css",
-    "static/js/23.60660247.chunk.js": "/static/js/23.60660247.chunk.js",
-    "static/js/23.60660247.chunk.js.map": "/static/js/23.60660247.chunk.js.map",
+    "static/js/23.29ebf332.chunk.js": "/static/js/23.29ebf332.chunk.js",
+    "static/js/23.29ebf332.chunk.js.map": "/static/js/23.29ebf332.chunk.js.map",
     "static/css/24.9187e447.chunk.css": "/static/css/24.9187e447.chunk.css",
     "static/js/24.74d2f849.chunk.js": "/static/js/24.74d2f849.chunk.js",
     "static/js/24.74d2f849.chunk.js.map": "/static/js/24.74d2f849.chunk.js.map",
@@ -161,7 +161,7 @@
     "static/js/20.9d592282.chunk.js.LICENSE.txt": "/static/js/20.9d592282.chunk.js.LICENSE.txt",
     "static/js/21.c58872e4.chunk.js.LICENSE.txt": "/static/js/21.c58872e4.chunk.js.LICENSE.txt",
     "static/js/22.21fcd3ea.chunk.js.LICENSE.txt": "/static/js/22.21fcd3ea.chunk.js.LICENSE.txt",
-    "static/js/23.60660247.chunk.js.LICENSE.txt": "/static/js/23.60660247.chunk.js.LICENSE.txt",
+    "static/js/23.29ebf332.chunk.js.LICENSE.txt": "/static/js/23.29ebf332.chunk.js.LICENSE.txt",
     "static/js/24.74d2f849.chunk.js.LICENSE.txt": "/static/js/24.74d2f849.chunk.js.LICENSE.txt",
     "static/js/25.75c4970d.chunk.js.LICENSE.txt": "/static/js/25.75c4970d.chunk.js.LICENSE.txt",
     "static/js/26.508cf9cc.chunk.js.LICENSE.txt": "/static/js/26.508cf9cc.chunk.js.LICENSE.txt",
@@ -185,10 +185,10 @@
     "static/media/700.css": "/static/media/roboto-vietnamese-700-normal.3096f18a.woff2"
   },
   "entrypoints": [
-    "static/js/runtime-main.b209b8bf.js",
+    "static/js/runtime-main.30ac5a86.js",
     "static/css/16.5f996a24.chunk.css",
     "static/js/16.527a6fb7.chunk.js",
     "static/css/main.ffc1a05b.chunk.css",
-    "static/js/main.5d39fd0a.chunk.js"
+    "static/js/main.8bd8e9f5.chunk.js"
   ]
 }
