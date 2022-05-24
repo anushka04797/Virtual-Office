@@ -139,25 +139,18 @@ const WbsModal = (props) => {
 
           console.log("matched")
           ep = res.data.data[i].estimated_person
-
-          console.log("eeeeeeeeeeeepppppp", ep)
         }
       }
 
       const start = props.data.project.start_date
       const end = props.data.project.planned_delivery_date
 
-
-
       const moment = require('moment');
       let total_days = moment(end).diff(moment(start), 'days');
       total_days = total_days + 1
       console.log("total days", total_days);
       let total_hrs = total_days * 8;
-
       console.log("total hourssss ", total_hrs)
-
-
       //  const startd = (new Date(start)).toString();
       // console.log("string", startd);
       const tomorrow = new Date(start);
@@ -170,25 +163,21 @@ const WbsModal = (props) => {
         if (tomorrow.getDay() == 5 || tomorrow.getDay() == 6) {
           count = count + 1;
         }
-
-
       }
       console.log("weekdays", count)
-
       count = count * 8;
-
       total_hrs = total_hrs - count;
-
       let total_spent = 0
       for (const item in props.timeCardList.data) {
         console.log(props.timeCardList.data[item].hours_today)
         total_spent += parseInt(props.timeCardList.data[item].hours_today)
       }
-      console.log('spent', total_spent)
-      setremaininghrs(Number(total_hrs - total_spent).toFixed(2))
+      console.log('remains', total_hrs-total_spent)
+      
       total_hrs = total_hrs * ep
       setPlannedHours(Number(total_hrs).toFixed(2))
       setactualHour(Number(total_spent).toFixed(2))
+      setremaininghrs(Number(total_hrs - total_spent).toFixed(2))
       console.log("planned hours", total_hrs)
     })
     // API.get('project/assignee/list/'+props.data.project.work_package_index+'/').then(res=>{
@@ -727,9 +716,9 @@ const WbsModal = (props) => {
                               item.hours_today +
                               " hr(s)"}
                             {/* By {item.time_card_assignee.first_name + " " + item.time_card_assignee.last_name}  */}
-                            <p>
+                            {/* <p>
                               <small>@ {item.date_updated} </small>
-                            </p>
+                            </p> */}
                           </li>
                         ))
                         : "No task has been done so far."}
