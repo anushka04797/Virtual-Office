@@ -38,6 +38,8 @@ const WbsModal = (props) => {
   const [deliverableView, setDeliverableView] = useState(true);
   const [hrsWorked, setHrsWorked] = useState(true);
   const [plannedHours, setPlannedHours]= useState()
+  const [varianceHour, setVarianceHour]=useState()
+  const [remaininghrs, setremaininghrs]= useState()
   const dispatch = useDispatch();
   const wbsStatusArray = [
     {
@@ -207,6 +209,7 @@ const WbsModal = (props) => {
 
  
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+
   const updateWbs = (data, { setSubmitting }) => {
     console.log("formWbsUpdate:", props.data);
 
@@ -244,8 +247,11 @@ const WbsModal = (props) => {
     
 
     if (difference >= 0) {
-      data.remaining_hours =
-        props.data.project.remaining_hours - formWbsUpdate.values.hours_worked;
+      // data.remaining_hours =
+      //   props.data.project.remaining_hours - formWbsUpdate.values.hours_worked;
+
+       const remaining = plannedHours - formWbsUpdate.values.hours_worked
+
       API.put("wbs/update/" + props.data.id + "/", formWbsUpdate.values).then(
         (res) => {
           console.log("update result", res);
@@ -357,8 +363,9 @@ const WbsModal = (props) => {
       total_spent += parseInt(props.timeCardList.data[item].hours_today)
     }
     console.log('spent', total_spent)
-
-    const remaining_hrs = total_hrs - total_spent;
+    const variance = plannedHours - total_spent;
+    console.log("variance", variance)
+    const remaining_hrs = plannedHours - total_spent;
     const hours = {
       allocated_hours: total_hrs,
       spent_hours: total_spent,
