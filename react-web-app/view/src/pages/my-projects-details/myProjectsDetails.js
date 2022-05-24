@@ -128,7 +128,7 @@ const MyProjectsDetailsView = () => {
                     sorter: assignee.assignee.first_name,
                     assignee: assignee.assignee, 
                     estimated_person: assignee.estimated_person, 
-                    planned_value: parseFloat(assignee.assignee.slc_details.hourly_rate) * 8 * parseFloat(total_days)*parseFloat(assignee.estimated_person), 
+                    planned_value: Number(parseFloat(assignee.assignee.slc_details.hourly_rate) * 8 * parseFloat(total_days)*parseFloat(assignee.estimated_person)).toFixed(2), 
                     planned_hours: parseFloat(((total_days * 8) * parseFloat(assignee.estimated_person)).toFixed(1))
                 })
                 dtem.push(assignee.assignee.id.toString())
@@ -270,8 +270,8 @@ const MyProjectsDetailsView = () => {
             assignees.push(item.assignee.id?.toString())
             assignee_eps.push(item.estimated_person)
             total_temp_ep+=parseFloat(item.estimated_person)
-            total_planned_value += item.assignee.slc_details.hourly_rate * 8 * parseFloat(total_working_days)
-            total_planned_hours += parseFloat(item.estimated_person) * 8 * parseFloat(total_working_days)
+            total_planned_value += Number(item.assignee.slc_details.hourly_rate * 8 * parseFloat(total_working_days)).toFixed(2)
+            total_planned_hours += Number(parseFloat(item.estimated_person) * 8 * parseFloat(total_working_days)).toFixed(2)
         })
         
         editForm.setValues({
