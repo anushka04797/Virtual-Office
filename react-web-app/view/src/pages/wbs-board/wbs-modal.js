@@ -38,7 +38,7 @@ const WbsModal = (props) => {
   const [deliverableView, setDeliverableView] = useState(true);
   const [hrsWorked, setHrsWorked] = useState(true);
   const [plannedHours, setPlannedHours]= useState()
-  const [varianceHour, setVarianceHour]=useState()
+  const [actualHour, setactualHour]=useState()
   const [remaininghrs, setremaininghrs]= useState()
   const dispatch = useDispatch();
   const wbsStatusArray = [
@@ -179,9 +179,25 @@ const WbsModal = (props) => {
     count = count * 8;
 
     total_hrs = total_hrs - count;
-    
+
+    let total_spent = 0
+    for (const item in props.timeCardList.data) {
+      console.log(props.timeCardList.data[item].hours_today)
+      total_spent += parseInt(props.timeCardList.data[item].hours_today)
+    }
+    console.log('spent', total_spent)
+
+    setremaininghrs(total_hrs - total_spent)
+
     total_hrs = total_hrs*ep
     setPlannedHours(Number(total_hrs).toFixed(2))
+
+    
+
+    setactualHour(total_spent)
+    
+   
+    
     console.log("planned hours", total_hrs)
 
   })
@@ -363,19 +379,18 @@ const WbsModal = (props) => {
       total_spent += parseInt(props.timeCardList.data[item].hours_today)
     }
     console.log('spent', total_spent)
-    const variance = plannedHours - total_spent;
-    console.log("variance", variance)
+    
+   
     const remaining_hrs = plannedHours - total_spent;
+    //setVarianceHour(remaining_hrs)
+    
     const hours = {
       allocated_hours: total_hrs,
       spent_hours: total_spent,
       remaining_hours: remaining_hrs,
     }
-
     return hours;
-
   }
-
   function is_form_submitting() {
     console.log(formWbsUpdate.isSubmitting, formWbsUpdate.isValidating);
     total_hours();
@@ -384,8 +399,6 @@ const WbsModal = (props) => {
       return true;
     }
     return false;
-
-
   }
 
   return (
@@ -691,29 +704,30 @@ const WbsModal = (props) => {
                 </CCol>
                 <CCol md="12">
                   <p className="custom-label-wbs5">
-                   Project Planned Hours :
+                   Planned Hours :
                     <br></br>
                       {plannedHours} {/*{props.data.project?.remaining_hours}*/}
                   </p>
                 </CCol>
                 <CCol md="12">
                   <p>
-                    Hours Worked:
+                    Actual Hours :
                     <br></br>
-                    {total_hours().spent_hours}
+                    {actualHour}
                   </p>
                 </CCol>
                 <CCol md="12">
                   <p>
                     Remaining hours:
                     <br></br>
-                    {total_hours().remaining_hours>-1?total_hours().remaining_hours:0}
+                    {remaininghrs}
                   </p>
                 </CCol>
+                
                 {/**task list show */}
                 <CCol md="12">
                   <div className="task-list">
-                    <p>Actual Works :</p>
+                    <p>Actual Worked :</p>
                     <ol className="task-list-show">
                       {props.timeCardList?.data != undefined
                         ? Array.from(props.timeCardList.data).map((item) => (
