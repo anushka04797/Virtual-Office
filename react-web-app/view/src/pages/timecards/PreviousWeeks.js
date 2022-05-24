@@ -47,6 +47,7 @@ const PreviousWeeks = () => {
   const [pdfData, setPdfData] = useState([]);
   // console.log('userdata', usersData)
   const [assignee, setAssigneeValue] = useState();
+  const [selectedAssignee,setSelectedAssignee]=useState()
   const [pdfTitle, setPdfTitle] = useState();
   const [assigneeList, setAssigneeList] = useState([]);
   // const [selectedEmployee, setSelectedEmployee] = useState(initialState)
@@ -221,6 +222,7 @@ const PreviousWeeks = () => {
           });
         }
         setAssigneeList(temp);
+        setSelectedAssignee(temp[0])
       });
     }
     API.get(
@@ -265,9 +267,9 @@ const PreviousWeeks = () => {
       }
       setUsersData(tableData);
     });
-  }, [modaladdItem, show_edit_modal]);
+  }, []);
   const getAssigneeList = (option) => {
-    setAssigneeValue(option);
+    setSelectedAssignee(option);
     editForm.setValues({
       assigneeSelectPM: option.value,
       startDate: "",
@@ -457,77 +459,7 @@ const PreviousWeeks = () => {
     setmodalAddItem(false);
   };
 
-  const onSubmit = () => {
-    swal({
-      title: "Are you sure?",
-      text: "Once submitted, you will not be able to revert!",
-      icon: "warning",
-      buttons: true,
-      dangerMode: true,
-    }).then((willDelete) => {
-      if (willDelete) {
-        let temp = [];
-        for (let i = 0; i < usersData.length; i++) {
-          //console.log("data", usersData[i]);
-          temp[i] = usersData[i].data.id;
-        }
-        console.log("id", temp);
-
-        API.put("wbs/time-card/submit/", { time_cards: temp }).then((res) => {
-          console.log(res.data);
-          const unit = "pt";
-          const size = "A4"; // Use A1, A2, A3 or A4
-          const orientation = "portrait"; // portrait or landscape
-
-          const marginLeft = 40;
-          const doc = new jsPDF(orientation, unit, size);
-          doc.setFontSize(15);
-          const title =
-            "Timecard of" +
-            " " +
-            pdfTitle +
-            "\n From " +
-            startDate +
-            " to " +
-            endDate;
-          const headers = [
-            [
-              "WP",
-              "Project Name ",
-              "Task Title",
-              "Description",
-              "Hour(s)",
-              "Date Created",
-            ],
-          ];
-          const uData = usersData.map((elt, idx) => [
-            elt.data.project.work_package_number,
-            elt.data.project?.sub_task ? elt.data.project.sub_task : "-",
-            elt.data?.project.task_title,
-            elt.data.actual_work_done,
-            elt.data.hours_today,
-            elt.data.date_created,
-          ]);
-          let content = {
-            startY: 50,
-            head: headers,
-            body: uData,
-          };
-
-          doc.text(title, marginLeft, 30);
-          doc.autoTable(content);
-          doc.save("Timecard of" + " " + pdfTitle + ".pdf");
-
-          swal(
-            "Submitted",
-            "Your selected time cards are submitted!",
-            "success"
-          );
-        });
-      }
-    });
-  };
-
+ 
   const dateRange = () => {
     var sdate = new Date();
     var edate = new Date();
@@ -588,6 +520,12 @@ const PreviousWeeks = () => {
     return false;
   };
 
+  const onToDateChange=(event)=>{
+    editForm.handleChange(event)
+    let values = editForm.values
+    values['todate']=event.target.value
+    getTimeCards(values)
+  }
   return (
     <>
       {row != null && row != undefined && (
@@ -676,6 +614,7 @@ const PreviousWeeks = () => {
                     capitalize(profile_details.last_name)}
                   isClearable={false}
                   isMulti={false}
+                  value={selectedAssignee}
                   // value={{value:capitalize(profile_details.first_name) +
                   //      " " +
                   //      capitalize(profile_details.last_name), //label: capitalize(profile_details.first_name) +
@@ -726,7 +665,7 @@ const PreviousWeeks = () => {
                 name="todate"
                 id="todate"
                 value={editForm.values.todate}
-                onChange={editForm.handleChange}
+                onChange={onToDateChange}
               />
               {/**Error show */}
               {editForm.errors.todate && (
@@ -736,7 +675,7 @@ const PreviousWeeks = () => {
               )}
             </CCol>
 
-            <CCol xl="3" lg="3" md="6">
+            {/* <CCol xl="3" lg="3" md="6">
               <div className="button-holder--3">
                 <CButton
                   className="generate-card-button"
@@ -745,7 +684,7 @@ const PreviousWeeks = () => {
                   Show
                 </CButton>
               </div>
-            </CCol>
+            </CCol> */}
             {/**buttons for format of timecard */}
             <CRow className="mt-4">
               <CCol>
@@ -760,9 +699,9 @@ const PreviousWeeks = () => {
               <CCol md="4">
                 <CLabel className="custom-label-5" htmlFor="assigneeSelect">
                   Employee Name :{" "}
-                  {capitalize(profile_details.first_name) +
+                  {capitalize(selectedAssignee?.data?.first_name) +
                     " " +
-                    capitalize(profile_details.last_name)}
+                    capitalize(selectedAssignee?.data?.last_name)}
                 </CLabel>
               </CCol>
 
@@ -829,7 +768,7 @@ const PreviousWeeks = () => {
                 />
               </div>
 
-              {/* {totalHrs != 0 && (
+              {totalHrs != 0 && (
                   <div class="alert alert-info" role="alert">
                     <CRow>
                       <CCol md="5"></CCol>
@@ -853,7 +792,7 @@ const PreviousWeeks = () => {
                       </CCol>
                     </CRow>
                   </div>
-                )} */}
+                )}
             </CRow>
           </CRow>
         </CForm>

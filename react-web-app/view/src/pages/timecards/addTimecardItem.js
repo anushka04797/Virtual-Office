@@ -54,7 +54,7 @@ const AddTimecardItms = (props) => {
       hours_type:formAddTimecard.values.hours_type,
       hours:formAddTimecard.values.hours,
       hour_description:formAddTimecard.values.hour_description?formAddTimecard.values.hour_description:'',
-      assignee:sessionStorage.getItem(USER_ID),
+      assignee:props.employee,
       actual_work_done:formAddTimecard.values.actual_work_done,
       project:formAddTimecard.values.project,
       wbs:formAddTimecard.values.wbs,
@@ -91,7 +91,7 @@ const AddTimecardItms = (props) => {
       hours_type: "",
       wbs: "",
       hour_description:"",
-      assignee: sessionStorage.getItem(USER_ID)
+      assignee: props.employee
     },
     validateOnChange: true,
     validateOnBlur: true,
@@ -100,7 +100,7 @@ const AddTimecardItms = (props) => {
   });
 
   useEffect(() => {
-    console.log(props.show);
+    console.log('add tc props',props.employee);
     dispatch(fetchHolidays());
     dispatch(fetchUserHoursUsedAndLeft())
   }, []);

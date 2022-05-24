@@ -27,18 +27,15 @@ import moment from "moment";
 import swal from "sweetalert";
 import AddTimecardItms from "./addTimecardItem";
 import EditTimeCard from "./Edit";
-import { fetchTimecardThunk } from "../../store/slices/TimecardSlice";
+import { fetchAllTimecardsPmThunk, fetchTimecardThunk } from "../../store/slices/TimecardSlice";
 
 const TimeCards = () => {
   const profile_details = useSelector((state) => state.profile.data);
   const [selectedAssignee,setSelectedAssignee]=useState()
   const dispatch = useDispatch()
   const [update,setUpdate]=useState(0)
-  // console.log(profile_details)
   const [usersData, setUsersData] = useState([]);
   const [pdfData, setPdfData] = useState([]);
-  // console.log('userdata', usersData)
-  const [assignee, setAssigneeValue] = useState();
   const [pdfTitle, setPdfTitle] = useState();
   const [assigneeList, setAssigneeList] = useState([]);
   const [non_submitted_total_tc,setNonSubmittedTotalTC]=useState(0)
@@ -236,9 +233,8 @@ const TimeCards = () => {
   }
   const [modaladdItem, setmodalAddItem] = useState(false);
   const [show_edit_modal, setShowEditModal] = useState(false);
-  const getAssigneeList = (option) => {
-    setAssigneeValue(option);
-    
+  const handleAssigneeChange = (option) => {
+    setSelectedAssignee(option);
     setPdfTitle(option.label);
     get_assignee_tc(option)
   };
@@ -247,8 +243,10 @@ const TimeCards = () => {
     console.log('executing effect')
     window.scrollTo(0, 0);
     const { start, end } = dateRange();
-    setSelectedAssignee({label:profile_details.first_name+' '+profile_details.last_name,value:profile_details.id,data:profile_details})
+    // setSelectedAssignee({label:profile_details.first_name+' '+profile_details.last_name,value:profile_details.id,data:profile_details})
     setTotalHrs(0);
+    
+    setPdfTitle(capitalize(profile_details.first_name) + " " + capitalize(profile_details.last_name))
     if (
       has_permission("projects.change_projectassignee") ||
       has_permission("projects.add_projectassignee")
@@ -257,34 +255,50 @@ const TimeCards = () => {
         "project/assignees/all/" + sessionStorage.getItem(USER_ID) + "/"
       ).then((res) => {
         let temp = [];
-        if (res.data.data.length > 0) {
-          Array.from(res.data.data).forEach((item, idx) => {
-            temp.push({
-              data: item,
-              value: item.id,
-              label:
-                capitalize(item.first_name) + " " + capitalize(item.last_name),
-            });
-          });
-        } else {
+        Array.from(res.data.data).forEach((item, idx) => {
           temp.push({
-            data: profile_details,
-            value: profile_details.id,
+            data: item,
+            value: item.id,
             label:
-              capitalize(profile_details.first_name) +
-              " " +
-              capitalize(profile_details.last_name),
+              capitalize(item.first_name) + " " + capitalize(item.last_name),
           });
+        });
+        if(!temp.find(item=>item.value == res.data.user.id)){
+          temp.unshift({
+            data: res.data.user,
+            value: res.data.user.id,
+            label:
+              capitalize(res.data.user.first_name) +
+              " " +
+              capitalize(res.data.user.last_name),
+          });
+          
         }
         setAssigneeList(temp);
+        setSelectedAssignee({
+          data: res.data.user,
+          value: res.data.user.id,
+          label:
+            capitalize(res.data.user.first_name) +
+            " " +
+            capitalize(res.data.user.last_name),
+        })
       });
+    }
+    else{
+      setSelectedAssignee({
+        data: profile_details,
+        value: profile_details.id,
+        label:
+          capitalize(profile_details.first_name) +
+          " " +
+          capitalize(profile_details.last_name),
+      })
     }
     API.get(
       "wbs/user/time-card/list/" + sessionStorage.getItem(USER_ID) + "/"
     ).then((res) => {
-      setPdfTitle(
-        profile_details.first_name + " " + profile_details.last_name
-      );
+      
       let temp = [];
       Array.from(res.data.data).forEach((item, idx) => {
         temp.push({ data: item });
@@ -327,10 +341,10 @@ const TimeCards = () => {
       }
       setTotalHrs(hours_total)
       setUsersData(orderBy(tableData,'id','desc'));
-      console.log('data size',total_not_submitted)
       setNonSubmittedTotalTC(total_not_submitted)
+      
     });
-  }, [modaladdItem, show_edit_modal,update]);
+  }, [show_edit_modal,update]);
   
   const validateEditForm = (values) => {
     const errors = {};
@@ -386,8 +400,7 @@ const TimeCards = () => {
 
     doc.setFontSize(15);
 
-
-    const title = "Timecard of" + " " + pdfTitle;
+    const title = "Timecard of" + " " + selectedAssignee.data.first_name+' '+selectedAssignee.data.last_name;
     const headers = [
       [  
         "WP", 
@@ -407,7 +420,6 @@ const TimeCards = () => {
       elt.data.hours_today,
       elt.data.time_type,
       elt.data.date_created,
-      console.log("data", elt.data)
     ]);
     let content = {
       startY: 145,
@@ -426,17 +438,12 @@ const TimeCards = () => {
       doc.setFontSize(11)
       doc.text(42,105, "Employee Time Card")
       doc.text(410, 105, "Week-Ending: "+ edate)//+ edate)
-      doc.text(42, 125, "Name: "+ profile_details.first_name+' '+profile_details.last_name)//+ name)
+      doc.text(42, 125, "Name: "+ selectedAssignee.data.first_name+' '+selectedAssignee.data.last_name)//+ name)
      
       let date = new Date();
-      console.log("date", date)
-      doc.text(315, 420, "From " + startDate + " to " + endDate + "Total Hours " + Number(totalHrs).toFixed(2))
-    
-      doc.text(400, 435, "Submitted : " + time + "  " + day);
-  
-      //doc.text(42, 355, "Submitted : " + time +"  "+day )
-    
       doc.autoTable(content);
+      doc.text(115, doc.lastAutoTable.finalY+25, "From " + startDate + " to " + endDate + "Total Hours " + Number(totalHrs).toFixed(2))
+      doc.text(400, doc.lastAutoTable.finalY+25, "Submitted : " + time + "  " + day);
       // doc.save("Timecard of" + " " + pdfTitle + ".pdf");
       return doc
   };
@@ -454,6 +461,7 @@ const TimeCards = () => {
 
   const onAddItem = () => {
     setmodalAddItem(false);
+    setUpdate(update+1)
     // dispatch(fetchTimecardThunk());
   };
  
@@ -480,7 +488,7 @@ const TimeCards = () => {
 
         let doc = exportPDF()
         let formData = new FormData()
-        formData.append('employee', sessionStorage.getItem(USER_ID))
+        formData.append('employee', selectedAssignee.value)
         formData.append('time_cards', temp)
         formData.append('week_start', startDate)
         formData.append('week_end', endDate)
@@ -488,9 +496,9 @@ const TimeCards = () => {
 
         FILE_API.post("wbs/time-card/submit/", formData).then((res) => {
           console.log(res.data);
-          dispatch(fetchTimecardThunk(sessionStorage.getItem(USER_ID)))
+          dispatch(fetchAllTimecardsPmThunk(sessionStorage.getItem(USER_ID)))
           setUpdate(update+1)
-          doc.save("Timecard of" + " " + profile_details.first_name + ".pdf");
+          doc.save("Timecard of" + " " + selectedAssignee.data.first_name + ".pdf");
           window.open(doc.output('bloburl'), '_blank');
           swal(
             "Submitted",
@@ -544,16 +552,9 @@ const TimeCards = () => {
     return satday;
   };
   React.useEffect(() => {
-    console.log("values", editForm);
     dateRange()
     nextSatDay();
   }, []);
-
-  const show_submit = () => {
-    if (editForm.values.startDate && editForm.values.todate) {
-      return true;
-    } else return false;
-  };
 
   const show_add_item_btn = () => {
     if (editForm.values.assigneeSelectPM == sessionStorage.getItem(USER_ID)) {
@@ -573,12 +574,13 @@ const TimeCards = () => {
           }}
         />
       )}
-      <AddTimecardItms
+      {selectedAssignee && <AddTimecardItms
         // toggle={toggleModal}
+        employee={selectedAssignee.value}
         show={modaladdItem}
         onClose={onAddItem}
         onAdd={editForm.handleSubmit}
-      ></AddTimecardItms>
+      ></AddTimecardItms>}
       <CContainer>
 
         <CRow className="justify-content-between">
@@ -648,10 +650,11 @@ const TimeCards = () => {
                       capitalize(profile_details.last_name)}
                     isClearable={false}
                     isMulti={false}
-                    onChange={getAssigneeList}
+                    onChange={handleAssigneeChange}
                     classNamePrefix="custom-forminput-6"
                     options={assigneeList}
                     styles={colourStyles}
+                    value={selectedAssignee}
                   />
                 </div>
               )}
@@ -668,7 +671,7 @@ const TimeCards = () => {
             <CRow className="mt-4">
               <CCol>
                 <CLabel className="custom-label-5" htmlFor="assigneeSelect">
-                  Company : {profile_details.slc_details?.slc?.department?.company?.name}
+                  Company : {selectedAssignee?.data?.slc_details?.slc?.department?.company?.name}
                 </CLabel>
               </CCol>
             </CRow>
@@ -676,9 +679,9 @@ const TimeCards = () => {
               <CCol md="4">
                 <CLabel className="custom-label-5" htmlFor="assigneeSelect">
                   Employee Name :{" "}
-                  {capitalize(profile_details.first_name) +
+                  {capitalize(selectedAssignee?.data?.first_name) +
                     " " +
-                    capitalize(profile_details.last_name)}
+                    capitalize(selectedAssignee?.data?.last_name)}
                 </CLabel>
               </CCol>
             </CRow>
