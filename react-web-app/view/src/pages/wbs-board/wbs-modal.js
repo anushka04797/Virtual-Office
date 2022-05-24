@@ -15,12 +15,13 @@ import {
   CModalFooter,
   CTextarea,
 } from "@coreui/react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { form, useFormik } from "formik";
 import { API, USER_ID } from "../../Config";
 import swal from "sweetalert";
 import {
+  fetchProjectsAssigneeThunk,
   fetchProjectsForPMThunk,
   fetchProjectsThunk,
 } from "../../store/slices/ProjectsSlice";
@@ -36,6 +37,7 @@ const WbsModal = (props) => {
   // const modalData = useSelector(state => state.wbs.data)
   const [deliverableView, setDeliverableView] = useState(true);
   const [hrsWorked, setHrsWorked] = useState(true);
+  const [plannedHours, setPlannedHours]= useState()
   const dispatch = useDispatch();
   const wbsStatusArray = [
     {
@@ -60,6 +62,150 @@ const WbsModal = (props) => {
   //     setAssigneeList([]);
   //   };
 
+  // const planned_hours =()=>{
+
+  //   console.log('assignee id',props.data.assignee.id)
+  
+  // API.get('project/assignee/list/'+props.data.project.work_package_index+'/').then(res=>{
+    
+  //   console.log('blah',res.data.data[0].estimated_person)
+  //   console.log('blah1',res.data.data[1].estimated_person)
+  //   console.log("startend",props.data.project )
+  //   let ep = 0
+
+  //   for(let i =0;i<res.data.data.length;i++)
+  //   {
+  //     console.log("id", res.data.data[i].assignee.id)
+  //     if(props.data.assignee.id == res.data.data[i].assignee.id){
+
+  //       console.log("matched")
+  //       ep= res.data.data[i].estimated_person
+
+  //       console.log("eeeeeeeeeeeepppppp", ep)
+  //     }
+  //   }
+  // })
+  //   const start = props.data.project.start_date
+  //   const end= props.data.project.planned_delivery_date
+ 
+  //    const moment = require('moment');
+  //    const total_days = moment(end).diff(moment(start), 'days');
+ 
+  //    console.log("dddddddd", total_days);
+  //    let total_hrs = total_days * 8;
+     
+  //    const startd = (new Date(start)).toString();
+  //   console.log("string", startd);
+  //   const tomorrow = new Date(start);
+
+  //   let count = 0;
+  //   for (let i = 0; i < total_days; i++) {
+  //     tomorrow.setDate(tomorrow.getDate() + 1);
+  //     //console.log("tomorrow",tomorrow.getDay());
+
+  //     if (tomorrow.getDay() == 5 || tomorrow.getDay() == 6) {
+  //       count = count + 1;
+  //     }
+
+
+  //   }
+
+  //   count = count * 8;
+  //   total_hrs = total_hrs - count;
+
+  //   total_hrs = total_hrs*ep
+
+  //    return total_hrs
+ 
+  // }
+ 
+ React.useEffect(()=>{
+  console.log('assignee id',props.data.assignee.id)
+
+  console.log('assignee id',props.data.assignee.id)
+  
+  API.get('project/assignee/list/'+props.data.project.work_package_index+'/').then(res=>{
+    
+    console.log('blah',res.data.data[0].estimated_person)
+    console.log('blah1',res.data.data[1].estimated_person)
+    console.log("startend",props.data.project )
+    let ep = 0
+
+    for(let i =0;i<res.data.data.length;i++)
+    {
+      console.log("id", res.data.data[i].assignee.id)
+      if(props.data.assignee.id == res.data.data[i].assignee.id){
+
+        console.log("matched")
+        ep= res.data.data[i].estimated_person
+
+        console.log("eeeeeeeeeeeepppppp", ep)
+      }
+    }
+  
+    const start = props.data.project.start_date
+    const end= props.data.project.planned_delivery_date
+
+    
+ 
+     const moment = require('moment');
+     let total_days = moment(end).diff(moment(start), 'days');
+     total_days=total_days+1
+     console.log("total days", total_days);
+     let total_hrs = total_days * 8;
+     
+     console.log("total hourssss ", total_hrs)
+
+
+    //  const startd = (new Date(start)).toString();
+    // console.log("string", startd);
+    const tomorrow = new Date(start);
+
+    let count = 0;
+    for (let i = 0; i < total_days; i++) {
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      //console.log("tomorrow",tomorrow.getDay());
+
+      if (tomorrow.getDay() == 5 || tomorrow.getDay() == 6) {
+        count = count + 1;
+      }
+
+
+    }
+    console.log("weekdays", count)
+
+    count = count * 8;
+
+    total_hrs = total_hrs - count;
+    
+    total_hrs = total_hrs*ep
+    setPlannedHours(total_hrs)
+    console.log("planned hours", total_hrs)
+
+  })
+  // API.get('project/assignee/list/'+props.data.project.work_package_index+'/').then(res=>{
+    
+  //   console.log('blah',res.data.data[0].estimated_person)
+  //   console.log('blah1',res.data.data[1].estimated_person)
+  //   console.log("startend",props.data.project )
+  //   let ep = 0
+
+  //   for(let i =0;i<res.data.data.length;i++)
+  //   {
+  //     console.log("id", res.data.data[i].assignee.id)
+  //     if(props.data.assignee.id == res.data.data[i].assignee.id){
+
+  //       console.log("matched")
+  //       ep= res.data.data[i].estimated_person
+
+  //       console.log("eeeeeeeeeeeepppppp", ep)
+  //     }
+  //   }
+  // })
+
+ }, [props]);
+
+ 
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const updateWbs = (data, { setSubmitting }) => {
     console.log("formWbsUpdate:", props.data);
@@ -171,7 +317,7 @@ const WbsModal = (props) => {
   });
 
   const total_hours = () => {
-
+    console.log("ep", props.data)
     const start = props.data.start_date;
     const end = props.data.end_date;
 
@@ -540,7 +686,7 @@ const WbsModal = (props) => {
                   <p className="custom-label-wbs5">
                    Project Planned Hours :
                     <br></br>
-                    {total_hours().allocated_hours}   {/*{props.data.project?.remaining_hours}*/}
+                      {plannedHours} {/*{props.data.project?.remaining_hours}*/}
                   </p>
                 </CCol>
                 <CCol md="12">
