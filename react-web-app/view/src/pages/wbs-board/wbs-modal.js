@@ -124,9 +124,7 @@ const WbsModal = (props) => {
     console.log("last Date", lastDate);
 
     const currentDate = new Date();
-    const day = `${currentDate.getFullYear()}-${
-      currentDate.getMonth() + 1
-    }-${currentDate.getDate()}`;
+    const day = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()}`;
     const cday = day.split("-");
     console.log("current date", cday);
 
@@ -153,7 +151,6 @@ const WbsModal = (props) => {
             // console.log("text", res.data.message);
             dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)));
             dispatch(fetchProjectsThunk(sessionStorage.getItem(USER_ID)));
-
             dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)));
             swal({
               title: "Good job!",
@@ -518,7 +515,7 @@ const WbsModal = (props) => {
                   <p>
                     Balance hours:
                     <br></br>
-                    {/*remaininghrs*/}{plannedHours-total_hours().spent_hours}
+                    {(plannedHours-total_hours().spent_hours)==null?(<LinearProgress/>):(Number(plannedHours-total_hours().spent_hours).toFixed(2))}
                   </p>
                 </CCol>
                 {/**actual work list show */}
