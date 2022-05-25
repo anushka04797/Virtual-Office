@@ -123,8 +123,9 @@ const AddTimecardItms = (props) => {
         temp_projects.push({label:res.data.data[index].project.sub_task,value:res.data.data[index].project.id,data:res.data.data[index]})
       }
       console.log('temp p',temp_projects)
+      setProjects(temp_projects)
     })
-    setProjects(temp_projects)
+    
   }, []);
 
   const [selectedType, setSelectedType] = useState({ label: "RHR", value: 1 });
