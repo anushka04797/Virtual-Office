@@ -4,11 +4,13 @@ import InputBase from '@mui/material/InputBase';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import CloseSharpIcon from '@mui/icons-material/CloseSharp';
+import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import MatResult from './MatResult.js'
 import MatFullScreenSearchResult from './MatFullScreenSearchResult.js'
 import { API } from '../../Config.js';
 import DraggableSearchResultTab from './MatResultTab.js';
+import Menu from './SearchMenu'
 
 const MatSearch = () => {
     const [searchText, setSearchText] = useState('')
@@ -30,6 +32,9 @@ const MatSearch = () => {
             search()
           }
     }
+    const setOptions=()=>{
+        
+    }
     return (
         <>
             <Paper
@@ -39,6 +44,7 @@ const MatSearch = () => {
                 {/* <IconButton sx={{ p: '10px' }} aria-label="menu">
                     <MenuIcon />
                 </IconButton> */}
+                <Menu onSelect={setOptions}/>
                 <InputBase
                     sx={{ ml: 1, flex: 1 }}
                     placeholder="Search"

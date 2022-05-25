@@ -262,20 +262,6 @@ const CreateNewProject = () => {
     setTaskTitleList([...task_title_list, { value: inputValue, label: inputValue }])
   }
 
-  // const [work_packages, setWorkPackages] = useState([])
-
-  // function get_work_packages(tdo) {
-  //   let temp = []
-  //   projects.forEach((project, idx) => {
-  //     project.subtasks.forEach((subtask, idx) => {
-  //       if (subtask.task_delivery_order.title == tdo) {
-  //         temp.push({ value: subtask.work_package_number, label: subtask.work_package_number })
-  //       }
-  //     })
-  //   })
-  //   return temp.filter((value, index, array) => array.findIndex((t) => t.work_package_number === value.work_package_number) === index)
-  // }
-
   function is_form_submitting() {
     if (formCreateProject.isSubmitting && !formCreateProject.isValidating) {
       return true

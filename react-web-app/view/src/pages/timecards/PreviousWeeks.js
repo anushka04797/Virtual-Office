@@ -268,7 +268,7 @@ const PreviousWeeks = () => {
       setUsersData(tableData);
     });
   }, []);
-  const getAssigneeList = (option) => {
+  const handleAssigneeChange = (option) => {
     setSelectedAssignee(option);
     editForm.setValues({
       assigneeSelectPM: option.value,
@@ -446,7 +446,7 @@ const PreviousWeeks = () => {
     console.log(selectedType);
   };
 
-  // const getAssigneeList = (option) => {
+  // const handleAssigneeChange = (option) => {
   //     setAssigneeValue(option)
   //     editForm.setValues({
   //         assigneeSelectPM: option.value,
@@ -600,18 +600,10 @@ const PreviousWeeks = () => {
                   isClearable={false}
                   isMulti={false}
                   value={selectedAssignee}
-                  // value={{value:capitalize(profile_details.first_name) +
-                  //      " " +
-                  //      capitalize(profile_details.last_name), //label: capitalize(profile_details.first_name) +
-                  //     //  " " +
-                  //     //  capitalize(profile_details.last_name) 
-                  //     }}
-                  onChange={getAssigneeList}
+                  onChange={handleAssigneeChange}
                   classNamePrefix="custom-forminput-6"
                   options={assigneeList}
                   styles={colourStyles}
-
-
                 />
                 {/* {editForm.errors.assigneeSelectPM && <p className="error mt-1">{editForm.errors.assigneeSelectPM}</p>} */}
               </div>

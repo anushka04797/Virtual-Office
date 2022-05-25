@@ -270,8 +270,8 @@ const MyProjectsDetailsView = () => {
             assignees.push(item.assignee.id?.toString())
             assignee_eps.push(item.estimated_person)
             total_temp_ep+=parseFloat(item.estimated_person)
-            total_planned_value += Number(item.assignee.slc_details.hourly_rate * 8 * parseFloat(total_working_days)).toFixed(2)
-            total_planned_hours += Number(parseFloat(item.estimated_person) * 8 * parseFloat(total_working_days)).toFixed(2)
+            total_planned_value += parseFloat(Number(item.assignee.slc_details.hourly_rate * 8 * parseFloat(total_working_days)).toFixed(2))
+            total_planned_hours += parseFloat(Number(parseFloat(item.estimated_person) * 8 * parseFloat(total_working_days)).toFixed(2))
         })
         
         editForm.setValues({
@@ -466,14 +466,19 @@ const MyProjectsDetailsView = () => {
     };
     const handleAddPerson = () => {
         console.log("selected assignee", selectedAssignees, 'ep', selectedAssigneesEP)
-        populate_planned_value_and_hours([...inputList, { assignee: selectedAssignees.data, estimated_person: selectedAssigneesEP,planned_value: parseFloat(selectedAssignees.data.slc_details.hourly_rate) * 8 * parseFloat(total_working_days),planned_hours: parseFloat(((total_working_days * 8) * selectedAssigneesEP).toFixed(1))}])
+        populate_planned_value_and_hours([...inputList, { 
+            assignee: selectedAssignees.data, 
+            estimated_person: selectedAssigneesEP,
+            planned_value: Number(parseFloat(selectedAssignees.data.slc_details.hourly_rate) * 8 * parseFloat(total_working_days)).toFixed(2),
+            planned_hours: Number(parseFloat(((total_working_days * 8) * selectedAssigneesEP).toFixed(1))).toFixed(2)
+        }])
         setInputList([
             ...inputList, 
             { 
               assignee: selectedAssignees.data, 
               estimated_person: selectedAssigneesEP, 
-              planned_value: parseFloat(selectedAssignees.data.slc_details.hourly_rate) * 8 * parseFloat(total_working_days), 
-              planned_hours: parseFloat(((total_working_days * 8) * selectedAssigneesEP).toFixed(1)) 
+              planned_value: Number(parseFloat(selectedAssignees.data.slc_details.hourly_rate) * 8 * parseFloat(total_working_days)).toFixed(2), 
+              planned_hours: Number(parseFloat(((total_working_days * 8) * selectedAssigneesEP).toFixed(1))).toFixed(2) 
             }
           ]);
         setSelectedAssignees(null)
