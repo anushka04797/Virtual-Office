@@ -37,7 +37,7 @@ const WbsModal = (props) => {
   const [deliverableView, setDeliverableView] = useState(true);
   const [hrsWorked, setHrsWorked] = useState(true);
   const [plannedHours, setPlannedHours] = useState();
-  const [actualHour, setactualHour] = useState();
+  //const [actualHour, setactualHour] = useState();
   const [remaininghrs, setremaininghrs] = useState();
   const [datecheck, setdatecheck] = useState();
 
@@ -115,7 +115,7 @@ const WbsModal = (props) => {
 
       total_hrs = total_hrs * ep;
       setPlannedHours(Number(total_hrs).toFixed(2));
-      setactualHour(Number(total_spent).toFixed(2));
+      //setactualHour(Number(total_spent).toFixed(2));
       setremaininghrs(Number(total_hrs - total_spent).toFixed(2));
       console.log("planned hours", total_hrs);
     });
@@ -241,11 +241,14 @@ const WbsModal = (props) => {
 
     let total_spent = 0;
     for (const item in props.timeCardList.data) {
-      console.log(props.timeCardList.data[item].hours_today);
-      total_spent += parseInt(props.timeCardList.data[item].hours_today);
+      console.log("input hours", props.timeCardList.data[item].hours_today);
+
+
+      total_spent += parseFloat(props.timeCardList.data[item].hours_today);
     }
     console.log("spent", total_spent);
-
+    //setactualHour(Number(total_spent).toFixed(2));
+    
     const remaining_hrs = plannedHours - total_spent;
     const hours = {
       allocated_hours: total_hrs,
@@ -508,14 +511,14 @@ const WbsModal = (props) => {
                 <CCol md="12">
                   <p>
                     Actual Hours :<br></br>
-                    {actualHour}
+                    {/*actualHour*/}{total_hours().spent_hours}
                   </p>
                 </CCol>
                 <CCol md="12">
                   <p>
                     Balance hours:
                     <br></br>
-                    {remaininghrs}
+                    {/*remaininghrs*/}{plannedHours-total_hours().spent_hours}
                   </p>
                 </CCol>
                 {/**actual work list show */}

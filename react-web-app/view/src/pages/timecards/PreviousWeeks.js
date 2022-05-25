@@ -335,6 +335,30 @@ const PreviousWeeks = () => {
     //FileSaver.saveAs(data, fileName + fileExtension);
   }
 
+  const exportxl =()=>{
+
+    const ExcelJS = require('exceljs');
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet('My Sheet');
+    workbook.mergeCells('A4:B5');
+    workbook.getCell('B5').value = 'Hello, World!';
+    expect(workbook.getCell('B5').value).toBe(workbook.getCell('A4').value);
+    expect(workbook.getCell('B5').master).toBe(workbook.getCell('A4'));
+
+
+    workbook.mergeCells('K10', 'M12');
+
+    // merge by start row, start column, end row, end column (equivalent to K10:M12)
+    workbook.mergeCells(10,11,12,13);
+
+    //workbook = createAndFillWorkbook();
+    var wbout = workbook.xlsx.writeFile("filename");
+    FileSaver.saveAs(new Blob([wbout],{type:"application/octet-stream"}), "filename" + ".xlsx");
+
+  }
+  
+  
+
 
   {
     /**export data as pdf */
@@ -550,8 +574,8 @@ const PreviousWeeks = () => {
               <CButton
                 className="file-format-download"
                 onClick={() =>
-                  
-                  exportToCSV(usersData, "Timecard of" + " " + pdfTitle)
+                  exportxl()
+                  //exportToCSV(usersData, "Timecard of" + " " + pdfTitle)
                 }
               >
                 <CIcon name="cil-spreadsheet" className="mr-2" />
