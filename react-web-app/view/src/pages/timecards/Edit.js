@@ -73,7 +73,7 @@ const EditTimeCard = (props) => {
             <CModal
                 //show={showModal}
                 show={props.show}
-                onClose={props.onClose}
+                onClose={()=>props.onClose()}
                 toggle={props.toggle}
             >
                 <CModalHeader closeButton>

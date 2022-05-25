@@ -169,10 +169,11 @@ const TimeCards = () => {
   };
   const get_assignee_tc=(assignee)=>{
     const { start, end } = dateRange();
-    setPdfTitle(assignee.data.first_name+' '+assignee.data.last_name)
+    setPdfTitle(assignee.first_name+' '+assignee.last_name)
     API.get(
-      "wbs/user/time-card/list/" + assignee.value + "/"
+      "wbs/user/time-card/list/" + assignee.id + "/"
     ).then((res) => {
+      console.log('assignee tc',res.data)
       setPdfTitle(
         profile_details.first_name + " " + profile_details.last_name
       );
@@ -218,7 +219,6 @@ const TimeCards = () => {
       }
       setTotalHrs(hours_total)
       setUsersData(orderBy(tableData,'id','desc'));
-      console.log('data size',total_not_submitted)
       setNonSubmittedTotalTC(total_not_submitted)
     });
   }
@@ -236,7 +236,7 @@ const TimeCards = () => {
   const handleAssigneeChange = (option) => {
     setSelectedAssignee(option);
     setPdfTitle(option.label);
-    get_assignee_tc(option)
+    get_assignee_tc(option.data)
   };
 
   React.useEffect(() => {
@@ -274,76 +274,34 @@ const TimeCards = () => {
           });
           
         }
-        setAssigneeList(temp);
-        setSelectedAssignee({
-          data: res.data.user,
-          value: res.data.user.id,
-          label:
-            capitalize(res.data.user.first_name) +
-            " " +
-            capitalize(res.data.user.last_name),
-        })
+        setAssigneeList(orderBy(temp,'label'));
+        if(selectedAssignee==null || selectedAssignee==undefined){
+          setSelectedAssignee({
+            data: res.data.user,
+            value: res.data.user.id,
+            label:
+              capitalize(res.data.user.first_name) +
+              " " +
+              capitalize(res.data.user.last_name),
+          })
+        }
+        get_assignee_tc(res.data.user)
       });
     }
     else{
-      setSelectedAssignee({
-        data: profile_details,
-        value: profile_details.id,
-        label:
-          capitalize(profile_details.first_name) +
-          " " +
-          capitalize(profile_details.last_name),
-      })
-    }
-    API.get(
-      "wbs/user/time-card/list/" + sessionStorage.getItem(USER_ID) + "/"
-    ).then((res) => {
-      
-      let temp = [];
-      Array.from(res.data.data).forEach((item, idx) => {
-        temp.push({ data: item });
-      });
-      let filteredData = temp;
-      filteredData = temp.filter(
-        (p) => p.data.date_updated >= start && p.data.date_updated <= end
-      );
-      setPdfData(filteredData);
-      var tableData = [];
-      let hours_total = 0
-      let total_not_submitted=0
-      for (let index = 0; index < filteredData.length; index++) {
-        if(filteredData[index].data.submitted==false){
-          total_not_submitted++;
-        }
-        const element = filteredData[index];
-        hours_total += parseFloat(element.data.hours_today)
-        tableData.push({
-          WP: element.data.project
-            ? element.data.project.work_package_number
-            : "-",
-          "Project Name":
-            element.data.project != null
-              ? element.data.project?.sub_task
-              : "-",
-          "Task Title":
-            element.data.project != null
-              ? element.data.project?.task_title
-              : "-",
-          Description: element.data?.actual_work_done
-            ? element.data?.actual_work_done
-            : "-",
-          "Hour(s)": element.data.hours_today,
-          Type: element.data.time_type,
-          "Date Created": element.data.date_created,
-          data: element.data,
-          "id":element.data.id
-        });
+      if(selectedAssignee==null || selectedAssignee==undefined){
+        setSelectedAssignee({
+          data: profile_details,
+          value: profile_details.id,
+          label:
+            capitalize(profile_details.first_name) +
+            " " +
+            capitalize(profile_details.last_name),
+        })
+        get_assignee_tc(profile_details)
       }
-      setTotalHrs(hours_total)
-      setUsersData(orderBy(tableData,'id','desc'));
-      setNonSubmittedTotalTC(total_not_submitted)
-      
-    });
+    }
+    
   }, [show_edit_modal,update]);
   
   const validateEditForm = (values) => {
@@ -461,8 +419,7 @@ const TimeCards = () => {
 
   const onAddItem = () => {
     setmodalAddItem(false);
-    setUpdate(update+1)
-    // dispatch(fetchTimecardThunk());
+    get_assignee_tc(selectedAssignee.data)
   };
  
   const onSubmit = () => {
@@ -496,8 +453,8 @@ const TimeCards = () => {
 
         FILE_API.post("wbs/time-card/submit/", formData).then((res) => {
           console.log(res.data);
-          dispatch(fetchAllTimecardsPmThunk(sessionStorage.getItem(USER_ID)))
-          setUpdate(update+1)
+          // dispatch(fetchAllTimecardsPmThunk(selectedAssignee.value))
+          get_assignee_tc(selectedAssignee.data)
           doc.save("Timecard of" + " " + selectedAssignee.data.first_name + ".pdf");
           window.open(doc.output('bloburl'), '_blank');
           swal(

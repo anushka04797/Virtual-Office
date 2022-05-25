@@ -125,7 +125,7 @@ const PreviousWeeks = () => {
       API.get("wbs/user/time-card/list/" + values.assigneeSelect + "/").then(
         (res) => {
           let temp = [];
-          console.log("zzzzzzzz", profile_details);
+          console.log("zzzzzzzz", res.data.data);
           setPdfTitle(
             profile_details.first_name + " " + profile_details.last_name
           );
@@ -528,21 +528,6 @@ const PreviousWeeks = () => {
   }
   return (
     <>
-      {row != null && row != undefined && (
-        <EditTimeCard
-          data={row}
-          show={show_edit_modal}
-          onClose={() => {
-            setShowEditModal(false);
-          }}
-        />
-      )}
-      <AddTimecardItms
-        // toggle={toggleModal}
-        show={modaladdItem}
-        onClose={onAddItem}
-        onAdd={editForm.handleSubmit}
-      ></AddTimecardItms>
       <CContainer>
 
         <CRow className="justify-content-between">

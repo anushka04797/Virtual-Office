@@ -7,8 +7,6 @@ import {
   CLabel,
   CInput,
   CButton,
-  CDataTable,
-  CBadge,
   CModal,
   CModalBody,
   CModalHeader,
@@ -126,7 +124,7 @@ const AddTimecardItms = (props) => {
       setProjects(temp_projects)
     })
     
-  }, []);
+  }, [props]);
 
   const [selectedType, setSelectedType] = useState({ label: "RHR", value: 1 });
   const [wbsList, setWbsList] = useState();
@@ -168,34 +166,19 @@ const AddTimecardItms = (props) => {
 
   const handleProjectChange = (newValue, actionMeta) => {
     formAddTimecard.setFieldValue("project", newValue.value);
-    // console.log(`action: ${actionMeta.action}`);
-    // console.log("newValue: ", newValue.data.project.wbs_list);
-    // console.log("id", (parseInt(sessionStorage.getItem(USER_ID))));
-    // console.log("type", (parseInt(newValue.data.project.wbs_list[0].id)))
-
     let wbslistArray = [];
     for (let i = 0; i < newValue.data.project.wbs_list.length; i++) {
-      if (parseInt(newValue.data.project.wbs_list[i].assignee_id) == parseInt(sessionStorage.getItem(USER_ID))) {
+      if (parseInt(newValue.data.project.wbs_list[i].assignee_id) == parseInt(props.employee)) {
         wbslistArray.push({
           value: newValue.data.project.wbs_list[i].id,
           label: newValue.data.project.wbs_list[i].title,
           data: newValue.data.project.wbs_list[i],
         });
-        
       }
     }
     setWbsList(wbslistArray);
-
-    //setSelectedProject(newValue.data.project.wbs_list)
-    //console.log(selectedProject);
-
-    //console.log("aaa", formAddTimecard.values.project)
   };
   
-
-  
-
-
   return (
     <>
       <CModal
