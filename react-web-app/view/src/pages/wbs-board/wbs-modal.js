@@ -519,7 +519,7 @@ const WbsModal = (props) => {
                 </CCol>
                 <CCol md="12">
                   <p>
-                    Remaining hours:
+                    Balance hours:
                     <br></br>
                     {remaininghrs}
                   </p>

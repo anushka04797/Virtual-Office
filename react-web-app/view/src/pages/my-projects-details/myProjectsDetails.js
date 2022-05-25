@@ -273,7 +273,7 @@ const MyProjectsDetailsView = () => {
             total_planned_value += parseFloat(Number(item.assignee.slc_details.hourly_rate * 8 * parseFloat(total_working_days)).toFixed(2))
             total_planned_hours += parseFloat(Number(parseFloat(item.estimated_person) * 8 * parseFloat(total_working_days)).toFixed(2))
         })
-        
+        setTotalEp(total_temp_ep)
         editForm.setValues({
             //   task_delivery_order: editForm.values.task_delivery_order,
             //   tdo_details: editForm.values.tdo_details,
@@ -480,10 +480,9 @@ const MyProjectsDetailsView = () => {
               planned_value: Number(parseFloat(selectedAssignees.data.slc_details.hourly_rate) * 8 * parseFloat(total_working_days)).toFixed(2), 
               planned_hours: Number(parseFloat(((total_working_days * 8) * selectedAssigneesEP).toFixed(1))).toFixed(2) 
             }
-          ]);
+        ]);
         setSelectedAssignees(null)
         setSelectedAssigneesEP(0)
-        setTotalEp(total_ep+parseFloat(selectedAssigneesEP))
         setRemaining_EP((remaining_EP - selectedAssigneesEP).toFixed(1))
         console.log("inputList", inputList)
     };
