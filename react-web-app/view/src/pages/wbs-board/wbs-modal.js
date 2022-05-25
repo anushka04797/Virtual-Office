@@ -73,11 +73,8 @@ const WbsModal = (props) => {
     API.get(
       "project/assignee/list/" + props.data.project.work_package_index + "/"
     ).then((res) => {
-      console.log("blah", res.data.data[0].estimated_person);
-      console.log("blah1", res.data.data[1].estimated_person);
-      console.log("startend", props.data.project);
+      console.log(res.data)
       let ep = 0;
-
       for (let i = 0; i < res.data.data.length; i++) {
         console.log("id", res.data.data[i].assignee.id);
         if (props.data.assignee.id == res.data.data[i].assignee.id) {
@@ -151,12 +148,7 @@ const WbsModal = (props) => {
     if (datecheck >= 0) {
       API.put("wbs/update/" + props.data.id + "/", formWbsUpdate.values).then(
         (res) => {
-          console.log("update result", res);
-          console.log("data", res.data);
-          console.log("status", res.status); //200
-          console.log("success", res.data.success); //undefined
-          console.log("text", res.data.message); //undefined
-
+          console.log(res.data)
           if (res.status == 200 && res.data.success == "True") {
             // console.log("text", res.data.message);
             dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)));
@@ -171,7 +163,9 @@ const WbsModal = (props) => {
             props.onClose();
           }
         }
-      );
+      ).catch(err=>{
+        console.log(err)
+      });
     } else {
       setSubmitting(false);
       enqueueSnackbar("Planned Delivery date is over! ", {
