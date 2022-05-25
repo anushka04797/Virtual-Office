@@ -20,6 +20,7 @@ import {
   import Select from "react-select";
 import { API } from '../../Config';
 import swal from 'sweetalert';
+import { useSelector } from 'react-redux';
 const EditTimeCard = (props) => {
     const types = [
         { label: "RHR", value: "RHR" },
@@ -33,6 +34,13 @@ const EditTimeCard = (props) => {
         { label: "PB1", value: "PB1" },
         { label: "PB2", value: "PB2" },
     ];
+    const worktypes= useSelector(state=>{
+        let temp=[]
+        Array.from(state.worktypes.data).forEach((item,idx)=>{
+          temp.push({label:item.title,value:item.title,description:item.description,data:item})
+        })
+        return temp
+      })
     const edit_time_card=(values,{setSubmitting})=>{
         console.log(values)
         API.put('wbs/time-card/update/'+props.data.id+'/',values).then(res=>{
@@ -125,7 +133,7 @@ const EditTimeCard = (props) => {
                             >
                                 Type :
                             </CLabel>
-                            <Select options={types} onChange={handleSelectChange} defaultValue={types.filter(t=>t.value === props.data?.time_type)} />
+                            <Select options={worktypes} onChange={handleSelectChange} defaultValue={types.filter(t=>t.value === props.data?.time_type)} />
                         </CCol>
                     </CRow>
                 </CModalBody>

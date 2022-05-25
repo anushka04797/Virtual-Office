@@ -302,7 +302,7 @@ const TimeCards = () => {
       }
     }
     
-  }, [show_edit_modal,update]);
+  }, [update]);
   
   const validateEditForm = (values) => {
     const errors = {};
@@ -527,7 +527,7 @@ const TimeCards = () => {
           data={row}
           show={show_edit_modal}
           onClose={() => {
-            setShowEditModal(false); 
+            setShowEditModal(false);get_assignee_tc(selectedAssignee.data);
           }}
         />
       )}
