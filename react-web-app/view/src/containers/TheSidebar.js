@@ -64,16 +64,16 @@ const TheSidebar = () => {
       <CSidebarBrand className="d-md-down-none custom-color" to="/">
         <CImg
           className="c-sidebar-brand-full"
-          src={'assets/icons/DMA-LOGO-BIG.svg'}
-          height={35}
+          src={'assets/icons/VirtualOffice.svg'}
+          height={115}
         />
-        <h6 className="c-sidebar-brand-full name-brand1">Virtual Office</h6>
+        {/* <h6 className="c-sidebar-brand-full name-brand1">Virtual Office</h6> */}
 
-        <CImg
+        {/* <CImg
           className="c-sidebar-brand-minimized"
           src={'assets/icons/DMA-logo-small.svg'}
           height={35}
-        />
+        /> */}
         <span className="c-sidebar-brand-minimized name-brand1">VO</span>
       </CSidebarBrand>
       <CSidebarNav className="vo-sidebar">
