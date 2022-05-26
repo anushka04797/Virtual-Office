@@ -37,9 +37,10 @@ const WbsModal = (props) => {
   const [deliverableView, setDeliverableView] = useState(true);
   const [hrsWorked, setHrsWorked] = useState(true);
   const [plannedHours, setPlannedHours] = useState();
-  //const [actualHour, setactualHour] = useState();
+  const [actualHour, setactualHour] = useState();
   const [remaininghrs, setremaininghrs] = useState();
   const [datecheck, setdatecheck] = useState();
+  const [balancehrs, setbalancehrs] = useState();
 
   const dispatch = useDispatch();
   const wbsStatusArray = [
@@ -66,19 +67,13 @@ const WbsModal = (props) => {
   //   };
 
   React.useEffect(() => {
-    console.log("assignee id", props.data.assignee.id);
-
-    console.log("assignee id", props.data.assignee.id);
-
     API.get(
       "project/assignee/list/" + props.data.project.work_package_index + "/"
     ).then((res) => {
-      console.log(res.data)
       let ep = 0;
       for (let i = 0; i < res.data.data.length; i++) {
         console.log("id", res.data.data[i].assignee.id);
         if (props.data.assignee.id == res.data.data[i].assignee.id) {
-          console.log("matched");
           ep = res.data.data[i].estimated_person;
         }
       }
@@ -89,9 +84,8 @@ const WbsModal = (props) => {
       const moment = require("moment");
       let total_days = moment(end).diff(moment(start), "days");
       total_days = total_days + 1;
-      console.log("total days", total_days);
+
       let total_hrs = total_days * 8;
-      console.log("total hourssss ", total_hrs);
 
       const tomorrow = new Date(start);
 
@@ -103,39 +97,37 @@ const WbsModal = (props) => {
           count = count + 1;
         }
       }
-      console.log("weekdays", count);
+
       count = count * 8;
       total_hrs = total_hrs - count;
+
       let total_spent = 0;
       for (const item in props.timeCardList.data) {
-        console.log(props.timeCardList.data[item].hours_today);
-        total_spent += parseInt(props.timeCardList.data[item].hours_today);
+        total_spent += parseFloat(props.timeCardList.data[item].hours_today);
       }
-      console.log("remains", total_hrs - total_spent);
+
+      setactualHour(Number(total_spent).toFixed(2));
 
       total_hrs = total_hrs * ep;
       setPlannedHours(Number(total_hrs).toFixed(2));
-      //setactualHour(Number(total_spent).toFixed(2));
+
       setremaininghrs(Number(total_hrs - total_spent).toFixed(2));
-      console.log("planned hours", total_hrs);
     });
 
     const lastDate = props.data.end_date;
-    console.log("last Date", lastDate);
 
     const currentDate = new Date();
-    const day = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()}`;
+    const day = `${currentDate.getFullYear()}-${
+      currentDate.getMonth() + 1
+    }-${currentDate.getDate()}`;
     const cday = day.split("-");
-    console.log("current date", cday);
 
     const endDateArray = lastDate.split("-");
-    console.log("edate", endDateArray);
 
     const difference = moment(props.data.end_date, "YYYY-MM-DD").diff(
       moment(currentDate, "YYYY-MM-DD"),
       "days"
     );
-    console.log("difference", difference);
 
     setdatecheck(difference);
   }, [props]);
@@ -144,11 +136,9 @@ const WbsModal = (props) => {
 
   const updateWbs = (data, { setSubmitting }) => {
     if (datecheck >= 0) {
-      API.put("wbs/update/" + props.data.id + "/", formWbsUpdate.values).then(
-        (res) => {
-          console.log(res.data)
+      API.put("wbs/update/" + props.data.id + "/", formWbsUpdate.values)
+        .then((res) => {
           if (res.status == 200 && res.data.success == "True") {
-            // console.log("text", res.data.message);
             dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)));
             dispatch(fetchProjectsThunk(sessionStorage.getItem(USER_ID)));
             dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)));
@@ -159,10 +149,10 @@ const WbsModal = (props) => {
             });
             props.onClose();
           }
-        }
-      ).catch(err=>{
-        console.log(err)
-      });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     } else {
       setSubmitting(false);
       enqueueSnackbar("Planned Delivery date is over! ", {
@@ -207,56 +197,56 @@ const WbsModal = (props) => {
     onSubmit: updateWbs,
   });
 
-  const total_hours = () => {
-    console.log("ep", props.data);
-    const start = props.data.start_date;
-    const end = props.data.end_date;
+  // const total_hours = () => {
+  //   console.log("ep", props.data);
+  //   const start = props.data.start_date;
+  //   const end = props.data.end_date;
 
-    const moment = require("moment");
-    const total_days = moment(end).diff(moment(start), "days");
+  //   const moment = require("moment");
+  //   const total_days = moment(end).diff(moment(start), "days");
 
-    console.log("dddddddd", total_days);
+  //   console.log("dddddddd", total_days);
 
-    let total_hrs = total_days * 24;
+  //   let total_hrs = total_days * 24;
 
-    console.log("11111", total_hrs);
-    console.log("1", end);
+  //   console.log("11111", total_hrs);
+  //   console.log("1", end);
 
-    const startd = new Date(start).toString();
-    console.log("string", startd);
-    const tomorrow = new Date(start);
+  //   const startd = new Date(start).toString();
+  //   console.log("string", startd);
+  //   const tomorrow = new Date(start);
 
-    let count = 0;
-    for (let i = 0; i < total_days; i++) {
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      if (tomorrow.getDay() == 5 || tomorrow.getDay() == 6) {
-        count = count + 1;
-      }
-    }
-    count = count * 24;
-    total_hrs = total_hrs - count;
+  //   let count = 0;
+  //   for (let i = 0; i < total_days; i++) {
+  //     tomorrow.setDate(tomorrow.getDate() + 1);
+  //     if (tomorrow.getDay() == 5 || tomorrow.getDay() == 6) {
+  //       count = count + 1;
+  //     }
+  //   }
+  //   count = count * 24;
+  //   total_hrs = total_hrs - count;
 
-    let total_spent = 0;
-    for (const item in props.timeCardList.data) {
-      console.log("input hours", props.timeCardList.data[item].hours_today);
+  //   let total_spent = 0;
+  //   for (const item in props.timeCardList.data) {
+  //     console.log("input hours", props.timeCardList.data[item].hours_today);
 
+  //     total_spent += parseFloat(props.timeCardList.data[item].hours_today);
+  //   }
+  //   console.log("spent", total_spent);
+  //   //setactualHour(Number(total_spent).toFixed(2));
 
-      total_spent += parseFloat(props.timeCardList.data[item].hours_today);
-    }
-    console.log("spent", total_spent);
-    //setactualHour(Number(total_spent).toFixed(2));
-    
-    const remaining_hrs = plannedHours - total_spent;
-    const hours = {
-      allocated_hours: total_hrs,
-      spent_hours: total_spent,
-      remaining_hours: remaining_hrs,
-    };
-    return hours;
-  };
+  //   const remaining_hrs = plannedHours - total_spent;
+  //   const hours = {
+  //     allocated_hours: total_hrs,
+  //     spent_hours: total_spent,
+  //     remaining_hours: remaining_hrs,
+  //   };
+  //   return hours;
+  // };
+
   function is_form_submitting() {
     console.log(formWbsUpdate.isSubmitting, formWbsUpdate.isValidating);
-    total_hours();
+    //total_hours();
     if (formWbsUpdate.isSubmitting && !formWbsUpdate.isValidating) {
       return true;
     }
@@ -307,7 +297,6 @@ const WbsModal = (props) => {
                       </p>
                     )}
                   </div>
-                  
                 </CRow>
                 <CRow>
                   <div className="col-lg-12 mb-3">
@@ -502,20 +491,24 @@ const WbsModal = (props) => {
                 <CCol md="12">
                   <p className="custom-label-wbs5">
                     Planned Hours :<br></br>
-                    {plannedHours} 
+                    {plannedHours}
                   </p>
                 </CCol>
                 <CCol md="12">
                   <p>
                     Actual Hours :<br></br>
-                    {/*actualHour*/}{total_hours().spent_hours}
+                    {Number(actualHour).toFixed(2)}
                   </p>
                 </CCol>
                 <CCol md="12">
                   <p>
                     Balance hours:
                     <br></br>
-                    {(plannedHours-total_hours().spent_hours)==null?(<LinearProgress/>):(Number(plannedHours-total_hours().spent_hours).toFixed(2))}
+                    {remaininghrs == null ? (
+                      <LinearProgress />
+                    ) : (
+                      Number(remaininghrs).toFixed(2)
+                    )}
                   </p>
                 </CCol>
                 {/**actual work list show */}
