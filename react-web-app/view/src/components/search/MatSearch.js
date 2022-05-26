@@ -44,7 +44,7 @@ const MatSearch = () => {
                 {/* <IconButton sx={{ p: '10px' }} aria-label="menu">
                     <MenuIcon />
                 </IconButton> */}
-                <Menu onSelect={setOptions}/>
+                {/* <Menu onSelect={setOptions}/> */}
                 <InputBase
                     sx={{ ml: 1, flex: 1 }}
                     placeholder="Search"
