@@ -38,6 +38,7 @@ const AddTimecardItms = (props) => {
     return items
   })
   const [projects,setProjects]=useState([])
+  const [selectedProject, setselectedProject]=useState("")
   // const projects = useSelector((state) => {
   //   let projectsArray = [];
 
@@ -77,8 +78,14 @@ const AddTimecardItms = (props) => {
       // props.onAdd()
       toggleModal()
       formAddTimecard.resetForm()
+      
+      setSelectedType({label : null, value : null })
+      setWbsList()
+      setSelectedWbs(null)
+      setselectedProject(null)
       swal('Added!', 'Successfuly Added', 'success')
     })
+
     setModal(false)
   }
 
@@ -126,7 +133,7 @@ const AddTimecardItms = (props) => {
     
   }, [props]);
 
-  const [selectedType, setSelectedType] = useState({ label: "RHR", value: 1 });
+  const [selectedType, setSelectedType] = useState({ label: "", value: "" });
   const [wbsList, setWbsList] = useState();
   const [selectedWbs, setSelectedWbs] = useState();
 
@@ -164,20 +171,31 @@ const AddTimecardItms = (props) => {
     );
   };
 
-  const handleProjectChange = (newValue, actionMeta) => {
-    formAddTimecard.setFieldValue("project", newValue.value);
-    let wbslistArray = [];
-    for (let i = 0; i < newValue.data.project.wbs_list.length; i++) {
-      if (parseInt(newValue.data.project.wbs_list[i].assignee_id) == parseInt(props.employee)) {
-        wbslistArray.push({
-          value: newValue.data.project.wbs_list[i].id,
-          label: newValue.data.project.wbs_list[i].title,
-          data: newValue.data.project.wbs_list[i],
+  const handleProjectChange = (option) => {
+    setselectedProject(option)
+    console.log("selected Project", option.value)
+     formAddTimecard.setFieldValue("project", option.value);
+     let wbslistArray = [];
+     for (let i = 0; i < option.data.project.wbs_list.length; i++) {
+       if (parseInt(option.data.project.wbs_list[i].assignee_id) == parseInt(props.employee)) {
+         wbslistArray.push({
+           value: option.data.project.wbs_list[i].id,
+           label: option.data.project.wbs_list[i].title,
+           data: option.data.project.wbs_list[i],
         });
       }
     }
     setWbsList(wbslistArray);
   };
+
+  const reset_form = () => {
+    formAddTimecard.resetForm();
+    setSelectedType({label : null, value : null })
+    setWbsList()
+    setSelectedWbs(null)
+    setselectedProject(null)
+
+  }
   
   return (
     <>
@@ -209,7 +227,7 @@ const AddTimecardItms = (props) => {
                   name="hours_type"
                   options={worktypes}
                   onChange={handleHoursTypeChange}
-                  // value={formAddTimecard.values.hours_type}
+                  value={selectedType}
                 />
                 {formAddTimecard.touched.hours_type && formAddTimecard.errors.hours_type && <small style={{ color: 'red' }}>{formAddTimecard.errors.hours_type}</small>}
               </CCol>
@@ -263,6 +281,7 @@ const AddTimecardItms = (props) => {
                     className="custom-forminput-5"
                     onChange={handleProjectChange}
                     options={projects}
+                    value = {selectedProject}
                   />
                   {formAddTimecard.touched.project && formAddTimecard.errors.project && <small style={{ color: 'red' }}>{formAddTimecard.errors.project}</small>}
                 </CCol>
@@ -313,7 +332,7 @@ const AddTimecardItms = (props) => {
           <CButton color="primary" type="button" onClick={formAddTimecard.handleSubmit}>
             Add
           </CButton>{" "}
-          <CButton color="secondary" type="button" onClick={()=>{props.onClose();formAddTimecard.resetForm()}}>
+          <CButton color="secondary" type="button" onClick={()=>{props.onClose();reset_form()}}>
             Cancel
 
           </CButton>
