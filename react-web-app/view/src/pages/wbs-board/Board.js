@@ -25,6 +25,7 @@ import { useSnackbar } from 'notistack';
 import { useLocation } from 'react-router';
 import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
 import CircularProgress from '@mui/material/CircularProgress';
+import { element } from 'prop-types';
 
 const WbsBoard = () => {
     {/**export in excel */ }
@@ -43,6 +44,7 @@ const WbsBoard = () => {
     const [fetchData, setFetchedData] = useState([])
     const [assignees_loaded,setAssigneesLoaded]=useState(false)
     const [data_loaded,setDataLoaded]=useState(false)
+    const [update, setUpdate]= useState(1)
     const [boardData, setBoardData] = useState({
         lanes: [
             {
@@ -225,8 +227,11 @@ const WbsBoard = () => {
     }
     const editWbs = (cardId, metadata, laneId) => {
         // console.log("WBS edit: ", cardId, metadata, laneId);
+        setUpdate (update+1)
+        console.log("update", update)
         currentLaneId = laneId;
         currentCardId = cardId;
+        console.log("idddddddddddddd", element)
         console.log(boardData.lanes.find(element => element.id == currentLaneId))
         // console.log(data.lanes.find(element => element.id == currentLaneId).cards.find(element => element.id == currentCardId).title)
         const wbsId = (boardData.lanes.find(element => element.id == currentLaneId).cards.find(element => element.id == currentCardId)).id;
@@ -257,6 +262,8 @@ const WbsBoard = () => {
     }
 
     const updateStatus = (cardId, sourceLaneId, targetLaneId, position, cardDetails) => {
+        
+        //
         console.log("DRAG ENDS!!!: ", cardDetails.id)
         let values;
         if (cardDetails.laneId == "lane1") {
@@ -531,7 +538,7 @@ const WbsBoard = () => {
                     
                 </CRow>
             </CContainer>
-            {modalData != null && <WbsModal show={modal} onClose={onWbsUpdate} toggle={toggle} data={modalData} timeCardList={timeCardListData}></WbsModal>}
+            {modalData != null && <WbsModal show={modal} onClose={onWbsUpdate} toggle={toggle} data={modalData} timeCardList={timeCardListData}/>}
         </>
     )
 

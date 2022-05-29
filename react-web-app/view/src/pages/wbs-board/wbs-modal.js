@@ -521,7 +521,7 @@ const WbsModal = (props) => {
                             <li className="task-list-show-item">
                               {item.actual_work_done +
                                 " ➤ " +
-                                item.hours_today +
+                                Number(item.hours_today).toFixed(2) +
                                 " hr(s)"}
                             </li>
                           ))

@@ -76,6 +76,15 @@ const EditTimeCard = (props) => {
             })
         }
     },[props.data])
+
+    const oncancel = () => {
+        formEditTimeCard.setValues({
+            actual_work_done:props.data.actual_work_done,
+            time_type:props.data.time_type,
+            hours_today:props.data.hours_today,
+        })
+    }
+
     return (
         <>
             <CModal
@@ -141,7 +150,7 @@ const EditTimeCard = (props) => {
                     <CButton color="primary" onClick={formEditTimeCard.handleSubmit}>
                         save
                     </CButton>{" "}
-                    <CButton color="secondary" onClick={props.onClose}>
+                    <CButton color="secondary" onClick={()=>{props.onClose(); oncancel()}}>
                         Cancel
                     </CButton>
                 </CModalFooter>
