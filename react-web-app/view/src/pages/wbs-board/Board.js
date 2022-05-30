@@ -43,6 +43,10 @@ const WbsBoard = () => {
     const [fetchData, setFetchedData] = useState([])
     const [assignees_loaded,setAssigneesLoaded]=useState(false)
     const [data_loaded,setDataLoaded]=useState(false)
+<<<<<<< Updated upstream
+=======
+    const [update, setUpdate]= useState(0)
+>>>>>>> Stashed changes
     const [boardData, setBoardData] = useState({
         lanes: [
             {
@@ -81,6 +85,7 @@ const WbsBoard = () => {
 
     const profile = useSelector(state => state.profile.data)
     const populate_data = (data) => {
+        
         console.log('populating data', data)
         setFetchedData(data);
         let temp_data = {
@@ -153,6 +158,7 @@ const WbsBoard = () => {
             // setWbsAssigneeList(sortBy(tempAssigneList, 'first_name'))
             // setResetAssigneeSelectValue({value:sessionStorage.getItem(USER_ID), label:profile.first_name+' '+profile.last_name})
         }
+       
         console.log('temp data', temp_data)
         setBoardData(temp_data)
 
@@ -225,6 +231,11 @@ const WbsBoard = () => {
     }
     const editWbs = (cardId, metadata, laneId) => {
         // console.log("WBS edit: ", cardId, metadata, laneId);
+<<<<<<< Updated upstream
+=======
+        
+        console.log("update", update)
+>>>>>>> Stashed changes
         currentLaneId = laneId;
         currentCardId = cardId;
         console.log(boardData.lanes.find(element => element.id == currentLaneId))
@@ -257,7 +268,13 @@ const WbsBoard = () => {
     }
 
     const updateStatus = (cardId, sourceLaneId, targetLaneId, position, cardDetails) => {
+<<<<<<< Updated upstream
         console.log("DRAG ENDS!!!: ", cardDetails.id)
+=======
+
+        console.log("DRAG ENDS!!!: ", cardDetails)
+       
+>>>>>>> Stashed changes
         let values;
         if (cardDetails.laneId == "lane1") {
             values = {
@@ -273,10 +290,15 @@ const WbsBoard = () => {
                 "status": 3
             }
         }
+        console.log("values", values)
         API.put('wbs/update/status/' + parseInt(cardDetails.id) + '/', values).then((res) => {
             console.log('update result', res)
             dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)))
         })
+        setUpdate (update+1)
+        //populate_data(values )
+        console.log("card deatails", cardDetails)
+        console.log("board data", boardData)
     }
 
     // filter wbs
@@ -300,13 +322,13 @@ const WbsBoard = () => {
         setResetAssigneeSelectValue(null)
     }
 
-    useEffect(() => {
-        // for (const property in checked) {
-        //     console.log(`${property}: ${checked[property]}`);
-        // }
-        // filter_wbs_project_wise(checked)
-        console.log('assignee changed')
-    }, [resetAssigneeSelectValue])
+    // useEffect(() => {
+    //     // for (const property in checked) {
+    //     //     console.log(`${property}: ${checked[property]}`);
+    //     // }
+    //     // filter_wbs_project_wise(checked)
+    //     console.log('assignee changed')
+    // }, [resetAssigneeSelectValue])
     const filter_wbs_project_wise = (options) => {
         let temp_wbs_list = []
         if(options.find(item => item.value == 'all')){
@@ -446,7 +468,7 @@ const WbsBoard = () => {
                 setDataLoaded(true)
             })
         }
-    }, [profile])
+    }, [profile, update])
     const custom_progress_style = {
         height: 5,
         borderRadius: 3,
