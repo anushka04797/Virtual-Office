@@ -39,6 +39,8 @@ import swal from "sweetalert";
 import { useHistory, useLocation } from "react-router-dom";
 import AddTimecardItms from "./addTimecardItem";
 import EditTimeCard from "./Edit";
+import { exportxl } from "../../helper";
+import { exportPdf } from "../../helper";
 
 const PreviousWeeks = () => {
   const profile_details = useSelector((state) => state.profile.data);
@@ -309,255 +311,30 @@ const PreviousWeeks = () => {
     /**export fetched tabledata to excel */
   }
 
-  const fileType =
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
-  const fileExtension = ".xlsx";
-  const exportToCSV = (pdfData, pdfTitle) => {
-    console.log("llllllll", usersData);
+  // const fileType =
+  //   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
+  // const fileExtension = ".xlsx";
+  // const exportToCSV = (pdfData, pdfTitle) => {
+  //   console.log("llllllll", usersData);
 
-    console.log("1111111111111111111111111111111111111111", pdfData);
-    const ws = XLSX.utils.json_to_sheet(pdfData);
-    var wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "");
-    var wbout = XLSX.write(wb, { bookType: "xlsx", type: "array" });
-    FileSaver.saveAs(
-      new Blob([wbout], { type: "application/octet-stream" }),
-      pdfTitle + ".xlsx"
-    );
+  //   console.log("1111111111111111111111111111111111111111", pdfData);
+  //   const ws = XLSX.utils.json_to_sheet(pdfData);
+  //   var wb = XLSX.utils.book_new();
+  //   XLSX.utils.book_append_sheet(wb, ws, "");
+  //   var wbout = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+  //   FileSaver.saveAs(
+  //     new Blob([wbout], { type: "application/octet-stream" }),
+  //     pdfTitle + ".xlsx"
+  //   );
 
-    // const wb = { Sheets: { data: ws }, SheetNames: ["Sheet1"] };
-    // const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
-    // const data = new Blob([excelBuffer], { type: fileType });
+  // };
 
-    // require('xlsx').readFile(pdfTitle + ".xlsx").Sheets.Merge['!merges']
-    // [ { s: { c: 0, r: 0 }, e: { c: 1, r: 1 } },  // <-- The cell A1 represents the range A1:B2
-    //   { s: { c: 2, r: 0 }, e: { c: 2, r: 1 } },  // <-- The cell C1 represents the range C1:C2
-    //   { s: { c: 0, r: 2 }, e: { c: 1, r: 2 } },  // <-- The cell A3 represents the range A3:B3
-    //   { s: { c: 3, r: 0 }, e: { c: 3, r: 1 } },  // <-- The cell D1 represents the range D1:D2
-    //   { s: { c: 0, r: 3 }, e: { c: 1, r: 3 } } ] // <-- The cell A4 represents the range A4:B4
-
-    //FileSaver.saveAs(data, fileName + fileExtension);
-  };
-
-  async function exportxl(pdfData, pdfTitle) {
-    //console.log("pdf", pdfData)
-    console.log("pdftitle", pdfTitle);
-    const ExcelJS = require("exceljs");
-    const workbook = new ExcelJS.Workbook();
-    const sheet = workbook.addWorksheet("sheet1");
-
-    sheet.mergeCells("C1:E2");
-    const customcell = sheet.getCell("C1");
-    customcell.value = "Datasoft Manufacturing & Assembly";
-    customcell.font = {
-      size: 15,
-      bold: true,
-    };
-    sheet.getCell("C1").alignment = {
-      horizontal: "center",
-      vertical: "center",
-    };
-    sheet.mergeCells("C3:E3");
-    const customcell1 = sheet.getCell("C3");
-    customcell1.value = "Gulshan Branch";
-    customcell1.font = {
-      size: 13,
-      bold: true,
-    };
-    customcell1.alignment = {
-      horizontal: "center",
-      vertical: "center",
-    };
-
-    sheet.mergeCells("A5:B5");
-    sheet.getCell("A5").value = "Employee Timecard";
-
-    sheet.mergeCells("F6:G6");
-    const endate = moment(endDate).format("DD/MM/YYYY");
-    sheet.getCell("F6").value = "Week-Ending: " + endDate;
-
-    sheet.mergeCells("A6:D6");
-    sheet.getCell("A6").value = "Name: " + pdfTitle;
-
-    var borderStyles = {
-      top: { style: "thin" },
-      left: { style: "thin" },
-      bottom: { style: "thin" },
-      right: { style: "thin" }
-    };
-
-    sheet.getRow(8).values = [
-      "WP",
-      "Project Name",
-      "Task Title",
-      "Description",
-      "Hour(s)",
-      "Type",
-      "Date Created",
-    ];
-    sheet.getRow(8).font = {
-      name: "Arial Black",
-      family: 3,
-      //color : { argb : '96c030' },
-      size: 10,
-      //bold: true
-    };
-    // sheet.getRow(9).alignment = {
-    //  horizontal : "center"
-    // }
-    sheet.getRow(8).height = 20;
-    sheet.columns = [
-      { key: "wp", width: 10 },
-      { key: "name", width: 30 },
-      { key: "task_title", width: 32 },
-      { key: "description", width: 32 },
-      { key: "hours", width: 17 },
-      { key: "type", width: 15 },
-      { key: "date_created", width: 15 },
-    ];
-
-    for (let i = 0; i < pdfData.length; i++) {
-      sheet.addRow({
-        wp: pdfData[i].data.project.work_package_number,
-        name: pdfData[i].data.project.sub_task,
-        task_title: pdfData[i].data.project.task_title,
-        description: pdfData[i].data.actual_work_done,
-        hours: pdfData[i].data.hours_today,
-        type: pdfData[i].data.time_type,
-        date_created: pdfData[i].data.date_created,
-      });
-    }
-    let row_num = pdfData.length + 11;
-    if(totalHrs!=0){
-    let cell_num = pdfData.length+8;
-    sheet.getRow(cell_num).values = [
-      '', '','','',
-      "Total=" + Number(totalHrs).toFixed(2),
-    ]
-  }
-
-    if (totalHrs != 0) {
-    sheet.getRow(row_num).values = [
-      "From " +
-        startDate +
-        " to " +
-        endDate 
-    ];
-  }
-
-    let day = new Date();
-    let time = day.toLocaleString("en-US", {
-      hour: "numeric",
-      minute: "numeric",
-      hour12: true,
-    });
-    day = moment(day).format("DD/MM/YY");
-    sheet.getRow(row_num + 1).values = ["Submitted : " + time + "  " + day];
-
-    // sheet.columns.forEach(column => {
-    //   column.border = {
-    //     top: { style: "thin" },
-    //     left: { style: "thin" },
-    //     bottom: { style: "thin" },
-    //     right: { style: "thin" }
-    //   };
-    // });
-
-
-
-    const buffer = await workbook.xlsx.writeBuffer(pdfData);
-    const fileType = "application/octet-stream";
-    const fileExtension = ".xlsx";
-    const blob = new Blob([buffer], { type: fileType });
-
-    const fileName = "Time Card of " + pdfTitle + fileExtension;
-    saveAs(blob, fileName);
-    console.log("dataaaaaaaaaa", pdfData.length);
-  }
+  
 
   {
     /**export data as pdf */
   }
-  const exportPDF = () => {
-    console.log("total hours ", totalHrs);
-    const unit = "pt";
-    const size = "A4"; // Use A1, A2, A3 or A4
-    const orientation = "portrait"; // portrait or landscape
 
-    const marginLeft = 40;
-    const doc = new jsPDF(orientation, unit, size);
-
-    doc.setFontSize(15);
-
-    const title = "Timecard of" + " " + pdfTitle;
-
-    const headers = [
-      [
-        "WP",
-        "Project Name",
-        "Task Title",
-        "Description",
-        "Hour(s)",
-        "Type",
-        "Date Created",
-      ],
-    ];
-
-    const uData = pdfData.map((elt, idx) => [
-      elt.data.project.work_package_number,
-      elt.data.project.sub_task,
-      elt.data.project.task_title,
-      elt.data.actual_work_done,
-      elt.data.hours_today,
-      elt.data.time_type,
-      elt.data.date_created,
-    ]);
-
-    let content = {
-      startY: 145,
-      head: headers,
-      body: uData,
-    };
-
-    let day = new Date();
-    let time = day.toLocaleString("en-US", {
-      hour: "numeric",
-      minute: "numeric",
-      hour12: true,
-    });
-    day = moment(day).format("DD/MM/YY");
-    const edate = moment(endDate).format("DD/MM/YYYY");
-
-    doc.setFontSize(17);
-    doc.text(170, 50, "Datasoft Manufacturing & Assembly");
-    doc.setFontSize(13);
-    doc.text(245, 75, "Gulshan Branch");
-    doc.setFontSize(11);
-    doc.text(42, 105, "Employee Time Card");
-    doc.text(410, 105, "Week-Ending: " + edate); //+ edate)
-    doc.text(42, 125, "Name: " + pdfTitle); //+ name)
-
-    let date = new Date();
-    console.log("date", date);
-    if (totalHrs != 0) {
-      doc.text(
-        315,
-        420,
-        "From " +
-          startDate +
-          " to " +
-          endDate +
-          "Total Hours " +
-          Number(totalHrs).toFixed(2)
-      );
-    }
-
-    doc.text(400, 435, "Submitted : " + time + "  " + day);
-
-    doc.autoTable(content);
-    doc.save("Timecard of" + " " + pdfTitle + ".pdf");
-    console.log("data", pdfData);
-  };
 
   const toggleModal = () => {
     setmodalAddItem(!modaladdItem);
@@ -671,14 +448,14 @@ const PreviousWeeks = () => {
             <div className="format-buttons mt-3 mb-3 ">
               <CButton
                 className="file-format-download"
-                onClick={() => exportPDF()}
+                onClick={() => exportPdf(pdfData, pdfTitle, endDate, totalHrs, startDate)}
               >
                 <CIcon name="cil-description" className="mr-2" /> PDF
               </CButton>
               <CButton
                 className="file-format-download"
                 onClick={
-                  () => exportxl(pdfData, pdfTitle)
+                  () => exportxl(pdfData, pdfTitle, endDate, totalHrs, startDate)
                   //exportToCSV(usersData, "Timecard of" + " " + pdfTitle)
                 }
               >
