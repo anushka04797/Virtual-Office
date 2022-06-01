@@ -378,7 +378,10 @@ const MyProjects = () => {
 
                 <div className="row">
                     <div className="col-md-12 col-lg-11 col-sm-12 col-xs-12 mt-1">
-                        <h4 className="dash-header">My Projects({Array.from(projects).length}) <CButton className="export-project-list" onClick={() => exportToCSV()}><CIcon name="cil-spreadsheet" className="mr-2" />Export to excel</CButton><CustomSearch search={search}/></h4>
+                        <h4 className="dash-header">My Projects({Array.from(projects).length})
+                            <CButton className="export-project-list" onClick={() => exportToCSV()}>
+                            <CIcon name="cil-spreadsheet" className="mr-2" />Export to excel</CButton><CustomSearch search={search}/>
+                        </h4>
                         {projects != undefined &&
                             <Accordion allowMultipleExpanded={false} className="remove-acc-bg  mb-3" allowZeroExpanded>
                                 {Array.from(projects).map((project, idx) => (
@@ -388,7 +391,7 @@ const MyProjects = () => {
 
                                                 <IconButton aria-label="favourite" disabled size="medium" >
                                                     <GradeIcon fontSize="inherit" className="fav-button" />
-                                                </IconButton>{String(project.project.sub_task).toUpperCase()}
+                                                </IconButton>{String(project.project.task_delivery_order.title).toUpperCase()+' / '+String(project.project.sub_task).toUpperCase()}
                                                 {/**action buttons */}
                                                 <span className="fix-action-btn-alignment">
                                                     <CButton className="view-ongoing-details" onClick={() => history.push({ pathname: '/dashboard/Projects/my-projects/details/' + project.project.work_package_number, state: { project: project } })}><CIcon name="cil-list-rich" className="mr-1" />View Details</CButton>
@@ -406,12 +409,10 @@ const MyProjects = () => {
                                             {/*Project category buttons */}
                                             <div className="all-da-buttons-1">
                                                 {Array.from(project.subtasks).length > 0 && Array.from(project.subtasks).map((task, idx) => (
-
                                                     <CButton key={idx} type="button" className="package-button rounded-pill" onClick={() => { setShowSubTaskDetails(true); setSelectedSubTask(task); console.log('task', task) }}>
                                                         {task.task_title}
                                                         <span className="tooltiptext">{task.work_package_index}</span>
                                                     </CButton>
-
                                                 ))}
                                             </div>
                                             {/*Project participants */}
@@ -419,7 +420,6 @@ const MyProjects = () => {
                                                 {project.assignees.length > 0 && Array.from(project.assignees).map((assignee, idx) => (
                                                     <CTooltip key={idx} content={capitalize(assignee.first_name + ' ' + assignee.last_name)} className="tooltiptext1">
                                                         <img key={idx} className="img-fluid worker-image" src={assignee.profile_pic != null ? BASE_URL + assignee.profile_pic : 'avatars/user-avatar-default.png'} />
-
                                                     </CTooltip>
                                                 ))}
                                             </div>

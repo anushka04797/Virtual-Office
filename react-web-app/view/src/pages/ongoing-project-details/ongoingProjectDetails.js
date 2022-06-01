@@ -295,7 +295,7 @@ const OngoingProjectDetails = () => {
 
                                                 <IconButton aria-label="favourite" disabled size="medium" >
                                                     <GradeIcon fontSize="inherit" className="fav-button" />
-                                                </IconButton>{String(project.project.sub_task).toUpperCase()}
+                                                </IconButton>{String(project.project.task_delivery_order.title).toUpperCase()+' / '+String(project.project.sub_task).toUpperCase()}
                                                 {/**action buttons */}
                                                 <span className="fix-action-btn-alignment">
                                                     <CButton className="view-ongoing-details" onClick={() => history.push({ pathname: '/dashboard/Projects/assigned-projects/details/' + project.project.work_package_number, state: { project: project } })}><CIcon name="cil-list-rich" className="mr-1" />View Details</CButton>

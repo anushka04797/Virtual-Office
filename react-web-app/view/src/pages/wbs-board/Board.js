@@ -260,6 +260,7 @@ const WbsBoard = () => {
         setModal(false)
         dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)))
         setModalData(null);
+        setUpdate(update+1)
     }
 
     const updateStatus = (cardId, sourceLaneId, targetLaneId, position, cardDetails) => {
@@ -278,20 +279,14 @@ const WbsBoard = () => {
                 "status": 3
             }
         }
-        console.log("values", values)
         API.put('wbs/update/status/' + parseInt(cardDetails.id) + '/', values).then((res) => {
-            console.log('update result', res)
             dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)))
+            setUpdate(update+1)
         })
-        setUpdate (update+1)
-        //populate_data(values )
-        console.log("card deatails", cardDetails)
-        console.log("board data", boardData)
     }
 
     // filter wbs
     const filterWbs = (newValue, actionMeta) => {
-        console.log("fn ran!!!", newValue, actionMeta);
         var temWbsList = wbsList;
         temWbsList = temWbsList.filter(item => item.assignee.id === newValue.value)
         populate_data(temWbsList)
@@ -324,9 +319,7 @@ const WbsBoard = () => {
         }
         else{
             for (let index=0;index<options.length;index++) {
-                console.log('option 1',options[index].value)
                 for (let index1 = 0; index1 < wbsList.length; index1++) {
-                    console.log('option 2',wbsList[index1].project.sub_task)
                     if (wbsList[index1].project.sub_task == options[index].value && wbsList[index1].assignee.id == resetAssigneeSelectValue.value) {
                         temp_wbs_list.push(wbsList[index1])
                     }
@@ -334,7 +327,6 @@ const WbsBoard = () => {
             }
             
         }
-        console.log(temp_wbs_list)
         // let temWbsList = wbsList.filter(item => item.assignee.id === newValue.value)
         populate_data(temp_wbs_list)
     }

@@ -19,8 +19,6 @@ import AssignedProjectsPopover from './inc/AssignedProjectsPopover';
 import { useHistory } from 'react-router';
 import { useSnackbar } from "notistack";
 
-
-
 const CreateNewProject = () => {
   const colourStyles = {
     // control: (styles, state) => ({ ...styles,height:"35px", fontSize: '14px !important', lineHeight: '1.42857', borderRadius: "8px",borderRadius:".25rem",color:"rgb(133,133,133)",border:state.isFocused ? '2px solid #0065ff' :'inherit'}),
@@ -29,7 +27,7 @@ const CreateNewProject = () => {
   let history = useHistory()
   const dispatch = useDispatch()
   const [selectedTDO, setSelectedTDO] = useState()
-  const [selectedTDODetails, setSelectedTDODetails] = useState()
+  
   const [selectedSubTask, setSelectedSubTask] = useState()
   const [selectedTaskTitle, setSelectedTaskTitle] = useState()
   const [work_package_number, setWorkPackageNumber] = useState()
@@ -43,21 +41,17 @@ const CreateNewProject = () => {
   const [isWpInputdisabled, setIsWpInputdisabled] = useState(false)
   const [selectedAssigneeExistingEP,setSelectedAssigneeExistingEP]=useState(0)
   //tdo list states and functions
-  const tdo_list = useSelector(state => state.projects.tdo_list)
+  
   const new_tdo_list = useSelector(state => sortBy(state.tdo.data, 'label'))
   const [remaining_EP, setRemaining_EP] = useState(1)
   
   const handleTDOChange = (newValue, actionMeta) => {
-    console.log("TDO details: ", newValue.value.details);
+    console.log("TDO", newValue.value);
     if (actionMeta.action == 'select-option') {
       formCreateProject.setFieldValue('task_delivery_order', newValue.value.title)
       formCreateProject.setFieldValue('tdo_details', newValue.value.details)
       setSelectedTDO(newValue)
       setSubTaskList(get_sub_tasks(newValue.value.title))
-      // setWorkPackages(get_work_packages(newValue.value.title))
-      // console.group('Value Changed', newValue.value);
-      // console.log('form values', formCreateProject.values)
-      // console.groupEnd();
     }
     else if (actionMeta.action == 'clear') {
       setSelectedTDO(null)
@@ -69,30 +63,12 @@ const CreateNewProject = () => {
     }
   };
 
-  const handleTdoDetailsChange = (event) => {
-    console.log("TDO details: ", event.target.value);
-    formCreateProject.setFieldValue('tdo_details', event.target.value)
-  }
-
-  const handleTDOInputChange = (inputValue, actionMeta) => {
-    // console.log(`action: ${actionMeta.action}`);
-    // if(inputValue.length>0){
-    //   formCreateProject.setFieldValue('task_delivery_order',inputValue)
-    //   dispatch(push_item({value:inputValue,label:inputValue}))
-    //   setSubTaskList(get_sub_tasks(inputValue))
-    //   setWorkPackages(get_work_packages(inputValue))
-    //   console.group('setting value',inputValue)
-    // }
-    console.groupEnd();
-  };
-
   const handleTDOCreate = (inputValue) => {
+    console.log('created TDO',inputValue)
     formCreateProject.setFieldValue('task_delivery_order', inputValue)
     dispatch(push_item({ value: inputValue, label: inputValue }))
     setSubTaskList(get_sub_tasks(inputValue))
-    // setWorkPackages(get_work_packages(inputValue))
     setSelectedTDO({ value: inputValue, label: inputValue })
-    // console.group('setting value', inputValue)
   }
 
   let task_title_array = [
@@ -147,18 +123,12 @@ const CreateNewProject = () => {
       })
     })
     temp = temp.filter((value, index, array) => array.findIndex((t) => t.work_package_number === value.work_package_number) === index)
-    console.log("sort bY subtask", sortBy(temp, 'label'))
     return sortBy(temp, 'label');
-  }
-
-  const valid_date = (current) => {
-    let yesterday = moment().subtract(1, 'day')
-    return current.isAfter(yesterday);
   }
   
   const handleSubTaskChange = (newValue, actionMeta) => {
     if (actionMeta.action == 'select-option') {
-      // console.log('sub task', newValue)
+      console.log(newValue)
       setSelectedSubTask(newValue)
       formCreateProject.setValues({
         task_delivery_order: formCreateProject.values.task_delivery_order,
@@ -176,9 +146,9 @@ const CreateNewProject = () => {
         planned_value: formCreateProject.values.planned_value,
         remaining_hours: formCreateProject.values.planned_hours
       })
-      setWorkPackageNumber(newValue.work_package_number)
+      // setWorkPackageNumber(newValue.work_package_number)
+      setWorkPackageNumber(newValue.work_package_number?newValue.work_package_number:Math.max(work_package_numbers)+1)
       setIsWpInputdisabled(true)
-      // console.log('values', formCreateProject.values)
     }
     else if (actionMeta.action == 'clear') {
       setSelectedSubTask(null)
@@ -195,7 +165,6 @@ const CreateNewProject = () => {
 
   const handleTaskTitleChange = (newValue, actionMeta) => {
     if (actionMeta.action == 'select-option') {
-      console.log('task title:::', newValue)
       setSelectedTaskTitle(newValue)
       formCreateProject.setValues({
         task_delivery_order: formCreateProject.values.task_delivery_order,
@@ -230,13 +199,12 @@ const CreateNewProject = () => {
   }
 
   const handleSubTaskCreate = (inputValue) => {
-    // console.log('created', inputValue)
-    // formCreateProject.setFieldValue('sub_task', inputValue)
+    console.log(work_package_numbers)
+
     setSubTaskList([...sub_task_list, { value: inputValue, label: inputValue }])
-    // setWorkPackages(get_work_packages(inputValue))
     setSelectedSubTask({ value: inputValue, label: inputValue })
-    setWorkPackageNumber('')
-    setIsWpInputdisabled(false)
+    setWorkPackageNumber(Math.max(work_package_numbers)+1)
+    setIsWpInputdisabled(true)
     formCreateProject.setValues({
       task_delivery_order: formCreateProject.values.task_delivery_order,
       tdo_details: formCreateProject.values.tdo_details,
@@ -253,7 +221,6 @@ const CreateNewProject = () => {
       planned_value: formCreateProject.values.planned_value,
       remaining_hours: formCreateProject.values.planned_hours
     })
-    // console.log('top work_package_numbers', Math.max(work_package_numbers)+10)
   }
 
   const handleTaskTitleCreate = (inputValue) => {
@@ -269,83 +236,7 @@ const CreateNewProject = () => {
     return false
   }
 
-  const handleWorkPackageCreate = (value) => {
-    setWorkPackageNumber({ value: value, label: value })
-    // setWorkPackages([...work_packages, { value: value, label: value }])
-    formCreateProject.setFieldValue('work_package_number', String(value))
-  }
-
-  const handleWorkPackageNumberChange = (newValue, actionMeta) => {
-    if (actionMeta.action == 'select-option') {
-      // console.log('selected work package', newValue)
-      setWorkPackageNumber(newValue.value.replace(/\D/g, ""))
-      formCreateProject.setFieldValue('work_package_number', String(newValue.value))
-    }
-    else if (actionMeta.action == 'clear') {
-      setSelectedSubTask(null)
-      setWorkPackageNumber(null)
-      formCreateProject.setFieldValue('work_package_number', '')
-    }
-  }
-
   const [total_working_days, setTotalWorkingDays] = useState(0)
-
-  const handleAssigneeChange = (value, actionMeta) => {
-    setSelectedAssignees(value)
-    // if (actionMeta.action == 'select-option') {
-    let single_planned_value = 0;
-    let temp = []
-    console.log('values', value)
-    value.forEach((item, idx) => {
-      temp.push(item.data.id)
-      if (item.data.slc_details != null) {
-        single_planned_value += parseInt(item.data.slc_details.hourly_rate) * parseInt(total_working_days) * 8
-      }
-    })
-    formCreateProject.setValues({
-      task_delivery_order: formCreateProject.values.task_delivery_order,
-      tdo_details: formCreateProject.values.tdo_details,
-      sub_task: formCreateProject.values.sub_task,
-      description: formCreateProject.values.description,
-      work_package_number: formCreateProject.values.work_package_number,
-      task_title: formCreateProject.values.task_title,
-      estimated_person: formCreateProject.values.estimated_person,
-      start_date: formCreateProject.values.start_date,
-      planned_delivery_date: formCreateProject.values.planned_delivery_date,
-      assignee: temp,
-      pm: sessionStorage.getItem(USER_ID),
-      planned_hours: formCreateProject.values.planned_hours,
-      planned_value: parseFloat(single_planned_value),
-      remaining_hours: formCreateProject.values.planned_hours
-    })
-    // }
-    console.log(value, actionMeta.action)
-  }
-
-  const handleEPChange = (event) => {
-    console.log(selectedAssignees)
-    setSelectedAssigneesEP(event.target.value)
-    let temp = []
-    temp.push(parseInt(event.target.value))
-    if (total_working_days > 0) {
-      formCreateProject.setValues({
-        task_delivery_order: formCreateProject.values.task_delivery_order,
-        tdo_details: formCreateProject.values.tdo_details,
-        sub_task: formCreateProject.values.sub_task,
-        description: formCreateProject.values.description,
-        work_package_number: formCreateProject.values.work_package_number,
-        task_title: formCreateProject.values.task_title,
-        estimated_person: temp,
-        start_date: formCreateProject.values.start_date,
-        planned_delivery_date: formCreateProject.values.planned_delivery_date,
-        assignee: formCreateProject.values.assignee,
-        pm: sessionStorage.getItem(USER_ID),
-        planned_hours: ((total_working_days * 8) * event.target.value).toFixed(1),
-        planned_value: formCreateProject.values.planned_value,
-        remaining_hours: formCreateProject.values.planned_hours
-      })
-    }
-  }
 
   const [isWpExist, setisWpExist] = useState(false)
 
@@ -359,7 +250,6 @@ const CreateNewProject = () => {
       setisWpExist(false)
     }
     formCreateProject.setFieldValue('work_package_number', String(inputValue))
-    // }
   }
 
   function isDateBeforeToday(date) {
@@ -379,24 +269,17 @@ const CreateNewProject = () => {
         return { wp: true, sub_task: false }
       }
     })
-
   }
 
   const validate_create_project_form = (values) => {
-    // console.log('validating values ', values)
-    // console.log('WP list ', is_wp_subtask_valid(values.sub_task, values.work_package_number))
     const errors = {}
     if (!values.task_delivery_order) errors.task_delivery_order = "Task Delivery Order is required"
     if (!values.sub_task) errors.sub_task = "Sub Task is required"
     if (!values.work_package_number) errors.work_package_number = "Work Package Number is required"
-    // if (values.sub_task && values.work_package_number && is_wp_subtask_valid(values.sub_task,values.work_package_number)) errors.work_package_number="This work package number already exists"
     if (!values.task_title) errors.task_title = "Task title is required"
     if (!values.planned_delivery_date) errors.planned_delivery_date = "Invalid planned delivery date"
-    // if (work_package_numbers.includes(values.work_package_number)) errors.work_package_number = "This work package number already exists"
-    // if (existing_sub_tasks.includes(values.sub_task)) errors.sub_task = "This Sub task name already exists"
-    // if (!values.estimated_person ) errors.estimated_person = "Invalid estimated person number"
     if (isDateBeforeToday(values.planned_delivery_date)) errors.planned_delivery_date = "Invalid planned delivery date"
-    // console.log('validating errors ', errors)
+    
     return errors
   }
 
@@ -473,7 +356,7 @@ const CreateNewProject = () => {
       setAssignees(sortBy(temp, 'label'))
     })
     API.get('project/work-package-numbers/').then((res) => {
-      console.log('WP list', res.data.wp)
+      console.log('WP list', res.data)
       let temp = []
       Array.from(res.data.wp).forEach((item, idx) => {
         temp.push(item)
@@ -635,15 +518,8 @@ const CreateNewProject = () => {
       list[index][name] = value;
       setInputList(list);
     }
-
   };
 
-  // handle click event of the Remove button
-  const handleRemoveClick = index => {
-    const list = [...inputList];
-    list.splice(index, 1);
-    setInputList(list);
-  };
 
   function populate_planned_value_and_hours(inputList) {
     let total_planned_value = 0
@@ -742,13 +618,11 @@ const CreateNewProject = () => {
                           placeholder="Select from list or create new"
                           isClearable={false}
                           onChange={handleTDOChange}
-                          onInputChange={handleTDOInputChange}
+                          // onInputChange={handleTDOInputChange}
                           onCreateOption={handleTDOCreate}
                           classNamePrefix="custom-forminput-6"
                           value={selectedTDO}
                           options={new_tdo_list}
-                          // getOptionLabel= {option=>option.task_delivery_order}
-                          // getOptionValue = {option=>option.task_delivery_order}
                           styles={colourStyles}
                         />
                         {formCreateProject.touched.task_delivery_order && formCreateProject.errors.task_delivery_order && <small style={{ color: 'red' }}>{formCreateProject.errors.task_delivery_order}</small>}
@@ -772,7 +646,7 @@ const CreateNewProject = () => {
                           placeholder="Select from list or create new"
                           isClearable={false}
                           onChange={handleSubTaskChange}
-                          onInputChange={handleSubTaskInputChange}
+                          // onInputChange={handleSubTaskInputChange}
                           onCreateOption={handleSubTaskCreate}
                           classNamePrefix="custom-forminput-6"
                           value={selectedSubTask}
@@ -789,25 +663,10 @@ const CreateNewProject = () => {
                         <CLabel className="custom-label-5" htmlFor="workPackageNo">
                           Work Package Number * <span className="input-alert-msg">{isWpExist && "(Work Package exists)"}</span>
                         </CLabel>
-                        {/* {<CreatableSelect
-                          closeMenuOnSelect={true}
-                          aria-labelledby="workPackageNo"
-                          id="workPackageNo"
-                          placeholder="Select from list or create new"
-                          isClearable={true}
-                          onChange={handleWorkPackageNumberChange}
-                          onInputChange={handleWorkPackageInputChange}
-                          onCreateOption={handleWorkPackageCreate}
-                          classNamePrefix="custom-forminput-6"
-                          value={work_package_number}
-                          options={work_packages}
-                          getOptionLabel={option => option.label}
-                          getOptionValue={option => option.value}
-                          styles={colourStyles}
-                        />} */}
+                        
                         <CInput id='work_package_number' name='work_package_number' type='number' onChange={(e) => { setWorkPackageNumber(e.target.value); handleWorkPackageInputChange(e.target.value) }} value={work_package_number} disabled={isWpInputdisabled}></CInput>
                         {!isWpInputdisabled && work_package_numbers.length > 0 && <div className="input-info-msg">
-                          WP #{parseInt(Math.max(...work_package_numbers) + 10)} is available
+                          WP #{parseInt(Math.max(...work_package_numbers) + 1)} is available
                           {/* {work_package_numbers.map((item, idx) => (
                             <span key={idx}>{item}<span>{(idx + 1 !== work_package_numbers.length) && ", "}</span></span>
                             // <span>{", " +idx + work_package_numbers.length}</span>
