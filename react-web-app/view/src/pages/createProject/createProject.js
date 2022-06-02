@@ -135,7 +135,7 @@ const CreateNewProject = () => {
         tdo_details: formCreateProject.values.tdo_details,
         sub_task: newValue.value,
         description: newValue.description,
-        work_package_number: newValue.work_package_number,
+        work_package_number: newValue.work_package_number?newValue.work_package_number:Math.max(...work_package_numbers)+1,
         task_title: formCreateProject.values.task_title,
         estimated_person: formCreateProject.values.estimated_person,
         start_date: formCreateProject.values.start_date,
@@ -147,7 +147,7 @@ const CreateNewProject = () => {
         remaining_hours: formCreateProject.values.planned_hours
       })
       // setWorkPackageNumber(newValue.work_package_number)
-      setWorkPackageNumber(newValue.work_package_number?newValue.work_package_number:Math.max(work_package_numbers)+1)
+      setWorkPackageNumber(newValue.work_package_number?newValue.work_package_number:Math.max(...work_package_numbers)+1)
       setIsWpInputdisabled(true)
     }
     else if (actionMeta.action == 'clear') {
@@ -203,14 +203,14 @@ const CreateNewProject = () => {
 
     setSubTaskList([...sub_task_list, { value: inputValue, label: inputValue }])
     setSelectedSubTask({ value: inputValue, label: inputValue })
-    setWorkPackageNumber(Math.max(work_package_numbers)+1)
+    setWorkPackageNumber(Math.max(...work_package_numbers)+1)
     setIsWpInputdisabled(true)
     formCreateProject.setValues({
       task_delivery_order: formCreateProject.values.task_delivery_order,
       tdo_details: formCreateProject.values.tdo_details,
       sub_task: inputValue,
       description: '',
-      work_package_number: '',
+      work_package_number: Math.max(...work_package_numbers)+1,
       task_title: formCreateProject.values.task_title,
       estimated_person: formCreateProject.values.estimated_person,
       start_date: formCreateProject.values.start_date,
