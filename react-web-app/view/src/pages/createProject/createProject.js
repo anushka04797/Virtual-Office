@@ -149,6 +149,7 @@ const CreateNewProject = () => {
       // setWorkPackageNumber(newValue.work_package_number)
       setWorkPackageNumber(newValue.work_package_number?newValue.work_package_number:Math.max(...work_package_numbers)+1)
       setIsWpInputdisabled(true)
+      
     }
     else if (actionMeta.action == 'clear') {
       setSelectedSubTask(null)
