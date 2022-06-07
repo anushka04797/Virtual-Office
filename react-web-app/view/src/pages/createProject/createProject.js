@@ -289,7 +289,6 @@ const CreateNewProject = () => {
     setSelectedSubTask(null)
     setSelectedTDO(null)
     setWorkPackageNumber(null)
-    setAssignees([])
     setInputList([])
     setSelectedAssigneesEP(0)
     setSelectedAssignees(null)
@@ -343,6 +342,7 @@ const CreateNewProject = () => {
   })
 
   function handlePlannedDeliveryDateChange(event) {
+    setInputList([])
     dateRange(formCreateProject.values.start_date, event.target.value)
   }
 
@@ -710,7 +710,7 @@ const CreateNewProject = () => {
                         <CLabel className="custom-label-5">
                           Start Date
                         </CLabel>
-                        <CInput id="start_date" name="start_date" value={formCreateProject.values.start_date} onChange={(event) => { formCreateProject.handleChange(event) }} className="custom-forminput-6" type="date" />
+                        <CInput id="start_date" name="start_date" value={formCreateProject.values.start_date} onChange={(event) => { formCreateProject.handleChange(event);setInputList([]) }} className="custom-forminput-6" type="date" />
                         {formCreateProject.touched.start_date && formCreateProject.errors.start_date && <small style={{ color: 'red' }}>{formCreateProject.errors.start_date}</small>}
                       </div>
                       {/**Planned delivery date */}
@@ -756,7 +756,7 @@ const CreateNewProject = () => {
                                 placeholder="Select from list"
                                 isClearable={false}
                                 isMulti={false}
-                                onChange={(v, i) => { setSelectedAssignees(v); setSelectedAssigneesEP(remaining_EP); setSelectedAssigneeExistingEP(v.data.total_ep) }}
+                                onChange={(v, i) => { setSelectedAssignees(v); setSelectedAssigneesEP(remaining_EP); setSelectedAssigneeExistingEP(v.data.total_ep)}}
                                 classNamePrefix="custom-forminput-6"
                                 value={selectedAssignees}
                                 options={assignees ? assignees : []}

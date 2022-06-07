@@ -393,7 +393,7 @@ const MyProjectsDetailsView = () => {
             });
     }
     function handlePlannedDeliveryDateChange(event) {
-        // editForm.handleChange(event);
+        setInputList([])
         dateRange(editForm.values.start_date, event.target.value)
     }
     function dateRange(startDate, endDate) {
@@ -599,7 +599,7 @@ const MyProjectsDetailsView = () => {
                                         <CLabel className="custom-label-5">
                                             Start Date
                                         </CLabel>
-                                        <CInput id="start_date" name="start_date" value={editForm.values.start_date} onChange={(event) => { editForm.handleChange(event) }} className="custom-forminput-6" type="date" />
+                                        <CInput id="start_date" name="start_date" value={editForm.values.start_date} onChange={(event) => { editForm.handleChange(event);setInputList([]) }} className="custom-forminput-6" type="date" />
                                         {editForm.touched.start_date && editForm.errors.start_date && <small style={{ color: 'red' }}>{editForm.errors.start_date}</small>}
                                     </div>
                                     {/**Planned delivery date */}
