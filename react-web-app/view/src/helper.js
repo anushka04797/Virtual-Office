@@ -134,7 +134,7 @@ export async function exportxl(pdfData, pdfTitle, endDate, totalHrs, startDate) 
 
     sheet.mergeCells("F6:G6");
     const endate = moment(endDate).format("DD/MM/YYYY");
-    sheet.getCell("F6").value = "Week-Ending: " + endDate;
+    //sheet.getCell("F6").value = "Week-Ending: " + endDate;
 
     sheet.mergeCells("A6:D6");
     sheet.getCell("A6").value = "Name: " + pdfTitle;
@@ -207,14 +207,14 @@ export async function exportxl(pdfData, pdfTitle, endDate, totalHrs, startDate) 
       hour12: true,
     });
     day = moment(day).format("DD/MM/YY");
-    sheet.getRow(row_num + 1).values = ["Submitted : " + time + "  " + day];
+    //sheet.getRow(row_num + 1).values = ["Submitted : " + time + "  " + day];
 
     const buffer = await workbook.xlsx.writeBuffer(pdfData);
     const fileType = "application/octet-stream";
     const fileExtension = ".xlsx";
     const blob = new Blob([buffer], { type: fileType });
 
-    const fileName = "Time Card of " + pdfTitle + fileExtension;
+    const fileName = "Actual Hours of " + pdfTitle + fileExtension;
     saveAs(blob, fileName);
     
   } 
@@ -230,7 +230,7 @@ export async function exportxl(pdfData, pdfTitle, endDate, totalHrs, startDate) 
 
     doc.setFontSize(15);
 
-    const title = "Timecard of" + " " + pdfTitle;
+   
 
     const headers = [
       [
@@ -274,28 +274,28 @@ export async function exportxl(pdfData, pdfTitle, endDate, totalHrs, startDate) 
     doc.setFontSize(13);
     doc.text(245, 75, "Gulshan Branch");
     doc.setFontSize(11);
-    doc.text(42, 105, "Employee Time Card");
-    doc.text(410, 105, "Week-Ending: " + edate); //+ edate)
+    doc.text(42, 105, "Actual Worked Hours");
+    // doc.text(410, 105, "Week-Ending: " + edate); //+ edate)
     doc.text(42, 125, "Name: " + pdfTitle); //+ name)
-
+    doc.autoTable(content);
     let date = new Date();
     console.log("date", date);
     if (totalHrs != 0) {
       doc.text(
-        315,
-        420,
+        42,
+        doc.lastAutoTable.finalY+25,
         "From " +
           startDate +
           " to " +
-          endDate +
-          "Total Hours " +
-          Number(totalHrs).toFixed(2)
+          endDate 
+         
       );
     }
-
-    doc.text(400, 435, "Submitted : " + time + "  " + day);
-
-    doc.autoTable(content);
-    doc.save("Timecard of" + " " + pdfTitle + ".pdf");
+    doc.text(430, doc.lastAutoTable.finalY+25, " Total Hours " + Number(totalHrs).toFixed(2))
+    //doc.text(396, doc.lastAutoTable.finalY+25, "Submitted : " + time + "  " + day);
+   
+    
+    
+    doc.save( "Actual Worked Hours " + pdfTitle + ".pdf");
     console.log("data", pdfData);
   };

@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { CCardBody, CCard, CForm, CButton, CInput, CBadge, CModal, CModalHeader, CModalTitle, CModalBody, CContainer, CRow, CCol, CLabel, CTextarea } from '@coreui/react'
+import { CCardBody, CCard, CForm, CButton, CInput, CBadge, CModal, CModalHeader, CModalTitle, CModalBody, CContainer, CRow, CCol, CLabel, CTextarea,  CCardFooter  } from '@coreui/react'
 
 import '../ongoing-project-details-view/OngoingProjectDetailsView.css';
 import CIcon from '@coreui/icons-react';
@@ -729,6 +729,9 @@ const MyProjectsDetailsView = () => {
                                         </div>
                                     </div>
                                 </CCardBody>
+                                <CCardFooter row>
+                                     <CButton type='button' className="create-wbs-from-modal float-right" size='sm' onClick={() => history.push({ pathname: '/dashboard/WBS/create-wbs',state:{task:subtask} })}>Create WBS</CButton>
+                                </CCardFooter>
                             </CCard>))}
                     </div>
                 </div>

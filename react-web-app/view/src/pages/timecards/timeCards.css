@@ -108,6 +108,10 @@ margin-bottom: 20px;
     background-color: #0066ffa2;
     color: white;
 }
+.a:hover{
+    background-color: #0066ffa2;
+}
+
 /*media query*/
 @media all and (min-width:300px) and (max-width:600px){
     .generate-card-button{
