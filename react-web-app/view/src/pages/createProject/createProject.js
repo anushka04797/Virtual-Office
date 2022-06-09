@@ -296,7 +296,11 @@ const CreateNewProject = () => {
         dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)))
         dispatch(fetchProjectsThunk(sessionStorage.getItem(USER_ID)))
         setSelectedAssignees([])
-        swal('Created!', 'Successfuly Created', 'success')
+        swal('Created!', 'Successfully Created', 'success').then((e) => {
+          // if (e) {
+          //   window.location.reload()
+          // }
+        })
       } else {
         swal('Failed!', 'Project Creation failed', 'failed')
       }

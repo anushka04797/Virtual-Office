@@ -28,6 +28,7 @@ import swal from "sweetalert";
 import AddTimecardItms from "./addTimecardItem";
 import EditTimeCard from "./Edit";
 import { fetchAllTimecardsPmThunk, fetchTimecardThunk } from "../../store/slices/TimecardSlice";
+import { useLocation } from "react-router-dom";
 
 const TimeCards = () => {
   const profile_details = useSelector((state) => state.profile.data);
@@ -54,6 +55,7 @@ const TimeCards = () => {
   const [row, setRow] = useState();
 
   const getTimeCards = (values) => {
+    
     console.log("working");
     setStartDate(values.startDate);
     setEndDate(values.todate);
@@ -168,6 +170,7 @@ const TimeCards = () => {
     }
   };
   const get_assignee_tc=(assignee)=>{
+    console.log('get_tc',assignee)
     const { start, end } = dateRange();
     setPdfTitle(assignee.first_name+' '+assignee.last_name)
     API.get(
@@ -303,7 +306,17 @@ const TimeCards = () => {
     }
     
   }, [update]);
-  
+  useEffect(()=>{
+    if (location.state?.assignee && assigneeList.length>0) {
+      let assignee_id = location.state.assignee;
+      console.log("predefined id", assignee_id);
+      console.log("found user", assigneeList.find(item=>item.value==assignee_id));
+      // setSelectedAssignee(assigneeList.find(item=>item.value==assignee_id))
+      setSelectedAssignee(assigneeList.find(item=>item.value==assignee_id));
+      setPdfTitle(assigneeList.find(item=>item.value==assignee_id).label);
+      get_assignee_tc(assigneeList.find(item=>item.value==assignee_id).data)
+    }
+  },[assigneeList])
   const validateEditForm = (values) => {
     const errors = {};
 
@@ -400,8 +413,9 @@ const TimeCards = () => {
      
       let date = new Date();
       doc.autoTable(content);
-      doc.text(115, doc.lastAutoTable.finalY+25, "From " + startDate + " to " + endDate + "Total Hours " + Number(totalHrs).toFixed(2))
-      doc.text(400, doc.lastAutoTable.finalY+25, "Submitted : " + time + "  " + day);
+      doc.text(42, doc.lastAutoTable.finalY+25, "From " + startDate + " to " + endDate )
+      doc.text(250, doc.lastAutoTable.finalY+25, " Total Hours " + Number(totalHrs).toFixed(2))
+      doc.text(396, doc.lastAutoTable.finalY+25, "Submitted on : " + time + "  " + day);
       // doc.save("Timecard of" + " " + pdfTitle + ".pdf");
       return doc
   };
@@ -508,9 +522,11 @@ const TimeCards = () => {
     satday = moment(satday).format('YYYY-MM-DD')
     return satday;
   };
+  let location = useLocation();
   React.useEffect(() => {
     dateRange()
     nextSatDay();
+    
   }, []);
 
   const show_add_item_btn = () => {

@@ -38,7 +38,7 @@ import WBSFileUpload from "../../components/wbs-docs-upload/WBSFileUpload";
 
 const CreateNewWBS = () => {
   const dispatch = useDispatch();
-  let location = useLocation();
+ 
   const remaining_hours = (remaining, total) => {
     return String(parseFloat(total) - parseFloat(remaining));
   };
@@ -389,8 +389,9 @@ const CreateNewWBS = () => {
       }
     });
   }
-
+  let location = useLocation();
   React.useEffect(() => {
+    console.log("location ", location)
     if (location.state?.task) {
       let task = location.state.task;
       console.log("location data if block", task);

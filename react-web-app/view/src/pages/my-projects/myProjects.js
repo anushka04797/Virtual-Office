@@ -1,490 +1,914 @@
-import React, { useState, useEffect } from 'react'
-import { fetchProjectsForPMThunk, fetchProjectsThunk } from '../../store/slices/ProjectsSlice';
-import '../ongoing-project-details/ongoingProjectDetails.css';
-import { CTooltip, CCol, CAlert, CCard, CCardBody, CButton, CModal, CModalHeader, CModalBody, CContainer, CForm, CRow, CLabel, CInput, CModalTitle } from '@coreui/react';
-import GradeIcon from '@material-ui/icons/Grade';
-import IconButton from '@material-ui/core/IconButton';
+import React, { useState, useEffect } from "react";
+import {
+  fetchProjectsForPMThunk,
+  fetchProjectsThunk,
+} from "../../store/slices/ProjectsSlice";
+import "../ongoing-project-details/ongoingProjectDetails.css";
+import {
+  CTooltip,
+  CCol,
+  CAlert,
+  CCard,
+  CCardBody,
+  CButton,
+  CModal,
+  CModalHeader,
+  CModalBody,
+  CContainer,
+  CForm,
+  CRow,
+  CLabel,
+  CInput,
+  CModalTitle,
+} from "@coreui/react";
+import GradeIcon from "@material-ui/icons/Grade";
+import IconButton from "@material-ui/core/IconButton";
 import CIcon from "@coreui/icons-react";
 import { useHistory } from "react-router-dom";
-import { useDispatch, useSelector } from 'react-redux';
-import { BASE_URL, USER_ID } from '../../Config';
-import { API } from '../../Config';
-import swal from 'sweetalert'
+import { useDispatch, useSelector } from "react-redux";
+import { BASE_URL, USER_ID } from "../../Config";
+import { API } from "../../Config";
+import swal from "sweetalert";
 import Select from "react-select";
-import { arrayRemoveItem, has_permission } from '../../helper';
-import uniq from 'lodash/uniq';
+import { arrayRemoveItem, has_permission } from "../../helper";
+import uniq from "lodash/uniq";
 import {
-    Accordion,
-    AccordionItem,
-    AccordionItemHeading,
-    AccordionItemButton,
-    AccordionItemPanel,
-} from 'react-accessible-accordion';
-import 'react-accessible-accordion/dist/fancy-example.css';
-import LinearWithValueLabel from '../../components/linear-progress-bar/linear-progress-bar';
-import './myProjects.css'
-import * as FileSaver from 'file-saver';
-import * as XLSX from 'xlsx';
-import capitalize from '@material-ui/utils/capitalize';
-import CustomSearch from '../../components/CustomSearch/CustomSearch';
-import SearchResult from './inc/SearchResult'
+  Accordion,
+  AccordionItem,
+  AccordionItemHeading,
+  AccordionItemButton,
+  AccordionItemPanel,
+} from "react-accessible-accordion";
+import "react-accessible-accordion/dist/fancy-example.css";
+import LinearWithValueLabel from "../../components/linear-progress-bar/linear-progress-bar";
+import "./myProjects.css";
+import * as FileSaver from "file-saver";
+import * as XLSX from "xlsx";
+import capitalize from "@material-ui/utils/capitalize";
+import CustomSearch from "../../components/CustomSearch/CustomSearch";
+import SearchResult from "./inc/SearchResult";
 
 const MyProjects = () => {
-    let history = useHistory();
-    const dispatch = useDispatch();
-    const [pmStatus, setPmStatus] = useState(1);
-    const [status, setStatus] = useState({});
-    const [managers, setManagers] = useState([])
-    const [currentPM, setPM] = useState()
+  let history = useHistory();
+  const dispatch = useDispatch();
+  const [pmStatus, setPmStatus] = useState(1);
+  const [status, setStatus] = useState({});
+  const [managers, setManagers] = useState([]);
+  const [currentPM, setPM] = useState();
+  const [selectedTdo, setSelectedTdo] = useState([]);
 
-    const handlePMChange = (option, actionMeta) => {
-        setPM(option)
-    }
-    const changePM = (wp) => {
-        API.put('project/change-project-manager/', { wp: wp, pm: currentPM.value }).then((res) => {
-            if (res.status == 200 && res.data.success == 'True') {
-                setStatus({ project: null })
-                setPM(null)
-                dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)))
-                swal('Updated!', 'Project manager changed successfully', 'success')
-            }
-        })
-    }
-    //const projects=useSelector(state=> state.projects.data.filter((item)=> project.project.status === 0))
-    const projects = useSelector(state => {
-        let temp = []
-        state.projects.pm_projects.forEach((item, idx) => {
-            if (item.project.status == 0) {
-                temp.push(item)
-                // temp_statues.push(false)
-            }
-        })
-        // setStatuses(temp_statues)
-        // console.log('temp', temp)
-        return temp
-    })
-    const [show_sub_task_details, setShowSubTaskDetails] = useState(false)
-    const [selectedSubTask, setSelectedSubTask] = useState()
-    useEffect(() => {
-        window.scrollTo(0, 0);
-        console.log('my projects', projects)
-        dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)))
-        API.get('project/managers/').then((res) => {
-            // console.log('res', res.data.data)
-            let temp = []
-            Array.from(res.data.data).forEach((manager, idx) => {
-                temp.push({ value: manager.id, label: manager.first_name + ' ' + manager.last_name, data: manager })
-                if (manager.id == sessionStorage.getItem(USER_ID)) {
-                    setPM({ value: manager.id, label: manager.first_name + ' ' + manager.last_name, data: manager })
-                }
-            })
-            setManagers(temp)
-        })
-    }, [])
-    const mark_project_completed = (id) => {
-        swal({
-            title: "Are you sure?",
-            text: "You can change project status later!",
-            icon: "warning",
-            buttons: true,
-            dangerMode: true,
-        })
-            .then((willUpdate) => {
-                if (willUpdate) {
-                    API.put('/project/change-status/' + id + "/", { status: 1 }).then(response => {
-                        if (response.data.success == "True") {
-                            dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)))
-                            dispatch(fetchProjectsThunk(sessionStorage.getItem(USER_ID)))
-                            swal("Poof! Project is marked as completed", {
-                                icon: "success",
-                            });
+  const handlePMChange = (option, actionMeta) => {
+    setPM(option);
+  };
+  const changePM = (wp) => {
+    API.put("project/change-project-manager/", {
+      wp: wp,
+      pm: currentPM.value,
+    }).then((res) => {
+      if (res.status == 200 && res.data.success == "True") {
+        setStatus({ project: null });
+        setPM(null);
+        dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)));
+        swal("Updated!", "Project manager changed successfully", "success");
+      }
+    });
+  };
+  //const projects=useSelector(state=> state.projects.data.filter((item)=> project.project.status === 0))
 
-                        }
-                        else if (response.data.success == "False") {
-                            swal("Poof!" + response.data.message, {
-                                icon: "error",
-                            });
-                        }
-
-                    }).catch(error => {
-                        //swal("Failed!",error,"error");
-                    })
-
-                }
-            });
-    }
-    const changePMChangeInputFieldStatus = (idx, action) => {
-        switch (action) {
-            case 'open':
-                setPM({ value: projects[idx].project.pm.id, label: projects[idx].project.pm.first_name + ' ' + projects[idx].project.pm.last_name })
-                setStatus({ project: idx });
-                break
-            case 'close':
-                setStatus({ project: null });
-                break
-        }
-    }
-    const remaining_hours = (projects) => {
-        let remaining_hours = 0;
-        projects.forEach(item => {
-            remaining_hours += parseFloat(item.remaining_hours);
-        })
-        return remaining_hours;
-    }
-    const can_create_wbs=(assignees)=>{
-        let result=false
-        assignees.forEach((item,idx)=>{
-            if(item.assignee.id == sessionStorage.getItem(USER_ID)){
-                result=true
-            }
-        })
-        return result
-    }
-    function totalProjectHrs(projects) {
-        let total_hours = 0;
-        projects.forEach(item => {
-            total_hours += parseFloat(item.planned_hours);
-        })
-        return total_hours;
-    }
-    const delete_assignee = (project_id, assignee_id) => {
-        swal({
-            title: "Are you sure?",
-            text: "Once deleted, you will not be able to recover this record!",
-            icon: "warning",
-            buttons: true,
-            dangerMode: true,
-        })
-            .then((willDelete) => {
-                if (willDelete) {
-                    API.delete('/project/remove-assignee/' + assignee_id + "/", { data: { project: project_id, assignee: assignee_id } }).then(response => {
-                        if (response.data.success == "True") {
-                            dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)))
-                            swal("Poof! Your selected assignee has been removed!", {
-                                icon: "success",
-                            });
-
-                        }
-                        else if (response.data.success == "False") {
-                            swal("Poof!" + response.data.message, {
-                                icon: "error",
-                            });
-                        }
-
-                    }).catch(error => {
-                        //swal("Failed!",error,"error");
-                    })
-
-                }
-            });
-    }
-    function calculate_progress_in_percentage(total_hours, remaining_hours) {
-        let worked_hours = parseFloat(total_hours) - parseFloat(remaining_hours)
-        return (100 * worked_hours) / parseFloat(total_hours)
-    }
-    {/**export in excel */ }
-    const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-    const fileExtension = '.xlsx';
-    const fileName = 'PM\'\s project List';
-    const xlData = [];
-    const exportToCSV = () => {
-        for (let i = 0; i < projects.length; i++) {
-            const item = projects[i];
-            let subTaskNames = [];
-            var subTaskName;
-            Array.from(item.subtasks).map((el) => {
-                subTaskNames.push(el.task_title)
-            })
-            subTaskName = subTaskNames.join(",");
-            let assigneNames = [];
-            var assigneName;
-            Array.from(item.assignees).map((el) => {
-                assigneNames.push(el.first_name + ' ' + el.last_name)
-            })
-            assigneName = assigneNames.join(",");
-            xlData.push({ 'Sl. No': i + 1, 'TDO': item.project.task_delivery_order.title, 'Work Package Number': item.project.work_package_number, 'Work Package Index': item.project.work_package_index, 'Project Name': item.project.sub_task, 'Subtasks': subTaskName, 'Assignee(s)': assigneName, 'Planned Value': item.project.planned_value, 'Planned Hours': item.project.planned_hours, 'Planned Delivery Date': item.project.planned_delivery_date })
-        }
-        const ws = XLSX.utils.json_to_sheet(xlData);
-        const wb = { Sheets: { 'data': ws }, SheetNames: ['data'] };
-        const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-        const data = new Blob([excelBuffer], { type: fileType });
-        FileSaver.saveAs(data, fileName + fileExtension);
-    }
-    const [searchText,setSearchText]=useState('')
-    const [searchResultShow,setSearchResultShow]=useState(false)
-    const [result,setResult] = useState([])
-    const add_item_to_search_result=(arr,emp,project)=>{
-
-    }
-    const resize_project=(project,employee_id)=>{
-        let temp={
-            sub_task:project.sub_task,
-            planned_delivery_date:project.planned_delivery_date
-        }
-        // temp.wbs_list=[]
-        Object.defineProperty(temp, 'wbs_list', {
-            value: [],
-            writable: true
+  const tdolist = useSelector((state) => {
+    let temp = [];
+    state.projects.pm_projects.forEach((item, idx) => {
+      if (item.project.status == 0) {
+        temp.push({
+          label: item.project.task_delivery_order.title,
+          value: item.project.task_delivery_order.id,
         });
-        for(let index=0;index<project.wbs_list.length;index++){
-            if(employee_id == project.wbs_list[index].assignee_id){
-                temp.wbs_list.push(project.wbs_list[index])   
-            }
+      }
+    });
+    temp.unshift({ label: "Select All", value: "all" });
+    console.log("temp ", temp);
+    return temp;
+  });
+
+  const [filteredtdos, setfilteredtdos] = useState([]);
+  const filter_tdos = (options) => {
+    let temp_tdos = [];
+    //console.log("options", options[0].length)
+    for (let i = 0; i < options[0].length; i++) {
+      console.log("value 1 =", options[0][i].label);
+      for (let j = 0; j < projects.length; j++) {
+        console.log(
+          "value 2 = ",
+          projects[j].project.task_delivery_order.title
+        );
+        if (
+          options[0][i].label == projects[j].project.task_delivery_order.title
+        ) {
+          temp_tdos.push(projects[j]);
         }
-        return temp
+      }
     }
-    const search=(text)=>{
-        if(String(text).length>0){
-            setSearchText(text)
-            let result=[]
-            for(let index=0;index<projects.length;index++){
-                for(let index2=0;index2<projects[index].assignees.length;index2++){
-                    if(String(projects[index].assignees[index2].first_name).toLowerCase().includes(text) || String(projects[index].assignees[index2].last_name).toLowerCase().includes(text)){
-                        // result.push({'sorter':projects[index].assignees[index2].first_name,'employee':projects[index].assignees[index2],'projects':[projects[index].project]})
-                        let found_index = -1
-                        for(let temp_index=0;temp_index<result.length;temp_index++){
-                            if(result[temp_index].employee.id == projects[index].assignees[index2].id){
-                                found_index=temp_index
-                            }
-                        }
-                        let temp_project = resize_project(projects[index].project,projects[index].assignees[index2].id)
-                        if(found_index!= -1){
-                            
-                            result[found_index].projects.push(temp_project)
-                        }
-                        else{
-                            result.push({'sorter':projects[index].assignees[index2].first_name,'employee':projects[index].assignees[index2],'projects':[temp_project]})
-                        }
-                        
-                    }
-                }
-            }
-            console.log(result)
-            setResult(result)
-            setSearchResultShow(true)
+    setfilteredtdos(temp_tdos);
+    console.log("temp tdosss", temp_tdos);
+    return temp_tdos;
+  };
+
+  const handleTDOChange = (value, actionMeta) => {
+    if(actionMeta.action == 'select-option'){
+      if(value.find(item=>item.value == 'all')){
+          setSelectedTdo(value) 
+          console.log("values1", value)  
+
+      }
+      else{
+        console.log("values", value)        
+          setSelectedTdo(value)
+          
+      }
+  }
+  else if(actionMeta.action == 'clear'){
+      setSelectedTdo([])
+     
+  }
+  else if(actionMeta.action == 'remove-value'){
+      setSelectedTdo(value)
+     
+  }
+  };
+  const handleTDOChange1 = (value, actionMeta) => {
+    let temp_tdo_list = [];
+    if (actionMeta.action == "select-option") {
+      if (value[value.length - 1].value == "all") {
+        setSelectedTdo([{ label: "Select All", value: "all" }]);
+        temp_tdo_list = [...tdolist];
+        // if (temp_tdo_list[0].value == "all") {
+        //   temp_tdo_list.shift();
+        // }
+        temp_tdo_list.shift([{ label: "Select All", value: "all" }]);
+        filter_tdos(temp_tdo_list);
+      } else if (value[value.length - 1].value != "all") {
+        if (value.find((item) => item.value == "all")) {
+          value.shift();
         }
+        temp_tdo_list.push(value);
+
+        setSelectedTdo(value);
+        if (temp_tdo_list[0].value == "all") {
+          temp_tdo_list.shift();
+        }
+        filter_tdos(temp_tdo_list);
+      }
+    } else if (actionMeta.action == "clear") {
+      setSelectedTdo([{ label: "Select All", value: "all" }]);
+      temp_tdo_list = [];
+      temp_tdo_list = [...tdolist];
+      if (temp_tdo_list[0].value == "all") {
+        temp_tdo_list.shift();
+      }
+      filter_tdos(temp_tdo_list);
+    } else if (actionMeta.action == "remove-value") {
+      setSelectedTdo(value);
+      temp_tdo_list = [];
+      temp_tdo_list.push(value);
+      if (temp_tdo_list[0].value == "all") {
+        temp_tdo_list.shift();
+      }
+      filter_tdos(temp_tdo_list);
     }
-    
-    return (
-        <>
-            <SearchResult open={searchResultShow} handleClose={()=>setSearchResultShow(false)} searchText={searchText} result={result}/>
-                {/* <DraggableSearchResultTab open={open} handleClose={()=>setOpen(false)} searchText={searchText} result={result}/> */}
-                {/* <MatFullScreenSearchResult open={open} handleClose={()=>setOpen(false)}/> */}
-                {/* <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" /> */}
-                {/* <IconButton color="primary" sx={{ p: '10px' }} aria-label="directions">
+  };
+
+  const projects = useSelector((state) => {
+    let temp = [];
+    state.projects.pm_projects.forEach((item, idx) => {
+      if (item.project.status == 0) {
+        temp.push(item);
+      }
+    });
+    return temp;
+  });
+
+  const [show_sub_task_details, setShowSubTaskDetails] = useState(false);
+  const [selectedSubTask, setSelectedSubTask] = useState();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+
+    dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)));
+    API.get("project/managers/").then((res) => {
+      console.log("res", res.data.data);
+      let temp = [];
+      Array.from(res.data.data).forEach((manager, idx) => {
+        temp.push({
+          value: manager.id,
+          label: manager.first_name + " " + manager.last_name,
+          data: manager,
+        });
+        if (manager.id == sessionStorage.getItem(USER_ID)) {
+          setPM({
+            value: manager.id,
+            label: manager.first_name + " " + manager.last_name,
+            data: manager,
+          });
+        }
+      });
+      setManagers(temp);
+    });
+  }, []);
+  const mark_project_completed = (id) => {
+    swal({
+      title: "Are you sure?",
+      text: "You can change project status later!",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then((willUpdate) => {
+      if (willUpdate) {
+        API.put("/project/change-status/" + id + "/", { status: 1 })
+          .then((response) => {
+            if (response.data.success == "True") {
+              dispatch(
+                fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID))
+              );
+              dispatch(fetchProjectsThunk(sessionStorage.getItem(USER_ID)));
+              swal("Poof! Project is marked as completed", {
+                icon: "success",
+              });
+            } else if (response.data.success == "False") {
+              swal("Poof!" + response.data.message, {
+                icon: "error",
+              });
+            }
+          })
+          .catch((error) => {
+            //swal("Failed!",error,"error");
+          });
+      }
+    });
+  };
+  const changePMChangeInputFieldStatus = (idx, action) => {
+    switch (action) {
+      case "open":
+        setPM({
+          value: projects[idx].project.pm.id,
+          label:
+            projects[idx].project.pm.first_name +
+            " " +
+            projects[idx].project.pm.last_name,
+        });
+        setStatus({ project: idx });
+        break;
+      case "close":
+        setStatus({ project: null });
+        break;
+    }
+  };
+  const remaining_hours = (projects) => {
+    let remaining_hours = 0;
+    projects.forEach((item) => {
+      remaining_hours += parseFloat(item.remaining_hours);
+    });
+    return remaining_hours;
+  };
+  const can_create_wbs = (assignees) => {
+    let result = false;
+    assignees.forEach((item, idx) => {
+      if (item.assignee.id == sessionStorage.getItem(USER_ID)) {
+        result = true;
+      }
+    });
+    return result;
+  };
+  function totalProjectHrs(projects) {
+    let total_hours = 0;
+    projects.forEach((item) => {
+      total_hours += parseFloat(item.planned_hours);
+    });
+    return total_hours;
+  }
+  const delete_assignee = (project_id, assignee_id) => {
+    swal({
+      title: "Are you sure?",
+      text: "Once deleted, you will not be able to recover this record!",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then((willDelete) => {
+      if (willDelete) {
+        API.delete("/project/remove-assignee/" + assignee_id + "/", {
+          data: { project: project_id, assignee: assignee_id },
+        })
+          .then((response) => {
+            if (response.data.success == "True") {
+              dispatch(
+                fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID))
+              );
+              swal("Poof! Your selected assignee has been removed!", {
+                icon: "success",
+              });
+            } else if (response.data.success == "False") {
+              swal("Poof!" + response.data.message, {
+                icon: "error",
+              });
+            }
+          })
+          .catch((error) => {
+            //swal("Failed!",error,"error");
+          });
+      }
+    });
+  };
+  function calculate_progress_in_percentage(total_hours, remaining_hours) {
+    let worked_hours = parseFloat(total_hours) - parseFloat(remaining_hours);
+    return (100 * worked_hours) / parseFloat(total_hours);
+  }
+  {
+    /**export in excel */
+  }
+  const fileType =
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
+  const fileExtension = ".xlsx";
+  const fileName = "PM's project List";
+  const xlData = [];
+  const exportToCSV = () => {
+    for (let i = 0; i < projects.length; i++) {
+      const item = projects[i];
+      let subTaskNames = [];
+      var subTaskName;
+      Array.from(item.subtasks).map((el) => {
+        subTaskNames.push(el.task_title);
+      });
+      subTaskName = subTaskNames.join(",");
+      let assigneNames = [];
+      var assigneName;
+      Array.from(item.assignees).map((el) => {
+        assigneNames.push(el.first_name + " " + el.last_name);
+      });
+      assigneName = assigneNames.join(",");
+      xlData.push({
+        "Sl. No": i + 1,
+        TDO: item.project.task_delivery_order.title,
+        "Work Package Number": item.project.work_package_number,
+        "Work Package Index": item.project.work_package_index,
+        "Project Name": item.project.sub_task,
+        Subtasks: subTaskName,
+        "Assignee(s)": assigneName,
+        "Planned Value": item.project.planned_value,
+        "Planned Hours": item.project.planned_hours,
+        "Planned Delivery Date": item.project.planned_delivery_date,
+      });
+    }
+    const ws = XLSX.utils.json_to_sheet(xlData);
+    const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
+    const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+    const data = new Blob([excelBuffer], { type: fileType });
+    FileSaver.saveAs(data, fileName + fileExtension);
+  };
+  const [searchText, setSearchText] = useState("");
+  const [searchResultShow, setSearchResultShow] = useState(false);
+  const [result, setResult] = useState([]);
+  const add_item_to_search_result = (arr, emp, project) => {};
+  const resize_project = (project, employee_id) => {
+    let temp = {
+      sub_task: project.sub_task,
+      planned_delivery_date: project.planned_delivery_date,
+    };
+    // temp.wbs_list=[]
+    Object.defineProperty(temp, "wbs_list", {
+      value: [],
+      writable: true,
+    });
+    for (let index = 0; index < project.wbs_list.length; index++) {
+      if (employee_id == project.wbs_list[index].assignee_id) {
+        temp.wbs_list.push(project.wbs_list[index]);
+      }
+    }
+    return temp;
+  };
+  const search = (text) => {
+    if (String(text).length > 0) {
+      setSearchText(text);
+      let result = [];
+      for (let index = 0; index < projects.length; index++) {
+        for (
+          let index2 = 0;
+          index2 < projects[index].assignees.length;
+          index2++
+        ) {
+          if (
+            String(projects[index].assignees[index2].first_name)
+              .toLowerCase()
+              .includes(text) ||
+            String(projects[index].assignees[index2].last_name)
+              .toLowerCase()
+              .includes(text)
+          ) {
+            // result.push({'sorter':projects[index].assignees[index2].first_name,'employee':projects[index].assignees[index2],'projects':[projects[index].project]})
+            let found_index = -1;
+            for (let temp_index = 0; temp_index < result.length; temp_index++) {
+              if (
+                result[temp_index].employee.id ==
+                projects[index].assignees[index2].id
+              ) {
+                found_index = temp_index;
+              }
+            }
+            let temp_project = resize_project(
+              projects[index].project,
+              projects[index].assignees[index2].id
+            );
+            if (found_index != -1) {
+              result[found_index].projects.push(temp_project);
+            } else {
+              result.push({
+                sorter: projects[index].assignees[index2].first_name,
+                employee: projects[index].assignees[index2],
+                projects: [temp_project],
+              });
+            }
+          }
+        }
+      }
+      console.log(result);
+      setResult(result);
+      setSearchResultShow(true);
+    }
+  };
+
+  return (
+    <>
+      <SearchResult
+        open={searchResultShow}
+        handleClose={() => setSearchResultShow(false)}
+        searchText={searchText}
+        result={result}
+      />
+      {/* <DraggableSearchResultTab open={open} handleClose={()=>setOpen(false)} searchText={searchText} result={result}/> */}
+      {/* <MatFullScreenSearchResult open={open} handleClose={()=>setOpen(false)}/> */}
+      {/* <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" /> */}
+      {/* <IconButton color="primary" sx={{ p: '10px' }} aria-label="directions">
                     <DirectionsIcon />
             </IconButton> */}
-            {selectedSubTask && <CModal closeOnBackdrop={false} size="lg" alignment="center" show={show_sub_task_details} onClose={() => { setShowSubTaskDetails(!show_sub_task_details) }}>
-                <CModalHeader onClose={() => setShowSubTaskDetails(!show_sub_task_details)} closeButton>
-                    <CModalTitle className="modal-title-projects">
-                        <span className="edit-profile-form-header">Subtask Details</span>
-                    </CModalTitle>
-                </CModalHeader>
-                <CModalBody>
-                    <CContainer>
-                        <CForm>
-                            <CRow>
-                                <div className="card-header-portion-ongoing">
-                                    <h4 className="ongoing-card-header-1">
-                                        {/* <IconButton aria-label="favourite" disabled size="medium" color="primary">
+      {selectedSubTask && (
+        <CModal
+          closeOnBackdrop={false}
+          size="lg"
+          alignment="center"
+          show={show_sub_task_details}
+          onClose={() => {
+            setShowSubTaskDetails(!show_sub_task_details);
+          }}
+        >
+          <CModalHeader
+            onClose={() => setShowSubTaskDetails(!show_sub_task_details)}
+            closeButton
+          >
+            <CModalTitle className="modal-title-projects">
+              <span className="edit-profile-form-header">Subtask Details</span>
+            </CModalTitle>
+          </CModalHeader>
+          <CModalBody>
+            <CContainer>
+              <CForm>
+                <CRow>
+                  <div className="card-header-portion-ongoing">
+                    <h4 className="ongoing-card-header-1">
+                      {/* <IconButton aria-label="favourite" disabled size="medium" color="primary">
                                             <GradeIcon fontSize="inherit" className="fav-button" />
                                         </IconButton> */}
-                                        {selectedSubTask != undefined ? selectedSubTask.sub_task : ''}
-                                    </h4>
+                      {selectedSubTask != undefined
+                        ? selectedSubTask.sub_task
+                        : ""}
+                    </h4>
+                  </div>
+                  <div className="justify-content-center">
+                    <div className="mt-1 mb-2">
+                      <CCard className="card-ongoing-project">
+                        <CCardBody className="details-project-body">
+                          <div className="ongoing-initial-info row">
+                            <div className="tasks-done-2 col-lg-4">
+                              <h6 className="tiny-header2">
+                                Work Package Index
+                              </h6>
+                              <h6 className="project-point-details">
+                                {selectedSubTask.work_package_index}
+                              </h6>
+                            </div>
+                            <div className="tasks-done-2 col-lg-4">
+                              <h6 className="tiny-header2">Task Title</h6>
+                              <h6 className="project-point-details">
+                                {selectedSubTask.task_title}
+                              </h6>
+                            </div>
+                            <div className="tasks-done-2 col-lg-4">
+                              <h6 className="tiny-header2">PM Name</h6>
+                              <h6 className="project-point-details">
+                                {selectedSubTask.pm.first_name +
+                                  " " +
+                                  selectedSubTask.pm.last_name}
+                              </h6>
+                            </div>
+                            <div className="tasks-done-2 col-lg-4">
+                              <h6 className="tiny-header2">
+                                Estimated Person(s)
+                              </h6>
+                              <h6 className="project-point-details">
+                                {selectedSubTask.estimated_person}
+                              </h6>
+                            </div>
+                            {has_permission("projects.add_projects") && (
+                              <div className="tasks-done-2 col-lg-4">
+                                <h6 className="tiny-header2">Planned Value</h6>
+                                <h6 className="project-point-details">
+                                  {selectedSubTask.planned_value}{" "}
+                                </h6>
+                              </div>
+                            )}
+                            <div className="tasks-done-2 col-lg-4">
+                              <h6 className="tiny-header2">Planned Hours</h6>
+                              <h6 className="project-point-details">
+                                {selectedSubTask.planned_hours}{" "}
+                              </h6>
+                            </div>
+                            <div className="tasks-done-2 col-lg-4">
+                              <h6 className="tiny-header2">Actual Hours</h6>
+                              <h6 className="project-point-details">
+                                {(
+                                  selectedSubTask.planned_hours -
+                                  selectedSubTask.remaining_hours
+                                ).toFixed(2)}{" "}
+                              </h6>
+                            </div>
+                            <div className="tasks-done-2 col-lg-4">
+                              <h6 className="tiny-header2">Remaining Hours</h6>
+                              <h6 className="project-point-details">
+                                {selectedSubTask.remaining_hours}{" "}
+                              </h6>
+                            </div>
+                            <div className="tasks-done-2 col-lg-4">
+                              <h6 className="tiny-header2">Start Date</h6>
+                              <h6 className="project-point-details">
+                                {selectedSubTask.start_date}{" "}
+                              </h6>
+                            </div>
+                            <div className="tasks-done-2 col-lg-4">
+                              <h6 className="tiny-header2">
+                                Planned delivery date
+                              </h6>
+                              <h6 className="project-point-details">
+                                {selectedSubTask.planned_delivery_date}{" "}
+                              </h6>
+                            </div>
+                            <div className="tasks-done-2 col-lg-12">
+                              <h6 className="tiny-header2">Task deatils</h6>
+                              <h6 className="project-point-details">
+                                {selectedSubTask.description == ""
+                                  ? "Not available"
+                                  : selectedSubTask.description}
+                              </h6>
+                            </div>
+                          </div>
 
-                                </div>
-                                <div className="justify-content-center">
-                                    <div className="mt-1 mb-2">
-                                        <CCard className="card-ongoing-project">
-                                            <CCardBody className="details-project-body">
-                                                <div className="ongoing-initial-info row">
-                                                    <div className="tasks-done-2 col-lg-4">
-                                                        <h6 className="tiny-header2">Work Package Index</h6>
-                                                        <h6 className="project-point-details">{selectedSubTask.work_package_index}</h6>
-                                                    </div>
-                                                    <div className="tasks-done-2 col-lg-4">
-                                                        <h6 className="tiny-header2">Task Title</h6>
-                                                        <h6 className="project-point-details">{selectedSubTask.task_title}</h6>
-                                                    </div>
-                                                    <div className="tasks-done-2 col-lg-4">
-                                                        <h6 className="tiny-header2">PM Name</h6>
-                                                        <h6 className="project-point-details">{selectedSubTask.pm.first_name + ' ' + selectedSubTask.pm.last_name}</h6>
-                                                    </div>
-                                                    <div className="tasks-done-2 col-lg-4">
-                                                        <h6 className="tiny-header2">Estimated Person(s)</h6>
-                                                        <h6 className="project-point-details">{selectedSubTask.estimated_person}</h6>
-                                                    </div>
-                                                    {has_permission("projects.add_projects") && <div className="tasks-done-2 col-lg-4">
-                                                        <h6 className="tiny-header2">Planned Value</h6>
-                                                        <h6 className="project-point-details">{selectedSubTask.planned_value} </h6>
-                                                    </div>}
-                                                    <div className="tasks-done-2 col-lg-4">
-                                                        <h6 className="tiny-header2">Planned Hours</h6>
-                                                        <h6 className="project-point-details">{selectedSubTask.planned_hours} </h6>
-                                                    </div>
-                                                    <div className="tasks-done-2 col-lg-4">
-                                                        <h6 className="tiny-header2">Actual Hours</h6>
-                                                        <h6 className="project-point-details">{(selectedSubTask.planned_hours - selectedSubTask.remaining_hours).toFixed(1)} </h6>
-                                                    </div>
-                                                    <div className="tasks-done-2 col-lg-4">
-                                                        <h6 className="tiny-header2">Remaining Hours</h6>
-                                                        <h6 className="project-point-details">{selectedSubTask.remaining_hours} </h6>
-                                                    </div>
-                                                    <div className="tasks-done-2 col-lg-4">
-                                                        <h6 className="tiny-header2">Planned delivery date</h6>
-                                                        <h6 className="project-point-details">{selectedSubTask.planned_delivery_date} </h6>
-                                                    </div>
-                                                    <div className="tasks-done-2 col-lg-12">
-                                                        <h6 className="tiny-header2">Task deatils</h6>
-                                                        <h6 className="project-point-details">{selectedSubTask.description == '' ? 'Not available' : selectedSubTask.description}</h6>
-                                                    </div>
-                                                </div>
-
-                                                <div className="mt-4 mb-2">
-                                                    <h5 className="projectName mb-3">Asssignee(s)-({Array.from(selectedSubTask.assignees).length})</h5>
-                                                    <div className="file-show-ongoing-details row">
-                                                        {selectedSubTask != undefined && Array.from(selectedSubTask.assignees).map((item, idx) => (
-                                                            <div key={idx} className="col-md-4 col-sm-6 col-lg-4">
-                                                                <div className="file-attached-ongoing rounded-pill">
-                                                                    <CButton type="button" onClick={() => delete_assignee(selectedSubTask.id, item.assignee.id)} className="remove-file-ongoing"><img src={"assets/icons/icons8-close-64-blue.svg"} className="close-icon-size" /></CButton>{item.assignee.first_name + ' ' + item.assignee.last_name}
-                                                                </div>
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                                {/* <div className="col-md-12 mt-2 mb-2">
+                          <div className="mt-4 mb-2">
+                            <h5 className="projectName mb-3">
+                              Asssignee(s)-(
+                              {Array.from(selectedSubTask.assignees).length})
+                            </h5>
+                            <div className="file-show-ongoing-details row">
+                              {selectedSubTask != undefined &&
+                                Array.from(selectedSubTask.assignees).map(
+                                  (item, idx) => (
+                                    <div
+                                      key={idx}
+                                      className="col-md-4 col-sm-6 col-lg-4"
+                                    >
+                                      <div className="file-attached-ongoing rounded-pill">
+                                        <CButton
+                                          type="button"
+                                          onClick={() =>
+                                            delete_assignee(
+                                              selectedSubTask.id,
+                                              item.assignee.id
+                                            )
+                                          }
+                                          className="remove-file-ongoing"
+                                        >
+                                          <img
+                                            src={
+                                              "assets/icons/icons8-close-64-blue.svg"
+                                            }
+                                            className="close-icon-size"
+                                          />
+                                        </CButton>
+                                        {item.assignee.first_name +
+                                          " " +
+                                          item.assignee.last_name}
+                                      </div>
+                                    </div>
+                                  )
+                                )}
+                            </div>
+                          </div>
+                          {/* <div className="col-md-12 mt-2 mb-2">
                                                     <div className="project-actions">
                                                         <CButton className="edit-project-ongoing-task" onClick={() => editInfoForm(subtask)} ><CIcon name="cil-pencil" className="mr-1" /> Edit </CButton>
                                                         <CButton type="button" onClick={() => delete_subtask(subtask.work_package_index)} className="delete-project-2"><CIcon name="cil-trash" className="mr-1" /> Delete</CButton>
                                                     </div>
                                                 </div> */}
-                                            </CCardBody>
-                                        </CCard>
-                                    </div>
-                                </div>
-                            </CRow>
-                            {/**forward to wbs button  */}
-                            {can_create_wbs(selectedSubTask.assignees) && <CRow className="justify-content-center">
-                                <CButton type='button' className="create-wbs-from-modal" onClick={() => history.push({ pathname: '/dashboard/WBS/create-wbs',state:{task:selectedSubTask} })}>Create WBS</CButton>
-                            </CRow>}
-                            
-                        </CForm>
-                    </CContainer>
-                </CModalBody>
-            </CModal>}
+                        </CCardBody>
+                      </CCard>
+                    </div>
+                  </div>
+                </CRow>
+                {/**forward to wbs button  */}
+                {can_create_wbs(selectedSubTask.assignees) && (
+                  <CRow className="justify-content-center">
+                    <CButton
+                      type="button"
+                      className="create-wbs-from-modal"
+                      onClick={() =>
+                        history.push({
+                          pathname: "/dashboard/WBS/create-wbs",
+                          state: { task: selectedSubTask },
+                        })
+                      }
+                    >
+                      Create WBS
+                    </CButton>
+                  </CRow>
+                )}
+              </CForm>
+            </CContainer>
+          </CModalBody>
+        </CModal>
+      )}
 
-            {/*_______CARDS FOR LIST BEGIN */}
-            <div className="container">
+      {/*_______CARDS FOR LIST BEGIN */}
 
-                <div className="row">
-                    <div className="col-md-12 col-lg-11 col-sm-12 col-xs-12 mt-1">
-                        <h4 className="dash-header">My Projects({Array.from(projects).length})
-                            <CButton className="export-project-list" onClick={() => exportToCSV()}>
-                            <CIcon name="cil-spreadsheet" className="mr-2" />Export to excel</CButton><CustomSearch search={search}/>
-                        </h4>
-                        {projects != undefined &&
-                            <Accordion allowMultipleExpanded={false} className="remove-acc-bg  mb-3" allowZeroExpanded>
-                                {Array.from(projects).map((project, idx) => (
-                                    <AccordionItem key={idx} className="card-ongoing-project">
-                                        <AccordionItemHeading className="ongoing-accordion-header">
-                                            <AccordionItemButton>
-
-                                                <IconButton aria-label="favourite" disabled size="medium" >
-                                                    <GradeIcon fontSize="inherit" className="fav-button" />
-                                                </IconButton>{String(project.project.task_delivery_order.title).toUpperCase()+' / '+String(project.project.sub_task).toUpperCase()}
-                                                {/**action buttons */}
-                                                <span className="fix-action-btn-alignment">
-                                                    <CButton className="view-ongoing-details" onClick={() => history.push({ pathname: '/dashboard/Projects/my-projects/details/' + project.project.work_package_number, state: { project: project } })}><CIcon name="cil-list-rich" className="mr-1" />View Details</CButton>
-                                                    <CButton type="button" onClick={() => { mark_project_completed(project.project.work_package_number) }} className="mark-ongoing-completed"><CIcon name="cil-check-alt" className="mr-1" />Mark as Completed</CButton>
-                                                </span>
-                                            </AccordionItemButton>
-                                        </AccordionItemHeading>
-                                        <AccordionItemPanel>
-                                            {/* <hr className="header-underline1" /> */}
-                                            {/*task percentage portion */}
-                                            <div>
-                                                <h6 className="show-amount">{remaining_hours(project.subtasks).toFixed(1)}/{totalProjectHrs(project.subtasks)} Hrs</h6>
-                                                <LinearWithValueLabel progress={() => calculate_progress_in_percentage(totalProjectHrs(project.subtasks), remaining_hours(project.subtasks))} />
-                                            </div>
-                                            {/*Project category buttons */}
-                                            <div className="all-da-buttons-1">
-                                                {Array.from(project.subtasks).length > 0 && Array.from(project.subtasks).map((task, idx) => (
-                                                    <CButton key={idx} type="button" className="package-button rounded-pill" onClick={() => { setShowSubTaskDetails(true); setSelectedSubTask(task); console.log('task', task) }}>
-                                                        {task.task_title}
-                                                        <span className="tooltiptext">{task.work_package_index}</span>
-                                                    </CButton>
-                                                ))}
-                                            </div>
-                                            {/*Project participants */}
-                                            <div className="all-da-workers1">
-                                                {project.assignees.length > 0 && Array.from(project.assignees).map((assignee, idx) => (
-                                                    <CTooltip key={idx} content={capitalize(assignee.first_name + ' ' + assignee.last_name)} className="tooltiptext1">
-                                                        <img key={idx} className="img-fluid worker-image" src={assignee.profile_pic != null ? BASE_URL + assignee.profile_pic : 'avatars/user-avatar-default.png'} />
-                                                    </CTooltip>
-                                                ))}
-                                            </div>
-                                            {/*project info in text */}
-                                            <div className="information-show row">
-                                                {/* <div className="info-show-now col-lg-6">
+      <div className="container">
+        <div className="row">
+          <div className="col-md-12 col-lg-11 col-sm-12 col-xs-12 mt-1">
+            <CRow className="dash-header">
+              <CCol lg="4">My Projects({Array.from(projects).length})</CCol>
+              <CCol lg="2">
+                <CustomSearch search={search} />
+              </CCol>
+              <CCol lg="3" className="mb-3 pl-4">
+                <Select
+                  className="custom-forminput-6"
+                  placeholder="Filter by TDO"
+                  options={tdolist}
+                  isMulti
+                  onChange={handleTDOChange}
+                  value={selectedTdo}
+                />
+              </CCol>
+              <CCol lg="2">
+                <CButton
+                  className="export-project-list"
+                  onClick={() => exportToCSV()}
+                >
+                  <CIcon name="cil-spreadsheet" className="mr-2" />
+                  Export to excel
+                </CButton>
+              </CCol>
+            </CRow>
+            {projects != undefined && (
+              <Accordion
+                allowMultipleExpanded={false}
+                className="remove-acc-bg  mb-3"
+                allowZeroExpanded
+              >
+                {Array.from(projects).map((project, idx) => (
+                  <AccordionItem key={idx} className="card-ongoing-project">
+                    <AccordionItemHeading className="ongoing-accordion-header">
+                      <AccordionItemButton>
+                        <IconButton
+                          aria-label="favourite"
+                          disabled
+                          size="medium"
+                        >
+                          <GradeIcon
+                            fontSize="inherit"
+                            className="fav-button"
+                          />
+                        </IconButton>
+                        {String(
+                          project.project.task_delivery_order.title
+                        ).toUpperCase() +
+                          " / " +
+                          String(project.project.sub_task).toUpperCase()}
+                        {/**action buttons */}
+                        <span className="fix-action-btn-alignment">
+                          <CButton
+                            className="view-ongoing-details"
+                            onClick={() =>
+                              history.push({
+                                pathname:
+                                  "/dashboard/Projects/my-projects/details/" +
+                                  project.project.work_package_number,
+                                state: { project: project },
+                              })
+                            }
+                          >
+                            <CIcon name="cil-list-rich" className="mr-1" />
+                            View Details
+                          </CButton>
+                          <CButton
+                            type="button"
+                            onClick={() => {
+                              mark_project_completed(
+                                project.project.work_package_number
+                              );
+                            }}
+                            className="mark-ongoing-completed"
+                          >
+                            <CIcon name="cil-check-alt" className="mr-1" />
+                            Mark as Completed
+                          </CButton>
+                        </span>
+                      </AccordionItemButton>
+                    </AccordionItemHeading>
+                    <AccordionItemPanel>
+                      {/* <hr className="header-underline1" /> */}
+                      {/*task percentage portion */}
+                      <div>
+                        <h6 className="show-amount">
+                          {remaining_hours(project.subtasks).toFixed(2)}/
+                          {totalProjectHrs(project.subtasks)} Hrs
+                        </h6>
+                        <LinearWithValueLabel
+                          progress={() =>
+                            calculate_progress_in_percentage(
+                              totalProjectHrs(project.subtasks),
+                              remaining_hours(project.subtasks)
+                            )
+                          }
+                        />
+                      </div>
+                      {/*Project category buttons */}
+                      <div className="all-da-buttons-1">
+                        {Array.from(project.subtasks).length > 0 &&
+                          Array.from(project.subtasks).map((task, idx) => (
+                            <CButton
+                              key={idx}
+                              type="button"
+                              className="package-button rounded-pill"
+                              onClick={() => {
+                                setShowSubTaskDetails(true);
+                                setSelectedSubTask(task);
+                                console.log("task", task);
+                              }}
+                            >
+                              {task.task_title}
+                              <span className="tooltiptext">
+                                {task.work_package_index}
+                              </span>
+                            </CButton>
+                          ))}
+                      </div>
+                      {/*Project participants */}
+                      <div className="all-da-workers1">
+                        {project.assignees.length > 0 &&
+                          Array.from(project.assignees).map((assignee, idx) => (
+                            <CTooltip
+                              key={idx}
+                              content={capitalize(
+                                assignee.first_name + " " + assignee.last_name
+                              )}
+                              className="tooltiptext1"
+                            >
+                              <img
+                                key={idx}
+                                className="img-fluid worker-image"
+                                src={
+                                  assignee.profile_pic != null
+                                    ? BASE_URL + assignee.profile_pic
+                                    : "avatars/user-avatar-default.png"
+                                }
+                              />
+                            </CTooltip>
+                          ))}
+                      </div>
+                      {/*project info in text */}
+                      <div className="information-show row">
+                        {/* <div className="info-show-now col-lg-6">
                                                     <h5 className="project-details-points child"><h5 className="info-header-1">Assigned by :</h5>{project.project.pm.first_name + ' ' + project.project.pm.last_name}</h5>
                                                 </div> */}
-                                                <div className="info-show-now col-lg-6">
-                                                    <h5 className="project-details-points"><h5 className="info-header-1">Project Manager : {status.project != idx ? (<CButton className="edit-pm-name" variant='ghost' onClick={(e) => changePMChangeInputFieldStatus(idx, 'open')}><CIcon name="cil-pencil" className="mr-1 pen-icon-pm" /></CButton>) : null}</h5>{status.project != idx ? (<span>{project.project.pm.first_name + ' ' + project.project.pm.last_name}</span>
-                                                    ) : <></>}
-                                                        {/**if clicked edit button */}
-                                                        {/**if clicked edit button */}
-                                                        {status.project == idx ? (
-                                                            <div className="pm-name-edit-part">
-                                                                <CForm className="desktop-width">
-                                                                    {/* <CInput className="custom-forminput-6 pm-edit" type="text" value={project.project.sub_task} /> */}
-                                                                    <Select
-                                                                        closeMenuOnSelect={true}
-                                                                        aria-labelledby="prjctSelect"
-                                                                        id="prjctSelect"
-                                                                        minHeight="35px"
-                                                                        placeholder="Select from list"
-                                                                        isClearable={true}
-                                                                        isMulti={false}
-                                                                        onChange={handlePMChange}
-                                                                        classNamePrefix="pm-edit"
-                                                                        value={currentPM}
-                                                                        options={managers}
-                                                                    // styles={colourStyles}
-                                                                    />
-
-                                                                </CForm>
-                                                                <div className="mt-1">
-                                                                    <CButton type="button" variant="ghost" className="confirm-name-pm" onClick={(e) => changePM(project.project.work_package_number)}><CIcon name="cil-check-circle" className="mr-1 tick" size="xl" /></CButton>
-                                                                    <CButton type="button" variant="ghost" className="cancel-name-pm" onClick={(e) => changePMChangeInputFieldStatus(project.project.id, 'close')}><CIcon name="cil-x-circle" className="mr-1 cross" size="xl" /></CButton>
-                                                                </div>
-                                                            </div>
-                                                        ) : <></>}
-                                                    </h5>
-                                                </div>
-                                                {/* <div className="info-show-now col-lg-6">
+                        <div className="info-show-now col-lg-6">
+                          <h5 className="project-details-points">
+                            <h5 className="info-header-1">
+                              Project Manager :{" "}
+                              {status.project != idx ? (
+                                <CButton
+                                  className="edit-pm-name"
+                                  variant="ghost"
+                                  onClick={(e) =>
+                                    changePMChangeInputFieldStatus(idx, "open")
+                                  }
+                                >
+                                  <CIcon
+                                    name="cil-pencil"
+                                    className="mr-1 pen-icon-pm"
+                                  />
+                                </CButton>
+                              ) : null}
+                            </h5>
+                            {status.project != idx ? (
+                              <span>
+                                {project.project.pm.first_name +
+                                  " " +
+                                  project.project.pm.last_name}
+                              </span>
+                            ) : (
+                              <></>
+                            )}
+                            {/**if clicked edit button */}
+                            {/**if clicked edit button */}
+                            {status.project == idx ? (
+                              <div className="pm-name-edit-part">
+                                <CForm className="desktop-width">
+                                  {/* <CInput className="custom-forminput-6 pm-edit" type="text" value={project.project.sub_task} /> */}
+                                  <Select
+                                    closeMenuOnSelect={true}
+                                    aria-labelledby="prjctSelect"
+                                    id="prjctSelect"
+                                    minHeight="35px"
+                                    placeholder="Select from list"
+                                    isClearable={true}
+                                    isMulti={false}
+                                    onChange={handlePMChange}
+                                    classNamePrefix="pm-edit"
+                                    value={currentPM}
+                                    options={managers}
+                                    // styles={colourStyles}
+                                  />
+                                </CForm>
+                                <div className="mt-1">
+                                  <CButton
+                                    type="button"
+                                    variant="ghost"
+                                    className="confirm-name-pm"
+                                    onClick={(e) =>
+                                      changePM(
+                                        project.project.work_package_number
+                                      )
+                                    }
+                                  >
+                                    <CIcon
+                                      name="cil-check-circle"
+                                      className="mr-1 tick"
+                                      size="xl"
+                                    />
+                                  </CButton>
+                                  <CButton
+                                    type="button"
+                                    variant="ghost"
+                                    className="cancel-name-pm"
+                                    onClick={(e) =>
+                                      changePMChangeInputFieldStatus(
+                                        project.project.id,
+                                        "close"
+                                      )
+                                    }
+                                  >
+                                    <CIcon
+                                      name="cil-x-circle"
+                                      className="mr-1 cross"
+                                      size="xl"
+                                    />
+                                  </CButton>
+                                </div>
+                              </div>
+                            ) : (
+                              <></>
+                            )}
+                          </h5>
+                        </div>
+                        {/* <div className="info-show-now col-lg-6">
                                                     <h5 className="project-details-points child"><h5 className="info-header-1">Planned delivery date :</h5>{project.project.planned_delivery_date}</h5>
                                                 </div> */}
-                                                {/* <div className="info-show-now col-lg-6"> */}
-                                                {/* <h5 className="project-details-points"><h5 className="info-header-1">Project Details :</h5>Design and develop the app for the seller and buyer module</h5> */}
-                                                {/* <h5 className="project-details-points child"><h5 className="info-header-1">Start Date : </h5>{project.project.start_date}</h5>
+                        {/* <div className="info-show-now col-lg-6"> */}
+                        {/* <h5 className="project-details-points"><h5 className="info-header-1">Project Details :</h5>Design and develop the app for the seller and buyer module</h5> */}
+                        {/* <h5 className="project-details-points child"><h5 className="info-header-1">Start Date : </h5>{project.project.start_date}</h5>
 
                                                     <h5 className="project-details-points"><h5 className="info-header-1">Planned Delivery Date : </h5>{project.project.planned_delivery_date}</h5>
                                                 </div> */}
-                                            </div>
-                                        </AccordionItemPanel>
-                                    </AccordionItem>
-                                ))}
-                            </Accordion>
-                        }
+                      </div>
+                    </AccordionItemPanel>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            )}
 
-                        {/**If no projects are there */}
-                        {Array.from(projects).length < 1 ? (
-                            <CAlert className="no-value-show-alert" color="primary">Currently there are no projects</CAlert>
-                        ) : null}
-                    </div>
-                </div>
-            </div>
-
-        </>)
-}
+            {/**If no projects are there */}
+            {Array.from(projects).length < 1 ? (
+              <CAlert className="no-value-show-alert" color="primary">
+                Currently there are no projects
+              </CAlert>
+            ) : null}
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
 export default MyProjects;

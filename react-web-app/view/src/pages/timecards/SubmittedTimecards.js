@@ -15,18 +15,21 @@ import "./timeCards.css";
 import { fetchUserSubmittedTimecards } from "../../store/slices/TimecardSlice";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
-import { useState } from "react";
+import { useState , useEffect} from "react";
 import { has_permission } from "../../helper.js";
 import * as FileSaver from "file-saver";
+import { saveAs } from "file-saver";
+import { useHistory } from "react-router-dom";
 const SubmittedTimecards = () => {
   const [pdfData, setPdfData] = useState([]);
-  let submitted =[]
+  let submitted = [];
   const profile_details = useSelector((state) => state.profile.data);
   const submitted_timecards = useSelector((state) => {
     let temp = [];
     Array.from(state.timecardList.user_weekly_submitted_timecards).forEach(
       (item, idx) => {
         temp.push({
+          data:item.employee,
           Weekending: moment(item.week_end).format("ddd, MMMM DD, YYYY"),
           Name: item.employee.first_name + " " + item.employee.last_name,
           Total: item.total_hours,
@@ -43,8 +46,8 @@ const SubmittedTimecards = () => {
         });
       }
     );
-    
-    submitted=[...temp]
+
+    submitted = [...temp];
     return temp;
   });
   const dispatch = useDispatch();
@@ -63,11 +66,9 @@ const SubmittedTimecards = () => {
   };
   React.useEffect(() => {
     dispatch(fetchUserSubmittedTimecards());
-
     
   }, []);
   const exportPDF = () => {
-    
     const pdfTitle =
       profile_details.first_name + " " + profile_details.last_name;
 
@@ -104,8 +105,8 @@ const SubmittedTimecards = () => {
       elt.HOL,
       elt.PB1,
       elt.WFH,
-      elt.OTO, 
-      elt.Submitted, 
+      elt.OTO,
+      elt.Submitted,
       console.log("data", elt),
     ]);
     let content = {
@@ -129,13 +130,13 @@ const SubmittedTimecards = () => {
     doc.setFontSize(11);
     doc.text(42, 105, "Submitted Time Card");
     // doc.text(410, 105, "Week-Ending: " + edate); //+ edate)
-    if(!has_permission("projects.add_projects"))
-
-       {doc.text(42, 125, "Employee Name: " + pdfTitle)} //+ name)
+    if (!has_permission("projects.add_projects")) {
+      doc.text(42, 125, "Employee Name: " + pdfTitle);
+    } //+ name)
 
     // let date = new Date();
     // console.log("date", date);
-    doc.text(440, 360, "Total " +submitted.length+ " Submitted");
+    doc.text(440, 360, "Total " + submitted.length + " Submitted");
 
     // doc.text(400, 375, "Submitted : " + time + "  " + day);
 
@@ -145,15 +146,104 @@ const SubmittedTimecards = () => {
 
     //let blob = new Blob([csv], { type: 'application/vnd.ms-excel' });
     doc.save("Timecard of" + " " + pdfTitle + ".pdf");
-    
+
     // FileSaver.saveAs(blobPDF, "dummy.csv");
     // console.log("data", pdfData);
   };
-  const exportXL =()=>{
-    const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
-    
+  async function exportXL() {
+    const ExcelJS = require("exceljs");
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet("sheet1");
 
+    sheet.mergeCells("B1:F2");
+    const customcell = sheet.getCell("C1");
+    customcell.value = "Datasoft Manufacturing & Assembly";
+    customcell.font = {
+      size: 15,
+      bold: true,
+    };
+    sheet.getCell("C1").alignment = {
+      horizontal: "center",
+      vertical: "center",
+    };
+    sheet.mergeCells("C3:D3");
+    const customcell1 = sheet.getCell("C3");
+    customcell1.value = "Gulshan Branch";
+    customcell1.font = {
+      size: 13,
+      bold: true,
+    };
+    customcell1.alignment = {
+      horizontal: "center",
+      vertical: "center",
+    };
+
+    sheet.mergeCells("A5:B5");
+    sheet.getCell("A5").value = "Submitted Timecards";
+
+    sheet.getRow(8).values = [
+      "Weekending",
+      "Name",
+      "Total",
+      "RHR",
+      "SIC",
+      "HOL",
+      "PB1",
+      "WFH",
+      "OTO",
+      "Submitted",
+    ];
+    sheet.getRow(8).font = {
+      name: "Arial Black",
+      family: 3,
+
+      size: 10,
+    };
+    sheet.getRow(8).height = 20;
+    sheet.columns = [
+      { key: "Weekending", width: 20 },
+      { key: "Name", width: 25 },
+      { key: "Total", width: 10 },
+      { key: "RHR", width: 10 },
+      { key: "SIC", width: 10 },
+      { key: "HOL", width: 10 },
+      { key: "PB1", width: 10 },
+      { key: "WFH", width: 10 },
+      { key: "OTO", width: 10 },
+      { key: "Submitted", width: 20 },
+    ];
+    console.log("submitted", submitted);
+
+    for (let i = 0; i < submitted.length; i++) {
+      sheet.addRow({
+        Weekending: submitted[i].Weekending,
+        Name: submitted[i].Name,
+        Total: submitted[i].Total,
+        RHR: submitted[i].RHR,
+        SIC: submitted[i].SIC,
+        HOL: submitted[i].HOL,
+        PB1: submitted[i].PB1,
+        WFH: submitted[i].WFH,
+        OTO: submitted[i].OTO,
+        Submitted: submitted[i].Submitted,
+      });
+    }
+    let row_num = submitted.length + 11;
+    let total = submitted_timecards.length;
+    if (total != 0) {
+      sheet.getRow(row_num).values = ["Total Submitted =  " + submitted.length];
+    }
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const fileType = "application/octet-stream";
+    const fileExtension = ".xlsx";
+    const blob = new Blob([buffer], { type: fileType });
+
+    const fileName = "Submitted Timecards " + fileExtension;
+    saveAs(blob, fileName);
   }
+  
+  let history = useHistory();
   return (
     <>
       <CContainer>
@@ -172,7 +262,12 @@ const SubmittedTimecards = () => {
               >
                 <CIcon name="cil-description" className="mr-2" /> PDF
               </CButton>
-              <CButton className="file-format-download" onClick={() => {exportXL();}}>
+              <CButton
+                className="file-format-download"
+                onClick={() => {
+                  exportXL();
+                }}
+              >
                 <CIcon name="cil-spreadsheet" className="mr-2" />
                 Excel
               </CButton>
@@ -189,15 +284,16 @@ const SubmittedTimecards = () => {
           </CCol>
         </CRow>
         <CRow>
-        {!has_permission("projects.add_projects") && 
-          <CCol>
-            <CLabel className="custom-label-5" htmlFor="assigneeSelect">
-              Employee Name :{" "}
-              {capitalize(profile_details.first_name) +
-                " " +
-                capitalize(profile_details.last_name)}
-            </CLabel>
-          </CCol>}
+          {!has_permission("projects.add_projects") && (
+            <CCol>
+              <CLabel className="custom-label-5" htmlFor="assigneeSelect">
+                Employee Name :{" "}
+                {capitalize(profile_details.first_name) +
+                  " " +
+                  capitalize(profile_details.last_name)}
+              </CLabel>
+            </CCol>
+          )}
         </CRow>
         <CRow className="mt-5">
           <CCol>
@@ -245,6 +341,22 @@ const SubmittedTimecards = () => {
               striped
               bordered
               sorter
+              scopedSlots={{
+                Name: (item) => (
+                  <td>
+                    <a
+                     onClick={() => {
+                      history.push({pathname:'/dashboard/timecard/generate-timecard',state:{assignee:item.data.id} })
+                     }}
+                      size="sm"
+                      type="button"
+                      color="primary"
+                    >
+                      <u> {item["Name"]}</u>
+                    </a>
+                  </td>
+                ),
+              }}
             />
             <div class="alert alert-info" role="alert">
               <CRow>

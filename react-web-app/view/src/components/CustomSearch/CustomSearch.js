@@ -37,7 +37,7 @@ const CustomSearch = (props) => {
                 {/* <IconButton sx={{ p: '10px' }} aria-label="menu">
                     <MenuIcon />
                 </IconButton> */}
-                <InputBase
+                <InputBase autoFocus
                     sx={{ ml: 1, flex: 1 }}
                     placeholder="Search in assigned projects"
                     inputProps={{ 'aria-label': 'search' }}
