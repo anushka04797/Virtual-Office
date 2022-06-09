@@ -40,6 +40,8 @@ const CreateNewProject = () => {
   const [existing_sub_tasks, setExistingSubTasks] = useState([])
   const [isWpInputdisabled, setIsWpInputdisabled] = useState(false)
   const [selectedAssigneeExistingEP,setSelectedAssigneeExistingEP]=useState(0)
+  const [total_working_days, setTotalWorkingDays] = useState(0)
+  const [total_planned_hours, setTotalPlannedHours] = useState(0)
   //tdo list states and functions
   
   const new_tdo_list = useSelector(state => sortBy(state.tdo.data, 'label'))
@@ -190,18 +192,9 @@ const CreateNewProject = () => {
     }
   }
 
-  const handleSubTaskInputChange = (inputValue, actionMeta) => {
-    if (actionMeta.action == 'set-value') {
-      console.log('wecedcedc')
-      // if(existing_sub_tasks.includes(inputValue)){
-      //   formCreateProject.setFieldError('sub_task','This sub task name already exists')
-      // }
-    }
-  }
 
   const handleSubTaskCreate = (inputValue) => {
     console.log(work_package_numbers)
-
     setSubTaskList([...sub_task_list, { value: inputValue, label: inputValue }])
     setSelectedSubTask({ value: inputValue, label: inputValue })
     setWorkPackageNumber(Math.max(...work_package_numbers)+1)
@@ -237,7 +230,7 @@ const CreateNewProject = () => {
     return false
   }
 
-  const [total_working_days, setTotalWorkingDays] = useState(0)
+  
 
   const [isWpExist, setisWpExist] = useState(false)
 
@@ -303,17 +296,9 @@ const CreateNewProject = () => {
         dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)))
         dispatch(fetchProjectsThunk(sessionStorage.getItem(USER_ID)))
         setSelectedAssignees([])
-        swal('Created!', 'Successfuly Created', 'success').then((e) => {
-          // if (e) {
-          //   window.location.reload()
-          // }
-        })
+        swal('Created!', 'Successfuly Created', 'success')
       } else {
-        swal('Failed!', 'Project Creation unsuccessful', 'failed').then((e) => {
-          // if (e) {
-          //   window.location.reload()
-          // }
-        })
+        swal('Failed!', 'Project Creation failed', 'failed')
       }
     })
   }
@@ -342,8 +327,32 @@ const CreateNewProject = () => {
   })
 
   function handlePlannedDeliveryDateChange(event) {
-    setInputList([])
-    dateRange(formCreateProject.values.start_date, event.target.value)
+    inputList.forEach(item=>removeAssignee(item))
+    formCreateProject.handleChange(event)
+    // dateRange(formCreateProject.values.start_date, event.target.value)
+    API.get('project/date-to-date/'+formCreateProject.values.start_date+'/'+event.target.value+'/').then(res=>{
+      console.log('total_hrs',res.data)
+      setTotalPlannedHours(parseFloat(res.data.total_hours))
+      
+      formCreateProject.setValues({
+        task_delivery_order: formCreateProject.values.task_delivery_order,
+        tdo_details: formCreateProject.values.tdo_details,
+        sub_task: formCreateProject.values.sub_task,
+        description: formCreateProject.values.description,
+        work_package_number: formCreateProject.values.work_package_number,
+        task_title: formCreateProject.values.task_title,
+        estimated_person: (parseFloat(res.data.total_hours) / total_working_days).toFixed(2),
+        start_date: formCreateProject.values.start_date,
+        planned_delivery_date: event.target.value,
+        assignee: formCreateProject.values.assignee,
+        pm: sessionStorage.getItem(USER_ID),
+        planned_hours: parseFloat(res.data.total_hours),
+        planned_value: formCreateProject.values.planned_value,
+        remaining_hours: formCreateProject.values.planned_hours
+      })
+    }).catch(err=>{
+      console.log(err)
+    })
   }
 
   useEffect(() => {
@@ -523,16 +532,16 @@ const CreateNewProject = () => {
 
 
   function populate_planned_value_and_hours(inputList) {
-    let total_planned_value = 0
-    let total_planned_hours = 0
+    let temp_total_planned_value = 0
+    let temp_total_planned_hours = 0
     let assignees = []
     let assignee_eps = []
     console.log('inputs', inputList)
     Array.from(inputList).forEach((item, idx) => {
       assignees.push(item.assignee.data.id)
       assignee_eps.push(item.estimated_person)
-      total_planned_value += parseFloat(item.assignee.data.slc_details.hourly_rate) * 8 * parseFloat(total_working_days)
-      total_planned_hours += parseFloat(item.estimated_person) * 8 * parseFloat(total_working_days)
+      temp_total_planned_value += parseFloat(item.assignee.data.slc_details.hourly_rate) * total_planned_hours
+      temp_total_planned_hours += parseFloat(item.estimated_person) * total_planned_hours
     })
     formCreateProject.setValues({
       task_delivery_order: formCreateProject.values.task_delivery_order,
@@ -546,9 +555,9 @@ const CreateNewProject = () => {
       planned_delivery_date: formCreateProject.values.planned_delivery_date,
       assignee: assignees,
       pm: sessionStorage.getItem(USER_ID),
-      planned_hours: total_planned_hours,
-      planned_value: total_planned_value,
-      remaining_hours: total_planned_hours
+      planned_hours: temp_total_planned_hours,
+      planned_value: temp_total_planned_value,
+      remaining_hours: temp_total_planned_hours
     })
   }
 
@@ -563,15 +572,14 @@ const CreateNewProject = () => {
         { 
           assignee: selectedAssignees,
           estimated_person: selectedAssigneesEP, 
-          planned_value: parseFloat(selectedAssignees.data.slc_details.hourly_rate) * 8 * parseFloat(total_working_days), 
-          planned_hours: parseFloat(((total_working_days * 8) * selectedAssigneesEP).toFixed(1)) 
+          planned_value: parseFloat(selectedAssignees.data.slc_details.hourly_rate) * total_planned_hours * selectedAssigneesEP, 
+          planned_hours: parseFloat((total_planned_hours * selectedAssigneesEP).toFixed(1)) 
         }
       ]);
       // setRemaining_EP((remaining_EP - selectedAssigneesEP).toFixed(1))
       setSelectedAssignees(null)
       setSelectedAssigneesEP(0)
       setSelectedAssigneeExistingEP(0)
-      console.log("inputList", inputList)
     }
     else {
       enqueueSnackbar("Assignee details not available ! ", {
@@ -586,7 +594,6 @@ const CreateNewProject = () => {
     console.log('item to remove',arrayRemoveItem(inputList, item))
     populate_planned_value_and_hours(arrayRemoveItem(inputList, item))
     setInputList(arrayRemoveItem(inputList, item))
-    // setRemaining_EP((parseFloat(remaining_EP) + parseFloat(item.estimated_person)).toFixed(1))
   }
   
   return (

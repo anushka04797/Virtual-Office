@@ -2,12 +2,10 @@
 import React, { useEffect, useState } from 'react';
 import { CCardBody, CCard, CForm, CButton, CInput, CBadge, CModal, CModalHeader, CModalTitle, CModalBody, CContainer, CRow, CCol, CLabel, CTextarea } from '@coreui/react'
 
-import GradeIcon from '@material-ui/icons/Grade';
-import IconButton from '@material-ui/core/IconButton';
 import '../ongoing-project-details-view/OngoingProjectDetailsView.css';
 import CIcon from '@coreui/icons-react';
 import Select, { defaultTheme } from "react-select";
-import Creatable from 'react-select/creatable';
+
 import { useHistory, useLocation } from 'react-router';
 import { API, BASE_URL, USER_ID } from '../../Config';
 import swal from 'sweetalert';
@@ -47,6 +45,8 @@ const MyProjectsDetailsView = () => {
     const [remaining_EP, setRemaining_EP] = useState(1)
     const [selectedAssigneeTotalEP,setSelectedAssigneeTotalEP]=useState(0)
     const [total_ep,setTotalEp]=useState(0)
+    const [total_planned_hours, setTotalPlannedHours] = useState(0)
+
     const radioHandler = (status, titleStatus) => {
         setStatus(status);
         setTitleStatus(titleStatus);
@@ -106,7 +106,6 @@ const MyProjectsDetailsView = () => {
         setSelectedAssignees(null)
     }
     const initialize_default_assignees = (subtask) => {
-        let total_days=initialize_total_working_days(subtask.start_date, subtask.planned_delivery_date)
         let preset_assignees = []
 
         API.get('auth/assignee/list/').then((res) => {
@@ -128,8 +127,8 @@ const MyProjectsDetailsView = () => {
                     sorter: assignee.assignee.first_name,
                     assignee: assignee.assignee, 
                     estimated_person: assignee.estimated_person, 
-                    planned_value: Number(parseFloat(assignee.assignee.slc_details.hourly_rate) * 8 * parseFloat(total_days)*parseFloat(assignee.estimated_person)).toFixed(2), 
-                    planned_hours: parseFloat(((total_days * 8) * parseFloat(assignee.estimated_person)).toFixed(1))
+                    planned_value: Number(parseFloat(assignee.assignee.slc_details.hourly_rate) * parseFloat(subtask.planned_hours) *parseFloat(assignee.estimated_person)).toFixed(2), 
+                    planned_hours: parseFloat((parseFloat(subtask.planned_hours) * parseFloat(assignee.estimated_person)).toFixed(2))
                 })
                 dtem.push(assignee.assignee.id.toString())
                 preset_assignees.push({ value: String(assignee.assignee.id).toString(), label: assignee.assignee.first_name + ' ' + assignee.assignee.last_name, data: assignee.assignee })
@@ -145,14 +144,14 @@ const MyProjectsDetailsView = () => {
             editForm.setFieldValue('assignee', dtem)
             return dtem
         })
-
     }
     const editInfoForm = (subtask) => {
         console.log('selected sub task', subtask)
         setEditModal(!editModal)
         if (editForm) {
             console.log('assignee in edit form', editForm.values)
-            initialize_total_working_days(project?.project.start_date, project?.project.planned_delivery_date)
+            setTotalPlannedHours(subtask.planned_hours)
+            // initialize_total_working_days(project?.project.start_date, project?.project.planned_delivery_date)
             editForm.setValues({
                 sub_task: project?.project.sub_task,
                 description: project?.project.description,
@@ -181,61 +180,8 @@ const MyProjectsDetailsView = () => {
         }
         return false
     }
-    const handleAssigneeChange = (values, actionMeta) => {
-        setSelectedAssignees(values)
-        let temp = []
-        let planned_value = 0
 
-        Array.from(values).forEach((item, idx) => {
-            temp.push(item.value)
-            if (item.data.slc_details != null) {
-                // if (actionMeta.action === 'select-option'){
-                planned_value += parseInt(item.data.slc_details.hourly_rate) * parseInt(total_working_days) * 8
-                // }else if (actionMeta.action === 'remove-value'){
-                //     planned_value += parseInt(item.data.slc_details.hourly_rate) * parseInt(calc(startDate, endDate)) * 8
-                // }
-            }
-        })
-        editForm.setValues({
-            sub_task: editForm.values.sub_task,
-            description: editForm.values.description,
-            work_package_number: editForm.values.work_package_number,
-            work_package_index: editForm.values.work_package_index,
-            task_title: editForm.values.task_title,
-            estimated_person: editForm.values.estimated_person,
-            start_date: editForm.values.start_date,
-            planned_delivery_date: editForm.values.planned_delivery_date,
-            assignee: temp,
-            pm: project.project.pm.id,
-            planned_hours: editForm.values.planned_hours,
-            planned_value: parseFloat(planned_value),
-            remaining_hours: editForm.values.remaining_hours,
-            status: editForm.values.status,
-            sub_task_updated: ""
-        })
-    }
-    const initialize_total_working_days = (startDate, endDate) => {
-        var start = startDate.split('-');
-        var end = endDate.split('-');
-        var startYear = parseInt(start[0]);
-        var endYear = parseInt(end[0]);
-        var dates = [];
-        for (var i = startYear; i <= endYear; i++) {
-            var endMonth = i != endYear ? 11 : parseInt(end[1]) - 1;
-            var startMon = i === startYear ? parseInt(start[1]) - 1 : 0;
-            for (var j = startMon; j <= endMonth; j = j > 12 ? j % 12 || 11 : j + 1) {
-                var month = j + 1;
-                var displayMonth = month < 10 ? '0' + month : month;
-                dates.push([i, displayMonth, '01'].join('-'));
-            }
-        }
-        // const monthNames = ["January", "February", "March", "April", "May", "June",
-        //     "July", "August", "September", "October", "November", "December"
-        // ];
-        // let total_working_days = 0
-        setTotalWorkingDays(calc(startDate, endDate))
-        return calc(startDate, endDate)
-    }
+    // component initializing
     const initialize = () => {
         API.get('project/details/' + work_package_number + '/').then((res) => {
             console.log(res)
@@ -248,7 +194,7 @@ const MyProjectsDetailsView = () => {
                     setProject(res.data.data)
                     setTdo(res.data.data.project.task_delivery_order.title)
                     // editForm.setFieldValue('assignee', res.data.assignee)
-                    initialize_total_working_days(res.data.data.project.start_date, res.data.data.project.planned_delivery_date)
+                    // initialize_total_working_days(res.data.data.project.start_date, res.data.data.project.planned_delivery_date)
                     // dateRange(res.data.data.project.start_date,res.data.data.project.planned_delivery_date)
                 }
                 else {
@@ -260,8 +206,8 @@ const MyProjectsDetailsView = () => {
         })
     }
     function populate_planned_value_and_hours(inputList) {
-        let total_planned_value = 0
-        let total_planned_hours = 0
+        let total_temp_planned_value = 0
+        let total_temp_planned_hours = 0
         let assignees = []
         let assignee_eps = []
         let total_temp_ep=0
@@ -270,8 +216,8 @@ const MyProjectsDetailsView = () => {
             assignees.push(item.assignee.id?.toString())
             assignee_eps.push(item.estimated_person)
             total_temp_ep+=parseFloat(item.estimated_person)
-            total_planned_value += parseFloat(Number(item.assignee.slc_details.hourly_rate * 8 * parseFloat(total_working_days)).toFixed(2))
-            total_planned_hours += parseFloat(Number(parseFloat(item.estimated_person) * 8 * parseFloat(total_working_days)).toFixed(2))
+            total_temp_planned_value += parseFloat(Number(item.assignee.slc_details.hourly_rate * parseFloat(total_planned_hours)).toFixed(2))
+            total_temp_planned_hours += parseFloat(Number(parseFloat(item.estimated_person) * parseFloat(total_planned_hours)).toFixed(2))
         })
         setTotalEp(total_temp_ep)
         editForm.setValues({
@@ -287,9 +233,9 @@ const MyProjectsDetailsView = () => {
             planned_delivery_date: editForm.values.planned_delivery_date,
             assignee: assignees,
             pm: sessionStorage.getItem(USER_ID),
-            planned_hours: total_planned_hours,
-            planned_value: total_planned_value,
-            remaining_hours: total_planned_hours
+            planned_hours: total_temp_planned_hours,
+            planned_value: total_temp_planned_value,
+            remaining_hours: total_temp_planned_hours
         })
     }
     function removeAssignee(item) {
@@ -341,25 +287,7 @@ const MyProjectsDetailsView = () => {
             handle_tdo_title_change(project.project.task_delivery_order.id)
         }
     }
-    function getBusinessDateCount(startDate, endDate) {
-        var elapsed, daysBeforeFirstSaturday, daysAfterLastSunday;
-        var ifThen = function (a, b, c) {
-            return a == b ? c : a;
-        };
-        elapsed = endDate - startDate;
-        elapsed /= 86400000;
-        var daysBeforeFirstSunday = (7 - startDate.getDay()) % 7;
-        daysAfterLastSunday = endDate.getDay();
-        elapsed -= (daysBeforeFirstSunday + daysAfterLastSunday);
-        elapsed = (elapsed / 7) * 5;
-        elapsed += ifThen(daysBeforeFirstSunday - 1, -1, 0) + ifThen(daysAfterLastSunday, 6, 5);
-        return Math.ceil(elapsed);
-    }
-    function calc(startDate, endDate) {
-        var result = getBusinessDateCount(new Date(startDate), new Date(endDate));
-        console.log('total days from calc func',result)
-        return result;
-    }
+    // delete assignee
     const delete_assignee = (project_id, assignee_id) => {
         swal({
             title: "Are you sure?",
@@ -393,92 +321,52 @@ const MyProjectsDetailsView = () => {
             });
     }
     function handlePlannedDeliveryDateChange(event) {
-        setInputList([])
-        dateRange(editForm.values.start_date, event.target.value)
-    }
-    function dateRange(startDate, endDate) {
-        console.log("dateRange", startDate, endDate)
-        var start = startDate.split('-');
-        var end = endDate.split('-');
-        var startYear = parseInt(start[0]);
-        var endYear = parseInt(end[0]);
-        var dates = [];
-        for (var i = startYear; i <= endYear; i++) {
-            var endMonth = i != endYear ? 11 : parseInt(end[1]) - 1;
-            var startMon = i === startYear ? parseInt(start[1]) - 1 : 0;
-            for (var j = startMon; j <= endMonth; j = j > 12 ? j % 12 || 11 : j + 1) {
-                var month = j + 1;
-                var displayMonth = month < 10 ? '0' + month : month;
-                dates.push([i, displayMonth, '01'].join('-'));
-            }
-        }
-        const monthNames = ["January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December"
-        ];
-        let total_working_days = 0
-        API.get('organizations/calender/all/').then((res) => {
-            console.log("value", res.data)
-            dates.forEach((date, idx) => {
-                month = monthNames[new Date(date).getMonth()]
-                res.data.data.forEach((item, idx) => {
-                    console.log(item.Year)
-                    if (item.Year == new Date(date).getFullYear()) {
-                        total_working_days += item[month]
-                        console.log('total_working_days', total_working_days)
-                    }
-                })
-            })
-            // setTotalWorkingDays(total_working_days)
-        }).then(() => {
-            var assignee_array = []
-            selectedAssignees.forEach(item => {
-                console.log(item.data.id)
-                assignee_array.push(item.data.id.toString())
-            })
+        //removing each selected assignee
+        
+        editForm.handleChange(event)
+        // dateRange(editForm.values.start_date, event.target.value)
+        API.get('project/date-to-date/'+editForm.values.start_date+'/'+event.target.value+'/').then(res=>{
+            setTotalPlannedHours(parseFloat(res.data.total_hours))
             editForm.setValues({
                 sub_task: editForm.values.sub_task,
                 description: editForm.values.description,
                 work_package_number: editForm.values.work_package_number,
                 work_package_index: editForm.values.work_package_index,
                 task_title: editForm.values.task_title,
-                estimated_person: (calc(startDate, endDate) / total_working_days).toFixed(2),
+                estimated_person: 1,
                 start_date: editForm.values.start_date,
-                planned_delivery_date: endDate,
-                assignee: assignee_array,
+                planned_delivery_date: event.target.value,
+                assignee: [],
                 pm: sessionStorage.getItem(USER_ID),
-                planned_hours: editForm.values.planned_hours,
+                planned_hours: parseFloat(res.data.total_hours),
                 planned_value: editForm.values.planned_value,
-                remaining_hours: editForm.values.planned_hours
+                remaining_hours: parseFloat(res.data.total_hours)
             })
+        }).catch(err=>{
+            console.log(err)
         })
     }
+    
     function calculate_progress_in_percentage(total_hours, remaining_hours) {
         let worked_hours = parseFloat(total_hours) - parseFloat(remaining_hours)
         return (100 * worked_hours) / parseFloat(total_hours)
     }
-    const handleAddClick = () => {
-        console.log("selected assignee", selectedAssignees, 'ep', selectedAssigneesEP)
-        populate_planned_value_and_hours([...inputList, { assignee: selectedAssignees.data, estimated_person: selectedAssigneesEP }])
-        setInputList([...inputList, { assignee: selectedAssignees.data, estimated_person: selectedAssigneesEP }]);
-        setSelectedAssignees(null)
-        setSelectedAssigneesEP(0)
-        console.log("inputList", inputList)
-    };
+    
     const handleAddPerson = () => {
         console.log("selected assignee", selectedAssignees, 'ep', selectedAssigneesEP)
         populate_planned_value_and_hours([...inputList, { 
             assignee: selectedAssignees.data, 
             estimated_person: selectedAssigneesEP,
-            planned_value: Number(parseFloat(selectedAssignees.data.slc_details.hourly_rate) * 8 * parseFloat(total_working_days)).toFixed(2),
-            planned_hours: Number(parseFloat(((total_working_days * 8) * selectedAssigneesEP).toFixed(1))).toFixed(2)
+            planned_value: Number(parseFloat(selectedAssignees.data.slc_details.hourly_rate) * total_planned_hours).toFixed(2),
+            planned_hours: Number(parseFloat((total_planned_hours * selectedAssigneesEP).toFixed(1))).toFixed(2)
         }])
         setInputList([
             ...inputList, 
             { 
-              assignee: selectedAssignees.data, 
-              estimated_person: selectedAssigneesEP, 
-              planned_value: Number(parseFloat(selectedAssignees.data.slc_details.hourly_rate) * 8 * parseFloat(total_working_days)).toFixed(2), 
-              planned_hours: Number(parseFloat(((total_working_days * 8) * selectedAssigneesEP).toFixed(1))).toFixed(2) 
+                assignee: selectedAssignees.data, 
+                estimated_person: selectedAssigneesEP, 
+                planned_value: Number(parseFloat(selectedAssignees.data.slc_details.hourly_rate) * total_planned_hours).toFixed(2),
+                planned_hours: Number(parseFloat((total_planned_hours * selectedAssigneesEP).toFixed(1))).toFixed(2)
             }
         ]);
         setSelectedAssignees(null)
