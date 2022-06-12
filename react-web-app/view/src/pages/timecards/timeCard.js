@@ -6,28 +6,26 @@ import {
   CLabel,
   CButton,
   CDataTable,
-  CBadge,CInput
+  CBadge
 } from "@coreui/react";
 import orderBy from 'lodash/orderBy';
 import React, { useState, useEffect } from "react";
 import "./timeCards.css";
 import Select from "react-select";
 import { useDispatch, useSelector } from "react-redux";
-import { BASE_URL, FILE_API, USER_ID } from "../../Config";
+import { FILE_API, USER_ID } from "../../Config";
 import { API } from "../../Config";
 import { has_permission } from "../../helper";
 import { useFormik } from "formik";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
-import * as FileSaver from "file-saver";
-import * as XLSX from "xlsx";
 
 import CIcon from "@coreui/icons-react";
 import moment from "moment";
 import swal from "sweetalert";
 import AddTimecardItms from "./addTimecardItem";
 import EditTimeCard from "./Edit";
-import { fetchAllTimecardsPmThunk, fetchTimecardThunk } from "../../store/slices/TimecardSlice";
+
 import { useLocation } from "react-router-dom";
 
 const TimeCards = () => {
@@ -38,6 +36,7 @@ const TimeCards = () => {
   const [usersData, setUsersData] = useState([]);
   const [pdfData, setPdfData] = useState([]);
   const [pdfTitle, setPdfTitle] = useState();
+  let location = useLocation();
   const [assigneeList, setAssigneeList] = useState([]);
   const [non_submitted_total_tc,setNonSubmittedTotalTC]=useState(0)
   // const [selectedEmployee, setSelectedEmployee] = useState(initialState)
@@ -48,10 +47,6 @@ const TimeCards = () => {
   const [endDate, setEndDate] = useState("");
   const [totalHrs, setTotalHrs] = useState(0);
   const [modalData, setModalData] = useState("");
-
-  const [modal, setModal] = useState();
-  const [actualWorkDone, setActualWorkDone] = useState();
-  const [hour, sethour] = useState();
   const [row, setRow] = useState();
 
   const getTimeCards = (values) => {
@@ -177,9 +172,9 @@ const TimeCards = () => {
       "wbs/user/time-card/list/" + assignee.id + "/"
     ).then((res) => {
       console.log('assignee tc',res.data)
-      setPdfTitle(
-        profile_details.first_name + " " + profile_details.last_name
-      );
+      // setPdfTitle(
+      //   profile_details.first_name + " " + profile_details.last_name
+      // );
       let temp = [];
       Array.from(res.data.data).forEach((item, idx) => {
         temp.push({ data: item });
@@ -231,9 +226,7 @@ const TimeCards = () => {
     }
     return "";
   }
-  {
-    /**fetch all assignees for PM */
-  }
+  
   const [modaladdItem, setmodalAddItem] = useState(false);
   const [show_edit_modal, setShowEditModal] = useState(false);
   const handleAssigneeChange = (option) => {
@@ -246,10 +239,9 @@ const TimeCards = () => {
     console.log('executing effect')
     window.scrollTo(0, 0);
     const { start, end } = dateRange();
+    
     // setSelectedAssignee({label:profile_details.first_name+' '+profile_details.last_name,value:profile_details.id,data:profile_details})
     setTotalHrs(0);
-    
-    setPdfTitle(capitalize(profile_details.first_name) + " " + capitalize(profile_details.last_name))
     if (
       has_permission("projects.change_projectassignee") ||
       has_permission("projects.add_projectassignee")
@@ -279,16 +271,25 @@ const TimeCards = () => {
         }
         setAssigneeList(orderBy(temp,'label'));
         if(selectedAssignee==null || selectedAssignee==undefined){
-          setSelectedAssignee({
-            data: res.data.user,
-            value: res.data.user.id,
-            label:
-              capitalize(res.data.user.first_name) +
-              " " +
-              capitalize(res.data.user.last_name),
-          })
+          if (location.state?.assignee && temp.length>0) {
+            let assignee_id = location.state.assignee;
+            setSelectedAssignee(temp.find(item=>item.value==assignee_id));
+            get_assignee_tc(temp.find(item=>item.value==assignee_id).data)
+          }
+          else{
+            setSelectedAssignee({
+              data: res.data.user,
+              value: res.data.user.id,
+              label:
+                capitalize(res.data.user.first_name) +
+                " " +
+                capitalize(res.data.user.last_name),
+            })
+            get_assignee_tc(res.data.user)
+          }
+          setPdfTitle(capitalize(res.data.user.first_name) + " " + capitalize(res.data.user.last_name))
         }
-        get_assignee_tc(res.data.user)
+        
       });
     }
     else{
@@ -301,22 +302,21 @@ const TimeCards = () => {
             " " +
             capitalize(profile_details.last_name),
         })
+        setPdfTitle(capitalize(profile_details.first_name) + " " + capitalize(profile_details.last_name))
         get_assignee_tc(profile_details)
       }
     }
     
-  }, [update]);
-  useEffect(()=>{
-    if (location.state?.assignee && assigneeList.length>0) {
-      let assignee_id = location.state.assignee;
-      console.log("predefined id", assignee_id);
-      console.log("found user", assigneeList.find(item=>item.value==assignee_id));
-      // setSelectedAssignee(assigneeList.find(item=>item.value==assignee_id))
-      setSelectedAssignee(assigneeList.find(item=>item.value==assignee_id));
-      setPdfTitle(assigneeList.find(item=>item.value==assignee_id).label);
-      get_assignee_tc(assigneeList.find(item=>item.value==assignee_id).data)
-    }
-  },[assigneeList])
+  }, []);
+  // useEffect(()=>{
+  //   if (location.state?.assignee && assigneeList.length>0) {
+  //     let assignee_id = location.state.assignee;
+      
+  //     setSelectedAssignee(assigneeList.find(item=>item.value==assignee_id));
+      
+  //   }
+  // },[assigneeList])
+  
   const validateEditForm = (values) => {
     const errors = {};
 
@@ -349,18 +349,6 @@ const TimeCards = () => {
   const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
   const fileExtension = ".xlsx";
   
-  const exportToCSV = (csvData, fileName) => {
-    const ws = XLSX.utils.json_to_sheet(csvData);
-    const wb = { Sheets: { data: ws }, SheetNames: ["" + startDate + ' - ' + endDate] };
-    const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
-    const data = new Blob([excelBuffer], { type: fileType });
-    FileSaver.saveAs(data, fileName + fileExtension);
-  }
-
-
-  {
-    /**export data as pdf */
-  }
   const exportPDF = () => {
     const unit = "pt";
     const size = "A4"; // Use A1, A2, A3 or A4
@@ -424,12 +412,7 @@ const TimeCards = () => {
     setRow(tableItem.data);
     setShowEditModal(true);
   };
-  const hideModal = (tableItem) => {
-    setModal(!row);
-    setRow(null);
-    setActualWorkDone(null);
-    sethour(null);
-  };
+  
 
   const onAddItem = () => {
     setmodalAddItem(false);
@@ -522,12 +505,6 @@ const TimeCards = () => {
     satday = moment(satday).format('YYYY-MM-DD')
     return satday;
   };
-  let location = useLocation();
-  React.useEffect(() => {
-    dateRange()
-    nextSatDay();
-    
-  }, []);
 
   const show_add_item_btn = () => {
     if (editForm.values.assigneeSelectPM == sessionStorage.getItem(USER_ID)) {

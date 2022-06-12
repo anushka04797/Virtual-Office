@@ -21,7 +21,7 @@ import * as FileSaver from "file-saver";
 import { saveAs } from "file-saver";
 import { useHistory } from "react-router-dom";
 const SubmittedTimecards = () => {
-  const [pdfData, setPdfData] = useState([]);
+  const dispatch = useDispatch();
   let submitted = [];
   const profile_details = useSelector((state) => state.profile.data);
   const submitted_timecards = useSelector((state) => {
@@ -50,23 +50,9 @@ const SubmittedTimecards = () => {
     submitted = [...temp];
     return temp;
   });
-  const dispatch = useDispatch();
-  const nextSatDay = () => {
-    var satday = new Date();
-    for (let i = 0; i < 7; i++) {
-      if (satday.getDay() === 6) {
-        console.log("sat", satday);
-        break;
-      } else {
-        satday = moment(satday).add(1, "day").toDate();
-      }
-    }
-    satday = moment(satday).format("YYYY-MM-DD");
-    return satday;
-  };
+  
   React.useEffect(() => {
     dispatch(fetchUserSubmittedTimecards());
-    
   }, []);
   const exportPDF = () => {
     const pdfTitle =
@@ -345,9 +331,7 @@ const SubmittedTimecards = () => {
                 Name: (item) => (
                   <td>
                     <a
-                     onClick={() => {
-                      history.push({pathname:'/dashboard/timecard/generate-timecard',state:{assignee:item.data.id} })
-                     }}
+                     onClick={() => {}}
                       size="sm"
                       type="button"
                       color="primary"

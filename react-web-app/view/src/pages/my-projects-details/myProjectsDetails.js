@@ -1,7 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
 import { CCardBody, CCard, CForm, CButton, CInput, CBadge, CModal, CModalHeader, CModalTitle, CModalBody, CContainer, CRow, CCol, CLabel, CTextarea,  CCardFooter  } from '@coreui/react'
-
 import '../ongoing-project-details-view/OngoingProjectDetailsView.css';
 import CIcon from '@coreui/icons-react';
 import Select, { defaultTheme } from "react-select";
@@ -238,12 +237,7 @@ const MyProjectsDetailsView = () => {
             remaining_hours: total_temp_planned_hours
         })
     }
-    function removeAssignee(item) {
-        setAssignees(sortBy([...assignees,{ value: item.assignee.id.toString(), label: item.assignee.first_name + ' ' + item.assignee.last_name, data: item.assignee }],'label'))
-        setInputList(arrayRemoveItem(inputList, item));
-        populate_planned_value_and_hours(arrayRemoveItem(inputList, item))
-        setRemaining_EP((parseFloat(remaining_EP) + parseFloat(item.estimated_person)).toFixed(1))
-    }
+    
     const colourStyles = {
         // control: (styles, state) => ({ ...styles,height:"35px", fontSize: '14px !important', lineHeight: '1.42857', borderRadius: "8px",borderRadius:".25rem",color:"rgb(133,133,133)",border:state.isFocused ? '2px solid #0065ff' :'inherit'}),
         option: (provided, state) => ({ ...provided, fontSize: '14px !important' }),
@@ -320,31 +314,47 @@ const MyProjectsDetailsView = () => {
                 }
             });
     }
+    function removeAssignee(item) {
+        setAssignees(sortBy([...assignees,{ value: item.assignee.id.toString(), label: item.assignee.first_name + ' ' + item.assignee.last_name, data: item.assignee }],'label'))
+        setInputList(arrayRemoveItem(inputList, item));
+        populate_planned_value_and_hours(arrayRemoveItem(inputList, item))
+        setRemaining_EP((parseFloat(remaining_EP) + parseFloat(item.estimated_person)).toFixed(1))
+    }
     function handlePlannedDeliveryDateChange(event) {
         //removing each selected assignee
-        
+        setInputList([])
+        setTotalEp(0.00)
         editForm.handleChange(event)
-        // dateRange(editForm.values.start_date, event.target.value)
-        API.get('project/date-to-date/'+editForm.values.start_date+'/'+event.target.value+'/').then(res=>{
-            setTotalPlannedHours(parseFloat(res.data.total_hours))
-            editForm.setValues({
-                sub_task: editForm.values.sub_task,
-                description: editForm.values.description,
-                work_package_number: editForm.values.work_package_number,
-                work_package_index: editForm.values.work_package_index,
-                task_title: editForm.values.task_title,
-                estimated_person: 1,
-                start_date: editForm.values.start_date,
-                planned_delivery_date: event.target.value,
-                assignee: [],
-                pm: sessionStorage.getItem(USER_ID),
-                planned_hours: parseFloat(res.data.total_hours),
-                planned_value: editForm.values.planned_value,
-                remaining_hours: parseFloat(res.data.total_hours)
+        API.get('auth/assignee/list/').then((res) => {
+            let temp_asses=[]
+            Array.from(res.data.data).forEach((item, idx) => {
+                temp_asses.push({ value: item.id.toString(), label: item.first_name + ' ' + item.last_name, data: item })
             })
-        }).catch(err=>{
-            console.log(err)
+            setAssignees(temp_asses)
+        }).then(()=>{
+            // dateRange(editForm.values.start_date, event.target.value)
+            API.get('project/date-to-date/'+editForm.values.start_date+'/'+event.target.value+'/').then(res=>{
+                setTotalPlannedHours(parseFloat(res.data.total_hours))
+                editForm.setValues({
+                    sub_task: editForm.values.sub_task,
+                    description: editForm.values.description,
+                    work_package_number: editForm.values.work_package_number,
+                    work_package_index: editForm.values.work_package_index,
+                    task_title: editForm.values.task_title,
+                    estimated_person: 1,
+                    start_date: editForm.values.start_date,
+                    planned_delivery_date: event.target.value,
+                    assignee: [],
+                    pm: sessionStorage.getItem(USER_ID),
+                    planned_hours: parseFloat(res.data.total_hours),
+                    planned_value: 0.00,
+                    remaining_hours: parseFloat(res.data.total_hours)
+                })
+            }).catch(err=>{
+                console.log(err)
+            })
         })
+        
     }
     
     function calculate_progress_in_percentage(total_hours, remaining_hours) {

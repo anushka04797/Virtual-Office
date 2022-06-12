@@ -144,7 +144,7 @@ const WbsModal = (props) => {
             dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)));
             swal({
               title: "Good job!",
-              text: res.data.message,
+              text: "WBS updated successfully!",
               icon: "success",
             });
             props.onClose();
