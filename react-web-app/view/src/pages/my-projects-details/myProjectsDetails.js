@@ -6,7 +6,7 @@ import CIcon from '@coreui/icons-react';
 import Select, { defaultTheme } from "react-select";
 
 import { useHistory, useLocation } from 'react-router';
-import { API, BASE_URL, USER_ID } from '../../Config';
+import { API, API_URL, BASE_URL, TOKEN, USER_ID } from '../../Config';
 import swal from 'sweetalert';
 import { useDispatch } from 'react-redux'
 import {
@@ -24,6 +24,8 @@ import { has_permission } from '../../helper';
 import LinearWithValueLabel from '../../components/linear-progress-bar/linear-progress-bar';
 import './myProjectDetails.css'
 import AssignedProjectsPopover from './inc/AssignedProjectsPopover';
+import axios from 'axios';
+
 
 const MyProjectsDetailsView = () => {
     const { work_package_number } = useParams();
@@ -33,7 +35,7 @@ const MyProjectsDetailsView = () => {
     const [assignees, setAssignees] = useState([])
 
     const [inputList, setInputList] = useState([])
-    const [total_working_days, setTotalWorkingDays] = useState(0)
+    
     let location = useLocation()
     let history = useHistory()
     const [titleStatus, setTitleStatus] = useState(1);
@@ -45,6 +47,7 @@ const MyProjectsDetailsView = () => {
     const [selectedAssigneeTotalEP,setSelectedAssigneeTotalEP]=useState(0)
     const [total_ep,setTotalEp]=useState(0)
     const [total_planned_hours, setTotalPlannedHours] = useState(0)
+    const [total_ph,setTotalPH]=useState(0)
 
     const radioHandler = (status, titleStatus) => {
         setStatus(status);
@@ -97,37 +100,43 @@ const MyProjectsDetailsView = () => {
         validate: validateEditForm,
         onSubmit: edit_project
     })
-    const reset_form = () => {
-        editForm.resetForm()
-        setAssignees([])
-        setInputList([])
-        setSelectedAssigneesEP(0)
-        setSelectedAssignees(null)
-    }
+    
     const initialize_default_assignees = (subtask) => {
-        let preset_assignees = []
-
-        API.get('auth/assignee/list/').then((res) => {
-            console.log('assignees',res.data)
+        
+        const requestOne = API.get("project/date-to-date/"+subtask.start_date+"/"+subtask.planned_delivery_date+"/");
+        const requestTwo = API.get("auth/assignee/list/");
+        axios.all([requestOne,requestTwo],{
+            baseURL: API_URL,
+            timeout: 100000,
+            headers: {
+              "Authorization": `Bearer ${sessionStorage.getItem(TOKEN)}`,
+              "Content-Type": "application/json",
+            }
+          }).then(axios.spread((...responses) =>{
+            const responseOne = responses[0]
+            const responseTwo = responses[1]
+            let total_hours=responseOne.data.total_hours
+            setTotalPH(total_hours)
             let temp = []
             let dtem = []
             let temp_inputList=[]
             let total_temp_ep=0
+            let preset_assignees = []
             let eps=[]
-            Array.from(res.data.data).forEach((item, idx) => {
+            Array.from(responseTwo.data.data).forEach((item, idx) => {
                 temp.push({ value: item.id.toString(), label: item.first_name + ' ' + item.last_name, data: item })
             })
 
             subtask?.assignees.forEach((assignee, idx) => {
-                console.log('asstray',total_working_days)
+                console.log('asstray',total_ph)
                 total_temp_ep+=parseFloat(assignee.estimated_person)
                 eps.push(assignee.estimated_person)
                 temp_inputList.push({ 
                     sorter: assignee.assignee.first_name,
                     assignee: assignee.assignee, 
                     estimated_person: assignee.estimated_person, 
-                    planned_value: Number(parseFloat(assignee.assignee.slc_details.hourly_rate) * parseFloat(subtask.planned_hours) *parseFloat(assignee.estimated_person)).toFixed(2), 
-                    planned_hours: parseFloat((parseFloat(subtask.planned_hours) * parseFloat(assignee.estimated_person)).toFixed(2))
+                    planned_value: Number(parseFloat(assignee.assignee.slc_details.hourly_rate) * parseFloat(total_hours) * parseFloat(assignee.estimated_person)).toFixed(2), 
+                    planned_hours: parseFloat((parseFloat(total_hours) * parseFloat(assignee.estimated_person)).toFixed(2))
                 })
                 dtem.push(assignee.assignee.id.toString())
                 preset_assignees.push({ value: String(assignee.assignee.id).toString(), label: assignee.assignee.first_name + ' ' + assignee.assignee.last_name, data: assignee.assignee })
@@ -135,6 +144,7 @@ const MyProjectsDetailsView = () => {
                     return ele.value != String(assignee.assignee.id).toString();
                 });
             })
+            console.log({temp_inputList})
             setInputList(sortBy(temp_inputList,'sorter'));
             setAssignees(sortBy(temp, 'label'))
             setTotalEp(total_temp_ep)
@@ -142,32 +152,33 @@ const MyProjectsDetailsView = () => {
             editForm.setFieldValue('estimated_person', eps)
             editForm.setFieldValue('assignee', dtem)
             return dtem
-        })
+        }))
     }
     const editInfoForm = (subtask) => {
         console.log('selected sub task', subtask)
         setEditModal(!editModal)
         if (editForm) {
-            console.log('assignee in edit form', editForm.values)
-            setTotalPlannedHours(subtask.planned_hours)
-            // initialize_total_working_days(project?.project.start_date, project?.project.planned_delivery_date)
-            editForm.setValues({
-                sub_task: project?.project.sub_task,
-                description: project?.project.description,
-                work_package_number: project?.project.work_package_number,
-                work_package_index: subtask?.work_package_index,
-                task_title: subtask?.task_title,
-                estimated_person: editForm.values.estimated_person,
-                start_date: subtask.start_date,
-                planned_delivery_date: subtask.planned_delivery_date,
-                assignee: initialize_default_assignees(subtask),
-                pm: project.project.pm.id,
-                planned_hours: subtask.planned_hours,
-                planned_value: subtask.planned_value,
-                remaining_hours: subtask.remaining_hours,
-                status: subtask.status,
-                sub_task_updated: ""
+            API.get('project/date-to-date/'+subtask.start_date+'/'+subtask.planned_delivery_date+'/').then(res=>{
+                setTotalPlannedHours(parseFloat(res.data.total_hours))
+                editForm.setValues({
+                    sub_task: project?.project.sub_task,
+                    description: project?.project.description,
+                    work_package_number: project?.project.work_package_number,
+                    work_package_index: subtask?.work_package_index,
+                    task_title: subtask?.task_title,
+                    estimated_person: editForm.values.estimated_person,
+                    start_date: subtask.start_date,
+                    planned_delivery_date: subtask.planned_delivery_date,
+                    assignee: initialize_default_assignees(subtask),
+                    pm: project.project.pm.id,
+                    planned_hours: subtask.planned_hours,
+                    planned_value: subtask.planned_value,
+                    remaining_hours: subtask.remaining_hours,
+                    status: subtask.status,
+                    sub_task_updated: ""
+                })
             })
+            
             
             // populate_planned_value_and_hours(inputList)
             // dateRange(project?.project.start_date,project?.project.planned_delivery_date)
@@ -215,7 +226,7 @@ const MyProjectsDetailsView = () => {
             assignees.push(item.assignee.id?.toString())
             assignee_eps.push(item.estimated_person)
             total_temp_ep+=parseFloat(item.estimated_person)
-            total_temp_planned_value += parseFloat(Number(item.assignee.slc_details.hourly_rate * parseFloat(total_planned_hours)).toFixed(2))
+            total_temp_planned_value += parseFloat(Number(item.assignee.slc_details.hourly_rate * parseFloat(item.estimated_person) * parseFloat(total_planned_hours)).toFixed(2))
             total_temp_planned_hours += parseFloat(Number(parseFloat(item.estimated_person) * parseFloat(total_planned_hours)).toFixed(2))
         })
         setTotalEp(total_temp_ep)
@@ -375,7 +386,7 @@ const MyProjectsDetailsView = () => {
             { 
                 assignee: selectedAssignees.data, 
                 estimated_person: selectedAssigneesEP, 
-                planned_value: Number(parseFloat(selectedAssignees.data.slc_details.hourly_rate) * total_planned_hours).toFixed(2),
+                planned_value: Number(parseFloat(selectedAssignees.data.slc_details.hourly_rate) * total_planned_hours * selectedAssigneesEP).toFixed(2),
                 planned_hours: Number(parseFloat((total_planned_hours * selectedAssigneesEP).toFixed(1))).toFixed(2)
             }
         ]);
