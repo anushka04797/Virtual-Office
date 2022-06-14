@@ -27,7 +27,7 @@ const CreateNewProject = () => {
   let history = useHistory()
   const dispatch = useDispatch()
   const [selectedTDO, setSelectedTDO] = useState()
-  
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const [selectedSubTask, setSelectedSubTask] = useState()
   const [selectedTaskTitle, setSelectedTaskTitle] = useState()
   const [work_package_number, setWorkPackageNumber] = useState()
@@ -544,7 +544,7 @@ const CreateNewProject = () => {
     Array.from(inputList).forEach((item, idx) => {
       assignees.push(item.assignee.data.id)
       assignee_eps.push(item.estimated_person)
-      temp_total_planned_value += parseFloat(item.assignee.data.slc_details.hourly_rate) * total_planned_hours
+      temp_total_planned_value += parseFloat(item.assignee.data.slc_details.hourly_rate) * parseFloat(item.estimated_person) * total_planned_hours
       temp_total_planned_hours += parseFloat(item.estimated_person) * total_planned_hours
     })
     formCreateProject.setValues({
@@ -566,8 +566,9 @@ const CreateNewProject = () => {
   }
 
   // handle click event of the Add button
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+ 
   const handleAddClick = () => {
+    console.log({selectedAssigneesEP})
     if(selectedAssignees.data.slc_details?.hourly_rate != null && selectedAssignees.data.slc_details?.hourly_rate!= undefined ){
       console.log('selectedAssignees',selectedAssignees.data.slc_details)
       populate_planned_value_and_hours([...inputList, { assignee: selectedAssignees, estimated_person: selectedAssigneesEP }])
@@ -576,8 +577,8 @@ const CreateNewProject = () => {
         { 
           assignee: selectedAssignees,
           estimated_person: selectedAssigneesEP, 
-          planned_value: parseFloat(selectedAssignees.data.slc_details.hourly_rate) * total_planned_hours * selectedAssigneesEP, 
-          planned_hours: parseFloat((total_planned_hours * selectedAssigneesEP).toFixed(1)) 
+          planned_value: parseFloat(selectedAssignees.data.slc_details.hourly_rate) * total_planned_hours * selectedAssigneesEP,
+          planned_hours: parseFloat((total_planned_hours * selectedAssigneesEP).toFixed(1))
         }
       ]);
       // setRemaining_EP((remaining_EP - selectedAssigneesEP).toFixed(1))
@@ -788,7 +789,7 @@ const CreateNewProject = () => {
                               <CLabel className="custom-label-5">
                                 EP
                               </CLabel>
-                              <CInput id="estimated_person" type="number" name="estimated_person" min="0" max={remaining_EP} step="0.1" value={selectedAssigneesEP} onChange={(e) => { if(e.target.value.match("^(0(\.[0-9]+)?|1(\.0+)?)$")!=null){ setSelectedAssigneesEP(e.target.value) }}} className="custom-forminput-6"></CInput>
+                              <CInput id="estimated_person" type="number" name="estimated_person" min="0" max={remaining_EP} step="0.1" value={selectedAssigneesEP} onChange={(e) => { if(e.target.value.match("^(0(\.[0-9]+)?|1(\.0+)?)$")!=null){ setSelectedAssigneesEP(e.target.value) }}} className="custom-forminput-6"/>
                             </div>
                             <div className="col-lg-3 mb-3">
                               <CButton color="primary" className="ar-btn" onClick={handleAddClick} disabled={selectedAssigneesEP == 0}>+ Add</CButton>
