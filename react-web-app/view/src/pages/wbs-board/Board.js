@@ -469,14 +469,28 @@ const WbsBoard = () => {
         <>
             <CContainer>
                 <CRow>
+                {has_permission("projects.add_projects")&&(
                     <CCol lg="3" className="mb-3 pl-4">
                         <Select
                             value={resetAssigneeSelectValue}
                             placeholder="Filter by assignee"
                             options={wbsAssigneeList}
                             onChange={filterWbs}
+                           
                         />
                     </CCol>
+                )}
+                {!has_permission("projects.add_projects")&&(
+                    <CCol lg="3" className="mb-3 pl-4">
+                        <Select
+                            value={resetAssigneeSelectValue}
+                            placeholder="Filter by assignee"
+                            options={wbsAssigneeList}
+                            onChange={filterWbs}
+                            isDisabled = {true}
+                        />
+                    </CCol>
+                )}
                     <CCol lg="3" className="mb-3 pl-4">
                         <Select
                             className="custom-forminput-6"

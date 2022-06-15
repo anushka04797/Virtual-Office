@@ -491,7 +491,7 @@ const PreviousWeeks = () => {
                 )} */}
                 {/**IF PM */}
 
-                <div>
+                
                   <CLabel className="custom-label-5" htmlFor="assigneeSelectPM">
                     Select Employee
                   </CLabel>
@@ -514,7 +514,7 @@ const PreviousWeeks = () => {
                     styles={colourStyles}
                   />
                   {/* {editForm.errors.assigneeSelectPM && <p className="error mt-1">{editForm.errors.assigneeSelectPM}</p>} */}
-                </div>
+                
               </CCol>
             )}
 
