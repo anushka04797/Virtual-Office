@@ -130,6 +130,8 @@ const WbsModal = (props) => {
     );
 
     setdatecheck(difference);
+
+    
   }, [props]);
 
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
@@ -252,7 +254,7 @@ const WbsModal = (props) => {
     }
     return false;
   }
-
+ 
   return (
     <>
       <CModal
@@ -443,13 +445,15 @@ const WbsModal = (props) => {
                       <LinearProgress />
                     ) : (
                       <div>
-                        <CButton
-                          type="button"
-                          onClick={formWbsUpdate.handleSubmit}
-                          color="primary"
-                        >
-                          Update
-                        </CButton>{" "}
+                        {props.data.status != 3 && props.data.status != 4 && (
+                          <CButton
+                            type="button"
+                            onClick={formWbsUpdate.handleSubmit}
+                            color="primary"
+                          >
+                            Update
+                          </CButton>
+                        )}{" "}
                         <CButton color="secondary" onClick={props.toggle}>
                           Cancel
                         </CButton>

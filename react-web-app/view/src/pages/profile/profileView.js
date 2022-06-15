@@ -443,6 +443,7 @@ const UserProfile = () => {
         {/**Main Content */}
       
         <CTabs activeTab={tab}>
+          {console.log("tab0", tab)}
           <CNav variant="tabs" className="tab-style">
             {/**View Profile */}
             <CNavItem>
@@ -470,7 +471,8 @@ const UserProfile = () => {
           <CTabContent>
             {/**_____VIEW PROFILE____ */}
             
-            <CTabPane data-tab="viewProfile" active={tab=='viewProfile'?true:false}>
+            <CTabPane data-tab="viewProfile" activeTab={tab==="viewProfile"?true:false}>
+              {console.log("profile tab", tab)}
               {profile_details != undefined && (
                 <CContainer>
                   <h3 className="profile-page-header">Profile Details</h3>
@@ -791,8 +793,8 @@ const UserProfile = () => {
             </CTabPane>
  
             {/**_____Change Password___ */}
-            <CTabPane data-tab="changePassword" active={tab=='changePassword'?true:false}>
-              
+            <CTabPane data-tab="changePassword" activeTab={tab==="changePassword"?true:false}>
+            {console.log("change tab", tab)}
               <CContainer>
                 <h3 className="profile-page-header">Change Password</h3>
                 <CRow>

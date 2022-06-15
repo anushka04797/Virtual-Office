@@ -213,25 +213,32 @@ export async function exportxl(pdfData, pdfTitle, endDate, totalHrs, startDate) 
     const fileType = "application/octet-stream";
     const fileExtension = ".xlsx";
     const blob = new Blob([buffer], { type: fileType });
-
-    const fileName = "Actual Hours of " + pdfTitle + fileExtension;
+    
+    let today = new Date();
+    const weekday = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
+    let days = weekday[today.getDay()];
+    let todayDate = moment(today).format("DD-MM-YYYY");
+    let pdf = pdfTitle.replace(/\s/g, '_')
+    const fileName = pdf +"_"+ days + "_" + todayDate +fileExtension;
     saveAs(blob, fileName);
     
   } 
 
   export function exportPdf  (pdfData, pdfTitle, endDate, totalHrs, startDate )  {
-    
     const unit = "pt";
     const size = "A4"; // Use A1, A2, A3 or A4
     const orientation = "portrait"; // portrait or landscape
-
     const marginLeft = 40;
     const doc = new jsPDF(orientation, unit, size);
-
     doc.setFontSize(15);
-
-   
-
     const headers = [
       [
         "WP",
@@ -293,9 +300,104 @@ export async function exportxl(pdfData, pdfTitle, endDate, totalHrs, startDate) 
     }
     doc.text(430, doc.lastAutoTable.finalY+25, " Total Hours " + Number(totalHrs).toFixed(2))
     //doc.text(396, doc.lastAutoTable.finalY+25, "Submitted : " + time + "  " + day);
-   
-    
-    
-    doc.save( "Actual Worked Hours " + pdfTitle + ".pdf");
+    let today = new Date();
+    const weekday = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
+    let days = weekday[today.getDay()];
+    let todayDate = moment(today).format("DD-MM-YYYY");
+    let pdf = pdfTitle.replace(/\s/g, '_')
+    doc.save(pdf +"_"+ days + "_" + todayDate +".pdf");
+    console.log("data", pdfData);
+  };
+  export function exportPdfview  (pdfData, pdfTitle, endDate, totalHrs, startDate )  {
+    const unit = "pt";
+    const size = "A4"; // Use A1, A2, A3 or A4
+    const orientation = "portrait"; // portrait or landscape
+    const marginLeft = 40;
+    const doc = new jsPDF(orientation, unit, size);
+    doc.setFontSize(15);
+    const headers = [
+      [
+        "WP",
+        "Project Name",
+        "Task Title",
+        "Description",
+        "Hour(s)",
+        "Type",
+        "Date Created",
+      ],
+    ];
+
+    const uData = pdfData.map((elt, idx) => [
+      elt.data.project.work_package_number,
+      elt.data.project.sub_task,
+      elt.data.project.task_title,
+      elt.data.actual_work_done,
+      elt.data.hours_today,
+      elt.data.time_type,
+      elt.data.date_created,
+    ]);
+
+    let content = {
+      startY: 145,
+      head: headers,
+      body: uData,
+    };
+
+    let day = new Date();
+    let time = day.toLocaleString("en-US", {
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    });
+    day = moment(day).format("DD/MM/YY");
+    const edate = moment(endDate).format("DD/MM/YYYY");
+
+    doc.setFontSize(17);
+    doc.text(170, 50, "Datasoft Manufacturing & Assembly");
+    doc.setFontSize(13);
+    doc.text(245, 75, "Gulshan Branch");
+    doc.setFontSize(11);
+    doc.text(42, 105, "Actual Worked Hours");
+    // doc.text(410, 105, "Week-Ending: " + edate); //+ edate)
+    doc.text(42, 125, "Name: " + pdfTitle); //+ name)
+    doc.autoTable(content);
+    let date = new Date();
+    console.log("date", date);
+    if (totalHrs != 0) {
+      doc.text(
+        42,
+        doc.lastAutoTable.finalY+25,
+        "From " +
+          startDate +
+          " to " +
+          endDate 
+         
+      );
+    }
+    doc.text(430, doc.lastAutoTable.finalY+25, " Total Hours " + Number(totalHrs).toFixed(2))
+    //doc.text(396, doc.lastAutoTable.finalY+25, "Submitted : " + time + "  " + day);
+    let today = new Date();
+    const weekday = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
+    let days = weekday[today.getDay()];
+    let todayDate = moment(today).format("DD-MM-YYYY");
+    let pdf = pdfTitle.replace(/\s/g, '_')
+    //doc.save(pdf +"_"+ days + "_" + todayDate +".pdf");
+    window.open(doc.output("bloburl"), "_blank");
     console.log("data", pdfData);
   };

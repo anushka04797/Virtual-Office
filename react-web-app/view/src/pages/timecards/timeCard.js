@@ -6,9 +6,9 @@ import {
   CLabel,
   CButton,
   CDataTable,
-  CBadge
+  CBadge,
 } from "@coreui/react";
-import orderBy from 'lodash/orderBy';
+import orderBy from "lodash/orderBy";
 import React, { useState, useEffect } from "react";
 import "./timeCards.css";
 import Select from "react-select";
@@ -30,15 +30,15 @@ import { useLocation } from "react-router-dom";
 
 const TimeCards = () => {
   const profile_details = useSelector((state) => state.profile.data);
-  const [selectedAssignee,setSelectedAssignee]=useState()
-  const dispatch = useDispatch()
-  const [update,setUpdate]=useState(0)
+  const [selectedAssignee, setSelectedAssignee] = useState();
+  const dispatch = useDispatch();
+  const [update, setUpdate] = useState(0);
   const [usersData, setUsersData] = useState([]);
   const [pdfData, setPdfData] = useState([]);
   const [pdfTitle, setPdfTitle] = useState();
   let location = useLocation();
   const [assigneeList, setAssigneeList] = useState([]);
-  const [non_submitted_total_tc,setNonSubmittedTotalTC]=useState(0)
+  const [non_submitted_total_tc, setNonSubmittedTotalTC] = useState(0);
   // const [selectedEmployee, setSelectedEmployee] = useState(initialState)
   {
     /**fetch all assignees for PM */
@@ -50,7 +50,6 @@ const TimeCards = () => {
   const [row, setRow] = useState();
 
   const getTimeCards = (values) => {
-    
     console.log("working");
     setStartDate(values.startDate);
     setEndDate(values.todate);
@@ -111,7 +110,6 @@ const TimeCards = () => {
       API.get("wbs/user/time-card/list/" + values.assigneeSelect + "/").then(
         (res) => {
           let temp = [];
-          console.log("zzzzzzzz", profile_details);
           setPdfTitle(
             profile_details.first_name + " " + profile_details.last_name
           );
@@ -136,7 +134,7 @@ const TimeCards = () => {
             const element = filteredData[index];
             temp_hrs += parseFloat(element.data.hours_today);
             tableData.push({
-              "WP": element.data.project
+              WP: element.data.project
                 ? element.data.project.work_package_number
                 : "-",
               "Project Name":
@@ -164,14 +162,13 @@ const TimeCards = () => {
       );
     }
   };
-  const get_assignee_tc=(assignee)=>{
-    console.log('get_tc',assignee)
+  const get_assignee_tc = (assignee) => {
+    console.log("get_tc", assignee);
+
     const { start, end } = dateRange();
-    setPdfTitle(assignee.first_name+' '+assignee.last_name)
-    API.get(
-      "wbs/user/time-card/list/" + assignee.id + "/"
-    ).then((res) => {
-      console.log('assignee tc',res.data)
+    setPdfTitle(assignee.first_name + " " + assignee.last_name);
+    API.get("wbs/user/time-card/list/" + assignee.id + "/").then((res) => {
+      console.log("assignee tc", res.data);
       // setPdfTitle(
       //   profile_details.first_name + " " + profile_details.last_name
       // );
@@ -183,24 +180,23 @@ const TimeCards = () => {
       filteredData = temp.filter(
         (p) => p.data.date_updated >= start && p.data.date_updated <= end
       );
+      console.log("filtered", filteredData);
       setPdfData(filteredData);
       var tableData = [];
-      let hours_total = 0
-      let total_not_submitted=0
+      let hours_total = 0;
+      let total_not_submitted = 0;
       for (let index = 0; index < filteredData.length; index++) {
-        if(filteredData[index].data.submitted==false){
+        if (filteredData[index].data.submitted == false) {
           total_not_submitted++;
         }
         const element = filteredData[index];
-        hours_total += parseFloat(element.data.hours_today)
+        hours_total += parseFloat(element.data.hours_today);
         tableData.push({
           WP: element.data.project
             ? element.data.project.work_package_number
             : "-",
           "Project Name":
-            element.data.project != null
-              ? element.data.project?.sub_task
-              : "-",
+            element.data.project != null ? element.data.project?.sub_task : "-",
           "Task Title":
             element.data.project != null
               ? element.data.project?.task_title
@@ -212,34 +208,35 @@ const TimeCards = () => {
           Type: element.data.time_type,
           "Date Created": element.data.date_created,
           data: element.data,
-          "id":element.data.id
+          id: element.data.id,
         });
       }
-      setTotalHrs(hours_total)
-      setUsersData(orderBy(tableData,'id','desc'));
-      setNonSubmittedTotalTC(total_not_submitted)
+      setTotalHrs(hours_total);
+      setUsersData(orderBy(tableData, "id", "desc"));
+      setNonSubmittedTotalTC(total_not_submitted);
+      console.log("selected", selectedAssignee);
     });
-  }
+  };
   function capitalize(string) {
     if (string != undefined) {
       return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
     }
     return "";
   }
-  
+
   const [modaladdItem, setmodalAddItem] = useState(false);
   const [show_edit_modal, setShowEditModal] = useState(false);
   const handleAssigneeChange = (option) => {
     setSelectedAssignee(option);
     setPdfTitle(option.label);
-    get_assignee_tc(option.data)
+    get_assignee_tc(option.data);
   };
 
   React.useEffect(() => {
-    console.log('executing effect')
+    console.log("executing effect");
     window.scrollTo(0, 0);
     const { start, end } = dateRange();
-    
+
     // setSelectedAssignee({label:profile_details.first_name+' '+profile_details.last_name,value:profile_details.id,data:profile_details})
     setTotalHrs(0);
     if (
@@ -258,7 +255,7 @@ const TimeCards = () => {
               capitalize(item.first_name) + " " + capitalize(item.last_name),
           });
         });
-        if(!temp.find(item=>item.value == res.data.user.id)){
+        if (!temp.find((item) => item.value == res.data.user.id)) {
           temp.unshift({
             data: res.data.user,
             value: res.data.user.id,
@@ -267,16 +264,16 @@ const TimeCards = () => {
               " " +
               capitalize(res.data.user.last_name),
           });
-          
         }
-        setAssigneeList(orderBy(temp,'label'));
-        if(selectedAssignee==null || selectedAssignee==undefined){
-          if (location.state?.assignee && temp.length>0) {
+        setAssigneeList(orderBy(temp, "label"));
+        if (selectedAssignee == null || selectedAssignee == undefined) {
+          if (location.state?.assignee && temp.length > 0) {
             let assignee_id = location.state.assignee;
-            setSelectedAssignee(temp.find(item=>item.value==assignee_id));
-            get_assignee_tc(temp.find(item=>item.value==assignee_id).data)
-          }
-          else{
+            setSelectedAssignee(temp.find((item) => item.value == assignee_id));
+            get_assignee_tc(
+              temp.find((item) => item.value == assignee_id).data
+            );
+          } else {
             setSelectedAssignee({
               data: res.data.user,
               value: res.data.user.id,
@@ -284,16 +281,18 @@ const TimeCards = () => {
                 capitalize(res.data.user.first_name) +
                 " " +
                 capitalize(res.data.user.last_name),
-            })
-            get_assignee_tc(res.data.user)
+            });
+            get_assignee_tc(res.data.user);
           }
-          setPdfTitle(capitalize(res.data.user.first_name) + " " + capitalize(res.data.user.last_name))
+          setPdfTitle(
+            capitalize(res.data.user.first_name) +
+              " " +
+              capitalize(res.data.user.last_name)
+          );
         }
-        
       });
-    }
-    else{
-      if(selectedAssignee==null || selectedAssignee==undefined){
+    } else {
+      if (selectedAssignee == null || selectedAssignee == undefined) {
         setSelectedAssignee({
           data: profile_details,
           value: profile_details.id,
@@ -301,22 +300,38 @@ const TimeCards = () => {
             capitalize(profile_details.first_name) +
             " " +
             capitalize(profile_details.last_name),
-        })
-        setPdfTitle(capitalize(profile_details.first_name) + " " + capitalize(profile_details.last_name))
-        get_assignee_tc(profile_details)
+        });
+        setPdfTitle(
+          capitalize(profile_details.first_name) +
+            " " +
+            capitalize(profile_details.last_name)
+        );
+        get_assignee_tc(profile_details);
       }
     }
-    
-  }, []);
-  // useEffect(()=>{
-  //   if (location.state?.assignee && assigneeList.length>0) {
-  //     let assignee_id = location.state.assignee;
-      
-  //     setSelectedAssignee(assigneeList.find(item=>item.value==assignee_id));
-      
-  //   }
-  // },[assigneeList])
-  
+  }, [update]);
+  useEffect(() => {
+    if (location.state?.assignee && assigneeList.length > 0) {
+      let assignee_id = location.state.assignee;
+      console.log("predefined id", assignee_id);
+      console.log(
+        "found user",
+        assigneeList.find((item) => item.value == assignee_id)
+      );
+      // setSelectedAssignee(assigneeList.find(item=>item.value==assignee_id))
+      setSelectedAssignee(
+        assigneeList.find((item) => item.value == assignee_id)
+      );
+      setPdfTitle(assigneeList.find((item) => item.value == assignee_id).label);
+      get_assignee_tc(
+        assigneeList.find((item) => item.value == assignee_id).data
+      );
+      console.log(
+        assigneeList.find((item) => item.value == assignee_id).data,
+        "from useeffect"
+      );
+    }
+  }, [assigneeList]);
   const validateEditForm = (values) => {
     const errors = {};
 
@@ -346,9 +361,10 @@ const TimeCards = () => {
   {
     /**export fetched tabledata to excel */
   }
-  const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
+  const fileType =
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
   const fileExtension = ".xlsx";
-  
+
   const exportPDF = () => {
     const unit = "pt";
     const size = "A4"; // Use A1, A2, A3 or A4
@@ -359,16 +375,21 @@ const TimeCards = () => {
 
     doc.setFontSize(15);
 
-    const title = "Timecard of" + " " + selectedAssignee.data.first_name+' '+selectedAssignee.data.last_name;
+    const title =
+      "Timecard of" +
+      " " +
+      selectedAssignee.data.first_name +
+      " " +
+      selectedAssignee.data.last_name;
     const headers = [
-      [  
-        "WP", 
+      [
+        "WP",
         "Project Name",
         "Task Title",
         "Description",
         "Hour(s)",
         "Type",
-        "Date Created", 
+        "Date Created",
       ],
     ];
     const uData = pdfData.map((elt, idx) => [
@@ -386,39 +407,60 @@ const TimeCards = () => {
       body: uData,
     };
 
-     let day = new Date();
-     let time = day.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })
-      day=moment(day).format("DD/MM/YY")
-      const edate= moment(endDate).format("DD/MM/YYYY")
-      doc.setFontSize(17)
-      doc.text(170, 50, "Datasoft Manufacturing & Assembly")
-      doc.setFontSize(13)
-      doc.text(245,75, "Gulshan Branch")
-      doc.setFontSize(11)
-      doc.text(42,105, "Employee Time Card")
-      doc.text(410, 105, "Week-Ending: "+ edate)//+ edate)
-      doc.text(42, 125, "Name: "+ selectedAssignee.data.first_name+' '+selectedAssignee.data.last_name)//+ name)
-     
-      let date = new Date();
-      doc.autoTable(content);
-      doc.text(42, doc.lastAutoTable.finalY+25, "From " + startDate + " to " + endDate )
-      doc.text(250, doc.lastAutoTable.finalY+25, " Total Hours " + Number(totalHrs).toFixed(2))
-      doc.text(396, doc.lastAutoTable.finalY+25, "Submitted on : " + time + "  " + day);
-      // doc.save("Timecard of" + " " + pdfTitle + ".pdf");
-      return doc
+    let day = new Date();
+    let time = day.toLocaleString("en-US", {
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    });
+    day = moment(day).format("DD/MM/YY");
+    const edate = moment(endDate).format("DD/MM/YYYY");
+    doc.setFontSize(17);
+    doc.text(170, 50, "Datasoft Manufacturing & Assembly");
+    doc.setFontSize(13);
+    doc.text(245, 75, "Gulshan Branch");
+    doc.setFontSize(11);
+    doc.text(42, 105, "Employee Time Card");
+    doc.text(410, 105, "Week-Ending: " + edate); //+ edate)
+    doc.text(
+      42,
+      125,
+      "Name: " +
+        selectedAssignee.data.first_name +
+        " " +
+        selectedAssignee.data.last_name
+    ); //+ name)
+
+    let date = new Date();
+    doc.autoTable(content);
+    doc.text(
+      42,
+      doc.lastAutoTable.finalY + 25,
+      "From " + startDate + " to " + endDate
+    );
+    doc.text(
+      250,
+      doc.lastAutoTable.finalY + 25,
+      " Total Hours " + Number(totalHrs).toFixed(2)
+    );
+    doc.text(
+      396,
+      doc.lastAutoTable.finalY + 25,
+      "Submitted on : " + time + "  " + day
+    );
+    return doc;
   };
 
   const showModal = (tableItem) => {
     setRow(tableItem.data);
     setShowEditModal(true);
   };
-  
 
   const onAddItem = () => {
     setmodalAddItem(false);
-    get_assignee_tc(selectedAssignee.data)
+    get_assignee_tc(selectedAssignee.data);
   };
- 
+
   const onSubmit = () => {
     swal({
       title: "Are you sure?",
@@ -428,32 +470,53 @@ const TimeCards = () => {
       dangerMode: true,
     }).then((willDelete) => {
       if (willDelete) {
-        let temp = '';
+        let temp = "";
         for (let i = 0; i < usersData.length; i++) {
           //console.log("data", usersData[i]);
           // temp.push(usersData[i].data.id)
           if (i == usersData.length - 1) {
-            temp += usersData[i].data.id
-          }
-          else {
-            temp += (usersData[i].data.id + ',')
+            temp += usersData[i].data.id;
+          } else {
+            temp += usersData[i].data.id + ",";
           }
         }
 
-        let doc = exportPDF()
-        let formData = new FormData()
-        formData.append('employee', selectedAssignee.value)
-        formData.append('time_cards', temp)
-        formData.append('week_start', startDate)
-        formData.append('week_end', endDate)
-        formData.append('pdf_file', doc.output('datauristring'))
+        let doc = exportPDF();
+        let formData = new FormData();
+        formData.append("employee", selectedAssignee.value);
+        formData.append("time_cards", temp);
+        formData.append("week_start", startDate);
+        formData.append("week_end", endDate);
+        formData.append("pdf_file", doc.output("datauristring"));
 
         FILE_API.post("wbs/time-card/submit/", formData).then((res) => {
           console.log(res.data);
+          let day = new Date();
+          const weekday = [
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+          ];
+          let days = weekday[day.getDay()];
+          let todayDate = moment(day).format("DD-MM-YYYY");
+
           // dispatch(fetchAllTimecardsPmThunk(selectedAssignee.value))
-          get_assignee_tc(selectedAssignee.data)
-          doc.save("Timecard of" + " " + selectedAssignee.data.first_name + ".pdf");
-          window.open(doc.output('bloburl'), '_blank');
+          get_assignee_tc(selectedAssignee.data);
+          doc.save(
+            selectedAssignee.data.first_name +
+              "_" +
+              selectedAssignee.data.last_name +
+              "_" +
+              days +
+              "_" +
+              todayDate +
+              ".pdf"
+          );
+          window.open(doc.output("bloburl"), "_blank");
           swal(
             "Submitted",
             "Your selected time cards are submitted!",
@@ -463,7 +526,7 @@ const TimeCards = () => {
       }
     });
   };
-  
+
   const dateRange = () => {
     var sdate = new Date();
     var edate = new Date();
@@ -502,7 +565,7 @@ const TimeCards = () => {
         satday = moment(satday).add(1, "day").toDate();
       }
     }
-    satday = moment(satday).format('YYYY-MM-DD')
+    satday = moment(satday).format("YYYY-MM-DD");
     return satday;
   };
 
@@ -520,22 +583,26 @@ const TimeCards = () => {
           data={row}
           show={show_edit_modal}
           onClose={() => {
-            setShowEditModal(false);get_assignee_tc(selectedAssignee.data);
+            setShowEditModal(false);
+            get_assignee_tc(selectedAssignee.data);
           }}
         />
       )}
-      {selectedAssignee && <AddTimecardItms
-        // toggle={toggleModal}
-        employee={selectedAssignee.value}
-        show={modaladdItem}
-        onClose={onAddItem}
-        onAdd={editForm.handleSubmit}
-      ></AddTimecardItms>}
+      {selectedAssignee && (
+        <AddTimecardItms
+          // toggle={toggleModal}
+          employee={selectedAssignee.value}
+          show={modaladdItem}
+          onClose={onAddItem}
+          onAdd={editForm.handleSubmit}
+        ></AddTimecardItms>
+      )}
       <CContainer>
-
         <CRow className="justify-content-between">
           <CCol>
-            <h3 className="timecards-page-header mb-3">Actual Hours of this week</h3>
+            <h3 className="timecards-page-header mb-3">
+              Actual Hours of this week
+            </h3>
           </CCol>
           {/* <CCol
             md="8"
@@ -595,9 +662,11 @@ const TimeCards = () => {
                     aria-labelledby="assigneeSelectPM"
                     id="assigneeSelectPM"
                     minHeight="35px"
-                    placeholder={capitalize(profile_details.first_name) +
+                    placeholder={
+                      capitalize(profile_details.first_name) +
                       " " +
-                      capitalize(profile_details.last_name)}
+                      capitalize(profile_details.last_name)
+                    }
                     isClearable={false}
                     isMulti={false}
                     onChange={handleAssigneeChange}
@@ -621,7 +690,11 @@ const TimeCards = () => {
             <CRow className="mt-4">
               <CCol>
                 <CLabel className="custom-label-5" htmlFor="assigneeSelect">
-                  Company : {selectedAssignee?.data?.slc_details?.slc?.department?.company?.name}
+                  Company :{" "}
+                  {
+                    selectedAssignee?.data?.slc_details?.slc?.department
+                      ?.company?.name
+                  }
                 </CLabel>
               </CCol>
             </CRow>
@@ -638,7 +711,8 @@ const TimeCards = () => {
             <CRow>
               <CCol>
                 <CLabel className="custom-label-5" htmlFor="assigneeSelect">
-                  Weekending : {moment(nextSatDay()).format('dddd, DD MMMM YYYY')}
+                  Weekending :{" "}
+                  {moment(nextSatDay()).format("dddd, DD MMMM YYYY")}
                 </CLabel>
               </CCol>
             </CRow>
@@ -709,7 +783,16 @@ const TimeCards = () => {
                             </CButton>
                           </CBadge>
                         ) : (
-                          "N/A"
+                          <CBadge>
+                            <CButton
+                              size="sm"
+                              type="button"
+                              color="secondary"
+                              disabled
+                            >
+                              Edit
+                            </CButton>
+                          </CBadge>
                         )}
                       </td>
                     ),
@@ -725,7 +808,8 @@ const TimeCards = () => {
                             {"     "}
                             From <b>
                               {moment(startDate).format("DD-MMM-YY")}
-                            </b> to <b>{moment(endDate).format("DD-MMM-YY")}</b>
+                            </b>{" "}
+                            to <b>{moment(endDate).format("DD-MMM-YY")}</b>
                           </small>
                         }
                       </CCol>
@@ -733,7 +817,14 @@ const TimeCards = () => {
                         {
                           <small>
                             {"   "}
-                            Total <b>{Number(totalHrs).toFixed(2)} {Number(totalHrs).toFixed(2) > 1 ? 'hours' : 'hour'}&nbsp;</b>
+                            Total{" "}
+                            <b>
+                              {Number(totalHrs).toFixed(2)}{" "}
+                              {Number(totalHrs).toFixed(2) > 1
+                                ? "hours"
+                                : "hour"}
+                              &nbsp;
+                            </b>
                           </small>
                         }
                       </CCol>
@@ -746,8 +837,8 @@ const TimeCards = () => {
                       className="file-format-download"
                       type="button"
                       onClick={onSubmit}
-                      style={{ backgroundColor: '#e55353' }}
-                      disabled={non_submitted_total_tc==0}
+                      style={{ backgroundColor: "#e55353" }}
+                      disabled={non_submitted_total_tc == 0}
                     >
                       Submit
                     </CButton>

@@ -9,17 +9,21 @@ import {
 import CIcon from "@coreui/icons-react";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { capitalize } from "../../helper";
+import { capitalize, exportPdfview } from "../../helper";
 import moment from "moment";
 import "./timeCards.css";
 import { fetchUserSubmittedTimecards } from "../../store/slices/TimecardSlice";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
-import { useState , useEffect} from "react";
+import { useState, useEffect } from "react";
 import { has_permission } from "../../helper.js";
 import * as FileSaver from "file-saver";
 import { saveAs } from "file-saver";
 import { useHistory } from "react-router-dom";
+import { API } from "../../Config";
+
+
+
 const SubmittedTimecards = () => {
   const dispatch = useDispatch();
   let submitted = [];
@@ -27,9 +31,12 @@ const SubmittedTimecards = () => {
   const submitted_timecards = useSelector((state) => {
     let temp = [];
     Array.from(state.timecardList.user_weekly_submitted_timecards).forEach(
+      
       (item, idx) => {
+        //console.log("weekly submitted", item)
         temp.push({
-          data:item.employee,
+          id: item.employee.id, 
+          data: item.employee,
           Weekending: moment(item.week_end).format("ddd, MMMM DD, YYYY"),
           Name: item.employee.first_name + " " + item.employee.last_name,
           Total: item.total_hours,
@@ -50,24 +57,19 @@ const SubmittedTimecards = () => {
     submitted = [...temp];
     return temp;
   });
-  
+
   React.useEffect(() => {
     dispatch(fetchUserSubmittedTimecards());
   }, []);
   const exportPDF = () => {
     const pdfTitle =
-      profile_details.first_name + " " + profile_details.last_name;
-
+      profile_details.first_name + "_" + profile_details.last_name;
     const unit = "pt";
     const size = "A4"; // Use A1, A2, A3 or A4
     const orientation = "portrait"; // portrait or landscape
-
     const marginLeft = 40;
     const doc = new jsPDF(orientation, unit, size);
-
     doc.setFontSize(15);
-
-    const title = "Timecard of"; //+ " " + pdfTitle;
     const headers = [
       [
         "Weekending",
@@ -100,47 +102,36 @@ const SubmittedTimecards = () => {
       head: headers,
       body: uData,
     };
-
-    // let day = new Date();
-    // let time = day.toLocaleString("en-US", {
-    //   hour: "numeric",
-    //   minute: "numeric",
-    //   hour12: true,
-    // });
-    // day = moment(day).format("DD/MM/YY");
-    // const edate = moment(endDate).format("DD/MM/YYYY");
-    // doc.setFontSize(17);
+    let day = new Date();
+    const weekday = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
+    let days = weekday[day.getDay()];
+    let todayDate = moment(day).format("DD-MM-YYYY");
+    console.log("days ", todayDate);
     doc.text(170, 50, "Datasoft Manufacturing & Assembly");
     doc.setFontSize(13);
     doc.text(245, 75, "Gulshan Branch");
     doc.setFontSize(11);
     doc.text(42, 105, "Submitted Time Card");
-    // doc.text(410, 105, "Week-Ending: " + edate); //+ edate)
     if (!has_permission("projects.add_projects")) {
       doc.text(42, 125, "Employee Name: " + pdfTitle);
-    } //+ name)
-
-    // let date = new Date();
-    // console.log("date", date);
+    } 
     doc.text(440, 360, "Total " + submitted.length + " Submitted");
-
-    // doc.text(400, 375, "Submitted : " + time + "  " + day);
-
     doc.autoTable(content);
-
-    // var blobPDF =  new Blob([ doc.output('blob') ], { type: 'application/vnd.ms-excel' });
-
-    //let blob = new Blob([csv], { type: 'application/vnd.ms-excel' });
-    doc.save("Timecard of" + " " + pdfTitle + ".pdf");
-
-    // FileSaver.saveAs(blobPDF, "dummy.csv");
-    // console.log("data", pdfData);
+    doc.save(pdfTitle + "_" + days + "_" + todayDate + "_" + ".pdf");
   };
+
   async function exportXL() {
     const ExcelJS = require("exceljs");
     const workbook = new ExcelJS.Workbook();
     const sheet = workbook.addWorksheet("sheet1");
-
     sheet.mergeCells("B1:F2");
     const customcell = sheet.getCell("C1");
     customcell.value = "Datasoft Manufacturing & Assembly";
@@ -163,10 +154,8 @@ const SubmittedTimecards = () => {
       horizontal: "center",
       vertical: "center",
     };
-
     sheet.mergeCells("A5:B5");
     sheet.getCell("A5").value = "Submitted Timecards";
-
     sheet.getRow(8).values = [
       "Weekending",
       "Name",
@@ -199,7 +188,6 @@ const SubmittedTimecards = () => {
       { key: "Submitted", width: 20 },
     ];
     console.log("submitted", submitted);
-
     for (let i = 0; i < submitted.length; i++) {
       sheet.addRow({
         Weekending: submitted[i].Weekending,
@@ -219,17 +207,111 @@ const SubmittedTimecards = () => {
     if (total != 0) {
       sheet.getRow(row_num).values = ["Total Submitted =  " + submitted.length];
     }
-
     const buffer = await workbook.xlsx.writeBuffer();
     const fileType = "application/octet-stream";
     const fileExtension = ".xlsx";
     const blob = new Blob([buffer], { type: fileType });
-
-    const fileName = "Submitted Timecards " + fileExtension;
+    const pdfTitle =
+      profile_details.first_name + "_" + profile_details.last_name;
+    let day = new Date();
+    const weekday = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
+    let days = weekday[day.getDay()];
+    let todayDate = moment(day).format("DD-MM-YYYY");
+    const fileName =
+      pdfTitle + "_" + days + "_" + todayDate + "_" + fileExtension;
     saveAs(blob, fileName);
   }
-  
-  let history = useHistory();
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [totalHrs, setTotalHrs] = useState(0);
+
+  const nextSatDay = () => {
+    var satday = new Date();
+    for (let i = 0; i < 7; i++) {
+      if (satday.getDay() === 6) {
+        console.log("sat", satday);
+        break;
+      } else {
+        satday = moment(satday).add(1, "day").toDate();
+      }
+    }
+    satday = moment(satday).format("YYYY-MM-DD");
+    return satday;
+  };
+  const dateRange = () => {
+    var sdate = new Date();
+    var edate = new Date();
+
+    for (let i = 0; i < 7; i++) {
+      if (sdate.getDay() === 0) {
+        console.log("start", sdate);
+        break;
+      } else {
+        sdate = moment(sdate).subtract(1, "day").toDate();
+      }
+    }
+    console.log("end date", edate);
+
+    setStartDate(moment(sdate).format("YYYY-MM-DD"));
+    setEndDate(nextSatDay());
+    
+    return {
+      start: moment(sdate).format("YYYY-MM-DD"),
+      end: nextSatDay(),
+    };
+  };
+
+  const assigneepdf = (empid, empName) =>{
+   console.log("id : ", empid, "Name ", empName)
+   const { start, end } = dateRange();
+
+   API.get("wbs/user/time-card/list/" + empid + "/").then((res) => {
+    //console.log("assignee tc", res.data);
+    let temp = [];
+      Array.from(res.data.data).forEach((item, idx) => {
+        temp.push({ data: item });
+      });
+      let filteredData = temp;
+      filteredData = temp.filter(
+        (p) => p.data.date_updated >= start && p.data.date_updated <= end
+      );
+
+      console.log("filtered", filteredData);
+
+      let hours_total = 0;
+      let total_not_submitted = 0;
+      let submittedtc =[]
+
+      for (let index = 0; index < filteredData.length; index++) {
+        if (filteredData[index].data.submitted == false) {
+          total_not_submitted++;
+        }
+        if(filteredData[index].data.submitted == true)
+        {
+          //submittedtc[index] = filteredData[index]
+          submittedtc.push(filteredData[index])
+          hours_total += parseFloat(filteredData[index].data.hours_today)
+        }
+        // const element = notsubmitted[index];
+        //  hours_total += parseFloat(element.data.hours_today);
+
+      }
+      console.log("submittedtcs", submittedtc)
+      console.log("total hours", hours_total)
+      exportPdfview(submittedtc, empName, end, hours_total, start )
+
+      
+      
+   })
+  }
   return (
     <>
       <CContainer>
@@ -331,7 +413,7 @@ const SubmittedTimecards = () => {
                 Name: (item) => (
                   <td>
                     <a
-                     onClick={() => {}}
+                      onClick={() => {assigneepdf(item["id"], item["Name"])}}
                       size="sm"
                       type="button"
                       color="primary"
