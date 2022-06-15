@@ -22,6 +22,7 @@ import { API, USER_ID } from "../../Config";
 import swal from 'sweetalert'
 import { fetchHolidays } from "../../store/slices/HolidaySlice";
 import { fetchUserHoursUsedAndLeft } from "../../store/slices/TimecardSlice";
+import { hours_spent_left } from "../../helper";
 
 const AddTimecardItms = (props) => {
 
@@ -39,18 +40,7 @@ const AddTimecardItms = (props) => {
   })
   const [projects,setProjects]=useState([])
   const [selectedProject, setselectedProject]=useState("")
-  // const projects = useSelector((state) => {
-  //   let projectsArray = [];
-
-  //   Array.from(state.projects.data).forEach((item, idx) => {
-  //     projectsArray.push({
-  //       value: item.project.id,
-  //       label: item.project.sub_task,
-  //       data: item,
-  //     });
-  //   });
-  //   return projectsArray;
-  // });
+  
   const worktypes= useSelector(state=>{
     let temp=[]
     Array.from(state.worktypes.data).forEach((item,idx)=>{
@@ -59,7 +49,7 @@ const AddTimecardItms = (props) => {
     return temp
   })
   const dispatch = useDispatch()
-  const hours_spent_left=useSelector(state=>state.timecardList.user_hours_used_left)
+  const hours_left=hours_spent_left(props.employee.id)
   const onSave = (values) => {
     console.log("values", formAddTimecard.values);
     const data={

@@ -604,54 +604,11 @@ const TimeCards = () => {
               Actual Hours of this week
             </h3>
           </CCol>
-          {/* <CCol
-            md="8"
-            id="tableRef"
-            className="d-flex justify-content-end"
-          >
-            <h5 className="tiny-header--5 mt-3 mr-2">Export </h5>
-            <div className="format-buttons mt-3 mb-3 ">
-              <CButton
-                className="file-format-download"
-                onClick={() => exportPDF()}
-              >
-                <CIcon name="cil-description" className="mr-2" /> PDF
-              </CButton>
-              <CButton
-                className="file-format-download"
-                onClick={() =>
-                  exportToCSV(usersData, "Timecard of" + " " + pdfTitle)
-                }
-              >
-                <CIcon name="cil-spreadsheet" className="mr-2" />
-                Excel
-              </CButton>
-            </div>
-          </CCol> */}
         </CRow>
         <CForm>
           <CRow>
             {/**assignees */}
             <CCol xl="3" lg="3" md="6">
-              {/* {!has_permission("projects.add_projects") && (
-                <div>
-                  <CLabel className="custom-label-5" htmlFor="assigneeSelect">
-                    Select Employee
-                  </CLabel>
-                  <CInput
-                    name="assigneeSelect"
-                    type="text"
-                    value={
-                      capitalize(profile_details.first_name) +
-                      " " +
-                      capitalize(profile_details.last_name)
-                    }
-                    onChange={editForm.handleChange}
-                    readOnly
-                  />
-                </div>
-              )} */}
-              {/**IF PM */}
               {has_permission("projects.add_projects") && (
                 <div>
                   <CLabel className="custom-label-5" htmlFor="assigneeSelectPM">
@@ -677,15 +634,6 @@ const TimeCards = () => {
                   />
                 </div>
               )}
-              {/**If PM but no assignee list **/}
-              {/* {has_group('pm')&& (assigneeList.length == 0) &&
-                  <div>
-                      <CLabel className="custom-label-5" htmlFor="assigneeSelect">
-                          Select Employee
-                      </CLabel>
-                      <CInput name="assigneeSelect" type="text" value={capitalize(profile_details.first_name) + ' ' + capitalize(profile_details.last_name)} onChange={editForm.handleChange} readOnly />
-                  </div>
-              } */}
             </CCol>
             <CRow className="mt-4">
               <CCol>
@@ -716,13 +664,6 @@ const TimeCards = () => {
                 </CLabel>
               </CCol>
             </CRow>
-
-            {/* {usersData.length > 0 && (
-              <div className="alert alert-info" role="alert">
-                Showing actual hours from {moment(startDate).format("DD-MM-YYYY")} to{" "}
-                {moment(endDate).format("DD-MM-YYYY")}
-              </div>
-            )} */}
             {show_add_item_btn() == true && (
               <div className="format-buttons mt-3 mb-3">
                 <CButton

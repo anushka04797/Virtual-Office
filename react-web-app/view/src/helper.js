@@ -1,9 +1,15 @@
-import { PERMISSIONS } from "./Config"
+import { API, PERMISSIONS } from "./Config"
 import moment from "moment";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { saveAs } from "file-saver";
 
+export const hours_spent_left=(user_id)=>{
+  API.get('organizations/user/hours/used-left/'+user_id+'/').then((res)=>{
+    console.log('used and left hours',res.data.data)
+    return res.data.data
+  })
+}
 export const user_groups = () => {
     //let temp=[]
     let groups = sessionStorage.getItem('groups').split(',')

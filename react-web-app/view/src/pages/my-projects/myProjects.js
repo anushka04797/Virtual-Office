@@ -645,12 +645,12 @@ const MyProjects = () => {
 
       <div className="container">
         <div className="row">
-          <div className="col-md-12 col-lg-11 col-sm-12 col-xs-12 mt-1">
-            <CRow className="dash-header">
-              <CCol lg="4">My Projects({Array.from(projects).length})</CCol>
-              <CCol lg="2">
+          <div className="col-md-10 col-lg-10 col-sm-12 col-xs-12 mt-1 offset-md-1 offset-lg-1">
+            <CRow className="dash-header justfy-content-between">
+              <CCol lg="7">My Projects({Array.from(projects).length})</CCol>
+              {/* <CCol lg="2">
                 <CustomSearch search={search} />
-              </CCol>
+              </CCol> */}
               <CCol lg="3" className="mb-3 pl-4">
                 <Select
                   className="custom-forminput-6"

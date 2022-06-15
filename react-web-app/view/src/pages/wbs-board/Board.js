@@ -200,7 +200,7 @@ const WbsBoard = () => {
 
     // }
 
-    const boardStyle = { backgroundColor: "#fff", margin: 'auto' };
+    const boardStyle = { backgroundColor: "#fff", marginRight: '40px',marginLeft:'40px' };
     const laneStyle = { backgroundColor: "rgb(243 243 243)" };
     let currentLaneId, currentCardId = '';
 
@@ -342,21 +342,6 @@ const WbsBoard = () => {
         populate_data(temp_wbs_list)
     }
     
-    const handleAllCheck = (event) => {
-        let temp_checked = { 'all': event.target.checked }
-        for (const item in checked) {
-            if (item != 'all') {
-                temp_checked[item] = false
-                // console.log('checked array value for all',temp_checked[item],'event value',event.target.checked)
-            }
-
-        }
-        console.log(temp_checked)
-        setChecked(temp_checked)
-        let temp = wbsList
-        temp = temp.filter(item => item.assignee.id == profile.id)
-        populate_data(temp)
-    }
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     React.useEffect(()=>{
         window.scrollTo(0, 0);
@@ -553,7 +538,7 @@ const WbsBoard = () => {
                 <CRow>
                     {data_loaded===false?(<CCol lg="8" md="8" sm="8" className="mt-4 offset-md-2 offset-lg-2 offset-sm-2">
                         <LinearProgress sx={custom_progress_style}/>
-                    </CCol>):(<CCol lg="12">
+                    </CCol>):(<CCol lg="12" className={""}>
                         <Board data={boardData} hideCardDeleteIcon handleDragEnd={updateStatus} onCardClick={editWbs} style={boardStyle} laneStyle={laneStyle} />
                     </CCol>)}
                     
