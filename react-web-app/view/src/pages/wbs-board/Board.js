@@ -152,6 +152,17 @@ const WbsBoard = () => {
                     })
                     // console.log('3', temp_data)
                 }
+                else if (element.status === 4) {
+                    // console.log("3rd cond", temp_data.lanes[2])
+                    temp_data.lanes[3].cards.push({
+                        "id": element.id.toString(),
+                        "laneId": "lane4",
+                        "title": element.title,
+                        "description": element.description + "\n ➤ " + capitalize(element.assignee.first_name) + " " + capitalize(element.assignee.last_name),
+                        "label": "★ " + element.end_date
+                    })
+                    // console.log('3', temp_data)
+                }
             })
             // console.log('tempAssigneList', tempAssigneList)
             // setWbsAssigneeList(sortBy(tempAssigneList, 'first_name'))
@@ -386,9 +397,10 @@ const WbsBoard = () => {
         // dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)))
         window.scrollTo(0, 0);
         setSelectedProjects([{label:'Select All',value:'all',data:{}}])
-        console.log('profile changed')
+        
         if (has_permission("projects.add_projects")) {
             API.get('wbs/pm/all/' + sessionStorage.getItem(USER_ID) + '/').then((res) => {
+                console.log('board data',res.data.data)
                 setWbsList(res.data.data)
                 let pre_selected_items = []
                 let temp_projects = []
