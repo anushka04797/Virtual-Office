@@ -779,7 +779,7 @@ const CreateNewProject = () => {
                               <CLabel className="custom-label-5">
                                 Assigned EP
                               </CLabel>
-                              <CInput type="number" value={selectedAssigneeExistingEP} readOnly className="custom-forminput-6"></CInput>
+                              <CInput type="number" value={Number(parseFloat(selectedAssigneeExistingEP)).toFixed(2)} readOnly className="custom-forminput-6"></CInput>
                               <CLabel className="custom-label-5">
                               <small>(Total from assigned projects)</small>
                               </CLabel>
@@ -789,7 +789,7 @@ const CreateNewProject = () => {
                               <CLabel className="custom-label-5">
                                 EP
                               </CLabel>
-                              <CInput id="estimated_person" type="number" name="estimated_person" min="0" max={remaining_EP} step="0.1" value={selectedAssigneesEP} onChange={(e) => { if(e.target.value.match("^(0(\.[0-9]+)?|1(\.0+)?)$")!=null){ setSelectedAssigneesEP(e.target.value) }}} className="custom-forminput-6"/>
+                              <CInput id="estimated_person" type="number" name="estimated_person" min="0" max={remaining_EP} step="0.1" value={Number(parseFloat(selectedAssigneesEP)).toFixed(2)} onChange={(e) => { if(e.target.value.match("^(0(\.[0-9]+)?|1(\.0+)?)$")!=null){ setSelectedAssigneesEP(e.target.value) }}} className="custom-forminput-6"/>
                             </div>
                             <div className="col-lg-3 mb-3">
                               <CButton color="primary" className="ar-btn" onClick={handleAddClick} disabled={selectedAssigneesEP == 0}>+ Add</CButton>
@@ -802,14 +802,14 @@ const CreateNewProject = () => {
                         <CLabel className="custom-label-5">
                           Total Planned Value
                         </CLabel>
-                        <CInput id="planned_value" name="planned_value" readOnly value={formCreateProject.values.planned_value} className="custom-forminput-6"></CInput>
+                        <CInput id="planned_value" name="planned_value" readOnly value={Number(parseFloat(formCreateProject.values.planned_value)).toFixed(2)} className="custom-forminput-6"></CInput>
                       </div>
                       {/**planned hours */}
                       <div className="col-lg-6 mb-3">
                         <CLabel className="custom-label-5">
                           Total Planned hr(s)
                         </CLabel>
-                        <CInput id="planned_hours" name="planned_hours" readOnly value={formCreateProject.values.planned_hours} onChange={(event) => { formCreateProject.setFieldValue('planned_hours', event.target.value); formCreateProject.setFieldValue('remaining_hours', event.target.value) }} className="custom-forminput-6"></CInput>
+                        <CInput id="planned_hours" name="planned_hours" readOnly value={Number(parseFloat(formCreateProject.values.planned_hours)).toFixed(2)} onChange={(event) => { formCreateProject.setFieldValue('planned_hours', event.target.value); formCreateProject.setFieldValue('remaining_hours', event.target.value) }} className="custom-forminput-6"></CInput>
                       </div>
                       {/**remaining hours */}
                       {/* <div className="col-lg-4 mb-3">
