@@ -141,13 +141,21 @@ const OngoingProjectDetails = () => {
         return (100 * worked_hours) / parseFloat(total_hours)
     }
 
+    const dateOver = (endDate) => {
+        let today = new Date ()
+        const moment = require("moment");
+        let daysleft =  moment(endDate).diff(moment(today), "days");
+        console.log("days left ", daysleft) 
 
+
+    }
     {/**export in excel */ }
     const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
     const fileExtension = '.xlsx';
     const fileName = 'Assigned project List';
     const xlData = [];
     const exportToCSV = () => {
+        console.log("date", selectedSubTask.planned_delivery_date)
         for (let i = 0; i < projects.length; i++) {
             const item = projects[i];
             let subTaskNames = [];
@@ -170,6 +178,8 @@ const OngoingProjectDetails = () => {
         const data = new Blob([excelBuffer], { type: fileType });
         FileSaver.saveAs(data, fileName + fileExtension);
     }
+    
+   
     return (
         <>
             {/* <MatResult open={open} handleClose={()=>setOpen(false)} searchText={searchText} result={result}/> */}
@@ -240,11 +250,11 @@ const OngoingProjectDetails = () => {
                                                         <h6 className="project-point-details">{selectedSubTask.start_date} </h6>
                                                     </div>
                                                     <div className="tasks-done-2 col-lg-4">
-                                                        <h6 className="tiny-header2">Planned delivery date</h6>
+                                                        <h6 className="tiny-header2">Planned delivery Date</h6>
                                                         <h6 className="project-point-details">{selectedSubTask.planned_delivery_date} </h6>
                                                     </div>
                                                     <div className="tasks-done-2 col-lg-12">
-                                                        <h6 className="tiny-header2">Task deatils</h6>
+                                                        <h6 className="tiny-header2">Task Deatils</h6>
                                                         <h6 className="project-point-details">{selectedSubTask.description == '' ? 'Not available' : selectedSubTask.description}</h6>
                                                     </div>
                                                 </div>
@@ -274,6 +284,7 @@ const OngoingProjectDetails = () => {
                             </CRow>
                             {/**forward to wbs button  */}
                             {can_create_wbs(selectedSubTask.assignees)==true && <CRow className="justify-content-center">
+                                {dateOver(selectedSubTask.planned_delivery_date)}
                                 <CButton type='button' className="create-wbs-from-modal" onClick={() => history.push({ pathname: '/dashboard/WBS/create-wbs',state:{task:selectedSubTask} })}>Create WBS</CButton>
                             </CRow>}
                         </CForm>

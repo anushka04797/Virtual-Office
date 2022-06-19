@@ -27,8 +27,8 @@ const ProjectsTableDashboard = () => {
                             <CCardBody>
                                 {/* <h6 className="id-no1">Work Package Number: # {item.project.work_package_number}</h6> */}
                                 <h5 className="card-details1"><span className="p-header-3">Project Name: </span> {item.project.sub_task}</h5>
-                                <h5 className="card-details1"><span className="p-header-3">Planned Hours: </span> {item.project.planned_hours}</h5>
-                                <h5 className="card-details1"><span className="p-header-3">Remaining Hours: </span> {item.project.remaining_hours}</h5>
+                                <h5 className="card-details1"><span className="p-header-3">Planned Hours: </span> {Number(parseFloat(item.project.planned_hours)).toFixed(2)}</h5>
+                                <h5 className="card-details1"><span className="p-header-3">Remaining Hours: </span> {Number(parseFloat(item.project.remaining_hours)).toFixed(2)}</h5>
                                 <h5 className="card-details1"><span className="p-header-3">Planned Delivery Date : </span>{item.project.planned_delivery_date}</h5>
                             </CCardBody>
                         </CCard>

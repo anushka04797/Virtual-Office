@@ -329,7 +329,7 @@ const MyProjectsDetailsView = () => {
         setAssignees(sortBy([...assignees,{ value: item.assignee.id.toString(), label: item.assignee.first_name + ' ' + item.assignee.last_name, data: item.assignee }],'label'))
         setInputList(arrayRemoveItem(inputList, item));
         populate_planned_value_and_hours(arrayRemoveItem(inputList, item))
-        setRemaining_EP((parseFloat(remaining_EP) + parseFloat(item.estimated_person)).toFixed(1))
+        setRemaining_EP((parseFloat(remaining_EP) + parseFloat(item.estimated_person)).toFixed(2))
     }
     function handlePlannedDeliveryDateChange(event) {
         //removing each selected assignee
@@ -346,6 +346,7 @@ const MyProjectsDetailsView = () => {
             // dateRange(editForm.values.start_date, event.target.value)
             API.get('project/date-to-date/'+editForm.values.start_date+'/'+event.target.value+'/').then(res=>{
                 setTotalPlannedHours(parseFloat(res.data.total_hours))
+                console.log("api", res.data.total_hours)
                 editForm.setValues({
                     sub_task: editForm.values.sub_task,
                     description: editForm.values.description,
@@ -379,7 +380,7 @@ const MyProjectsDetailsView = () => {
             assignee: selectedAssignees.data, 
             estimated_person: selectedAssigneesEP,
             planned_value: Number(parseFloat(selectedAssignees.data.slc_details.hourly_rate) * total_planned_hours).toFixed(2),
-            planned_hours: Number(parseFloat((total_planned_hours * selectedAssigneesEP).toFixed(1))).toFixed(2)
+            planned_hours: Number(parseFloat((total_planned_hours * selectedAssigneesEP).toFixed(2))).toFixed(2)
         }])
         setInputList([
             ...inputList, 
@@ -387,12 +388,12 @@ const MyProjectsDetailsView = () => {
                 assignee: selectedAssignees.data, 
                 estimated_person: selectedAssigneesEP, 
                 planned_value: Number(parseFloat(selectedAssignees.data.slc_details.hourly_rate) * total_planned_hours * selectedAssigneesEP).toFixed(2),
-                planned_hours: Number(parseFloat((total_planned_hours * selectedAssigneesEP).toFixed(1))).toFixed(2)
+                planned_hours: Number(parseFloat((total_planned_hours * selectedAssigneesEP).toFixed(2))).toFixed(2)
             }
         ]);
         setSelectedAssignees(null)
         setSelectedAssigneesEP(0)
-        setRemaining_EP((remaining_EP - selectedAssigneesEP).toFixed(1))
+        setRemaining_EP((remaining_EP - selectedAssigneesEP).toFixed(2))
         console.log("inputList", inputList)
     };
     const delete_subtask = (work_package_index) => {
@@ -446,7 +447,7 @@ const MyProjectsDetailsView = () => {
             })
             assigneName = assigneNames.join(",");
 
-            xlData.push({ 'Sl. No': i + 1, 'TDO': item.task_delivery_order.title, 'Project Name': item.sub_task, 'Work Package Number': item.work_package_number, 'Work Package Index': item.work_package_index, 'Project Manager': item.pm.first_name + '' + item.pm.last_name, 'Task Title': item.task_title, 'Estimated Persons': item.estimated_person, 'Planned Value': project.project.planned_value, 'Planned Hours': project.project.planned_hours, 'Planned Delivery Date': project.project.planned_delivery_date, 'Assignee(s)': assigneName })
+            xlData.push({ 'Sl. No': i + 1, 'TDO': item.task_delivery_order.title, 'Project Name': item.sub_task, 'Work Package Number': item.work_package_number, 'Work Package Index': item.work_package_index, 'Project Manager': item.pm.first_name + '' + item.pm.last_name, 'Task Title': item.task_title, 'Estimated Persons': item.estimated_person, 'Planned Value':  Number(parseFloat(project.project.planned_value)).toFixed(2), 'Planned Hours': Number(parseFloat(project.project.planned_hours)).toFixed(2), 'Planned Delivery Date': project.project.planned_delivery_date, 'Assignee(s)': assigneName })
 
         }
         const ws = XLSX.utils.json_to_sheet(xlData);
@@ -455,6 +456,17 @@ const MyProjectsDetailsView = () => {
         const data = new Blob([excelBuffer], { type: fileType });
         FileSaver.saveAs(data, fileName + fileExtension);
     }
+    const dateOver = (endDate) => {
+        let today = new Date ()
+        const moment = require("moment");
+        let daysleft =  moment(endDate).diff(moment(today), "days");
+        console.log("end date", endDate)
+        console.log("days left ", daysleft+1) 
+        if(daysleft+1 <= 0  )
+        {return false}
+        return true;
+    }
+
     return (
         <>
             {project != undefined && <CContainer>
@@ -488,7 +500,7 @@ const MyProjectsDetailsView = () => {
                                     </CCol>
                                     {/**Work Package Index */}
                                     <CCol lg="6" className="mb-2">
-                                        <CLabel htmlFor="work_package_index" className="custom-label-5">Work Package index</CLabel>
+                                        <CLabel htmlFor="work_package_index" className="custom-label-5">Work Package Index</CLabel>
                                         <CInput id="work_package_index" name="work_package_index" type="number" className="custom-forminput-6" min="0" value={editForm.values.work_package_index} onChange={editForm.handleChange} readOnly />
                                     </CCol>
                                     {/**Task Title */}
@@ -500,7 +512,7 @@ const MyProjectsDetailsView = () => {
                                     </CCol>
                                     {/**Task Details*/}
                                     <CCol lg="12" className="mb-2">
-                                        <CLabel htmlFor="sub_task" className="custom-label-5">Task details</CLabel>
+                                        <CLabel htmlFor="sub_task" className="custom-label-5">Task Details</CLabel>
                                         <CTextarea id="description" name="description" type="text" value={editForm.values.description} onChange={editForm.handleChange} className="custom-forminput-6"></CTextarea>
                                     </CCol>
                                     {/**start date */}
@@ -591,7 +603,7 @@ const MyProjectsDetailsView = () => {
                                         <CLabel className="custom-label-5">
                                             Planned Value
                                         </CLabel>
-                                        <CInput id="planned_value" name="planned_value" readOnly value={editForm.values.planned_value} className="custom-forminput-6"></CInput>
+                                        <CInput id="planned_value" name="planned_value" readOnly value={Number(parseFloat(editForm.values.planned_value)).toFixed(2)} className="custom-forminput-6"></CInput>
                                         {/* {editForm.touched.planned_value && editForm.errors.planned_value && <small style={{ color: 'red' }}>{editForm.errors.planned_value}</small>} */}
                                     </div>
                                     <div className="col-lg-3 mb-3">
@@ -607,7 +619,7 @@ const MyProjectsDetailsView = () => {
                                         <CLabel className="custom-label-5">
                                             Planned hr(s)
                                         </CLabel>
-                                        <CInput id="planned_hours" name="planned_hours" readOnly value={editForm.values.planned_hours} onChange={(event) => { editForm.setFieldValue('planned_hours', event.target.value); editForm.setFieldValue('remaining_hours', event.target.value) }} className="custom-forminput-6"></CInput>
+                                        <CInput id="planned_hours" name="planned_hours" readOnly value={Number(parseFloat(editForm.values.planned_hours)).toFixed(2)} onChange={(event) => { editForm.setFieldValue('planned_hours', event.target.value); editForm.setFieldValue('remaining_hours', event.target.value) }} className="custom-forminput-6"></CInput>
                                         {/* {editForm.touched.planned_hours && editForm.errors.planned_hours && <small style={{ color: 'red' }}>{editForm.errors.planned_hours}</small>} */}
                                     </div>
                                     {/**remaining hours */}
@@ -615,7 +627,7 @@ const MyProjectsDetailsView = () => {
                                         <CLabel className="custom-label-5">
                                             Remaining hr(s)
                                         </CLabel>
-                                        <CInput id="remaining_hours" name="remaining_hours" value={editForm.values.planned_hours} className="custom-forminput-6" readOnly />
+                                        <CInput id="remaining_hours" name="remaining_hours" value={Number(parseFloat(editForm.values.planned_hours)).toFixed(2)} className="custom-forminput-6" readOnly />
                                     </div>
                                     {/**pMs */}
                                     <div className="col-lg-12 mb-3">
@@ -676,6 +688,7 @@ const MyProjectsDetailsView = () => {
                 <div className="row">
                     <div className="col-md-11 col-sm-12 col-xs-12 mt-1 mb-2">
                         {Array.from(project.subtasks).map((subtask, idx) => (
+                          
                             <CCard key={idx} className="card-ongoing-project">
                                 <CCardBody className="details-project-body">
                                     {/*task percentage portion */}
@@ -698,30 +711,31 @@ const MyProjectsDetailsView = () => {
                                         </div>
                                         {has_permission("projects.add_projects") && <div className="tasks-done-2 col-lg-4">
                                             <h6 className="tiny-header2">Planned Value</h6>
-                                            <h6 className="project-point-details">{subtask.planned_value} </h6>
+                                            <h6 className="project-point-details">{Number(parseFloat(subtask.planned_value)).toFixed(2)} </h6>
                                         </div>}
                                         <div className="tasks-done-2 col-lg-4">
                                             <h6 className="tiny-header2">Planned Hours</h6>
-                                            <h6 className="project-point-details">{subtask.planned_hours} </h6>
+                                            <h6 className="project-point-details">{Number(parseFloat(subtask.planned_hours)).toFixed(2)} </h6>
                                         </div>
                                         <div className="tasks-done-2 col-lg-4">
                                             <h6 className="tiny-header2">Actual Hours</h6>
-                                            <h6 className="project-point-details">{(subtask.planned_hours - subtask.remaining_hours).toFixed(1)} </h6>
+                                            <h6 className="project-point-details">{(subtask.planned_hours - subtask.remaining_hours).toFixed(2)} </h6>
                                         </div>
                                         <div className="tasks-done-2 col-lg-4">
                                             <h6 className="tiny-header2">Remaining Hours</h6>
-                                            <h6 className="project-point-details">{subtask.remaining_hours} </h6>
+                                            <h6 className="project-point-details">{Number(parseFloat(subtask.remaining_hours)).toFixed(2)} </h6>
                                         </div>
                                         <div className="tasks-done-2 col-lg-4">
-                                            <h6 className="tiny-header2">Start date</h6>
+                                            <h6 className="tiny-header2">Start Date</h6>
                                             <h6 className="project-point-details">{subtask.start_date} </h6>
                                         </div>
                                         <div className="tasks-done-2 col-lg-4">
-                                            <h6 className="tiny-header2">Planned delivery date</h6>
+                                            
+                                            <h6 className="tiny-header2">Planned Delivery Date</h6>
                                             <h6 className="project-point-details">{subtask.planned_delivery_date} </h6>
                                         </div>
                                         <div className="tasks-done-2 col-lg-12">
-                                            <h6 className="tiny-header2">Task deatils</h6>
+                                            <h6 className="tiny-header2">Task Details</h6>
                                             <h6 className="project-point-details-2">{subtask.description == '' ? 'Not available' : subtask.description}</h6>
                                         </div>
                                     </div>
@@ -750,9 +764,13 @@ const MyProjectsDetailsView = () => {
                                         </div>
                                     </div>
                                 </CCardBody>
+                                {dateOver((subtask.planned_delivery_date))==true &&
+                               
                                 <CCardFooter row>
+                                   
                                      <CButton type='button' className="create-wbs-from-modal float-right" size='sm' onClick={() => history.push({ pathname: '/dashboard/WBS/create-wbs',state:{task:subtask} })}>Create WBS</CButton>
                                 </CCardFooter>
+                                }
                             </CCard>))}
                     </div>
                 </div>
