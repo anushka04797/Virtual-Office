@@ -186,7 +186,11 @@ const MyProjects = () => {
     });
     return temp;
   });
+  useEffect(()=>{
+    if(projects.length>0){
 
+    }
+  },[])
   const [show_sub_task_details, setShowSubTaskDetails] = useState(false);
   const [selectedSubTask, setSelectedSubTask] = useState();
   useEffect(() => {

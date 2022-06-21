@@ -5,7 +5,7 @@ import './meetings.css';
 import JitsiMeet from '../jitsi/JitsiMeet'
 import { useFormik } from 'formik'
 import { useDispatch, useSelector } from 'react-redux';
-import { API, USER_ID } from '../../Config';
+import { API, TOKEN, USER_ID } from '../../Config';
 import swal from 'sweetalert';
 import Select from 'react-select';
 import Datetime from 'react-datetime';
@@ -91,7 +91,6 @@ const OurMeetings = () => {
     const handleParticipantsChange=(value,actionMeta)=>{
         console.log(actionMeta.action)
         if(actionMeta.action == 'select-option' || actionMeta.action == 'remove-value'){
-            console.log(value)
             let temp_array = []
             let temp=[]
             let temp_string=''
@@ -124,7 +123,16 @@ const OurMeetings = () => {
         if(values.medium == '0'){
             values.room_name = "N/A"
         }
-
+        let formData= new FormData()
+        for(const item in values){
+            formData.append(item,values[item])
+            if(item == 'participant'){
+                formData.append(item,values[item]+','+sessionStorage.getItem(TOKEN))
+            }
+            else{
+                formData.append(item,values[item])
+            }
+        }
         //setMeeting(true)
         console.log('values',JSON.stringify(values))
         API.post('meetings/create/', values).then((res) => {

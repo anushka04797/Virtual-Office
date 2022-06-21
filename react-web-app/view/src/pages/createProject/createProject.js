@@ -365,7 +365,9 @@ const CreateNewProject = () => {
       console.log('assignees', res.data.data)
       let temp = []
       Array.from(res.data.data).forEach((item, idx) => {
-        temp.push({ value: item.id, label: item.first_name + ' ' + item.last_name, data: item })
+        if(item.first_name!=''){
+          temp.push({ value: item.id, label: item.first_name + ' ' + item.last_name, data: item })
+        }
       })
       setAssignees(sortBy(temp, 'label'))
     })
@@ -600,6 +602,10 @@ const CreateNewProject = () => {
     populate_planned_value_and_hours(arrayRemoveItem(inputList, item))
     setInputList(arrayRemoveItem(inputList, item))
   }
+  const valid_date = (current) => {
+    let yesterday = moment().subtract(1, 'day')
+    return current.isAfter(yesterday);
+  }
   
   return (
     <>
@@ -743,7 +749,7 @@ const CreateNewProject = () => {
                           // onChange={(e)=>{console.log(e.format())}}
                           onChange={(e) => { formCreateProject.setFieldValue('planned_delivery_date', e.format()) }}
                         /> */}
-                        <CInput id="planned_delivery_date" name="planned_delivery_date" value={formCreateProject.values.planned_delivery_date} onChange={(event) => handlePlannedDeliveryDateChange(event)} className="custom-forminput-6" type="date" />
+                        <CInput id="planned_delivery_date" name="planned_delivery_date" value={formCreateProject.values.planned_delivery_date} onChange={(event) => handlePlannedDeliveryDateChange(event)} className="custom-forminput-6" type="date" min="2022-06-21"/>
                         {formCreateProject.touched.planned_delivery_date && formCreateProject.errors.planned_delivery_date && <small style={{ color: 'red' }}>{formCreateProject.errors.planned_delivery_date}</small>}
                       </div>
                       <div className="col-lg-12 mb-3">
