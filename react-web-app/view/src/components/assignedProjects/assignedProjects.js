@@ -45,7 +45,7 @@ const AssignedProjectsDashboard = () => {
     setModalData(null);
   };
 
-  React.useEffect(() => {}, []);
+  React.useEffect(() => { dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)));}, []);
   return (
     <>
       <div className="main-holder-projects">
