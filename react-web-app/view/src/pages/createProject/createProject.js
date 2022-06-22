@@ -273,7 +273,7 @@ const CreateNewProject = () => {
     if (!values.task_title) errors.task_title = "Task title is required"
     if (!values.planned_delivery_date) errors.planned_delivery_date = "Invalid planned delivery date"
     if (isDateBeforeToday(values.planned_delivery_date)) errors.planned_delivery_date = "Invalid planned delivery date"
-    
+    window.scrollTo(0, 0);
     return errors
   }
 
@@ -721,7 +721,7 @@ const CreateNewProject = () => {
                         <CLabel className="custom-label-5" htmlFor="tdo" aria-labelledby="tdo">
                           Task Details
                         </CLabel>
-                        <CTextarea id="description" name="description" value={formCreateProject.values.description} onChange={handleSubtaskDetailsChange} rows="6" placeholder="Enter details..."></CTextarea>
+                        <CTextarea maxlength="500" id="description" name="description" value={formCreateProject.values.description} onChange={handleSubtaskDetailsChange} rows="6" placeholder="Enter details..."></CTextarea>
                       </div>
                       {/**start date */}
                       <div className="col-lg-6 mb-3">

@@ -231,19 +231,19 @@ const OngoingProjectDetails = () => {
                                                     </div>
                                                     {has_permission("projects.add_projects") && <div className="tasks-done-2 col-lg-4">
                                                         <h6 className="tiny-header2">Planned Value</h6>
-                                                        <h6 className="project-point-details">{selectedSubTask.planned_value} </h6>
+                                                        <h6 className="project-point-details">{Number(parseFloat(selectedSubTask.planned_value)).toFixed(2)} </h6>
                                                     </div>}
                                                     <div className="tasks-done-2 col-lg-4">
                                                         <h6 className="tiny-header2">Planned Hours</h6>
-                                                        <h6 className="project-point-details">{selectedSubTask.planned_hours} </h6>
+                                                        <h6 className="project-point-details">{Number(parseFloat(selectedSubTask.planned_hours)).toFixed(2)} </h6>
                                                     </div>
                                                     <div className="tasks-done-2 col-lg-4">
                                                         <h6 className="tiny-header2">Actual Hours</h6>
-                                                        <h6 className="project-point-details">{(selectedSubTask.planned_hours - selectedSubTask.remaining_hours).toFixed(1)} </h6>
+                                                        <h6 className="project-point-details">{(selectedSubTask.planned_hours - selectedSubTask.remaining_hours).toFixed(2)} </h6>
                                                     </div>
                                                     <div className="tasks-done-2 col-lg-4">
                                                         <h6 className="tiny-header2">Remaining Hours</h6>
-                                                        <h6 className="project-point-details">{selectedSubTask.remaining_hours} </h6>
+                                                        <h6 className="project-point-details">{Number(parseFloat(selectedSubTask.remaining_hours)).toFixed(2)} </h6>
                                                     </div>
                                                     <div className="tasks-done-2 col-lg-4">
                                                         <h6 className="tiny-header2">Start Date</h6>
@@ -322,7 +322,7 @@ const OngoingProjectDetails = () => {
                                             {/* <hr className="header-underline1" /> */}
                                             {/*task percentage portion */}
                                             <div>
-                                                <h6 className="show-amount">{remaining_hours(project.subtasks).toFixed(1)}/{totalProjectHrs(project.subtasks)} Hrs</h6>
+                                                <h6 className="show-amount">{remaining_hours(project.subtasks).toFixed(2)}/{totalProjectHrs(project.subtasks).toFixed(2)} Hrs</h6>
                                                 <LinearWithValueLabel progress={() => calculate_progress_in_percentage(totalProjectHrs(project.subtasks), remaining_hours(project.subtasks))} />
                                             </div>
                                             {/*Project category buttons */}

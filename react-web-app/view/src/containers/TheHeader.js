@@ -1,5 +1,5 @@
-import React from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import React from "react";
+import { useSelector, useDispatch } from "react-redux";
 import {
   CHeader,
   CToggler,
@@ -10,41 +10,51 @@ import {
   CSubheader,
   CBreadcrumbRouter,
   CLink,
-  CButton, CRow, CCol
-} from '@coreui/react'
-import CIcon from '@coreui/icons-react'
+  CButton,
+  CRow,
+  CCol,
+} from "@coreui/react";
+import CIcon from "@coreui/icons-react";
 import { useHistory } from "react-router-dom";
 // routes config
-import routes from '../routes/DashboardRoutes'
-import { changeState } from '../store/slices/SideBarSlice'
+import routes from "../routes/DashboardRoutes";
+import { changeState } from "../store/slices/SideBarSlice";
 import {
   TheHeaderDropdown,
   TheHeaderDropdownMssg,
   TheHeaderDropdownNotif,
-  TheHeaderDropdownTasks
-} from './index'
-import './TheHeader.css';
-import MatSearch from '../components/search/MatSearch';
-import MenuIcon from '@mui/icons-material/Menu';
+  TheHeaderDropdownTasks,
+} from "./index";
+import "./TheHeader.css";
+import MatSearch from "../components/search/MatSearch";
+import MenuIcon from "@mui/icons-material/Menu";
 
 const TheHeader = () => {
-  const dispatch = useDispatch()
-  const sidebarShow = useSelector(state => state.sidebar.sidebarShow)
+  const dispatch = useDispatch();
+  const sidebarShow = useSelector((state) => state.sidebar.sidebarShow);
   let history = useHistory();
   const toggleSidebar = () => {
-    const val = [true, 'responsive'].includes(sidebarShow) ? false : 'responsive'
-    dispatch(changeState(val))
-  }
+    const val = [true, "responsive"].includes(sidebarShow)
+      ? false
+      : "responsive";
+    dispatch(changeState(val));
+  };
 
   const toggleSidebarMobile = () => {
-    const val = [false, 'responsive'].includes(sidebarShow) ? true : 'responsive'
-    dispatch(changeState(val))
-  }
+    const val = [false, "responsive"].includes(sidebarShow)
+      ? true
+      : "responsive";
+    dispatch(changeState(val));
+  };
   React.useEffect(() => {
-    console.log('sidebar --- ', sidebarShow)
-  }, [])
+    console.log("sidebar --- ", sidebarShow);
+  }, []);
   return (
-    <CHeader withSubheader className="justify-content-between" colorScheme="light">
+    <CHeader
+      withSubheader
+      className="justify-content-between"
+      colorScheme="light"
+    >
       <CToggler
         inHeader
         className="ml-md-3 d-lg-none"
@@ -74,24 +84,33 @@ const TheHeader = () => {
         <CHeaderNavItem className="px-3 justify-content-between">
           <MatSearch />
         </CHeaderNavItem>
-
       </CHeaderNav>
 
       <CHeaderNav className="px-3">
         <TheHeaderDropdown />
       </CHeaderNav>
       <CSubheader className="px-3 justify-content-between">
-        <CButton className="back-button" onClick={() => history.goBack()}><CIcon name="cil-arrow-thick-from-right" className="mr-2" />Back</CButton>
+        <CButton
+          className="back-button"
+          onClick={() => {
+            if (history.length>0){
+            history.goBack();}
+             else {
+              history.push({ pathname: "/dashboard"})
+             }       
+           
+          }}
+        >
+          <CIcon name="cil-arrow-thick-from-right" className="mr-2" />
+          Back
+        </CButton>
         <CBreadcrumbRouter
           className="border-0 c-subheader-nav m-0 px-0 px-md-3 custom-router"
           routes={routes}
-
         />
-
       </CSubheader>
-
     </CHeader>
-  )
-}
+  );
+};
 
-export default TheHeader
+export default TheHeader;

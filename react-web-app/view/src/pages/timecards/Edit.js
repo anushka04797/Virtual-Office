@@ -141,6 +141,8 @@ const EditTimeCard = (props) => {
                 aria-label="default input example"
                 id="hours_today"
                 name="hours_today"
+                placeholder="0.00"
+                min="0.00"
                 value={formEditTimeCard.values.hours_today}
                 onChange={formEditTimeCard.handleChange}
               ></CInput>

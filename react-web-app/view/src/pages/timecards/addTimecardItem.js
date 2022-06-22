@@ -232,7 +232,7 @@ const AddTimecardItms = (props) => {
                 />
               </CCol>}
               <CCol className="col-md-12 mb-3">
-                <CLabel className="custom-label-wbs5"> Hours : </CLabel>
+                <CLabel className="custom-label-wbs5"> Hour(s) : </CLabel>
                 <CInput
                   type="number"
                   aria-label="default input example"
@@ -241,7 +241,7 @@ const AddTimecardItms = (props) => {
                   className="custom-forminput-5"
                   placeholder="0.00"
                   //onChange={formAddTimecard.handleChange}
-                  disabled={selectedType.value == 'HOL'}
+                  disabled={selectedType.value == 'HOL' ||selectedType.value == 'SIC' || selectedType.value == 'VAC'}
                   min="0.00"
                   onChange={(e) => {
                     formAddTimecard.setFieldValue(

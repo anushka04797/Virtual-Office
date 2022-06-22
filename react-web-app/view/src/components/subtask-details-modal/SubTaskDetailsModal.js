@@ -42,13 +42,13 @@ const SubTaskDetailsModal =(props)=>{
                                                     <h6 className="project-point-details">{props.selectedSubTask.estimated_person}</h6>
                                                 </div>
                                                 <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Planned Value</h6>
-                                                    <h6 className="project-point-details">{props.selectedSubTask.planned_value} </h6>
+                                                    <h6 className="project-point-details">{Number(parseFloat(props.selectedSubTask.planned_value)).toFixed(2)} </h6>
                                                 </div>
                                                 <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Planned Hours</h6>
-                                                    <h6 className="project-point-details">{props.selectedSubTask.planned_hours} </h6>
+                                                    <h6 className="project-point-details">{Number(parseFloat(props.selectedSubTask.planned_hours)).toFixed(2)} </h6>
                                                 </div>
                                                 <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Remaining Hours</h6>
-                                                    <h6 className="project-point-details">{props.selectedSubTask.remaining_hours} </h6>
+                                                    <h6 className="project-point-details">{Number(parseFloat(props.selectedSubTask.remaining_hours)).toFixed(2)} </h6>
                                                 </div>
                                             </div>
 
