@@ -199,7 +199,7 @@ const MyProjectsDetailsView = () => {
                 history.push('/dashboard/Projects/my-projects')
             }
             else {
-                console.log('project details', res.data)
+                console.log('project', res.data)
                 if (res.data.data.subtasks.length > 0) {
                     setProject(res.data.data)
                     setTdo(res.data.data.project.task_delivery_order.title)

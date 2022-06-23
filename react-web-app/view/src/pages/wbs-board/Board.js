@@ -26,7 +26,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchWbsThunk } from "../../store/slices/WbsSlice";
 import DateRangeIcon from "@material-ui/icons/DateRange";
 import CIcon from "@coreui/icons-react";
-import { USER_ID } from "../../Config";
+import { TOKEN, USER_ID } from "../../Config";
 import { API } from "../../Config";
 import swal from "sweetalert";
 import Select from "react-select";
@@ -39,6 +39,7 @@ import uniqBy from "lodash/uniqBy";
 import { has_permission, unique_elements } from "../../helper.js";
 import CommentIcon from "@mui/icons-material/Comment";
 import { styled } from "@mui/material/styles";
+import makeAnimated from 'react-select/animated';
 import {
   Checkbox,
   FormControlLabel,
@@ -59,6 +60,7 @@ import LinearProgress, {
 import CircularProgress from "@mui/material/CircularProgress";
 import { element } from "prop-types";
 
+const animatedComponents = makeAnimated();
 const WbsBoard = () => {
   {
     /**export in excel */
@@ -70,14 +72,11 @@ const WbsBoard = () => {
   const xlData = [];
   const [wbsList, setWbsList] = useState([]);
   const [projects, setProjects] = useState([]);
-  const [checked, setChecked] = useState({ all: true });
-  const [selectedAssignee, setSelectedAssignee] = useState("");
   const tempAssigneList = [];
   const [wbsAssigneeList, setWbsAssigneeList] = useState([]);
   let location = useLocation();
   const dispatch = useDispatch();
   const [fetchData, setFetchedData] = useState([]);
-  const [assignees_loaded, setAssigneesLoaded] = useState(false);
   const [data_loaded, setDataLoaded] = useState(false);
   const [update, setUpdate] = useState(0);
 
@@ -225,33 +224,37 @@ const WbsBoard = () => {
   };
 
   function getAssigneeList(data) {
-    console.log("getAssigneeList wbsList: ", data);
     if (data != undefined) {
       data.forEach((element) => {
-        if (
-          !tempAssigneList.find((item) => item.value === element.assignee.id)
-        ) {
+        if (!tempAssigneList.find((item) => item.value === element.assignee.id)) {
           var temp = {
             value: element.assignee.id,
-            label:
-              element.assignee.first_name + " " + element.assignee.last_name,
+            label:element.assignee.first_name + " " + element.assignee.last_name,
           };
           tempAssigneList.push(temp);
         }
       });
     }
-    setWbsAssigneeList(sortBy(tempAssigneList, "label"));
-    // console.log('tempAssigneList', tempAssigneList)
+    // setWbsAssigneeList(sortBy(tempAssigneList, "label"));
   }
+  const populate_assignees=()=>{
+    API.get('project/assignees/all/'+sessionStorage.getItem(USER_ID)+'/').then(res=>{
+      console.log('assignees',res.data.data)
+      let temp_array=[]
+      Array.from(res.data.data).forEach((element) => {
+        if (!temp_array.find((item) => item.value === element.id)) {
+          temp_array.push({
+            value: element.id,
+            label:element.first_name + " " + element.last_name,
+          });
+        }
+      });
+      // temp.push({value:'1',label:'A'})
+      setWbsAssigneeList(sortBy(temp_array, "label"));
+    }).catch(err=>{
 
-  // function compareTime(data){
-  //     data.forEach(element => {
-  //         const currentDate= new Date();
-  //         console.log("date", currentDate);
-
-  //     })
-
-  // }
+    })
+  }
 
   const boardStyle = {
     backgroundColor: "#fff",
@@ -259,8 +262,7 @@ const WbsBoard = () => {
     marginLeft: "40px",
   };
   const laneStyle = { backgroundColor: "rgb(243 243 243)" };
-  let currentLaneId,
-    currentCardId = "";
+  let currentLaneId,currentCardId = "";
 
   const [modal, setModal] = useState(false);
   const [modalData, setModalData] = useState(null);
@@ -380,7 +382,8 @@ const WbsBoard = () => {
       (item) => item.assignee.id === newValue.value
     );
     populate_data(temWbsList);
-    getAssigneeList(wbsList);
+    // getAssigneeList(wbsList);
+    
     setResetAssigneeSelectValue(newValue);
     setShowClearBtn(true);
     // setDataLoaded(false)
@@ -391,17 +394,10 @@ const WbsBoard = () => {
   function clearFilter() {
     setShowClearBtn(false);
     populate_data(wbsList);
-    getAssigneeList(wbsList);
+    // getAssigneeList(wbsList);
     setResetAssigneeSelectValue(null);
   }
 
-  // useEffect(() => {
-  //     // for (const property in checked) {
-  //     //     console.log(`${property}: ${checked[property]}`);
-  //     // }
-  //     // filter_wbs_project_wise(checked)
-  //     console.log('assignee changed')
-  // }, [resetAssigneeSelectValue])
   const filter_wbs_project_wise = (options) => {
     let temp_wbs_list = [];
     if (options.find((item) => item.value == "all")) {
@@ -427,7 +423,7 @@ const WbsBoard = () => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   React.useEffect(() => {
     window.scrollTo(0, 0);
-    console.log("dashboard mounted", location.state);
+    populate_assignees();
     if (location.state?.from == "login") {
       enqueueSnackbar("Welcome ", { variant: "success" });
     }
@@ -442,9 +438,15 @@ const WbsBoard = () => {
   ]);
   const handleProjectChange = (value, actionMeta) => {
     if (actionMeta.action == "select-option") {
+      console.log("select", value);
       if (value.find((item) => item.value == "all")) {
-        console.log("because of all", projects.slice(1));
-        setSelectedProjects([{ label: "Select All", value: "all", data: {} }]);
+        // setSelectedProjects([{ label: "Select All", value: "all", data: {} }]);
+        if(selectedProjects.find(item=>item.value == 'all')){
+          setSelectedProjects(value.filter(item=>item.value!='all'));
+        }
+        else{
+          setSelectedProjects([{ label: "Select All", value: "all", data: {} }]);
+        }
         filter_wbs_project_wise(projects.slice(1));
       } else {
         setSelectedProjects(value);
@@ -458,19 +460,37 @@ const WbsBoard = () => {
       filter_wbs_project_wise(value);
     }
   };
+  React.useEffect(()=>{
+    API.get('project/all/'+sessionStorage.getItem(USER_ID)+'/').then(res=>{
+      let temp_projects=[]
+      Array.from(res.data.data).forEach((item, idx) => {
+        temp_projects.push({
+          label: item.project.sub_task,
+          value: item.project.sub_task,
+          data: item.project,
+        });
+      });
+      temp_projects.unshift({
+        label: "Select All",
+        value: "all",
+        data: {},
+      });
+      setProjects(uniqBy(temp_projects, "value"));
+    })
+  },[])
   React.useEffect(() => {
     // dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)))
     window.scrollTo(0, 0);
     setSelectedProjects([{ label: "Select All", value: "all", data: {} }]);
 
     if (has_permission("projects.add_projects")) {
+      
       API.get("wbs/pm/all/" + sessionStorage.getItem(USER_ID) + "/")
         .then((res) => {
           console.log("board data", res.data.data);
           setWbsList(res.data.data);
           let pre_selected_items = [];
           let temp_projects = [];
-          let temp_checks = { all: true };
 
           Array.from(res.data.data).forEach((item, idx) => {
             if (item.assignee.id === profile.id) {
@@ -481,7 +501,6 @@ const WbsBoard = () => {
               value: item.project.sub_task,
               data: item.project,
             });
-            temp_checks[item.project.sub_task] = false;
           });
           temp_projects.unshift({
             label: "Select All",
@@ -489,8 +508,6 @@ const WbsBoard = () => {
             data: {},
           });
           setProjects(uniqBy(temp_projects, "value"));
-          setChecked(temp_checks);
-
           pre_selected_items = sortBy(pre_selected_items, [
             function (item) {
               return new Date(item.date_created);
@@ -498,7 +515,8 @@ const WbsBoard = () => {
           ]).reverse();
 
           populate_data(uniq(pre_selected_items));
-          getAssigneeList(res.data.data);
+          // getAssigneeList(res.data.data);
+          populate_assignees()
           setResetAssigneeSelectValue({
             value: sessionStorage.getItem(USER_ID),
             label: profile.first_name + " " + profile.last_name,
@@ -537,14 +555,13 @@ const WbsBoard = () => {
             data: {},
           });
           setProjects(uniqBy(temp_projects, "value"));
-          setChecked(temp_checks);
           pre_selected_items = sortBy(pre_selected_items, [
             function (item) {
               return new Date(item.date_created);
             },
           ]).reverse();
           populate_data(uniq(pre_selected_items));
-          getAssigneeList(res.data.data);
+          // getAssigneeList(res.data.data);
           setResetAssigneeSelectValue({
             value: sessionStorage.getItem(USER_ID),
             label: profile.first_name + " " + profile.last_name,
@@ -564,11 +581,13 @@ const WbsBoard = () => {
   return (
     <>
       <CContainer>
+        {/* <h4 className="pl-2">Filter WBS board</h4> */}
         <CRow>
           {has_permission("projects.add_projects") && (
             <CCol lg="3" className="mb-3 pl-4">
               <Select
                 value={resetAssigneeSelectValue}
+                components={animatedComponents}
                 placeholder="Filter by assignee"
                 options={wbsAssigneeList}
                 onChange={filterWbs}
@@ -579,6 +598,7 @@ const WbsBoard = () => {
             <CCol lg="3" className="mb-3 pl-4">
               <Select
                 value={resetAssigneeSelectValue}
+                components={animatedComponents}
                 placeholder="Filter by assignee"
                 options={wbsAssigneeList}
                 onChange={filterWbs}
@@ -590,7 +610,9 @@ const WbsBoard = () => {
             <Select
               className="custom-forminput-6"
               placeholder="Filter by project"
+              searchable={true}
               options={projects}
+              components={animatedComponents}
               isMulti
               onChange={handleProjectChange}
               value={selectedProjects}

@@ -369,7 +369,7 @@ const MyProjects = () => {
   const [searchText, setSearchText] = useState("");
   const [searchResultShow, setSearchResultShow] = useState(false);
   const [result, setResult] = useState([]);
-  const add_item_to_search_result = (arr, emp, project) => {};
+
   const resize_project = (project, employee_id) => {
     let temp = {
       sub_task: project.sub_task,
