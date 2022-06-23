@@ -273,7 +273,7 @@ const CreateNewProject = () => {
     if (!values.task_title) errors.task_title = "Task title is required"
     if (!values.planned_delivery_date) errors.planned_delivery_date = "Invalid planned delivery date"
     if (isDateBeforeToday(values.planned_delivery_date)) errors.planned_delivery_date = "Invalid planned delivery date"
-    window.scrollTo(0, 0);
+    // window.scrollTo(0, 0);
     return errors
   }
 
