@@ -1,5 +1,5 @@
 import React from 'react'
-import { CButton, CCard, CCardBody, CAlert } from '@coreui/react';
+import { CButton, CCard, CCardBody, CAlert, CRow, CCol } from '@coreui/react';
 import { useDispatch, useSelector } from "react-redux";
 import { fetchMeetingList } from "../../store/slices/MeetingSlice";
 import { USER_ID } from "../../Config";
@@ -38,7 +38,15 @@ const ScheduleMeetings = () => {
                         <CAlert className="no-value-show-alert" color="primary">Currently there are no upcoming meetings</CAlert>
                     ) : <></>}
                 </div>
-                {meeting != undefined  && <div className="button-holder3"><CButton className="tiny-buttons1"  onClick={() => history.push({pathname:'/dashboard/meetings'})}>View all</CButton></div>}
+                {meeting != undefined  && <CRow className="button-holder3">
+                <CCol className="p-header-3 col-md-9 mt-2">
+                        Total Meetings : {meeting.length}
+                    </CCol>
+
+                    <CCol className="col-md-3">
+                    <CButton className="tiny-buttons1"  onClick={() => history.push({pathname:'/dashboard/meetings'})}>View all</CButton>
+                    </CCol>
+                    </CRow>}
             </div>
 
 

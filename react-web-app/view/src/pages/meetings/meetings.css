@@ -18,6 +18,10 @@
     color: #0052cc;
     font-size: 45px;
 }
+.groupIcon{
+    color: #0052cc;
+    font-size: 40px;
+}
 .meeting-cards{
     border-radius: 3px;
     box-shadow: rgb(9 30 66 / 25%) 0px 1px 1px, rgb(9 30 66 / 13%) 0px 0px 1px 1px;

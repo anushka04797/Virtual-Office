@@ -495,7 +495,7 @@ const WbsModal = (props) => {
                 <CCol md="12">
                   <p className="custom-label-wbs5">
                     Planned Hours :<br></br>
-                    {plannedHours}
+                    {Number(parseFloat(plannedHours)).toFixed(2)}
                   </p>
                 </CCol>
                 <CCol md="12">

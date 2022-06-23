@@ -104,13 +104,13 @@ const CompleteProjects = () => {
                                                         <h6 className="project-point-details">{selectedSubTask.estimated_person}</h6>
                                                     </div>
                                                     <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Planned Value</h6>
-                                                        <h6 className="project-point-details">{selectedSubTask.assignees[0].project.planned_value} </h6>
+                                                        <h6 className="project-point-details">{Number(parseFloat(selectedSubTask.assignees[0].project.planned_value)).toFixed(2)} </h6>
                                                     </div>
                                                     <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Planned Hours</h6>
-                                                        <h6 className="project-point-details">{selectedSubTask.assignees[0].project.planned_hours} </h6>
+                                                        <h6 className="project-point-details">{Number(parseFloat(selectedSubTask.assignees[0].project.planned_hours)).toFixed(2)} </h6>
                                                     </div>
                                                     <div className="tasks-done-2 col-lg-4"><h6 className="tiny-header2">Remaining Hours</h6>
-                                                        <h6 className="project-point-details">{selectedSubTask.remaining_hours} </h6>
+                                                        <h6 className="project-point-details">{Number(parseFloat(selectedSubTask.remaining_hours)).toFixed(2)} </h6>
                                                     </div>
                                                 </div>
 

@@ -507,10 +507,10 @@ const CreateNewWBS = () => {
                               {selectedTask.planned_delivery_date}
                               <br />
                               <b>Planned Hours: </b>{" "}
-                              {selectedTask.planned_hours}
+                              {Number(parseFloat(selectedTask.planned_hours)).toFixed(2)}
                               <br />
                               <b>Remaining Hours: </b>{" "}
-                              {selectedTask.remaining_hours}
+                              {Number(parseFloat(selectedTask.remaining_hours)).toFixed(2)}
                               <br />
                               <b>Task details: </b> {selectedTask.description}
                             </small>

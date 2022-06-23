@@ -87,7 +87,7 @@ export const projectsSlice = createSlice({
     },
   }
 })
-
+//const get_projects_by_tdos = (state,tdos) => state.pm_projects.filter(item=>item.project.task_delivery_order.id==4)
 // Action creators are generated for each case reducer function
 export const { push_item} = projectsSlice.actions
 export default projectsSlice.reducer

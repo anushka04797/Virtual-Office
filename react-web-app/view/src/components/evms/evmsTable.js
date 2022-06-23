@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './evmsTable.css';
-import { CButton, CCard, CCardBody, CAlert } from '@coreui/react';
+import { CButton, CCard, CCardBody, CAlert, CRow, CCol } from '@coreui/react';
 import { useHistory } from "react-router-dom";
 import { fetchEvmsThunk } from '../../store/slices/EvmsSlice';
 import { useSelector, useDispatch } from 'react-redux';
@@ -53,7 +53,14 @@ const EvmsView = () => {
 
                 </div>
                 {evmsList != undefined &&
-                    <div className="button-holder3"><CButton className="tiny-buttons1" onClick={() => history.push({ pathname: '/dashboard/EVMS/view' })}>View all</CButton></div>}
+                    <CRow className="button-holder3">
+                         <CCol className="p-header-3 col-md-9 mt-2">
+                        Total EVMS: {evmsList.length}
+                    </CCol>
+
+                    <CCol className="col-md-3"><CButton className="tiny-buttons1" onClick={() => history.push({ pathname: '/dashboard/EVMS/view' })}>View all</CButton>
+                    </CCol>
+                    </CRow>}
 
             </div>
 

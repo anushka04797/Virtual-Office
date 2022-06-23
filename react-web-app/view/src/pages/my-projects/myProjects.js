@@ -529,7 +529,7 @@ const MyProjects = () => {
                             <div className="tasks-done-2 col-lg-4">
                               <h6 className="tiny-header2">Planned Hours</h6>
                               <h6 className="project-point-details">
-                                {selectedSubTask.planned_hours}{" "}
+                                {Number(parseFloat(selectedSubTask.planned_hours)).toFixed(2)}{" "}
                               </h6>
                             </div>
                             <div className="tasks-done-2 col-lg-4">
@@ -544,7 +544,7 @@ const MyProjects = () => {
                             <div className="tasks-done-2 col-lg-4">
                               <h6 className="tiny-header2">Remaining Hours</h6>
                               <h6 className="project-point-details">
-                                {selectedSubTask.remaining_hours}{" "}
+                                {Number(parseFloat(selectedSubTask.remaining_hours)).toFixed(2)}{" "}
                               </h6>
                             </div>
                             <div className="tasks-done-2 col-lg-4">

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import './projectsTable.css';
-import { CButton, CCard, CCardBody, CAlert } from '@coreui/react';
+import { CButton, CCard, CCardBody, CAlert, CRow, CCol } from '@coreui/react';
 import { useDispatch, useSelector } from "react-redux";
 // import { fetchProjectsThunk } from "../../store/slices/ProjectsSlice";
 // import { USER_ID } from "../../Config";
@@ -39,7 +39,15 @@ const ProjectsTableDashboard = () => {
                     ) : null
                     }
                 </div>
-                {projects != undefined && <div className="button-holder3"><CButton className="tiny-buttons1" onClick={() => history.push({ pathname: '/dashboard/Projects/assigned-projects' })}>View all</CButton></div>}
+                {projects != undefined && <CRow className="button-holder3">
+                    <CCol className="p-header-3 col-md-9 mt-2">
+                        Total Projects : {projects.length}
+                    </CCol>
+
+                    <CCol className="col-md-3">
+                    <CButton className="tiny-buttons1" onClick={() => history.push({ pathname: '/dashboard/Projects/assigned-projects' })}>View all</CButton>
+                    </CCol>
+                    </CRow>}
 
 
             </div>

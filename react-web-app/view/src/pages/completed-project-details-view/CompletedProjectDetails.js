@@ -122,15 +122,15 @@ const CompletedDetailsView = () => {
                     </div>
                     <div className="tasks-done-2 col-lg-4">
                       <h6 className="tiny-header2">Planned Value</h6>
-                      <h6 className="project-point-details">{project.project.planned_value} </h6>
+                      <h6 className="project-point-details">{Number(parseFloat(project.project.planned_value)).toFixed(2)} </h6>
                     </div>
                     <div className="tasks-done-2 col-lg-4">
                       <h6 className="tiny-header2">Planned Hours</h6>
-                      <h6 className="project-point-details">{project.project.planned_hours}</h6>
+                      <h6 className="project-point-details">{Number(parseFloat(project.project.planned_hours)).toFixed(2)}</h6>
                     </div>
                     <div className="tasks-done-2 col-lg-4">
                       <h6 className="tiny-header2">Remaining Hours</h6>
-                      <h6 className="project-point-details">{project.project.remaining_hours}</h6>
+                      <h6 className="project-point-details">{Number(parseFloat(project.project.remaining_hours)).toFixed(2)}</h6>
                     </div>
                   </div>
 
