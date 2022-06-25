@@ -49,7 +49,7 @@ const AssignedProjectsDashboard = () => {
   return (
     <>
       <div className="main-holder-projects">
-        <h3 className="projectsHeader">WBS Board</h3>
+        <h3 className="projectsHeader">WBS Board({wbs.length})</h3>
 
         <div className="card-holder1">
           {wbs != undefined &&
@@ -89,7 +89,7 @@ const AssignedProjectsDashboard = () => {
         {wbs != undefined && (
           <CRow className="button-holder3">
             <CCol className="p-header-3 col-md-9 mt-2">
-              Total WBS : {wbs.length}
+             
             </CCol>
 
             <CCol className="col-md-3">

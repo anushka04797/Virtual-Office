@@ -400,6 +400,7 @@ const WbsBoard = () => {
 
   const filter_wbs_project_wise = (options) => {
     let temp_wbs_list = [];
+    console.log("filter", options)
     if (options.find((item) => item.value == "all")) {
       temp_wbs_list = wbsList.filter(
         (item) => item.assignee.id == resetAssigneeSelectValue.value

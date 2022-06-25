@@ -16,7 +16,7 @@ const ScheduleMeetings = () => {
         <>
             <div className="main-holder-projects">
                 <h3 className="projectsHeader">
-                    Scheduled Meetings
+                    Scheduled Meetings({meeting.length})
                 </h3>
 
                 <div className="card-holder1 ">
@@ -40,7 +40,7 @@ const ScheduleMeetings = () => {
                 </div>
                 {meeting != undefined  && <CRow className="button-holder3">
                 <CCol className="p-header-3 col-md-9 mt-2">
-                        Total Meetings : {meeting.length}
+                       
                     </CCol>
 
                     <CCol className="col-md-3">

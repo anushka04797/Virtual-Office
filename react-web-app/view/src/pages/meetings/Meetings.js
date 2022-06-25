@@ -232,22 +232,22 @@ const OurMeetings = () => {
   }, []);
   let meetingEnded = " "
   const timeleft = (time) => {
-    let now = new Date();
-    now = moment(now);
-    let meetingTime = moment(time);
-    console.log("timeeee", time)
-    meetingTime = meetingTime.diff(now, "seconds")
-    if (meetingTime > 0) {
+     let now = new Date();
+    console.log("timeeee", (time))
+    let meetingTime =moment(time).diff(moment(now), "seconds")
+    
+    if(meetingTime>0){
       var mins = moment.utc(moment(meetingTime, "HH:mm:ss").diff(moment(now, "HH:mm:ss"))).format("mm")
       var hrs = moment.utc(moment(meetingTime, "HH:mm:ss").diff(moment(now, "HH:mm:ss"))).format("HH")
-      var days = moment.utc(moment(meetingTime, "HH:mm:ss").diff(moment(now, "HH:mm:ss"))).format("d")
-
-      console.log("minutes", mins, "hours", hrs, "days", days)
-      let str = "Starts Within : " + days + " days " + hrs + " hours " + mins + " minutes "
-      console.log("time left", str)
-      return str;
-    }
-    else {
+      var days = parseInt(moment.utc(moment(meetingTime, "HH:mm:ss").diff(moment(now, "HH:mm:ss"))).format("d"))     
+      days= days-1
+      
+        console.log("minutes ", mins, "hours ", hrs, "days" , days)
+       let str = "Starts Within : " + days + " days " + hrs + " hours " + mins + " minutes "
+       console.log("time left", str)
+        return str;
+     }
+     else{
       let str1 = "Meeting Ended"
       meetingEnded = str1
       return str1
@@ -283,8 +283,8 @@ const OurMeetings = () => {
                                   meeting.host.last_name}
                               </h6>
                             )}
-                            <h6>
-                              {timeleft(meeting.start_time)}
+                            <h6 className= "meeting-id mt-2">
+                             {timeleft(meeting.start_time)}
                             </h6>
                           </CCol>
                           <CCol className="col-md-3">

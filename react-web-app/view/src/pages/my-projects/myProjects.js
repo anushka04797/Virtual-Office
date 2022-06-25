@@ -55,8 +55,8 @@ const MyProjects = () => {
   const [status, setStatus] = useState({});
   const [managers, setManagers] = useState([]);
   const [currentPM, setPM] = useState();
-  const [selectedTdo, setSelectedTdo] = useState([]);
-
+  const [selectedTdo, setSelectedTdo] = useState();
+ 
   const handlePMChange = (option, actionMeta) => {
     setPM(option);
   };
@@ -73,8 +73,37 @@ const MyProjects = () => {
       }
     });
   };
+   const [filteredProjects, setfilteredProjects] = useState()
+  const projects = useSelector((state) => {
+    let temp = [];
+    state.projects.pm_projects.forEach((item, idx) => {
+      if (item.project.status == 0) {
+        temp.push(item);
+      }
+    }); 
+   // populate_data(temp)
+    return temp;
+    //setfilteredProjects(temp)
+  });
+ 
   //const projects=useSelector(state=> state.projects.data.filter((item)=> project.project.status === 0))
+  const populate_data = (data) => {
+    console.log("dataaa", data);
+    let temp = [];
+      for (let i = 0; i < projects.length; i++) {
+       for (let j = 0; j < data.length; j++)  {
+          if ( data[j].value == projects[i].project.task_delivery_order.id) {
+            console.log("matched")
+            console.log("data label", data[j].value, "project label", projects[i].project.task_delivery_order.id)
+            temp.push(projects[i]);
+          }
+      }
+   }
+    console.log("filtered projects", temp);
+    setfilteredProjects(temp)
+    return temp;
 
+  };
   const tdolist = useSelector((state) => {
     let temp = [];
     state.projects.pm_projects.forEach((item, idx) => {
@@ -87,65 +116,68 @@ const MyProjects = () => {
     });
     temp.unshift({ label: "Select All", value: "all" });
     console.log("temp ", temp);
+  
     return temp;
   });
 
-  const [filteredtdos, setfilteredtdos] = useState([]);
-  const filter_tdos = (options) => {
-    let temp_tdos = [];
-    //console.log("options", options[0].length)
-    for (let i = 0; i < options[0].length; i++) {
-      console.log("value 1 =", options[0][i].label);
-      for (let j = 0; j < projects.length; j++) {
-        console.log(
-          "value 2 = ",
-          projects[j].project.task_delivery_order.title
-        );
-        if (
-          options[0][i].label == projects[j].project.task_delivery_order.title
-        ) {
-          temp_tdos.push(projects[j]);
+  const filter_by_tdos = (options) => {
+
+    let temp_tdo_list = [];
+    console.log("filter", options);
+
+    if (options.find((item) => item.value == "all")) {
+      temp_tdo_list=[...tdolist]
+      
+    } else {
+      for (let index = 0; index < options.length; index++) {
+        for (let index1 = 0; index1 < tdolist.length; index1++) {
+          if (tdolist[index1].value == options[index].value)
+          {  temp_tdo_list.push(tdolist[index1]);
+          }
         }
       }
     }
-    setfilteredtdos(temp_tdos);
-    console.log("temp tdosss", temp_tdos);
-    return temp_tdos;
+    console.log("temp tdosss", temp_tdo_list);
+    //return temp_tdo_list;
+    console.log("data populated", temp_tdo_list)
+    populate_data(temp_tdo_list);
   };
 
   const handleTDOChange = (value, actionMeta) => {
-    if(actionMeta.action == 'select-option'){
-      if(value.find(item=>item.value == 'all')){
-          setSelectedTdo(value) 
-          console.log("values1", value)  
+    if (actionMeta.action == "select-option") {
+      console.log("select", value);
+      if (actionMeta.action == "select-option") {
+      if (value.find((item) => item.value == "all")) {
+          
+          setSelectedTdo(tdolist.filter((item) => item.value != "all"));
+          filter_by_tdos(tdolist.filter((item) => item.value != "all"))
+        } else {
+          setSelectedTdo(value);
+          filter_by_tdos(value);
+        }
+       
+      } 
+    } else if (actionMeta.action == "clear") {
+      setSelectedTdo([]);
+      filter_by_tdos(tdolist.filter((item) => item.value != "all"));
+     
+    } else if (actionMeta.action == "remove-value") {
+      setSelectedTdo(value);
+      if(value.length==0){
+      filter_by_tdos(tdolist.filter((item) => item.value != "all"));
       }
       else{
-        console.log("values", value)        
-          setSelectedTdo(value)
+        filter_by_tdos(value)
       }
-    }
-    else if(actionMeta.action == 'clear'){
-        setSelectedTdo([])
-      
-    }
-    else if(actionMeta.action == 'remove-value'){
-        setSelectedTdo(value)
       
     }
   };
   
-  const projects = useSelector((state) => {
-    let temp = [];
-    state.projects.filtered_pm_projects.forEach((item, idx) => {
-      if (item.project.status == 0) {
-        temp.push(item);
-      }
-    });
-    return temp;
-  });
-  useEffect(()=>{
-    dispatch(filter_pm_projects(selectedTdo))
-  },[selectedTdo])
+  useEffect(() => {
+    if (projects.length > 0) {
+      
+    }
+  }, []);
   const [show_sub_task_details, setShowSubTaskDetails] = useState(false);
   const [selectedSubTask, setSelectedSubTask] = useState();
   useEffect(() => {
@@ -171,6 +203,7 @@ const MyProjects = () => {
       });
       setManagers(temp);
     });
+    
   }, []);
   const mark_project_completed = (id) => {
     swal({
@@ -484,7 +517,9 @@ const MyProjects = () => {
                             <div className="tasks-done-2 col-lg-4">
                               <h6 className="tiny-header2">Planned Hours</h6>
                               <h6 className="project-point-details">
-                                {Number(parseFloat(selectedSubTask.planned_hours)).toFixed(2)}{" "}
+                                {Number(
+                                  parseFloat(selectedSubTask.planned_hours)
+                                ).toFixed(2)}{" "}
                               </h6>
                             </div>
                             <div className="tasks-done-2 col-lg-4">
@@ -499,7 +534,9 @@ const MyProjects = () => {
                             <div className="tasks-done-2 col-lg-4">
                               <h6 className="tiny-header2">Remaining Hours</h6>
                               <h6 className="project-point-details">
-                                {Number(parseFloat(selectedSubTask.remaining_hours)).toFixed(2)}{" "}
+                                {Number(
+                                  parseFloat(selectedSubTask.remaining_hours)
+                                ).toFixed(2)}{" "}
                               </h6>
                             </div>
                             <div className="tasks-done-2 col-lg-4">
@@ -630,13 +667,13 @@ const MyProjects = () => {
                 </CButton>
               </CCol>
             </CRow>
-            {projects != undefined && (
+            {filteredProjects != undefined && (
               <Accordion
                 allowMultipleExpanded={false}
                 className="remove-acc-bg  mb-3"
                 allowZeroExpanded
               >
-                {Array.from(projects).map((project, idx) => (
+                {Array.from(filteredProjects).map((project, idx) => (
                   <AccordionItem key={idx} className="card-ongoing-project">
                     <AccordionItemHeading className="ongoing-accordion-header">
                       <AccordionItemButton>

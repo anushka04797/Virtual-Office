@@ -26,7 +26,7 @@ const EvmsView = () => {
         <>
             <div className="main-holder-projects">
                 <h3 className="projectsHeader">
-                    EVMS Summary
+                    EVMS Summary ({evmsList.length})
                 </h3>
                 <div className="card-holder1">
                     {evmsList != undefined && Array.from(evmsList).slice(0, 3).map((item, idx) => (
@@ -55,7 +55,7 @@ const EvmsView = () => {
                 {evmsList != undefined &&
                     <CRow className="button-holder3">
                          <CCol className="p-header-3 col-md-9 mt-2">
-                        Total EVMS: {evmsList.length}
+                       
                     </CCol>
 
                     <CCol className="col-md-3"><CButton className="tiny-buttons1" onClick={() => history.push({ pathname: '/dashboard/EVMS/view' })}>View all</CButton>

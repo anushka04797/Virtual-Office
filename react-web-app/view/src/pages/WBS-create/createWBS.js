@@ -136,6 +136,7 @@ const CreateNewWBS = () => {
   const [selectedTask, setSelectedTask] = useState(null);
   const [selectedSubTask, setSelectedSubTask] = useState({});
   const [selectedProjectEndDate, setSelectedProjectEndDate] = useState("");
+  const [selectedProjectStartDate, setSelectedProjectStartDate]= useState("");
   const [selectedAssignee, setselectedAssignee] = useState([]);
 
   const handleProjectChange = (newValue, actionMeta) => {
@@ -349,9 +350,11 @@ const CreateNewWBS = () => {
   const handleTaskTitleChange = (newValue, actionMeta) => {
     if (newValue != null) {
       getAssigneeList(newValue);
-      console.log('task', newValue);
+      console.log('task', newValue.start_date);
       setSelectedTask(newValue);
       setSelectedProjectEndDate(newValue?.planned_delivery_date);
+      setSelectedProjectStartDate(newValue?.start_date)
+
     }
     if (actionMeta.action == "select-option") {
       formCreateWbs.setValues({
@@ -402,6 +405,8 @@ const CreateNewWBS = () => {
       setselectedAssignee(result.assignees.slice(1));
       
       setSelectedProjectEndDate(task.planned_delivery_date);
+      //console.log("start date", task)
+      setSelectedProjectStartDate(task.start_date)
 
       formCreateWbs.setValues({
         project: task.id,
@@ -559,6 +564,7 @@ const CreateNewWBS = () => {
                         {/* onChange={setWbsStartDate} */}
                         <CInput
                           max={selectedProjectEndDate}
+                          min = {selectedProjectStartDate}
                           type="date"
                           id="start_date"
                           name="start_date"
@@ -579,6 +585,7 @@ const CreateNewWBS = () => {
                         {/* onChange={setWbsEndDate} */}
                         <CInput
                           max={selectedProjectEndDate}
+                          min = {formCreateWbs.values.start_date}
                           type="date"
                           id="end_date"
                           name="end_date"

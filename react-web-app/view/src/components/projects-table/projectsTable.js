@@ -18,7 +18,7 @@ const ProjectsTableDashboard = () => {
         <>
             <div className="main-holder-projects">
                 <h3 className="projectsHeader">
-                    Assigned Projects
+                    Assigned Project({projects.length})
                 </h3>
 
                 <div className="card-holder1">
@@ -41,7 +41,7 @@ const ProjectsTableDashboard = () => {
                 </div>
                 {projects != undefined && <CRow className="button-holder3">
                     <CCol className="p-header-3 col-md-9 mt-2">
-                        Total Projects : {projects.length}
+                       
                     </CCol>
 
                     <CCol className="col-md-3">
