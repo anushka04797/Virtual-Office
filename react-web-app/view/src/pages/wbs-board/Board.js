@@ -433,31 +433,30 @@ const WbsBoard = () => {
     }
     //console.log(new Date(JSON.parse(sessionStorage.getItem('TOKEN')).time).toISOString())
   }, []);
-  const [selectedProjects, setSelectedProjects] = useState([
-    { label: "Select All", value: "all", data: {} },
-  ]);
+  const [selectedProjects, setSelectedProjects] = useState();
   const handleProjectChange = (value, actionMeta) => {
+    console.log("select", value);
     if (actionMeta.action == "select-option") {
-      console.log("select", value);
+      
       if (value.find((item) => item.value == "all")) {
-        // setSelectedProjects([{ label: "Select All", value: "all", data: {} }]);
-        if(selectedProjects.find(item=>item.value == 'all')){
-          setSelectedProjects(value.filter(item=>item.value!='all'));
-        }
-        else{
-          setSelectedProjects([{ label: "Select All", value: "all", data: {} }]);
-        }
-        filter_wbs_project_wise(projects.slice(1));
+        setSelectedProjects(projects.filter(item=>item.value!='all'));
+        filter_wbs_project_wise(projects.filter(item=>item.value!='all'));
+        
       } else {
         setSelectedProjects(value);
         filter_wbs_project_wise(value);
       }
     } else if (actionMeta.action == "clear") {
-      setSelectedProjects([{ label: "Select All", value: "all", data: {} }]);
-      filter_wbs_project_wise(projects.slice(1));
+      setSelectedProjects([]);
+      filter_wbs_project_wise(projects.filter(item=>item.value!='all'));
     } else if (actionMeta.action == "remove-value") {
       setSelectedProjects(value);
-      filter_wbs_project_wise(value);
+      if(value.length==0){
+        filter_wbs_project_wise(projects.filter(item=>item.value!='all'));
+      }
+      else{
+        filter_wbs_project_wise(value);
+      }
     }
   };
   React.useEffect(()=>{
@@ -481,8 +480,6 @@ const WbsBoard = () => {
   React.useEffect(() => {
     // dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)))
     window.scrollTo(0, 0);
-    setSelectedProjects([{ label: "Select All", value: "all", data: {} }]);
-
     if (has_permission("projects.add_projects")) {
       
       API.get("wbs/pm/all/" + sessionStorage.getItem(USER_ID) + "/")

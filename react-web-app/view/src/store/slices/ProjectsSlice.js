@@ -5,6 +5,7 @@ import sortBy from 'lodash/sortBy';
 const initialState = {
   data:[],
   pm_projects:[],
+  filtered_pm_projects:[],
   tdo_list:[],
   assignee:[],
   wbs: [],
@@ -39,6 +40,8 @@ export const fetchWbsThunk = createAsyncThunk('wbs/createWbsThunk', async (data)
   // console.log("wbs/create/", response.data)
   return response.data
 })
+
+
 export const projectsSlice = createSlice({
   name: 'projects',
   initialState,
@@ -46,6 +49,17 @@ export const projectsSlice = createSlice({
     push_item: (state,val) => {
       console.log('dispatching ----- ',val)
       state.tdo_list = [...state.tdo_list,val.payload]
+    },
+    filter_pm_projects: (state,tdos) => {
+      if(tdos.length>0){
+        state.filtered_pm_projects= state.pm_projects.filter((item)=> {tdos.find(tdo=>tdo.id==item.project.task_delivery_order.id)})
+      }
+      else{
+        state.filtered_pm_projects=state.pm_projects
+      }
+    },
+    reset_filter_pm_projects: (state) => {
+      state.filtered_pm_projects=[]
     },
   },
   extraReducers: {
@@ -89,5 +103,5 @@ export const projectsSlice = createSlice({
 })
 //const get_projects_by_tdos = (state,tdos) => state.pm_projects.filter(item=>item.project.task_delivery_order.id==4)
 // Action creators are generated for each case reducer function
-export const { push_item} = projectsSlice.actions
+export const { push_item,filter_pm_projects,reset_filter_pm_projects} = projectsSlice.actions
 export default projectsSlice.reducer

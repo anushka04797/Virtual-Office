@@ -32,10 +32,9 @@ const OurMeetings = () => {
   const dispatch = useDispatch();
   // const [roomName,setRoomName]=useState('')
   // const [username,setUserName] = useState('')
-  const [password, setPassword] = useState("");
   const meetings = useSelector((state) => {
-    let temp=[]
-    temp=state.meetings.data
+    let temp = []
+    temp = state.meetings.data
     temp = sortBy(temp, "start_time")
     return temp
   });
@@ -83,7 +82,6 @@ const OurMeetings = () => {
       formMeeting.setFieldValue("medium", option1.value);
       console.log("meeting location", option1.value);
     }
-    return option1.value;
   };
   const handleProjectChange = (option, actionMeta) => {
     if (actionMeta.action == "select-option") {
@@ -234,26 +232,26 @@ const OurMeetings = () => {
   }, []);
   let meetingEnded = " "
   const timeleft = (time) => {
-     let now = new Date();
-     now = moment(now);
-     let meetingTime = moment(time);
+    let now = new Date();
+    now = moment(now);
+    let meetingTime = moment(time);
     console.log("timeeee", time)
     meetingTime = meetingTime.diff(now, "seconds")
-    if(meetingTime>0){
+    if (meetingTime > 0) {
       var mins = moment.utc(moment(meetingTime, "HH:mm:ss").diff(moment(now, "HH:mm:ss"))).format("mm")
       var hrs = moment.utc(moment(meetingTime, "HH:mm:ss").diff(moment(now, "HH:mm:ss"))).format("HH")
-      var days = moment.utc(moment(meetingTime, "HH:mm:ss").diff(moment(now, "HH:mm:ss"))).format("d")     
-   
-        console.log("minutes", mins, "hours", hrs, "days", days)
-       let str = "Starts Within : " + days + " days " + hrs + " hours " + mins + " minutes "
-       console.log("time left", str)
-        return str;
-     }
-     else{
+      var days = moment.utc(moment(meetingTime, "HH:mm:ss").diff(moment(now, "HH:mm:ss"))).format("d")
+
+      console.log("minutes", mins, "hours", hrs, "days", days)
+      let str = "Starts Within : " + days + " days " + hrs + " hours " + mins + " minutes "
+      console.log("time left", str)
+      return str;
+    }
+    else {
       let str1 = "Meeting Ended"
-      meetingEnded=str1
+      meetingEnded = str1
       return str1
-     }
+    }
   };
   return (
     <>
@@ -286,7 +284,7 @@ const OurMeetings = () => {
                               </h6>
                             )}
                             <h6>
-                             {timeleft(meeting.start_time)}
+                              {timeleft(meeting.start_time)}
                             </h6>
                           </CCol>
                           <CCol className="col-md-3">
@@ -300,7 +298,7 @@ const OurMeetings = () => {
                                 <VideoCallIcon className="videoIcon" />
                               </div>
                             )}
-                            {meeting.medium == 1 &&  (
+                            {meeting.medium == 1 && (
                               <div className="join-btn-holder">
                                 <CButton
                                   className="meeting-join-btn"
@@ -375,7 +373,7 @@ const OurMeetings = () => {
                           { value: 0, label: "Physical" },
                           { value: 1, label: "Virtual" },
                         ]}
-                        // styles={colourStyles}
+                      // styles={colourStyles}
                       />
                       {formMeeting.touched.medium &&
                         formMeeting.errors.medium && (
@@ -400,7 +398,7 @@ const OurMeetings = () => {
                           { value: 0, label: "Project" },
                           { value: 1, label: "General" },
                         ]}
-                        // styles={colourStyles}
+                      // styles={colourStyles}
                       />
                       {formMeeting.touched.type && formMeeting.errors.type && (
                         <small style={{ color: "red" }}>
@@ -428,7 +426,7 @@ const OurMeetings = () => {
                           // isMulti={false}
                           classNamePrefix="custom-forminput-6"
                           options={projects}
-                          // styles={colourStyles}
+                        // styles={colourStyles}
                         />
                         {formMeeting.touched.project &&
                           formMeeting.errors.project && (
@@ -500,7 +498,7 @@ const OurMeetings = () => {
                         isMulti
                         classNamePrefix="custom-forminput-6"
                         options={participants}
-                        // styles={colourStyles}
+                      // styles={colourStyles}
                       />
                     </div>
                     {/**password */}

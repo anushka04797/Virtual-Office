@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import {
   fetchProjectsForPMThunk,
   fetchProjectsThunk,
+  filter_pm_projects,
 } from "../../store/slices/ProjectsSlice";
 import "../ongoing-project-details/ongoingProjectDetails.css";
 import {
@@ -51,7 +52,6 @@ import SearchResult from "./inc/SearchResult";
 const MyProjects = () => {
   let history = useHistory();
   const dispatch = useDispatch();
-  const [pmStatus, setPmStatus] = useState(1);
   const [status, setStatus] = useState({});
   const [managers, setManagers] = useState([]);
   const [currentPM, setPM] = useState();
@@ -118,68 +118,25 @@ const MyProjects = () => {
       if(value.find(item=>item.value == 'all')){
           setSelectedTdo(value) 
           console.log("values1", value)  
-
       }
       else{
         console.log("values", value)        
           setSelectedTdo(value)
-          
       }
-  }
-  else if(actionMeta.action == 'clear'){
-      setSelectedTdo([])
-     
-  }
-  else if(actionMeta.action == 'remove-value'){
-      setSelectedTdo(value)
-     
-  }
-  };
-  const handleTDOChange1 = (value, actionMeta) => {
-    let temp_tdo_list = [];
-    if (actionMeta.action == "select-option") {
-      if (value[value.length - 1].value == "all") {
-        setSelectedTdo([{ label: "Select All", value: "all" }]);
-        temp_tdo_list = [...tdolist];
-        // if (temp_tdo_list[0].value == "all") {
-        //   temp_tdo_list.shift();
-        // }
-        temp_tdo_list.shift([{ label: "Select All", value: "all" }]);
-        filter_tdos(temp_tdo_list);
-      } else if (value[value.length - 1].value != "all") {
-        if (value.find((item) => item.value == "all")) {
-          value.shift();
-        }
-        temp_tdo_list.push(value);
-
-        setSelectedTdo(value);
-        if (temp_tdo_list[0].value == "all") {
-          temp_tdo_list.shift();
-        }
-        filter_tdos(temp_tdo_list);
-      }
-    } else if (actionMeta.action == "clear") {
-      setSelectedTdo([{ label: "Select All", value: "all" }]);
-      temp_tdo_list = [];
-      temp_tdo_list = [...tdolist];
-      if (temp_tdo_list[0].value == "all") {
-        temp_tdo_list.shift();
-      }
-      filter_tdos(temp_tdo_list);
-    } else if (actionMeta.action == "remove-value") {
-      setSelectedTdo(value);
-      temp_tdo_list = [];
-      temp_tdo_list.push(value);
-      if (temp_tdo_list[0].value == "all") {
-        temp_tdo_list.shift();
-      }
-      filter_tdos(temp_tdo_list);
+    }
+    else if(actionMeta.action == 'clear'){
+        setSelectedTdo([])
+      
+    }
+    else if(actionMeta.action == 'remove-value'){
+        setSelectedTdo(value)
+      
     }
   };
-
+  
   const projects = useSelector((state) => {
     let temp = [];
-    state.projects.pm_projects.forEach((item, idx) => {
+    state.projects.filtered_pm_projects.forEach((item, idx) => {
       if (item.project.status == 0) {
         temp.push(item);
       }
@@ -187,10 +144,8 @@ const MyProjects = () => {
     return temp;
   });
   useEffect(()=>{
-    if(projects.length>0){
-
-    }
-  },[])
+    dispatch(filter_pm_projects(selectedTdo))
+  },[selectedTdo])
   const [show_sub_task_details, setShowSubTaskDetails] = useState(false);
   const [selectedSubTask, setSelectedSubTask] = useState();
   useEffect(() => {
