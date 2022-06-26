@@ -25,7 +25,7 @@ import Select from "react-select";
 import Datetime from "react-datetime";
 import moment from "moment";
 import { fetchMeetingList } from "../../store/slices/MeetingSlice";
-import sortBy from "lodash/sortBy"
+import sortBy from "lodash/sortBy";
 
 const OurMeetings = () => {
   const [meeting, setMeeting] = useState(false);
@@ -33,11 +33,33 @@ const OurMeetings = () => {
   // const [roomName,setRoomName]=useState('')
   // const [username,setUserName] = useState('')
   const meetings = useSelector((state) => {
-    let temp = []
-    temp = state.meetings.data
-    temp = sortBy(temp, "start_time")
-    return temp
+    let temp = [];
+    let temp1 = [];
+    let temp2 = [];
+    temp = state.meetings.data;
+    for (let i = 0; i < temp.length; i++) {
+      let now = new Date();
+      let meetingTime = moment(temp[i].start_time).diff(
+        moment(now),
+        "seconds"
+      );
+
+      if (meetingTime > 0) {
+        temp1.push(temp[i]);
+      } else {
+        temp2.push(temp[i]);
+      }
+    }
+    temp1 = sortBy(temp1, "start_time");
+    //temp2.push(sortBy(temp, "start_time"));
+
+    console.log("sorted1", temp1);
+    console.log("sorted2", temp2)
+    temp = temp1.concat(temp2);
+    console.log("length", temp.length)
+    return temp;
   });
+
   const projects = useSelector((state) => {
     //console.log(state.projects.pm_projects)
     let temp = [];
@@ -230,27 +252,40 @@ const OurMeetings = () => {
       setParticipants(temp);
     });
   }, []);
-  let meetingEnded = " "
+  let meetingEnded = " ";
   const timeleft = (time) => {
-     let now = new Date();
-    console.log("timeeee", (time))
-    let meetingTime =moment(time).diff(moment(now), "seconds")
-    
-    if(meetingTime>0){
-      var mins = moment.utc(moment(meetingTime, "HH:mm:ss").diff(moment(now, "HH:mm:ss"))).format("mm")
-      var hrs = moment.utc(moment(meetingTime, "HH:mm:ss").diff(moment(now, "HH:mm:ss"))).format("HH")
-      var days = parseInt(moment.utc(moment(meetingTime, "HH:mm:ss").diff(moment(now, "HH:mm:ss"))).format("d"))     
-      days= days-1
-      
-        console.log("minutes ", mins, "hours ", hrs, "days" , days)
-       let str = "Starts Within : " + days + " days " + hrs + " hours " + mins + " minutes "
-       console.log("time left", str)
-        return str;
-     }
-     else{
-      let str1 = "Meeting Ended"
-      meetingEnded = str1
-      return str1
+    let now = new Date();
+    console.log("timeeee", time);
+    let meetingTime = moment(time).diff(moment(now), "seconds");
+    console.log(" all seconds ", meetingTime);
+    if (meetingTime > 0) {
+      meetingTime = Number(meetingTime);
+      var days = Math.floor(meetingTime / 86400);
+      meetingTime -= days * 86400;
+      // calculate (and subtract) whole hours
+      var hours = Math.floor(meetingTime / 3600) % 24;
+      meetingTime -= hours * 3600;
+      // calculate (and subtract) whole minutes
+      var minutes = Math.floor(meetingTime / 60) % 60;
+      meetingTime -= minutes * 60;
+      // what's left is seconds
+      var seconds = meetingTime % 60;
+      var dDisplay = days > 0 ? days + (days == 1 ? " day, " : " days, ") : "";
+      var hDisplay =
+        hours > 0 ? hours + (hours == 1 ? " hour, " : " hours, ") : "";
+      var mDisplay =
+        minutes > 0
+          ? minutes + (minutes == 1 ? " minute, " : " minutes, ")
+          : "";
+      var sDisplay =
+        seconds > 0 ? seconds + (seconds == 1 ? " second" : " seconds") : "";
+
+      let str = "Starts Within " + dDisplay + hDisplay + mDisplay + sDisplay;
+      return str;
+    } else {
+      let str1 = "Meeting Ended";
+      meetingEnded = str1;
+      return str1;
     }
   };
   return (
@@ -260,9 +295,10 @@ const OurMeetings = () => {
           <div className="row">
             {/**Upcoming meetings */}
             <div className="col-md-12 col-lg-4">
-              <h4 className="section-name">Meetings</h4>
+              <h4 className="section-name">Meetings ({meetings.length})</h4>
               {/*Meeting list */}
               {meetings.length > 0 ? (
+                
                 meetings.map((meeting, idx) => (
                   <div key={idx}>
                     <CCard className="meeting-cards">
@@ -283,8 +319,8 @@ const OurMeetings = () => {
                                   meeting.host.last_name}
                               </h6>
                             )}
-                            <h6 className= "meeting-id mt-2">
-                             {timeleft(meeting.start_time)}
+                            <h6 className="meeting-id mt-2">
+                              {timeleft(meeting.start_time)}
                             </h6>
                           </CCol>
                           <CCol className="col-md-3">
@@ -373,7 +409,7 @@ const OurMeetings = () => {
                           { value: 0, label: "Physical" },
                           { value: 1, label: "Virtual" },
                         ]}
-                      // styles={colourStyles}
+                        // styles={colourStyles}
                       />
                       {formMeeting.touched.medium &&
                         formMeeting.errors.medium && (
@@ -398,7 +434,7 @@ const OurMeetings = () => {
                           { value: 0, label: "Project" },
                           { value: 1, label: "General" },
                         ]}
-                      // styles={colourStyles}
+                        // styles={colourStyles}
                       />
                       {formMeeting.touched.type && formMeeting.errors.type && (
                         <small style={{ color: "red" }}>
@@ -426,7 +462,7 @@ const OurMeetings = () => {
                           // isMulti={false}
                           classNamePrefix="custom-forminput-6"
                           options={projects}
-                        // styles={colourStyles}
+                          // styles={colourStyles}
                         />
                         {formMeeting.touched.project &&
                           formMeeting.errors.project && (
@@ -498,7 +534,7 @@ const OurMeetings = () => {
                         isMulti
                         classNamePrefix="custom-forminput-6"
                         options={participants}
-                      // styles={colourStyles}
+                        // styles={colourStyles}
                       />
                     </div>
                     {/**password */}
