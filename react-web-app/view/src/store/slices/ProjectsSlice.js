@@ -41,6 +41,7 @@ export const fetchWbsThunk = createAsyncThunk('wbs/createWbsThunk', async (data)
   return response.data
 })
 
+const selectEntities = state => state.entities
 
 export const projectsSlice = createSlice({
   name: 'projects',
@@ -51,12 +52,21 @@ export const projectsSlice = createSlice({
       state.tdo_list = [...state.tdo_list,val.payload]
     },
     filter_pm_projects: (state,tdos) => {
-      if(tdos.length>0){
-        state.filtered_pm_projects= state.pm_projects.filter((item)=> {tdos.find(tdo=>tdo.id==item.project.task_delivery_order.id)})
+      // state.filtered_pm_projects = state.pm_projects.filter((item)=> {tdos.payload.find(tdo=>tdo.value==item.project.task_delivery_order.id)})
+      let temp=[]
+      let projects=[...state.pm_projects]
+      for(let index1=0;index1<tdos.payload.length;index1++){
+        
+        for(let index2=0;index2<projects.length;index2++){
+          console.log('temp',projects[index2])
+          // if(state.pm_projects[index2].project.task_delivery_order.id == tdos.payload[index1].value){
+          //   console.log(state.pm_projects[index2])
+          // }
+          // console.log(state.pm_projects[index2])
+          // temp.push(state.pm_projects[index2])
+        } 
       }
-      else{
-        state.filtered_pm_projects=state.pm_projects
-      }
+      // state.filtered_pm_projects=temp
     },
     reset_filter_pm_projects: (state) => {
       state.filtered_pm_projects=[]
@@ -86,18 +96,8 @@ export const projectsSlice = createSlice({
       state.wbs = action.payload
     },
     [fetchProjectsForPMThunk.fulfilled]: (state, action) => {
-      //state.status = 'succeeded'
-      // Add any fetched posts to the array
       state.pm_projects = action.payload
-      // if(action.payload.length>0){
-      //   let temp = action.payload.filter((value, index, array) => array.findIndex((t) => t.task_delivery_order.id === value.task_delivery_order.id) === index); 
-      //   let tdo_temp=[]
-      //   temp.forEach((tdo,idx)=>{
-      //     tdo_temp.push({value:tdo.task_delivery_order.title,label:tdo.task_delivery_order.title})
-      //   })
-      //   console.log('tod',tdo_temp)
-      //   state.tdo_list= tdo_temp
-      // }
+      state.filtered_pm_projects = action.payload
     },
   }
 })

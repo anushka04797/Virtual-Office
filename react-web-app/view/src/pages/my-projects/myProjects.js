@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import {
   fetchProjectsForPMThunk,
   fetchProjectsThunk,
-  filter_pm_projects,
 } from "../../store/slices/ProjectsSlice";
 import "../ongoing-project-details/ongoingProjectDetails.css";
 import {
@@ -48,6 +47,30 @@ import * as XLSX from "xlsx";
 import capitalize from "@material-ui/utils/capitalize";
 import CustomSearch from "../../components/CustomSearch/CustomSearch";
 import SearchResult from "./inc/SearchResult";
+import { createSelector } from "reselect";
+
+const filter_pm_projects=createSelector(
+  (state)=>state.projects.pm_projects,
+  (_, tdos) => tdos,
+  (pm_projects,tdos)=>{
+    let temp=[]
+    console.log('projects',pm_projects,tdos)
+    if(tdos){
+      Array.from(tdos).forEach((item,idx)=>{
+        for(let index=0;index<pm_projects.length;index++){
+          console.log('project tdo'+index,pm_projects[index].project.task_delivery_order.id,item.value)
+          if(item.value == pm_projects[index].project.task_delivery_order.id){
+            temp.push(pm_projects[index])
+          }
+        }
+      })
+    }
+    else{
+      temp=pm_projects
+    }
+    return uniq(temp)
+  }
+)
 
 const MyProjects = () => {
   let history = useHistory();
@@ -56,7 +79,7 @@ const MyProjects = () => {
   const [managers, setManagers] = useState([]);
   const [currentPM, setPM] = useState();
   const [selectedTdo, setSelectedTdo] = useState();
- 
+
   const handlePMChange = (option, actionMeta) => {
     setPM(option);
   };
@@ -73,37 +96,17 @@ const MyProjects = () => {
       }
     });
   };
-   const [filteredProjects, setfilteredProjects] = useState()
+  // const [filteredProjects, setfilteredProjects] = useState()
   const projects = useSelector((state) => {
     let temp = [];
-    state.projects.pm_projects.forEach((item, idx) => {
+    Array.from(state.projects.filtered_pm_projects).forEach((item, idx) => {
       if (item.project.status == 0) {
         temp.push(item);
       }
-    }); 
-   // populate_data(temp)
+    });
     return temp;
-    //setfilteredProjects(temp)
   });
- 
-  //const projects=useSelector(state=> state.projects.data.filter((item)=> project.project.status === 0))
-  const populate_data = (data) => {
-    console.log("dataaa", data);
-    let temp = [];
-      for (let i = 0; i < projects.length; i++) {
-       for (let j = 0; j < data.length; j++)  {
-          if ( data[j].value == projects[i].project.task_delivery_order.id) {
-            console.log("matched")
-            console.log("data label", data[j].value, "project label", projects[i].project.task_delivery_order.id)
-            temp.push(projects[i]);
-          }
-      }
-   }
-    console.log("filtered projects", temp);
-    setfilteredProjects(temp)
-    return temp;
-
-  };
+  const filtered_pm_projects=useSelector((state)=>filter_pm_projects(state,selectedTdo))
   const tdolist = useSelector((state) => {
     let temp = [];
     state.projects.pm_projects.forEach((item, idx) => {
@@ -115,69 +118,29 @@ const MyProjects = () => {
       }
     });
     temp.unshift({ label: "Select All", value: "all" });
-    console.log("temp ", temp);
-  
     return temp;
   });
 
-  const filter_by_tdos = (options) => {
-
-    let temp_tdo_list = [];
-    console.log("filter", options);
-
-    if (options.find((item) => item.value == "all")) {
-      temp_tdo_list=[...tdolist]
-      
-    } else {
-      for (let index = 0; index < options.length; index++) {
-        for (let index1 = 0; index1 < tdolist.length; index1++) {
-          if (tdolist[index1].value == options[index].value)
-          {  temp_tdo_list.push(tdolist[index1]);
-          }
-        }
-      }
-    }
-    console.log("temp tdosss", temp_tdo_list);
-    //return temp_tdo_list;
-    console.log("data populated", temp_tdo_list)
-    populate_data(temp_tdo_list);
-  };
-
   const handleTDOChange = (value, actionMeta) => {
     if (actionMeta.action == "select-option") {
-      console.log("select", value);
-      if (actionMeta.action == "select-option") {
       if (value.find((item) => item.value == "all")) {
-          
-          setSelectedTdo(tdolist.filter((item) => item.value != "all"));
-          filter_by_tdos(tdolist.filter((item) => item.value != "all"))
-        } else {
-          setSelectedTdo(value);
-          filter_by_tdos(value);
-        }
-       
-      } 
+        setSelectedTdo(tdolist.filter((item) => item.value != "all"));
+      } else {
+        setSelectedTdo(value);
+      }
     } else if (actionMeta.action == "clear") {
-      setSelectedTdo([]);
-      filter_by_tdos(tdolist.filter((item) => item.value != "all"));
-     
+      setSelectedTdo(tdolist.filter((item) => item.value != "all"));
     } else if (actionMeta.action == "remove-value") {
       setSelectedTdo(value);
       if(value.length==0){
-      filter_by_tdos(tdolist.filter((item) => item.value != "all"));
+        setSelectedTdo(tdolist.filter((item) => item.value != "all"));
       }
       else{
-        filter_by_tdos(value)
+        setSelectedTdo(value);
       }
-      
     }
   };
-  
-  useEffect(() => {
-    if (projects.length > 0) {
-      
-    }
-  }, []);
+
   const [show_sub_task_details, setShowSubTaskDetails] = useState(false);
   const [selectedSubTask, setSelectedSubTask] = useState();
   useEffect(() => {
@@ -203,7 +166,6 @@ const MyProjects = () => {
       });
       setManagers(temp);
     });
-    
   }, []);
   const mark_project_completed = (id) => {
     swal({
@@ -312,9 +274,7 @@ const MyProjects = () => {
     let worked_hours = parseFloat(total_hours) - parseFloat(remaining_hours);
     return (100 * worked_hours) / parseFloat(total_hours);
   }
-  {
-    /**export in excel */
-  }
+  
   const fileType =
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
   const fileExtension = ".xlsx";
@@ -667,13 +627,13 @@ const MyProjects = () => {
                 </CButton>
               </CCol>
             </CRow>
-            {filteredProjects != undefined && (
+            {filtered_pm_projects !=undefined && (
               <Accordion
                 allowMultipleExpanded={false}
                 className="remove-acc-bg  mb-3"
                 allowZeroExpanded
               >
-                {Array.from(filteredProjects).map((project, idx) => (
+                {Array.from(filtered_pm_projects).map((project, idx) => (
                   <AccordionItem key={idx} className="card-ongoing-project">
                     <AccordionItemHeading className="ongoing-accordion-header">
                       <AccordionItemButton>
@@ -835,7 +795,7 @@ const MyProjects = () => {
                                     classNamePrefix="pm-edit"
                                     value={currentPM}
                                     options={managers}
-                                    // styles={colourStyles}
+                                  // styles={colourStyles}
                                   />
                                 </CForm>
                                 <div className="mt-1">
