@@ -346,10 +346,28 @@ const CreateNewProject = () => {
     setSelectedAssignees(null);
   };
 
-  const create_project = (values) => {
-    console.log("values", JSON.stringify(formCreateProject.values));
-    API.post("project/create/", formCreateProject.values).then((res) => {
+  const create_project = (values,{ setSubmitting }) => {
+    setSubmitting(true)
+    const formValues={
+        "task_delivery_order": values.task_delivery_order,
+        "tdo_details": values.tdo_details,
+        "sub_task": values.sub_task,
+        "description": values.description,
+        "work_package_number": values.work_package_number,
+        "task_title": values.task_title,
+        "estimated_person": values.estimated_person,
+        "start_date": values.start_date,
+        "planned_delivery_date": values.planned_delivery_date,
+        "assignee": values.assignee,
+        "pm": values.pm,
+        "planned_hours": Number(values.planned_hours).toFixed(2),
+        "planned_value": Number(values.planned_value).toFixed(2),
+        "remaining_hours": Number(values.remaining_hours).toFixed(2)
+    }
+    console.log("values", JSON.stringify(formValues));
+    API.post("project/create/", formValues).then((res) => {
       // console.log(res)
+      setSubmitting(false)
       if (res.status == 200 && res.data.success == "True") {
         reset_form();
         dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)));
@@ -363,6 +381,9 @@ const CreateNewProject = () => {
       } else {
         swal("Failed!", "Project Creation failed", "failed");
       }
+    }).catch(err=>{
+      console.log(err)
+      setSubmitting(false)
     });
   };
 
@@ -1142,7 +1163,7 @@ const CreateNewProject = () => {
                       </div>
                       {/**submit buttons */}
                       <div className="col-md-12">
-                        {is_form_submitting() == true ? (
+                        {formCreateProject.isSubmitting ? (
                           <LinearProgress />
                         ) : (
                           <div className="project-form-button-holders mt-3">

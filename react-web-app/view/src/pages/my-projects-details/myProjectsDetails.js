@@ -66,8 +66,24 @@ const MyProjectsDetailsView = () => {
         return errors
     }
     const edit_project = (values, { setSubmitting }) => {
-        console.log(JSON.stringify(values))
-        API.put('project/update/' + values.work_package_index + '/', values).then((res) => {
+        const formValues={
+            "task_delivery_order": values.task_delivery_order,
+            "tdo_details": values.tdo_details,
+            "sub_task": values.sub_task,
+            "description": values.description,
+            "work_package_number": values.work_package_number,
+            "task_title": values.task_title,
+            "estimated_person": values.estimated_person,
+            "start_date": values.start_date,
+            "planned_delivery_date": values.planned_delivery_date,
+            "assignee": values.assignee,
+            "pm": values.pm,
+            "planned_hours": Number(values.planned_hours).toFixed(2),
+            "planned_value": Number(values.planned_value).toFixed(2),
+            "remaining_hours": Number(values.remaining_hours).toFixed(2)
+        }
+        console.log(JSON.stringify(formValues))
+        API.put('project/update/' + values.work_package_index + '/', formValues).then((res) => {
             console.log(res.data)
             if (res.status == 200 && res.data.success == 'True') {
                 setEditModal(false)

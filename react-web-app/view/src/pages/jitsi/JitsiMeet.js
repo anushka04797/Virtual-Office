@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 class JitsiComponent extends Component {
-    domain = 'dma.com.bd';
+    domain = 'meet.jit.si';
     api = {};
     constructor(props) {
         super(props);
@@ -44,7 +44,7 @@ class JitsiComponent extends Component {
 
     handleClose = () => {
         console.log("handleClose");
-        // this.props.onMeetingClose()
+        this.props.onMeetingClose()
     }
 
     handleParticipantLeft = async (participant) => {
