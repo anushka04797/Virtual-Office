@@ -1000,11 +1000,11 @@ const CreateNewProject = () => {
                                     }
                                     text2={
                                       "  → " +
-                                      item.estimated_person +
+                                     (item.estimated_person).toFixed(2) +
                                       " EP → " +
-                                      item.planned_value +
+                                      (item.planned_value).toFixed(2) +
                                       " PV → " +
-                                      item.planned_hours +
+                                      (item.planned_hours).toFixed(2) +
                                       " Hr(s)"
                                     }
                                   />

@@ -18,6 +18,7 @@ const routes = [
     { path: '/dashboard/EVMS/details', exact: true, name: 'EVMS Details', component: React.lazy(() => import('../pages/evms-details/evmsDetails')) },
 
     { path: '/dashboard/WBS/create-wbs', exact: true, name: 'WBS', component: React.lazy(() => import('../pages/WBS-create/createWBS')) },
+    { path: '/dashboard/WBS/not-started', exact: true, name: 'Not Started', component: React.lazy(() => import('../pages/not-started/notStarted')) },
     { path: '/dashboard/WBS/board', exact: true, name: 'Board', component: React.lazy(() => import('../pages/wbs-board/Board')) },
 
     { path: '/dashboard/timecard/generate-timecard', exact: true, name: 'Generate Timecard', component: React.lazy(() => import('../pages/timecards/timeCard')) },

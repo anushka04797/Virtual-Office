@@ -54,7 +54,7 @@ const filter_pm_projects=createSelector(
   (_, tdos) => tdos,
   (pm_projects,tdos)=>{
     let temp=[]
-    console.log('projects',pm_projects,tdos)
+    console.log('projects from my projects',pm_projects,tdos)
     if(tdos){
       Array.from(tdos).forEach((item,idx)=>{
         for(let index=0;index<pm_projects.length;index++){

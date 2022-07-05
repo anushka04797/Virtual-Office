@@ -51,6 +51,7 @@ export const projectsSlice = createSlice({
       console.log('dispatching ----- ',val)
       state.tdo_list = [...state.tdo_list,val.payload]
     },
+    
     filter_pm_projects: (state,tdos) => {
       // state.filtered_pm_projects = state.pm_projects.filter((item)=> {tdos.payload.find(tdo=>tdo.value==item.project.task_delivery_order.id)})
       let temp=[]
