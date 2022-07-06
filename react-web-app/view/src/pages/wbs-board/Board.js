@@ -19,6 +19,8 @@ import {
   CModalFooter,
 } from "@coreui/react";
 import React, { useState, useEffect } from "react";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { JsonClient } from "../../Config";
 import "./Board.css";
 import Board, { Lane } from "react-trello";
 import WbsModal from "./wbs-modal";
@@ -39,7 +41,9 @@ import uniqBy from "lodash/uniqBy";
 import { has_permission, unique_elements } from "../../helper.js";
 import CommentIcon from "@mui/icons-material/Comment";
 import { styled } from "@mui/material/styles";
-import makeAnimated from 'react-select/animated';
+import makeAnimated from "react-select/animated";
+import { fetchProjectsForPMThunk } from "../../store/slices/ProjectsSlice";
+
 import {
   Checkbox,
   FormControlLabel,
@@ -151,7 +155,7 @@ const WbsBoard = () => {
 
     if (data != undefined) {
       data.forEach((element) => {
-        console.log("element", element);
+        //console.log("element", element);
         if (element.status === 1) {
           // console.log("1st cond", data.lanes[0])
           temp_data.lanes[0].cards.push({
@@ -226,10 +230,13 @@ const WbsBoard = () => {
   function getAssigneeList(data) {
     if (data != undefined) {
       data.forEach((element) => {
-        if (!tempAssigneList.find((item) => item.value === element.assignee.id)) {
+        if (
+          !tempAssigneList.find((item) => item.value === element.assignee.id)
+        ) {
           var temp = {
             value: element.assignee.id,
-            label:element.assignee.first_name + " " + element.assignee.last_name,
+            label:
+              element.assignee.first_name + " " + element.assignee.last_name,
           };
           tempAssigneList.push(temp);
         }
@@ -237,24 +244,24 @@ const WbsBoard = () => {
     }
     // setWbsAssigneeList(sortBy(tempAssigneList, "label"));
   }
-  const populate_assignees=()=>{
-    API.get('project/assignees/all/'+sessionStorage.getItem(USER_ID)+'/').then(res=>{
-      console.log('assignees',res.data.data)
-      let temp_array=[]
-      Array.from(res.data.data).forEach((element) => {
-        if (!temp_array.find((item) => item.value === element.id)) {
-          temp_array.push({
-            value: element.id,
-            label:element.first_name + " " + element.last_name,
-          });
-        }
-      });
-      // temp.push({value:'1',label:'A'})
-      setWbsAssigneeList(sortBy(temp_array, "label"));
-    }).catch(err=>{
-
-    })
-  }
+  const populate_assignees = () => {
+    API.get("project/assignees/all/" + sessionStorage.getItem(USER_ID) + "/")
+      .then((res) => {
+        console.log("assignees", res.data.data);
+        let temp_array = [];
+        Array.from(res.data.data).forEach((element) => {
+          if (!temp_array.find((item) => item.value === element.id)) {
+            temp_array.push({
+              value: element.id,
+              label: element.first_name + " " + element.last_name,
+            });
+          }
+        });
+        // temp.push({value:'1',label:'A'})
+        setWbsAssigneeList(sortBy(temp_array, "label"));
+      })
+      .catch((err) => {});
+  };
 
   const boardStyle = {
     backgroundColor: "#fff",
@@ -262,7 +269,8 @@ const WbsBoard = () => {
     marginLeft: "40px",
   };
   const laneStyle = { backgroundColor: "rgb(243 243 243)" };
-  let currentLaneId,currentCardId = "";
+  let currentLaneId,
+    currentCardId = "";
 
   const [modal, setModal] = useState(false);
   const [modalData, setModalData] = useState(null);
@@ -313,7 +321,7 @@ const WbsBoard = () => {
     setUpdate(update + 1);
     currentLaneId = laneId;
     currentCardId = cardId;
-   
+
     console.log(boardData.lanes.find((element) => element.id == currentLaneId));
     // console.log(data.lanes.find(element => element.id == currentLaneId).cards.find(element => element.id == currentCardId).title)
     const wbsId = boardData.lanes
@@ -383,7 +391,7 @@ const WbsBoard = () => {
     );
     populate_data(temWbsList);
     // getAssigneeList(wbsList);
-    
+
     setResetAssigneeSelectValue(newValue);
     setShowClearBtn(true);
     // setDataLoaded(false)
@@ -400,7 +408,7 @@ const WbsBoard = () => {
 
   const filter_wbs_project_wise = (options) => {
     let temp_wbs_list = [];
-    console.log("filter", options)
+    console.log("filter", options);
     if (options.find((item) => item.value == "all")) {
       temp_wbs_list = wbsList.filter(
         (item) => item.assignee.id == resetAssigneeSelectValue.value
@@ -438,51 +446,68 @@ const WbsBoard = () => {
   const handleProjectChange = (value, actionMeta) => {
     console.log("select", value);
     if (actionMeta.action == "select-option") {
-      
       if (value.find((item) => item.value == "all")) {
-        setSelectedProjects(projects.filter(item=>item.value!='all'));
-        filter_wbs_project_wise(projects.filter(item=>item.value!='all'));
-        
+        setSelectedProjects(projects.filter((item) => item.value != "all"));
+        filter_wbs_project_wise(projects.filter((item) => item.value != "all"));
       } else {
         setSelectedProjects(value);
         filter_wbs_project_wise(value);
       }
     } else if (actionMeta.action == "clear") {
       setSelectedProjects([]);
-      filter_wbs_project_wise(projects.filter(item=>item.value!='all'));
+      filter_wbs_project_wise(projects.filter((item) => item.value != "all"));
     } else if (actionMeta.action == "remove-value") {
       setSelectedProjects(value);
-      if(value.length==0){
-        filter_wbs_project_wise(projects.filter(item=>item.value!='all'));
-      }
-      else{
+      if (value.length == 0) {
+        filter_wbs_project_wise(projects.filter((item) => item.value != "all"));
+      } else {
         filter_wbs_project_wise(value);
       }
     }
   };
-  React.useEffect(()=>{
-    API.get('project/all/'+sessionStorage.getItem(USER_ID)+'/').then(res=>{
-      let temp_projects=[]
-      Array.from(res.data.data).forEach((item, idx) => {
-        temp_projects.push({
-          label: item.project.sub_task,
-          value: item.project.sub_task,
-          data: item.project,
-        });
-      });
-      temp_projects.unshift({
-        label: "Select All",
-        value: "all",
-        data: {},
-      });
-      setProjects(uniqBy(temp_projects, "value"));
-    })
-  },[])
   React.useEffect(() => {
+    API.get("project/all/" + sessionStorage.getItem(USER_ID) + "/").then(
+      (res) => {
+        let temp_projects = [];
+        Array.from(res.data.data).forEach((item, idx) => {
+          temp_projects.push({
+            label: item.project.sub_task,
+            value: item.project.sub_task,
+            data: item.project,
+          });
+        });
+        temp_projects.unshift({
+          label: "Select All",
+          value: "all",
+          data: {},
+        });
+        setProjects(uniqBy(temp_projects, "value"));
+      }
+    );
+  }, []);
+  const noWbsforProjects = () => {
+    if (has_permission("projects.add_projects")) {
+      console.log("is PM");
+      let temp = [];
+      temp = dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)));
+
+      //let temp = [...fetchProjectsForPMThunk]
+      //console.log("temp", temp)
+    }
+    // console.log("actual projects", fetchProjectsForPMThunk)
+    // for(let i=0;i<projects.length;i++){
+    //   if(projects[i].project.wbsList.length==0)
+    //   {
+    //     console.log("no wbs under this project", projects[i].project)
+    //   }
+    // }
+  };
+  React.useEffect(() => {
+    //noWbsforProjects();
+    //dispatch(pmprojects(sessionStorage.getItem(USER_ID)));
     // dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)))
     window.scrollTo(0, 0);
     if (has_permission("projects.add_projects")) {
-      
       API.get("wbs/pm/all/" + sessionStorage.getItem(USER_ID) + "/")
         .then((res) => {
           console.log("board data", res.data.data);
@@ -506,6 +531,7 @@ const WbsBoard = () => {
             data: {},
           });
           setProjects(uniqBy(temp_projects, "value"));
+          console.log("projectsss", uniqBy(temp_projects, "value"));
           pre_selected_items = sortBy(pre_selected_items, [
             function (item) {
               return new Date(item.date_created);
@@ -514,7 +540,7 @@ const WbsBoard = () => {
 
           populate_data(uniq(pre_selected_items));
           // getAssigneeList(res.data.data);
-          populate_assignees()
+          populate_assignees();
           setResetAssigneeSelectValue({
             value: sessionStorage.getItem(USER_ID),
             label: profile.first_name + " " + profile.last_name,
@@ -569,6 +595,13 @@ const WbsBoard = () => {
         .catch((err) => {
           setDataLoaded(true);
         });
+      console.log("projectssssss", projects);
+      // for(let i=0;i<projects.length;i++){
+      //   if(projects[i].project.wbsList.length==0)
+      //   {
+      //     console.log("no wbs under this project", projects[i].project)
+      //   }
+      // }
     }
   }, [profile, update]);
   const custom_progress_style = {
@@ -576,6 +609,63 @@ const WbsBoard = () => {
     borderRadius: 3,
   };
   const cardStyle = { backgroundColor: "red" };
+  const [nowbsforProject, setnoWbsforProject] = useState([]);
+
+  const pmprojects = createAsyncThunk(
+    "projects/fetchProjectsForPMThunk",
+    async (user_id) => {
+      const response = await JsonClient.get("project/all/" + user_id + "/");
+      console.log("pm projects", response.data);
+
+      console.log("temp res", response.data);
+      let noWbs = [];
+      let allassignee = [];
+      let noWbsAssignee = [];
+      let wbsAssignee = [];
+      for (let i = 0; i < response.data.length; i++) {
+        allassignee[i] = response.data[i].assignees;
+        wbsAssignee[i] = response.data[i].project.wbs_list;
+        if (response.data[i].project.wbs_list.length == 0) {
+          console.log("no wbs under this project", response.data[i].project);
+          noWbs.push(response.data[i].project);
+        }
+      }
+      for (let i = 0; i < allassignee.length; i++) {
+        let temp1 = [];
+        let temp2 = [];
+        let temp3 = [];
+        temp1 = [...allassignee[i]];
+        temp1 = [...sortBy(temp1, "id")];
+        temp2 = [...wbsAssignee[i]];
+
+        temp3 = [...uniqBy(temp2, "assignee_id")];
+        temp3 = [...sortBy(temp3, "assignee_id")];
+
+        console.log("temp1", temp1, "temp2", temp3);
+        let assignedIds = new Map();
+        for (let i = 0; i < temp3.length; i++) {
+          assignedIds.set(temp3[i].assignee_id, true);
+        }
+        let assigneesWithNoWbs = [];
+        for (let i = 0; i < temp1.length; i++) {
+          if (assignedIds.get(temp1[i].id) == undefined) {
+            assigneesWithNoWbs.push(temp1[i]);
+            console.log("temp1[i]", temp1[i].id);
+          }
+        }
+
+       
+        console.log("assignees with no wbs", assigneesWithNoWbs);
+        
+      }
+
+      console.log("project array", noWbs);
+      console.log("all assignee", allassignee);
+      console.log("all wbs", wbsAssignee);
+      setnoWbsforProject(noWbs);
+      return response.data;
+    }
+  );
   return (
     <>
       <CContainer>
@@ -677,7 +767,6 @@ const WbsBoard = () => {
                         </Grid>
                     ))}
                 </Grid> */}
-
         <CRow>
           {data_loaded === false ? (
             <CCol
@@ -689,17 +778,28 @@ const WbsBoard = () => {
               <LinearProgress sx={custom_progress_style} />
             </CCol>
           ) : (
-            <CCol lg="12" className={""}>
-              <Board
-                data={boardData}
-                hideCardDeleteIcon
-                handleDragEnd={updateStatus}
-                onCardClick={editWbs}
-                style={boardStyle}
-                laneStyle={laneStyle}
-                //cardStyle={cardStyle}
-              />
-            </CCol>
+            <CRow>
+              {Array.from(nowbsforProject).map((project, idx) => (
+                <CCol lg="2">
+                  <CCard>
+                    <CCardBody>
+                      Project name : {project.task_delivery_order.title}
+                    </CCardBody>
+                  </CCard>
+                </CCol>
+              ))}
+              <CCol lg="10" className={""}>
+                <Board
+                  data={boardData}
+                  hideCardDeleteIcon
+                  handleDragEnd={updateStatus}
+                  onCardClick={editWbs}
+                  style={boardStyle}
+                  laneStyle={laneStyle}
+                  //cardStyle={cardStyle}
+                />
+              </CCol>
+            </CRow>
           )}
         </CRow>
       </CContainer>

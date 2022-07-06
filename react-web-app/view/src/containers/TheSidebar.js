@@ -106,6 +106,7 @@ const TheSidebar = () => {
         {/**WBS */}
         <CSidebarNavDropdown icon="cil-spreadsheet"  name="WBS" className="vo-navItem">
           <CSidebarNavItem to="/dashboard/WBS/create-wbs" name="Create WBS" className="vo-navItem"></CSidebarNavItem>
+          {has_permission('projects.add_projects') &&<CSidebarNavItem to="/dashboard/WBS/not-started" name="Not Started" className="vo-navItem" ></CSidebarNavItem>}
           <CSidebarNavItem to="/dashboard/WBS/board" name="Board" className="vo-navItem" ></CSidebarNavItem>
 
         </CSidebarNavDropdown>
