@@ -609,63 +609,7 @@ const WbsBoard = () => {
     borderRadius: 3,
   };
   const cardStyle = { backgroundColor: "red" };
-  const [nowbsforProject, setnoWbsforProject] = useState([]);
-
-  const pmprojects = createAsyncThunk(
-    "projects/fetchProjectsForPMThunk",
-    async (user_id) => {
-      const response = await JsonClient.get("project/all/" + user_id + "/");
-      console.log("pm projects", response.data);
-
-      console.log("temp res", response.data);
-      let noWbs = [];
-      let allassignee = [];
-      let noWbsAssignee = [];
-      let wbsAssignee = [];
-      for (let i = 0; i < response.data.length; i++) {
-        allassignee[i] = response.data[i].assignees;
-        wbsAssignee[i] = response.data[i].project.wbs_list;
-        if (response.data[i].project.wbs_list.length == 0) {
-          console.log("no wbs under this project", response.data[i].project);
-          noWbs.push(response.data[i].project);
-        }
-      }
-      for (let i = 0; i < allassignee.length; i++) {
-        let temp1 = [];
-        let temp2 = [];
-        let temp3 = [];
-        temp1 = [...allassignee[i]];
-        temp1 = [...sortBy(temp1, "id")];
-        temp2 = [...wbsAssignee[i]];
-
-        temp3 = [...uniqBy(temp2, "assignee_id")];
-        temp3 = [...sortBy(temp3, "assignee_id")];
-
-        console.log("temp1", temp1, "temp2", temp3);
-        let assignedIds = new Map();
-        for (let i = 0; i < temp3.length; i++) {
-          assignedIds.set(temp3[i].assignee_id, true);
-        }
-        let assigneesWithNoWbs = [];
-        for (let i = 0; i < temp1.length; i++) {
-          if (assignedIds.get(temp1[i].id) == undefined) {
-            assigneesWithNoWbs.push(temp1[i]);
-            console.log("temp1[i]", temp1[i].id);
-          }
-        }
-
-       
-        console.log("assignees with no wbs", assigneesWithNoWbs);
-        
-      }
-
-      console.log("project array", noWbs);
-      console.log("all assignee", allassignee);
-      console.log("all wbs", wbsAssignee);
-      setnoWbsforProject(noWbs);
-      return response.data;
-    }
-  );
+  
   return (
     <>
       <CContainer>
@@ -779,7 +723,7 @@ const WbsBoard = () => {
             </CCol>
           ) : (
             <CRow>
-              {Array.from(nowbsforProject).map((project, idx) => (
+              {/* {Array.from(nowbsforProject).map((project, idx) => (
                 <CCol lg="2">
                   <CCard>
                     <CCardBody>
@@ -787,8 +731,8 @@ const WbsBoard = () => {
                     </CCardBody>
                   </CCard>
                 </CCol>
-              ))}
-              <CCol lg="10" className={""}>
+              ))} */}
+              <CCol  className={""}>
                 <Board
                   data={boardData}
                   hideCardDeleteIcon
