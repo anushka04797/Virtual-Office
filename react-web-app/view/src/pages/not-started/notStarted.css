@@ -34,7 +34,7 @@ mix-blend-mode: normal;
 text-transform: capitalize;
 }
 .card-details1{
-    font-size: 14px;
+    font-size: 12px;
     overflow-wrap: break-word;
     word-break: break-word;
     color:rgb(23,43,77);
@@ -47,7 +47,7 @@ mix-blend-mode: normal;
     color: rgb(107, 119, 140);
 }
 .p-header-4{
-    font-weight: 700 !important;
+    font-weight: 600 !important;
     color: rgb(211, 15, 15);
 }
 .button-holder3{
@@ -75,4 +75,25 @@ mix-blend-mode: normal;
 .project-card1:hover, .project-card1.active {
     box-shadow: rgb(9 30 66 / 25%) 0px 4px 8px -2px, rgb(9 30 66 / 31%) 0px 0px 1px;
     cursor: pointer;
+}
+.create-wbs-from-modal
+{
+    -webkit-box-align: baseline;
+    align-items: baseline;
+    border-width: 0px;
+    border-radius: 3px;
+    box-sizing: border-box;
+    font-style: normal;
+    font-weight: 500;
+    height: 30px;
+    width: 130px;
+    padding: 0px 10px;
+    font-size: 12px;
+    line-height: 2.28571em;
+    background-color: #0052cc;
+    color: white;
+}
+.create-wbs-from-modal:hover{
+    background-color: #0065ff;
+    color: white;
 }

@@ -80,7 +80,7 @@ const CreateNewWBS = () => {
   //fetcing projects from store
   const getProjectList = () => {
     let temp = [];
-    console.log("projects", store.getState().projects.data);
+    console.log("projects!!!!!!!!", store.getState().projects.data);
     Array.from(store.getState().projects.data).forEach((item, idx) => {
       // console.log('remaining hours ', remaining_hours(item.project.remaining_hours, item.project.planned_hours))
       if (parseFloat(item.project.remaining_hours) > 0) {
@@ -94,6 +94,7 @@ const CreateNewWBS = () => {
     if (has_permission("projects.add_projects")) {
 
       Array.from(store.getState().projects.pm_projects).forEach((item, idx) => {
+        console.log("ooooooo ", item)
         if (parseFloat(item.project.remaining_hours) > 0) {
           // console.log(tempitem.label === item.project.sub_task))
           if (!temp.find((ele) => ele.label === item.project.sub_task)) {

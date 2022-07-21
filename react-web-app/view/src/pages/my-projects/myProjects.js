@@ -417,7 +417,7 @@ const MyProjects = () => {
               <span className="edit-profile-form-header">Subtask Details</span>
             </CModalTitle>
           </CModalHeader>
-          <CModalBody>
+          <CModalBody> 
             <CContainer>
               <CForm>
                 <CRow>

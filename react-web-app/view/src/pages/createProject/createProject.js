@@ -360,9 +360,9 @@ const CreateNewProject = () => {
         "planned_delivery_date": values.planned_delivery_date,
         "assignee": values.assignee,
         "pm": values.pm,
-        "planned_hours": Number(values.planned_hours).toFixed(2),
-        "planned_value": Number(values.planned_value).toFixed(2),
-        "remaining_hours": Number(values.remaining_hours).toFixed(2)
+        "planned_hours": values.planned_hours,
+        "planned_value": values.planned_value,
+        "remaining_hours": values.remaining_hours
     }
     console.log("values", JSON.stringify(formValues));
     API.post("project/create/", formValues).then((res) => {
@@ -434,7 +434,7 @@ const CreateNewProject = () => {
           task_title: formCreateProject.values.task_title,
           estimated_person: (
             parseFloat(res.data.total_hours) / total_working_days
-          ).toFixed(2),
+          ),
           start_date: formCreateProject.values.start_date,
           planned_delivery_date: event.target.value,
           assignee: formCreateProject.values.assignee,
@@ -534,7 +534,7 @@ const CreateNewProject = () => {
           task_title: formCreateProject.values.task_title,
           estimated_person: (
             calc(startDate, endDate) / total_working_days
-          ).toFixed(2),
+          ),
           start_date: formCreateProject.values.start_date,
           planned_delivery_date: endDate,
           assignee: formCreateProject.values.assignee,
@@ -691,6 +691,7 @@ const CreateNewProject = () => {
 
   const handleAddClick = () => {
     console.log({ selectedAssigneesEP });
+    console.log({})
     if (
       selectedAssignees.data.slc_details?.hourly_rate != null &&
       selectedAssignees.data.slc_details?.hourly_rate != undefined
@@ -710,7 +711,7 @@ const CreateNewProject = () => {
             total_planned_hours *
             selectedAssigneesEP,
           planned_hours: parseFloat(
-            (total_planned_hours * selectedAssigneesEP).toFixed(1)
+            (total_planned_hours * selectedAssigneesEP)
           ),
         },
       ]);
@@ -1000,7 +1001,7 @@ const CreateNewProject = () => {
                                     }
                                     text2={
                                       "  → " +
-                                     (item.estimated_person).toFixed(2) +
+                                     item.estimated_person +
                                       " EP → " +
                                       (item.planned_value).toFixed(2) +
                                       " PV → " +
