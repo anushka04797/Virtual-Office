@@ -28,6 +28,7 @@ import { element } from "prop-types";
 import store from "../../store/Store";
 
 const NoWbs = () => {
+  const [selectedProject, setSelectedProject] = useState([]);
   const [options, setoptions] = useState();
   const [fetchproject, setfetchproject] = useState([]);
   const [tdos, setTdos] = useState([]);
@@ -62,13 +63,19 @@ const NoWbs = () => {
         value: projects[i].project.task_delivery_order.id,
       });
     }
-    setProjectDetails(details);
+    optionarray.unshift({
+      label: "Select All",
+      value: "all",
+      data: {},
+    });
+
     console.log("options", optionarray[0].data);
     console.log("allAssignee array", allassignee);
     console.log("wbslist", wbslist);
     console.log("details array ", details);
     setAllAssignee(allassignee);
     setallWbs(wbslist);
+
     setTdos(optionarray);
     nonewbs();
 
@@ -76,6 +83,7 @@ const NoWbs = () => {
       details.push({
         data: projects[i],
         name: projects[i].project.task_delivery_order.title,
+        id: projects[i].project.task_delivery_order.id,
         startDate: projects[i].project.date_created,
         endDate: projects[i].project.planned_delivery_date,
         plannedHours: projects[i].project.planned_hours,
@@ -87,6 +95,8 @@ const NoWbs = () => {
         totalNoWbsPeople: allAssigneeswithNoWbs[i].length,
       });
     }
+    console.log("details array", details);
+    setProjectDetails(details);
   };
 
   let allAssigneeswithNoWbs = [];
@@ -127,10 +137,71 @@ const NoWbs = () => {
     setnoWbsforProject(noWbs);
   };
 
+  const filter_notStarted_by_projects = (options) => {
+    let temp = [];
+    console.log("filter", options);
+    if (options.find((item) => item.value == "all")) {
+      temp.push(projectDetails);
+      console.log("temp all", temp);
+    } else {
+      for (let index = 0; index < options.length; index++) {
+        console.log("options len", options[index].value);
+        for (let index1 = 0; index1 < projects.length; index1++) {
+          console.log("projects len", projects[index1]);
+           if (options[index].value == projects[index1].project.task_delivery_order.id) {
+            console.log("id1 ",options[index].value, "id2" ,projects[index1].project.task_delivery_order.id )
+            temp.push(projects[index1]);
+            console.log("temp array", temp)
+           }
+          //   console.log(
+          //     "matched",
+          //     options[index].value,
+          //     "matched1",
+          //     projects[index1].project.task_delivery_order.id
+          //   );
+          //   temp.push(projects[index1]);
+          //   console.log("temp array", temp);
+          // }
+        }
+      }
+      console.log("filtered array", temp);
+    }
+    //optionlist(temp)
+    //setProjectDetails(temp);
+  };
+  
+  const handleProjectChange = (value, actionMeta) => {
+    console.log("select ", value, "action ", actionMeta);
+    if (actionMeta.action == "select-option") {
+      if (value.find((item) => item.value == "all")) {
+        console.log("alllll", value);
+        filter_notStarted_by_projects(
+          tdos.filter((item) => item.value != "all")
+        );
+        setSelectedProject(tdos.filter((item) => item.value != "all"));
+      } else {
+        setSelectedProject(value);
+        filter_notStarted_by_projects(value);
+      }
+    } else if (actionMeta.action == "clear") {
+      setSelectedProject([]);
+      filter_notStarted_by_projects(tdos.filter((item) => item.value != "all"));
+    } else if (actionMeta.action == "remove-value") {
+      setSelectedProject(value);
+      if (value.length == 0) {
+        filter_notStarted_by_projects(
+          tdos.filter((item) => item.value != "all")
+        );
+      } else {
+        filter_notStarted_by_projects(value);
+      }
+    }
+  };
   React.useEffect(() => {
     if (projects.length > 0 && fetchproject.length == 0) {
       setfetchproject(projects);
       optionlist(projects);
+      const all = [...projects]
     }
   }, [projects]);
   return (
@@ -141,10 +212,13 @@ const NoWbs = () => {
           <Select
             className="custom-forminput-6"
             placeholder="Filter by Projects"
+            searchable={true}
             options={tdos}
             isMulti
             // onChange={}
-            //value={}
+
+            onChange={handleProjectChange}
+            value={selectedProject}
           />
         </CCol>
       </CRow>

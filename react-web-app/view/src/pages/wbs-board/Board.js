@@ -485,23 +485,7 @@ const WbsBoard = () => {
       }
     );
   }, []);
-  const noWbsforProjects = () => {
-    if (has_permission("projects.add_projects")) {
-      console.log("is PM");
-      let temp = [];
-      temp = dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)));
-
-      //let temp = [...fetchProjectsForPMThunk]
-      //console.log("temp", temp)
-    }
-    // console.log("actual projects", fetchProjectsForPMThunk)
-    // for(let i=0;i<projects.length;i++){
-    //   if(projects[i].project.wbsList.length==0)
-    //   {
-    //     console.log("no wbs under this project", projects[i].project)
-    //   }
-    // }
-  };
+  
   React.useEffect(() => {
     //noWbsforProjects();
     //dispatch(pmprojects(sessionStorage.getItem(USER_ID)));
