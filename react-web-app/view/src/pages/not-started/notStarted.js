@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { JsonClient } from "../../Config";
 import "./notStarted.css";
 import Select from "react-select";
 import {
@@ -15,19 +13,11 @@ import {
 import uniqBy from "lodash/uniqBy";
 import sortBy from "lodash/sortBy";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  fetchProjectsThunk,
-  fetchProjectsAssigneeThunk,
-  createWbsThunk,
-  fetchWbsThunk,
-  fetchProjectsForPMThunk,
-} from "../../store/slices/ProjectsSlice";
-import { TOKEN, USER_ID } from "../../Config";
 import { Button } from "@mui/material";
-import { element } from "prop-types";
-import store from "../../store/Store";
+import { useHistory } from "react-router-dom";
 
 const NoWbs = () => {
+  let history = useHistory();
   const [selectedProject, setSelectedProject] = useState([]);
   const [options, setoptions] = useState();
   const [fetchproject, setfetchproject] = useState([]);
@@ -46,7 +36,10 @@ const NoWbs = () => {
   const [allAssignee, setAllAssignee] = useState();
   const [allwbs, setallWbs] = useState();
   const [projectDetails, setProjectDetails] = useState([]);
+  const [filteredProjects, setfilteredProjects] = useState(projects);
   const [noWBS, setNoWBS] = useState([]);
+  const [assigneeNoWbs, setAssigneeNoWbs] = useState([]);
+  let [data1, setdata1] = useState([]);
 
   let noWbs = [];
   let allassignee = [];
@@ -98,6 +91,29 @@ const NoWbs = () => {
     console.log("details array", details);
     setProjectDetails(details);
   };
+  const populate_data = (filteredProjects) => {
+    console.log("filtered projects", filteredProjects);
+    nonewbs();
+    let filteredDetails = [];
+    for (let i = 0; i < filteredProjects.length; i++) {
+      filteredDetails.push({
+        data: filteredProjects[i],
+        name: filteredProjects[i].project.task_delivery_order.title,
+        id: filteredProjects[i].project.task_delivery_order.id,
+        startDate: filteredProjects[i].project.date_created,
+        endDate: filteredProjects[i].project.planned_delivery_date,
+        plannedHours: filteredProjects[i].project.planned_hours,
+        remainingHrs: filteredProjects[i].project.remaining_hours,
+        assignees: filteredProjects[i].assignees,
+        totalAssignee: filteredProjects[i].assignees.length,
+        totalWBS: filteredProjects[i].project.wbs_list.length,
+        noWbsPeople: assigneeNoWbs[i],
+        totalNoWbsPeople: assigneeNoWbs[i].length,
+      });
+    }
+    console.log(" filtered details array", filteredDetails);
+    setProjectDetails(filteredDetails);
+  };
 
   let allAssigneeswithNoWbs = [];
   const nonewbs = () => {
@@ -127,7 +143,9 @@ const NoWbs = () => {
       console.log("assignees with no wbs", assigneesWithNoWbs);
 
       allAssigneeswithNoWbs.push(assigneesWithNoWbs);
+      setAssigneeNoWbs(allAssigneeswithNoWbs);
     }
+
     console.log("final array", allAssigneeswithNoWbs);
     setNoWBS(allAssigneeswithNoWbs);
 
@@ -148,28 +166,27 @@ const NoWbs = () => {
         console.log("options len", options[index].value);
         for (let index1 = 0; index1 < projects.length; index1++) {
           console.log("projects len", projects[index1]);
-           if (options[index].value == projects[index1].project.task_delivery_order.id) {
-            console.log("id1 ",options[index].value, "id2" ,projects[index1].project.task_delivery_order.id )
+          if (
+            options[index].value ==
+            projects[index1].project.task_delivery_order.id
+          ) {
+            console.log(
+              "id1 ",
+              options[index].value,
+              "id2",
+              projects[index1].project.task_delivery_order.id
+            );
             temp.push(projects[index1]);
-            console.log("temp array", temp)
-           }
-          //   console.log(
-          //     "matched",
-          //     options[index].value,
-          //     "matched1",
-          //     projects[index1].project.task_delivery_order.id
-          //   );
-          //   temp.push(projects[index1]);
-          //   console.log("temp array", temp);
-          // }
+            console.log("temp array", temp);
+          }
         }
       }
       console.log("filtered array", temp);
     }
-    //optionlist(temp)
-    //setProjectDetails(temp);
+    setfilteredProjects(temp);
+    populate_data(temp);
   };
-  
+
   const handleProjectChange = (value, actionMeta) => {
     console.log("select ", value, "action ", actionMeta);
     if (actionMeta.action == "select-option") {
@@ -201,7 +218,6 @@ const NoWbs = () => {
     if (projects.length > 0 && fetchproject.length == 0) {
       setfetchproject(projects);
       optionlist(projects);
-      const all = [...projects]
     }
   }, [projects]);
   return (
@@ -231,6 +247,7 @@ const NoWbs = () => {
         <div className="card-holder1">
           <CRow>
             {Array.from(projectDetails).map((item, idx) => (
+              
               <CCol lg="4 ">
                 <CCard className="project-card1">
                   {" "}
@@ -309,6 +326,13 @@ const NoWbs = () => {
                       type="button"
                       className="create-wbs-from-modal float-right"
                       size="sm"
+                      onClick={() => {
+                        
+                        history.push({
+                          pathname: "/dashboard/WBS/create-wbs",
+                          //state: { task : item },
+                        });
+                      }}
                     >
                       Create WBS
                     </Button>
