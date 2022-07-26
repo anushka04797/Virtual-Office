@@ -30,7 +30,7 @@ const ViewFiles = () => {
         if(actionMeta.action == 'select-option'){
             let temp=[]
             let projects = store.getState().projects.data
-            
+            console.log("projects", projects)
             Array.from(sharedDocs).forEach((item,idx)=>{
                 if(item.project.work_package_number == option.value){
                     temp.push(item)

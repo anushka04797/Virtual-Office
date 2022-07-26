@@ -49,28 +49,31 @@ import CustomSearch from "../../components/CustomSearch/CustomSearch";
 import SearchResult from "./inc/SearchResult";
 import { createSelector } from "reselect";
 
-const filter_pm_projects=createSelector(
-  (state)=>state.projects.pm_projects,
+const filter_pm_projects = createSelector(
+  (state) => state.projects.pm_projects,
   (_, tdos) => tdos,
-  (pm_projects,tdos)=>{
-    let temp=[]
-    console.log('projects from my projects',pm_projects,tdos)
-    if(tdos){
-      Array.from(tdos).forEach((item,idx)=>{
-        for(let index=0;index<pm_projects.length;index++){
-          console.log('project tdo'+index,pm_projects[index].project.task_delivery_order.id,item.value)
-          if(item.value == pm_projects[index].project.task_delivery_order.id){
-            temp.push(pm_projects[index])
+  (pm_projects, tdos) => {
+    let temp = [];
+    console.log("projects from my projects", pm_projects, tdos);
+    if (tdos) {
+      Array.from(tdos).forEach((item, idx) => {
+        for (let index = 0; index < pm_projects.length; index++) {
+          console.log(
+            "project tdo" + index,
+            pm_projects[index].project.task_delivery_order.id,
+            item.value
+          );
+          if (item.value == pm_projects[index].project.task_delivery_order.id) {
+            temp.push(pm_projects[index]);
           }
         }
-      })
+      });
+    } else {
+      temp = pm_projects;
     }
-    else{
-      temp=pm_projects
-    }
-    return uniq(temp)
+    return uniq(temp);
   }
-)
+);
 
 const MyProjects = () => {
   let history = useHistory();
@@ -106,7 +109,9 @@ const MyProjects = () => {
     });
     return temp;
   });
-  const filtered_pm_projects=useSelector((state)=>filter_pm_projects(state,selectedTdo))
+  const filtered_pm_projects = useSelector((state) =>
+    filter_pm_projects(state, selectedTdo)
+  );
   const tdolist = useSelector((state) => {
     let temp = [];
     state.projects.pm_projects.forEach((item, idx) => {
@@ -132,10 +137,9 @@ const MyProjects = () => {
       setSelectedTdo(tdolist.filter((item) => item.value != "all"));
     } else if (actionMeta.action == "remove-value") {
       setSelectedTdo(value);
-      if(value.length==0){
+      if (value.length == 0) {
         setSelectedTdo(tdolist.filter((item) => item.value != "all"));
-      }
-      else{
+      } else {
         setSelectedTdo(value);
       }
     }
@@ -274,7 +278,7 @@ const MyProjects = () => {
     let worked_hours = parseFloat(total_hours) - parseFloat(remaining_hours);
     return (100 * worked_hours) / parseFloat(total_hours);
   }
-  
+
   const fileType =
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
   const fileExtension = ".xlsx";
@@ -580,12 +584,13 @@ const MyProjects = () => {
                     <CButton
                       type="button"
                       className="create-wbs-from-modal"
-                      onClick={() =>
+                      onClick={() =>{
                         history.push({
                           pathname: "/dashboard/WBS/create-wbs",
                           state: { task: selectedSubTask },
                         })
-                      }
+                        //console.log("taskkkkkkkkk", selectedSubTask)
+                      }}
                     >
                       Create WBS
                     </CButton>
@@ -627,7 +632,7 @@ const MyProjects = () => {
                 </CButton>
               </CCol>
             </CRow>
-            {filtered_pm_projects !=undefined && (
+            {filtered_pm_projects != undefined && (
               <Accordion
                 allowMultipleExpanded={false}
                 className="remove-acc-bg  mb-3"
@@ -795,7 +800,7 @@ const MyProjects = () => {
                                     classNamePrefix="pm-edit"
                                     value={currentPM}
                                     options={managers}
-                                  // styles={colourStyles}
+                                    // styles={colourStyles}
                                   />
                                 </CForm>
                                 <div className="mt-1">
