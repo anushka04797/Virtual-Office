@@ -17,11 +17,13 @@ import { Button } from "@mui/material";
 import { useHistory } from "react-router-dom";
 
 const NoWbs = () => {
+  const [wbsinfo, setwbsinfo] = useState([])
   let history = useHistory();
   const [selectedProject, setSelectedProject] = useState([]);
   const [options, setoptions] = useState();
   const [fetchproject, setfetchproject] = useState([]);
   const [tdos, setTdos] = useState([]);
+  
 
   const projects = useSelector((state) => {
     let e = [];
@@ -46,6 +48,7 @@ const NoWbs = () => {
   let wbslist = [];
   let details = [];
   const optionlist = (projects) => {
+    
     let optionarray = [];
     for (let i = 0; i < projects.length; i++) {
       allassignee[i] = projects[i].assignees;
@@ -72,7 +75,10 @@ const NoWbs = () => {
     setTdos(optionarray);
     nonewbs();
 
+    console.log("projects", projects)
     for (let i = 0; i < projects.length; i++) {
+      
+      //setwbsinfo(projects[i].project)
       details.push({
         data: projects[i],
         name: projects[i].project.task_delivery_order.title,
@@ -88,11 +94,37 @@ const NoWbs = () => {
         totalNoWbsPeople: allAssigneeswithNoWbs[i].length,
       });
     }
+
+    // let wbsinfo1 = []
+    // for (let i = 0; i < projects.length; i++) {
+    //   wbsinfo1.push({
+    //     assignees: projects[i].assignees,
+    //     date_created: projects[i].project.date_created,
+    //     date_updated: projects[i].project.date_updated,
+    //     description : projects[i].project.description,
+    //     estimated_person : projects[i].project.estimated_person,
+    //     id : projects[i].project.id,
+    //     planned_delivery_date : projects[i].project.planned_delivery_date,
+    //     planned_hours : projects[i].project.planned_hours,
+    //     planned_value : projects[i].project.planned_value,
+    //     pm : projects[i].project.pm,
+    //     remaining_hours : projects[i].project.remaining_hours,
+    //     start_date : projects[i].project.start_date,
+    //     status: projects[i].project.status,
+    //     sub_task : projects[i].project.sub_task,
+    //     task_delivery_order: projects[i].project.task_delivery_order,
+    //     task_title : projects[i].project.task_title,
+    //     work_package_index : projects[i].project.work_package_index,
+    //     work_package_number : projects[i].project.work_package_number
+    //   })
+    // }
+    //setwbsinfo(wbsinfo1)
     console.log("details array", details);
     setProjectDetails(details);
   };
   const populate_data = (filteredProjects) => {
     console.log("filtered projects", filteredProjects);
+    //setwbsinfo(filteredProjects.project)
     nonewbs();
     let filteredDetails = [];
     for (let i = 0; i < filteredProjects.length; i++) {
@@ -111,8 +143,34 @@ const NoWbs = () => {
         totalNoWbsPeople: assigneeNoWbs[i].length,
       });
     }
-    console.log(" filtered details array", filteredDetails);
+    console.log("filtered details array", filteredDetails);
     setProjectDetails(filteredDetails);
+    let wbsInfo = []
+    // for (let i = 0; i < filteredProjects.length; i++) {
+    //   wbsInfo.push({
+    //     assignees: filteredProjects[i].assignees,
+    //     date_created: filteredProjects[i].project.date_created,
+    //     date_updated: filteredProjects[i].project.date_updated,
+    //     description : filteredProjects[i].project.description,
+    //     estimated_person : filteredProjects[i].project.estimated_person,
+    //     id : filteredProjects[i].project.id,
+    //     planned_delivery_date : filteredProjects[i].project.planned_delivery_date,
+    //     planned_hours : filteredProjects[i].project.planned_hours,
+    //     planned_value : filteredProjects[i].project.planned_value,
+    //     pm : filteredProjects[i].project.pm,
+    //     remaining_hours : filteredProjects[i].project.remaining_hours,
+    //     start_date : filteredProjects[i].project.start_date,
+    //     status: filteredProjects[i].project.status,
+    //     sub_task : filteredProjects[i].project.sub_task,
+    //     task_delivery_order: filteredProjects[i].project.task_delivery_order,
+    //     task_title : filteredProjects[i].project.task_title,
+    //     work_package_index : filteredProjects[i].project.work_package_index,
+    //     work_package_number : filteredProjects[i].project.work_package_number
+    //   })
+    // }     
+    // setwbsinfo (wbsInfo)
+    // console.log("wbsinfo", wbsInfo)
+
   };
 
   let allAssigneeswithNoWbs = [];
@@ -191,7 +249,7 @@ const NoWbs = () => {
     console.log("select ", value, "action ", actionMeta);
     if (actionMeta.action == "select-option") {
       if (value.find((item) => item.value == "all")) {
-        console.log("alllll", value);
+       
         filter_notStarted_by_projects(
           tdos.filter((item) => item.value != "all")
         );
@@ -215,6 +273,7 @@ const NoWbs = () => {
     }
   };
   React.useEffect(() => {
+    
     if (projects.length > 0 && fetchproject.length == 0) {
       setfetchproject(projects);
       optionlist(projects);
@@ -241,7 +300,7 @@ const NoWbs = () => {
 
       <div className="main-holder-projects">
         <h3 className="projectsHeader">
-          Project Wise WBS Details ({projects.length}){" "}
+          Project Wise WBS Details ({projectDetails.length}){" "}
         </h3>
 
         <div className="card-holder1">
@@ -321,7 +380,7 @@ const NoWbs = () => {
                       </span>
                     </h5>
                   </CCardBody>
-                  <CCardFooter>
+                  {/* <CCardFooter>
                     <Button
                       type="button"
                       className="create-wbs-from-modal float-right"
@@ -330,13 +389,13 @@ const NoWbs = () => {
                         
                         history.push({
                           pathname: "/dashboard/WBS/create-wbs",
-                          //state: { task : item },
+                          state: { task : wbsinfo },
                         });
                       }}
                     >
                       Create WBS
                     </Button>
-                  </CCardFooter>
+                  </CCardFooter> */}
                 </CCard>
               </CCol>
             ))}
