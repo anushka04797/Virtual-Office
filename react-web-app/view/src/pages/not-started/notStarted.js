@@ -81,7 +81,8 @@ const NoWbs = () => {
       //setwbsinfo(projects[i].project)
       details.push({
         data: projects[i],
-        name: projects[i].project.task_delivery_order.title,
+        name: projects[i].project.sub_task,
+        tdo : projects[i].project.task_delivery_order.title,
         id: projects[i].project.task_delivery_order.id,
         startDate: projects[i].project.date_created,
         endDate: projects[i].project.planned_delivery_date,
@@ -130,7 +131,8 @@ const NoWbs = () => {
     for (let i = 0; i < filteredProjects.length; i++) {
       filteredDetails.push({
         data: filteredProjects[i],
-        name: filteredProjects[i].project.task_delivery_order.title,
+        name: filteredProjects[i].project.sub_task,
+        tdo : filteredProjects[i].project.task_delivery_order.title,
         id: filteredProjects[i].project.task_delivery_order.id,
         startDate: filteredProjects[i].project.date_created,
         endDate: filteredProjects[i].project.planned_delivery_date,
@@ -286,7 +288,7 @@ const NoWbs = () => {
         <CCol lg="3" className="mb-3 pl-4">
           <Select
             className="custom-forminput-6"
-            placeholder="Filter by Projects"
+            placeholder="Filter by TDOs"
             searchable={true}
             options={tdos}
             isMulti
@@ -316,6 +318,11 @@ const NoWbs = () => {
                     <h5 className="card-details1">
                       <span className="p-header-3">
                         Project Name: {item.name}
+                      </span>{" "}
+                    </h5>
+                    <h5 className="card-details1">
+                      <span className="p-header-3">
+                        TDO: {item.tdo}
                       </span>{" "}
                     </h5>
                     <h5 className="card-details1">
