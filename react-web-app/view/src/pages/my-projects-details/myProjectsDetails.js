@@ -1273,6 +1273,7 @@ const MyProjectsDetailsView = () => {
                         className="create-wbs-from-modal float-right"
                         size="sm"
                         onClick={() =>
+                          //console.log("subtask ", subtask)
                           history.push({
                             pathname: "/dashboard/WBS/create-wbs",
                             state: { task: subtask },

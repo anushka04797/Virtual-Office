@@ -41,7 +41,7 @@ const NoWbs = () => {
   const [filteredProjects, setfilteredProjects] = useState(projects);
   const [noWBS, setNoWBS] = useState([]);
   const [assigneeNoWbs, setAssigneeNoWbs] = useState([]);
-  let [data1, setdata1] = useState([]);
+  let [myProjectDetails, setmyProjectDetails] = useState([]);
 
   let noWbs = [];
   let allassignee = [];
@@ -75,7 +75,8 @@ const NoWbs = () => {
     setTdos(optionarray);
     nonewbs();
 
-    console.log("projects", projects)
+    console.log("optionprojects", projects)
+    setmyProjectDetails(projects)
     for (let i = 0; i < projects.length; i++) {
       
       //setwbsinfo(projects[i].project)
@@ -96,34 +97,44 @@ const NoWbs = () => {
       });
     }
 
-    // let wbsinfo1 = []
-    // for (let i = 0; i < projects.length; i++) {
-    //   wbsinfo1.push({
-    //     assignees: projects[i].assignees,
-    //     date_created: projects[i].project.date_created,
-    //     date_updated: projects[i].project.date_updated,
-    //     description : projects[i].project.description,
-    //     estimated_person : projects[i].project.estimated_person,
-    //     id : projects[i].project.id,
-    //     planned_delivery_date : projects[i].project.planned_delivery_date,
-    //     planned_hours : projects[i].project.planned_hours,
-    //     planned_value : projects[i].project.planned_value,
-    //     pm : projects[i].project.pm,
-    //     remaining_hours : projects[i].project.remaining_hours,
-    //     start_date : projects[i].project.start_date,
-    //     status: projects[i].project.status,
-    //     sub_task : projects[i].project.sub_task,
-    //     task_delivery_order: projects[i].project.task_delivery_order,
-    //     task_title : projects[i].project.task_title,
-    //     work_package_index : projects[i].project.work_package_index,
-    //     work_package_number : projects[i].project.work_package_number
-    //   })
-    // }
-    //setwbsinfo(wbsinfo1)
+    let wbsinfo1 = []
+    for (let i = 0; i < projects.length; i++) {
+      
+      let assignees= projects[i].assignees
+
+      let temp1 = {
+        assignees: [],
+        date_created: projects[i].project.date_created,
+        date_updated: projects[i].project.date_updated,
+        description : projects[i].project.description,
+        estimated_person : projects[i].project.estimated_person,
+        id : projects[i].project.id,
+        planned_delivery_date : projects[i].project.planned_delivery_date,
+        planned_hours : projects[i].project.planned_hours,
+        planned_value : projects[i].project.planned_value,
+        pm : projects[i].project.pm,
+        remaining_hours : projects[i].project.remaining_hours,
+        start_date : projects[i].project.start_date,
+        status: projects[i].project.status,
+        sub_task : projects[i].project.sub_task,
+        task_delivery_order: projects[i].project.task_delivery_order,
+        task_title : projects[i].project.task_title,
+        work_package_index : projects[i].project.work_package_index,
+        work_package_number : projects[i].project.work_package_number
+      }
+      for(let i=0; i<assignees.length;i++){
+        let assignee = {assignee:assignees[i]}
+        //console.log(typeof assignee)
+        temp1.assignees.push(assignee)
+      }
+      wbsinfo1.push(temp1)
+    }
+    setwbsinfo(wbsinfo1)
     console.log("details array", details);
     setProjectDetails(details);
   };
   const populate_data = (filteredProjects) => {
+    setmyProjectDetails(filteredProjects)
     console.log("filtered projects", filteredProjects);
     //setwbsinfo(filteredProjects.project)
     nonewbs();
@@ -148,31 +159,39 @@ const NoWbs = () => {
     console.log("filtered details array", filteredDetails);
     setProjectDetails(filteredDetails);
     let wbsInfo = []
-    // for (let i = 0; i < filteredProjects.length; i++) {
-    //   wbsInfo.push({
-    //     assignees: filteredProjects[i].assignees,
-    //     date_created: filteredProjects[i].project.date_created,
-    //     date_updated: filteredProjects[i].project.date_updated,
-    //     description : filteredProjects[i].project.description,
-    //     estimated_person : filteredProjects[i].project.estimated_person,
-    //     id : filteredProjects[i].project.id,
-    //     planned_delivery_date : filteredProjects[i].project.planned_delivery_date,
-    //     planned_hours : filteredProjects[i].project.planned_hours,
-    //     planned_value : filteredProjects[i].project.planned_value,
-    //     pm : filteredProjects[i].project.pm,
-    //     remaining_hours : filteredProjects[i].project.remaining_hours,
-    //     start_date : filteredProjects[i].project.start_date,
-    //     status: filteredProjects[i].project.status,
-    //     sub_task : filteredProjects[i].project.sub_task,
-    //     task_delivery_order: filteredProjects[i].project.task_delivery_order,
-    //     task_title : filteredProjects[i].project.task_title,
-    //     work_package_index : filteredProjects[i].project.work_package_index,
-    //     work_package_number : filteredProjects[i].project.work_package_number
-    //   })
-    // }     
-    // setwbsinfo (wbsInfo)
-    // console.log("wbsinfo", wbsInfo)
+    for (let i = 0; i < filteredProjects.length; i++) {
 
+      let assignees= filteredProjects[i].assignees
+
+      let temp = {
+        assignees:[],
+        date_created: filteredProjects[i].project.date_created,
+        date_updated: filteredProjects[i].project.date_updated,
+        description : filteredProjects[i].project.description,
+        estimated_person : filteredProjects[i].project.estimated_person,
+        id : filteredProjects[i].project.id,
+        planned_delivery_date : filteredProjects[i].project.planned_delivery_date,
+        planned_hours : filteredProjects[i].project.planned_hours,
+        planned_value : filteredProjects[i].project.planned_value,
+        pm : filteredProjects[i].project.pm,
+        remaining_hours : filteredProjects[i].project.remaining_hours,
+        start_date : filteredProjects[i].project.start_date,
+        status: filteredProjects[i].project.status,
+        sub_task : filteredProjects[i].project.sub_task,
+        task_delivery_order: filteredProjects[i].project.task_delivery_order,
+        task_title : filteredProjects[i].project.task_title,
+        work_package_index : filteredProjects[i].project.work_package_index,
+        work_package_number : filteredProjects[i].project.work_package_number
+      }
+
+      for(let i=0;i<assignees.length;i++){
+        let assignee = {assignee:assignees[i]}
+        temp.assignees.push(assignee)
+      }
+      wbsInfo.push(temp)
+    }     
+    setwbsinfo (wbsInfo)
+    console.log("wbsinfo", wbsInfo)
   };
 
   let allAssigneeswithNoWbs = [];
@@ -274,6 +293,7 @@ const NoWbs = () => {
       }
     }
   };
+  
   React.useEffect(() => {
     
     if (projects.length > 0 && fetchproject.length == 0) {
@@ -292,8 +312,6 @@ const NoWbs = () => {
             searchable={true}
             options={tdos}
             isMulti
-            // onChange={}
-
             onChange={handleProjectChange}
             value={selectedProject}
           />
@@ -309,8 +327,15 @@ const NoWbs = () => {
           <CRow>
             {Array.from(projectDetails).map((item, idx) => (
               
-              <CCol lg="4 ">
-                <CCard className="project-card1">
+              <CCol lg="4" key={idx}>
+                <CCard className="project-card1"
+                onClick= {()=>{
+                  history.push({
+                    pathname:"/dashboard/Projects/my-projects/details/"+
+                    myProjectDetails[idx].project.work_package_number,
+                    state: { project: myProjectDetails[idx] },
+                })
+              }}>
                   {" "}
                   {/* on card click project details card will show */}
                   <CCardBody>
@@ -387,22 +412,23 @@ const NoWbs = () => {
                       </span>
                     </h5>
                   </CCardBody>
-                  {/* <CCardFooter>
+                  <CCardFooter>
                     <Button
                       type="button"
                       className="create-wbs-from-modal float-right"
                       size="sm"
                       onClick={() => {
+                        console.log("wbsinfo", wbsinfo[idx])
                         
-                        history.push({
-                          pathname: "/dashboard/WBS/create-wbs",
-                          state: { task : wbsinfo },
-                        });
+                        // history.push({
+                        //   pathname: "/dashboard/WBS/create-wbs",
+                        //   state: { task : wbsinfo[idx] },
+                        // });
                       }}
                     >
                       Create WBS
                     </Button>
-                  </CCardFooter> */}
+                  </CCardFooter>
                 </CCard>
               </CCol>
             ))}

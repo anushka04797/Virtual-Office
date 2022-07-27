@@ -661,14 +661,15 @@ const MyProjects = () => {
                         <span className="fix-action-btn-alignment">
                           <CButton
                             className="view-ongoing-details"
-                            onClick={() =>
+                            onClick={() =>{
+                              console.log("pro", project)
                               history.push({
                                 pathname:
                                   "/dashboard/Projects/my-projects/details/" +
                                   project.project.work_package_number,
                                 state: { project: project },
                               })
-                            }
+                            }}
                           >
                             <CIcon name="cil-list-rich" className="mr-1" />
                             View Details
