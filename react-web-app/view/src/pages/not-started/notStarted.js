@@ -329,16 +329,17 @@ const NoWbs = () => {
               
               <CCol lg="4" key={idx}>
                 <CCard className="project-card1"
-                onClick= {()=>{
-                  history.push({
-                    pathname:"/dashboard/Projects/my-projects/details/"+
-                    myProjectDetails[idx].project.work_package_number,
-                    state: { project: myProjectDetails[idx] },
-                })
-              }}>
+                >
                   {" "}
                   {/* on card click project details card will show */}
-                  <CCardBody>
+                  <CCardBody
+                  onClick= {()=>{
+                    history.push({
+                      pathname:"/dashboard/Projects/my-projects/details/"+
+                      myProjectDetails[idx].project.work_package_number,
+                      state: { project: myProjectDetails[idx] },
+                  })
+                }}>
                     {/* <h6 className="id-no1">Work Package Number: # {item.project.work_package_number}</h6> */}
                     <h5 className="card-details1">
                       <span className="p-header-3">
@@ -420,10 +421,10 @@ const NoWbs = () => {
                       onClick={() => {
                         console.log("wbsinfo", wbsinfo[idx])
                         
-                        // history.push({
-                        //   pathname: "/dashboard/WBS/create-wbs",
-                        //   state: { task : wbsinfo[idx] },
-                        // });
+                        history.push({
+                          pathname: "/dashboard/WBS/create-wbs",
+                          state: { task : wbsinfo[idx] },
+                        });
                       }}
                     >
                       Create WBS
