@@ -373,7 +373,7 @@ const CreateNewProject = () => {
         dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)));
         dispatch(fetchProjectsThunk(sessionStorage.getItem(USER_ID)));
         setSelectedAssignees([]);
-        swal("Created!", "Successfully Created", "success").then((e) => {
+        swal("Successfully Created!", "", "success").then((e) => {
           // if (e) {
           //   window.location.reload()
           // }
@@ -911,7 +911,7 @@ const CreateNewProject = () => {
                           htmlFor="tdo"
                           aria-labelledby="tdo"
                         >
-                          Task Details
+                          Task Details 
                         </CLabel>
                         <CTextarea
                           maxlength="500"
@@ -922,6 +922,8 @@ const CreateNewProject = () => {
                           rows="6"
                           placeholder="Enter details..."
                         ></CTextarea>
+
+                        <div className="float-right">{(formCreateProject.values.description).length}/500</div>
                       </div>
                       {/**start date */}
                       <div className="col-lg-6 mb-3">

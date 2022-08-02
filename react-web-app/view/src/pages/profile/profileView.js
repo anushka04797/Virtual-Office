@@ -128,7 +128,7 @@ const UserProfile = () => {
           change_pass_form.resetForm();
           setTab("viewProfile")
           console.log("view profile", tab)
-          swal("Updated", "Your Password has been changed", "success");
+          swal("Your Password has been Updated!", "", "success");
          // history.push({ pathname: '/dashboard/WBS/create-wbs'})
         }
       })
@@ -168,7 +168,7 @@ const UserProfile = () => {
       if (res.status == 201 && res.data.success == "True") {
         dispatch(fetchPersonalDetails(sessionStorage.getItem(USER_ID)));
         setVisible(false);
-        swal("Updated!", "Your Profile has been updated", "success");
+        swal("Your Profile has been Updated!", "", "success");
       }
     });
   };
@@ -182,12 +182,12 @@ const UserProfile = () => {
     )
       .then((res) => {
         if (res.status == 201) {
-          swal("Updated!", "Profile Picture Updated", "success");
+          swal("Profile Picture Updated!", "", "success");
         }
       })
       .catch((err) => {
         if (err.status == 400) {
-          swal("Incorrect", "Bad Request", "warning");
+          swal("Incorrect, Bad Request", "", "warning");
         }
       });
   };

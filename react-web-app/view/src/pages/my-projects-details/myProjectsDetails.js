@@ -61,6 +61,7 @@ const MyProjectsDetailsView = () => {
   const [total_ep, setTotalEp] = useState(0);
   const [total_planned_hours, setTotalPlannedHours] = useState(0);
   const [total_ph, setTotalPH] = useState(0);
+  const [length, setlength]= useState()
 
   const radioHandler = (status, titleStatus) => {
     setStatus(status);
@@ -68,6 +69,7 @@ const MyProjectsDetailsView = () => {
   };
   const [editModal, setEditModal] = useState(false);
   const validateEditForm = (values) => {
+    setlength(values.description.length)
     console.log("values ****", values);
     const errors = {};
     if (!values.sub_task || String(values.sub_task).length < 1)
@@ -109,7 +111,7 @@ const MyProjectsDetailsView = () => {
         setEditModal(false);
         setSubmitting(false);
         initialize();
-        swal("Updated!", "Task Details is updated", "success");
+        swal("Sub Task Details is updated!", " ", "success");
       }
     });
   };
@@ -117,6 +119,7 @@ const MyProjectsDetailsView = () => {
     initialValues: {
       sub_task: project?.project.sub_task,
       description: project?.project.description,
+      //length:(project?.project.description).length,
       work_package_number: project?.project.work_package_number,
       work_package_index: project?.project.work_package_index,
       task_title: "",
@@ -231,9 +234,12 @@ const MyProjectsDetailsView = () => {
           "/"
       ).then((res) => {
         setTotalPlannedHours(parseFloat(res.data.total_hours));
+        setlength(project.project.description.length);
         editForm.setValues({
           sub_task: project?.project.sub_task,
           description: project?.project.description,
+          length : (project?.project.description).length,
+         
           work_package_number: project?.project.work_package_number,
           work_package_index: subtask?.work_package_index,
           task_title: subtask?.task_title,
@@ -315,6 +321,7 @@ const MyProjectsDetailsView = () => {
       //   tdo_details: editForm.values.tdo_details,
       sub_task: editForm.values.sub_task,
       description: editForm.values.description,
+      length : (editForm.values.description).length,
       work_package_number: editForm.values.work_package_number,
       work_package_index: editForm.values.work_package_index,
       task_title: editForm.values.task_title,
@@ -355,15 +362,15 @@ const MyProjectsDetailsView = () => {
             dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)));
             initialize();
             swal(
-              "Updated",
-              "Task Delivery Order name has been updated",
+              "Task Delivery Order name has been Updated!",
+              "",
               "success"
             );
           }
         })
         .catch((err) => {
           console.log(err);
-          swal("Failed", "Proccess Failed", "error");
+          swal("Proccess Failed!", "", "error");
         });
     } else {
       swal("Invalid!", "Task delivery order name can not be empty", "warning");
@@ -375,7 +382,7 @@ const MyProjectsDetailsView = () => {
     }
   };
   // delete assignee
-  const delete_assignee = (project_id, assignee_id) => {
+  const delete_assignee = (project_id, assignee) => {
     swal({
       title: "Are you sure?",
       text: "Once deleted, you will not be able to recover this record!",
@@ -384,8 +391,8 @@ const MyProjectsDetailsView = () => {
       dangerMode: true,
     }).then((willDelete) => {
       if (willDelete) {
-        API.delete("/project/remove-assignee/" + assignee_id + "/", {
-          data: { project: project_id, assignee: assignee_id },
+        API.delete("/project/remove-assignee/" + assignee.id + "/", {
+          data: { project: project_id, assignee: assignee.id },
         })
           .then((response) => {
             if (response.data.success == "True") {
@@ -396,6 +403,19 @@ const MyProjectsDetailsView = () => {
               swal("Poof! Your selected assignee has been removed!", {
                 icon: "success",
               });
+              setAssignees(
+                sortBy(
+                  [
+                    ...assignees,
+                    {
+                      value: assignee.id.toString(),
+                      label: assignee.first_name + " " + item.assignee.last_name,
+                      data: assignee,
+                    },
+                  ],
+                  "label"
+                )
+              );
             } else if (response.data.success == "False") {
               swal("Poof!" + response.data.message, {
                 icon: "error",
@@ -409,6 +429,7 @@ const MyProjectsDetailsView = () => {
     });
   };
   function removeAssignee(item) {
+    console.log("assignee item", item)
     setAssignees(
       sortBy(
         [
@@ -460,6 +481,7 @@ const MyProjectsDetailsView = () => {
             editForm.setValues({
               sub_task: editForm.values.sub_task,
               description: editForm.values.description,
+             // length : (editForm.values.description).length,
               work_package_number: editForm.values.work_package_number,
               work_package_index: editForm.values.work_package_index,
               task_title: editForm.values.task_title,
@@ -612,7 +634,13 @@ const MyProjectsDetailsView = () => {
     }
     return true;
   };
-
+const editformHandleChange = (event)=> {
+  
+   console.log("updated length", editForm.values.length)
+  // setlength(editForm.values.length)
+  //editForm.handleChange
+  editForm.setFieldValue("description", editForm.values.description);
+}
   return (
     <>
       {project != undefined && (
@@ -736,15 +764,20 @@ const MyProjectsDetailsView = () => {
                     <CCol lg="12" className="mb-2">
                       <CLabel htmlFor="sub_task" className="custom-label-5">
                         Task Details
+                        
                       </CLabel>
                       <CTextarea
+                        maxlength="500"
                         id="description"
                         name="description"
                         type="text"
                         value={editForm.values.description}
                         onChange={editForm.handleChange}
                         className="custom-forminput-6"
+                       
                       ></CTextarea>
+                      
+                     { <div className="float-right">{length}/500</div>}
                     </CCol>
                     {/**start date */}
                     <div className="col-lg-6 mb-3">
@@ -1221,12 +1254,14 @@ const MyProjectsDetailsView = () => {
                               <div className="file-attached-ongoing rounded-pill">
                                 <CButton
                                   type="button"
-                                  onClick={() =>
+                                  onClick={() =>{
+
+                                    console.log("item here", item)
                                     delete_assignee(
                                       subtask.id,
-                                      item.assignee.id
+                                      item.assignee
                                     )
-                                  }
+                                  }}
                                   className="remove-file-ongoing"
                                 >
                                   <img
