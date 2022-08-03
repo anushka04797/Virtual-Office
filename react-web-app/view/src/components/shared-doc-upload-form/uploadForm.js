@@ -37,7 +37,7 @@ const UploadDocuments = () => {
       setSelectedProject(null)
       setFileAvatars([])
       setFiles([])
-      swal('Uploaded','Files are uploaded','success')
+      swal('Files are uploaded!','','success')
     })
   }
   const projects = useSelector(state => {

@@ -295,7 +295,7 @@ const CreateNewWBS = () => {
               dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)));
               dispatch(fetchProjectsThunk(sessionStorage.getItem(USER_ID)));
               dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)));
-              swal("Created!", "Successfuly Created", "success");
+              swal("Successfully Created!", "", "success");
           //   }
           // })
         }
@@ -550,13 +550,16 @@ const CreateNewWBS = () => {
                         </CLabel>
                         {/* onChange={setWbsDetails} */}
                         <CTextarea
+                           maxlength="200"
                           id="description"
                           name="description"
                           value={formCreateWbs.values.description}
                           onChange={formCreateWbs.handleChange}
                           className="custom-forminput-6"
                         ></CTextarea>
+                        { <div className="float-right">{(formCreateWbs.values.description).length}/200</div>}
                       </div>
+
                       {/**Start date */}
                       <div className="col-lg-6 mb-3">
                         <CLabel className="custom-label-wbs5">

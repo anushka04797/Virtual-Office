@@ -73,7 +73,7 @@ const AddTimecardItms = (props) => {
       setWbsList()
       setSelectedWbs(null)
       setselectedProject(null)
-      swal('Added!', 'Successfuly Added', 'success')
+      swal('Successfully Added!', '', 'success')
     })
 
     setModal(false)

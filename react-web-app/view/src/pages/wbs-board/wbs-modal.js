@@ -130,8 +130,6 @@ const WbsModal = (props) => {
     );
 
     setdatecheck(difference);
-
-    
   }, [props]);
 
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
@@ -145,8 +143,8 @@ const WbsModal = (props) => {
             dispatch(fetchProjectsThunk(sessionStorage.getItem(USER_ID)));
             dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)));
             swal({
-              title: "Good job!",
-              text: "WBS updated successfully!",
+              title: "Good job! WBS updated successfully!",
+              text: "",
               icon: "success",
             });
             props.onClose();
@@ -254,7 +252,7 @@ const WbsModal = (props) => {
     }
     return false;
   }
- 
+
   return (
     <>
       <CModal
@@ -301,15 +299,19 @@ const WbsModal = (props) => {
                   </div>
                 </CRow>
                 <CRow>
-                  <div className="col-lg-12 mb-3">
-                    <CLabel className="custom-label-wbs5">Descriptions</CLabel>
+                  <div className="col-md-12 mb-3">
+                    <CLabel className="custom-label-wbs5">Description</CLabel>
                     <CTextarea
+                      maxlength="300"
                       id="description"
                       name="description"
                       className="custom-forminput-5 text-box-height"
                       onChange={formWbsUpdate.handleChange}
                       value={formWbsUpdate.values.description}
                     ></CTextarea>
+                    <div className="float-right">
+                      {formWbsUpdate.values.description.length}/300
+                    </div>
                   </div>
                 </CRow>
                 <CRow>
@@ -426,12 +428,16 @@ const WbsModal = (props) => {
                   <div className="col-lg-12 mb-3">
                     <CLabel className="custom-label-wbs5">Comments</CLabel>
                     <CTextarea
+                      maxLength='200'
                       id="comments"
                       name="comments"
                       className="custom-forminput-5"
                       onChange={formWbsUpdate.handleChange}
                       value={formWbsUpdate.values.comments}
                     ></CTextarea>
+                    <div className="float-right">
+                      {formWbsUpdate.values.comments.length}/200
+                    </div>
                   </div>
                 </CRow>
                 <CRow>

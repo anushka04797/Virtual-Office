@@ -60,7 +60,7 @@ const ViewEvms = () => {
             if (res.status == 200 && res.data.success == 'True') {
                 dispatch(fetchEvmsThunk(sessionStorage.getItem(USER_ID)))
                 setVisible(false)
-                swal('Updated!', 'EVMS has been updated', 'success')
+                swal('EVMS has been updated!', '', 'success')
             }
             else {
                 swal('Error', 'There was a problem updating', 'warning')

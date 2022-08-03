@@ -143,11 +143,11 @@ const ProjectEVMS = () => {
       console.log(res)
       if (res.status == 200 && res.data.success == 'True') {
         reset_form()
-        swal('Created!', 'Successfuly Created', 'success')
+        swal('Successfully Created!', '', 'success')
       }
       else {
         console.log("error", res)
-        swal('Error!', 'Problem occured during creating EVMS', 'warning');
+        swal('Problem occured during creating EVMS!', '', 'warning');
       }
     })
   }
