@@ -15,8 +15,17 @@ import sortBy from "lodash/sortBy";
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from "@mui/material";
 import { useHistory } from "react-router-dom";
+import { API } from "../../Config";
 
 const NoWbs = () => {
+
+  const [notStartedWBS, setNotStartedWBS]=useState([])
+  const [tdooptions, settdooptions]= useState([])
+  const [notstaredDetails, setnotstaredDetails]= useState([])
+  const[initialwbs, setinitialwbs]= useState([])
+  const[everyproject, seteveryproject]= useState([])
+
+
   const [wbsinfo, setwbsinfo] = useState([])
   let history = useHistory();
   const [selectedProject, setSelectedProject] = useState([]);
@@ -24,6 +33,84 @@ const NoWbs = () => {
   const [fetchproject, setfetchproject] = useState([]);
   const [tdos, setTdos] = useState([]);
   
+  // const populateOption=(a)=>{
+  //   let list =[]
+  //   for(let i=0;i<a.length;i++)
+  //   {  console.log("aaaaaaaaaaaaaa",a[i])
+  //   list.push({
+  //       data: a[i],
+  //       label: a[i].project.task_delivery_order.title,
+  //       value: a[i].project.task_delivery_order.id,})
+  //   }
+  //   list.unshift({
+  //     label: "Select All",
+  //     value: "all",
+  //     data: {},
+  //   })
+  //   console.log("tdo list", list)
+  //   settdooptions(list)
+  //   // for(let i=0;i<a.length;i++)
+  //   // {}
+  //   let info=[]
+  //   for (let i = 0; i < a.length; i++) {
+      
+  //     //setwbsinfo(a[i].project)
+  //     info.push({
+  //       data: a[i],
+  //       name: a[i].project.sub_task,
+  //       tdo : a[i].project.task_delivery_order.title,
+  //       id: a[i].project.task_delivery_order.id,
+  //       startDate: a[i].project.date_created,
+  //       endDate: a[i].project.planned_delivery_date,
+  //       allassignees: a[i].allassignees,
+  //       totalAssignee: a[i].assignees.length,
+  //       noWbsPeople: a[i].assignees,
+        
+  //     });
+  //   }
+
+  //   setnotstaredDetails(info)
+   
+  //   let initialWBSInfo=[]
+  //   for (let i = 0; i < a.length; i++) {
+  //     let assignees= a[i].allassignees
+  //     console.log("ssssssssss", assignees)
+  //     initialWBSInfo.push({
+  //       assignees:  a[i].allassignees,
+  //       date_created: a[i].project.date_created,
+  //       date_updated: a[i].project.date_updated,
+  //       description : a[i].project.description,
+  //       estimated_person : a[i].project.estimated_person,
+  //       id : a[i].project.id,
+  //       planned_delivery_date : a[i].project.planned_delivery_date,
+  //       planned_hours : a[i].project.planned_hours,
+  //       planned_value : a[i].project.planned_value,
+  //       pm : a[i].project.pm,
+  //       remaining_hours : a[i].project.remaining_hours,
+  //       start_date : a[i].project.start_date,
+  //       status: a[i].project.status,
+  //       sub_task : a[i].project.sub_task,
+  //       task_delivery_order: a[i].project.task_delivery_order,
+  //       task_title : a[i].project.task_title,
+  //       work_package_index : a[i].project.work_package_index,
+  //       work_package_number : a[i].project.work_package_number
+  //     })
+  //      //for(let i=0; i<assignees.length;i++){
+  //      //  let assignee = {assignee:assignees[i]}
+  //     //   //console.log(typeof assignee)
+  //     //   initialWBSInfo.assignees.push(assignee)
+  //     // }
+  //     //wbsinfo1.push(temp1)
+  //   }
+  //   setinitialwbs(initialWBSInfo)
+  //   console.log("wbsinfoarray", initialWBSInfo)
+  
+  // }
+
+  // const data_population=(filtered)=>{
+
+  // }
+
 
   const projects = useSelector((state) => {
     let e = [];
@@ -128,6 +215,7 @@ const NoWbs = () => {
         temp1.assignees.push(assignee)
       }
       wbsinfo1.push(temp1)
+      console.log("wbs1", wbsinfo1)
     }
     setwbsinfo(wbsinfo1)
     console.log("details array", details);
@@ -238,7 +326,7 @@ const NoWbs = () => {
     let temp = [];
     console.log("filter", options);
     if (options.find((item) => item.value == "all")) {
-      temp.push(projectDetails);
+      temp.push(notstaredDetails);
       console.log("temp all", temp);
     } else {
       for (let index = 0; index < options.length; index++) {
@@ -295,7 +383,14 @@ const NoWbs = () => {
   };
   
   React.useEffect(() => {
+    // API.get('project/assignees-with-no-wbs/')
+    // .then((res) => {
+    //   console.log("api response", res.data.data)
+    //   setNotStartedWBS(res.data.data)
+    //   populateOption(res.data.data)
+    // })
     
+
     if (projects.length > 0 && fetchproject.length == 0) {
       setfetchproject(projects);
       optionlist(projects);
@@ -341,14 +436,15 @@ const NoWbs = () => {
                   })
                 }}>
                     {/* <h6 className="id-no1">Work Package Number: # {item.project.work_package_number}</h6> */}
+                    
                     <h5 className="card-details1">
                       <span className="p-header-3">
-                        Project Name: {item.name}
+                        TDO: {item.tdo}
                       </span>{" "}
                     </h5>
                     <h5 className="card-details1">
                       <span className="p-header-3">
-                        TDO: {item.tdo}
+                        Project Name: {item.name}
                       </span>{" "}
                     </h5>
                     <h5 className="card-details1">
@@ -360,7 +456,7 @@ const NoWbs = () => {
                         )}
                       </span>{" "}
                     </h5>
-                    <h5 className="card-details1">
+                    {/* <h5 className="card-details1">
                       <span className="p-header-3">
                         Planned Hours: {Number(item.plannedHours).toFixed(2)}{" "}
                       </span>{" "}
@@ -369,7 +465,7 @@ const NoWbs = () => {
                       <span className="p-header-3">
                         Remaining Hours: {Number(item.remainingHrs).toFixed(2)}{" "}
                       </span>{" "}
-                    </h5>
+                    </h5> */}
                     <h5 className="card-details1">
                       <span className="p-header-3">
                         Planned Delivery Date: {item.endDate}
@@ -391,12 +487,12 @@ const NoWbs = () => {
                       </span>{" "}
                       {/*hyperlinked to see number of projects every assignees are assigned*/}
                     </h5>
-                    <h5 className="card-details1">
+                    {/* <h5 className="card-details1">
                       <span className="p-header-3">
                         Total Created WBS : {item.totalWBS}
-                      </span>{" "}
+                      </span>{" "} */}
                       {/*hyperlinked to see wbs for this porject in board*/}
-                    </h5>
+                    {/* </h5> */}
                     <h5 className="card-details1">
                       <span className="p-header-4">
                         Assignees with No WBS ({item.totalNoWbsPeople}) :

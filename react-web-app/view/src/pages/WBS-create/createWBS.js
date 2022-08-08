@@ -295,7 +295,7 @@ const CreateNewWBS = () => {
               dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)));
               dispatch(fetchProjectsThunk(sessionStorage.getItem(USER_ID)));
               dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)));
-              swal("Successfully Created!", "", "success");
+              swal("WBS Created Successfully !", "", "success");
           //   }
           // })
         }
