@@ -550,14 +550,14 @@ const CreateNewWBS = () => {
                         </CLabel>
                         {/* onChange={setWbsDetails} */}
                         <CTextarea
-                           maxlength="200"
+                          maxlength="250"
                           id="description"
                           name="description"
                           value={formCreateWbs.values.description}
                           onChange={formCreateWbs.handleChange}
                           className="custom-forminput-6"
                         ></CTextarea>
-                        { <div className="float-right">{(formCreateWbs.values.description).length}/200</div>}
+                        { <div className="float-right">{(formCreateWbs.values.description).length}/250</div>}
                       </div>
 
                       {/**Start date */}

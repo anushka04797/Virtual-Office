@@ -59,10 +59,10 @@ const CreateNewProject = () => {
   const [work_package_numbers, setWorkPackageNumbers] = useState([]);
   const [existing_sub_tasks, setExistingSubTasks] = useState([]);
   const [isWpInputdisabled, setIsWpInputdisabled] = useState(false);
-  const [selectedAssigneeExistingEP, setSelectedAssigneeExistingEP] =
-    useState(0);
+  const [selectedAssigneeExistingEP, setSelectedAssigneeExistingEP] = useState(0);
   const [total_working_days, setTotalWorkingDays] = useState(0);
   const [total_planned_hours, setTotalPlannedHours] = useState(0);
+  const [deslength, setdeslength]= useState()
   //tdo list states and functions
 
   const new_tdo_list = useSelector((state) => sortBy(state.tdo.data, "label"));
@@ -326,6 +326,8 @@ const CreateNewProject = () => {
 
   const validate_create_project_form = (values) => {
     const errors = {}
+    //setdeslength(values.description.length)
+    //console.log("length", (values.description).length)
     if (!values.task_delivery_order) errors.task_delivery_order = "Task Delivery Order is required"
     if (!values.sub_task) errors.sub_task = "Sub Task is required"
     if (!values.work_package_number) errors.work_package_number = "Work Package Number is required"
@@ -347,6 +349,7 @@ const CreateNewProject = () => {
   };
 
   const create_project = (values,{ setSubmitting }) => {
+    setdeslength(values.description.length)
     setSubmitting(true)
     const formValues={
         "task_delivery_order": values.task_delivery_order,
@@ -403,6 +406,7 @@ const CreateNewProject = () => {
       planned_hours: 0,
       planned_value: 0,
       remaining_hours: 0,
+      des_length: 0,
     },
     validateOnChange: true,
     validateOnBlur: true,
@@ -422,6 +426,7 @@ const CreateNewProject = () => {
         "/"
     )
       .then((res) => {
+        setdeslength(formCreateProject.values.description.length)
         console.log("total_hrs", res.data);
         setTotalPlannedHours(parseFloat(res.data.total_hours));
 
@@ -525,6 +530,7 @@ const CreateNewProject = () => {
         console.log("total_working_days after loop: ", total_working_days);
       })
       .then(() => {
+        setdeslength(formCreateProject.values.description.length)
         formCreateProject.setValues({
           task_delivery_order: formCreateProject.values.task_delivery_order,
           tdo_details: formCreateProject.values.tdo_details,
@@ -669,7 +675,9 @@ const CreateNewProject = () => {
       temp_total_planned_hours +=
         parseFloat(item.estimated_person) * total_planned_hours;
     });
+    setdeslength(formCreateProject.values.description.length)
     formCreateProject.setValues({
+     
       task_delivery_order: formCreateProject.values.task_delivery_order,
       tdo_details: formCreateProject.values.tdo_details,
       sub_task: formCreateProject.values.sub_task,
@@ -914,16 +922,16 @@ const CreateNewProject = () => {
                           Task Details 
                         </CLabel>
                         <CTextarea
-                          maxlength="500"
+                          //maxlength="500"
                           id="description"
                           name="description"
                           value={formCreateProject.values.description}
                           onChange={handleSubtaskDetailsChange}
                           rows="6"
-                          placeholder="Enter details..."
+                          placeholder="Enter details..."  
                         ></CTextarea>
 
-                        <div className="float-right">{(formCreateProject.values.description).length}/500</div>
+                        {/* <div className="float-right">{formCreateProject.values.description.length}/500</div> */}
                       </div>
                       {/**start date */}
                       <div className="col-lg-6 mb-3">

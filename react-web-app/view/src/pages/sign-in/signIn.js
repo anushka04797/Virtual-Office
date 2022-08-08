@@ -88,7 +88,7 @@ const SignIn = () => {
 
   useEffect(() => {
     if (location.state?.registration) {
-      enqueueSnackbar('Registration succefull, please wait for admin approval.', { variant: 'info' })
+      enqueueSnackbar('Registration is successful, please wait for admin approval.', { variant: 'info' })
     }
     
     if(String(window.location).split('?').length>1){

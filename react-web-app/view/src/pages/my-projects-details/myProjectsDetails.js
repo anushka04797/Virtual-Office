@@ -767,7 +767,7 @@ const editformHandleChange = (event)=> {
                         
                       </CLabel>
                       <CTextarea
-                        maxlength="500"
+                        // maxlength="500"
                         id="description"
                         name="description"
                         type="text"
@@ -777,7 +777,7 @@ const editformHandleChange = (event)=> {
                        
                       ></CTextarea>
                       
-                     { <div className="float-right">{length}/500</div>}
+                     {/* { <div className="float-right">{length}/500</div>} */}
                     </CCol>
                     {/**start date */}
                     <div className="col-lg-6 mb-3">
