@@ -409,7 +409,7 @@ const MyProjectsDetailsView = () => {
                     ...assignees,
                     {
                       value: assignee.id.toString(),
-                      label: assignee.first_name + " " + item.assignee.last_name,
+                      label: assignee.first_name + " " + assignee.last_name,
                       data: assignee,
                     },
                   ],
