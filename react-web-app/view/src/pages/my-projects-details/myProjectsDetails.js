@@ -406,7 +406,7 @@ const MyProjectsDetailsView = () => {
                     {
                       value: assignee.id.toString(),
                       label:
-                        assignee.first_name + " " + item.assignee.last_name,
+                        assignee.first_name + " " + assignee.last_name,
                       data: assignee,
                     },
                   ],
@@ -485,7 +485,7 @@ const MyProjectsDetailsView = () => {
         setAssignees(temp_asses);
       })
       .then(() => {
-        dateRange(editForm.values.start_date, event.target.value);
+        // dateRange(editForm.values.start_date, event.target.value);
         API.get(
           "project/date-to-date/" +
             editForm.values.start_date +
