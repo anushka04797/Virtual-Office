@@ -78,7 +78,7 @@ const OngoingDetailsView = () => {
         if (res.status == 200 && res.data.success == "True") {
           setEditModal(false);
           initialize();
-          swal("Updated!", "Task Details is updated", "success");
+          swal("Sub Task Details is updated", "", "success");
         }
       }
     );
@@ -394,6 +394,7 @@ const OngoingDetailsView = () => {
                         Sub Task
                       </CLabel>
                       <CInput
+                      
                         id="sub_task"
                         name="sub_task"
                         type="text"

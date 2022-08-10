@@ -49,36 +49,75 @@ import CustomSearch from "../../components/CustomSearch/CustomSearch";
 import SearchResult from "./inc/SearchResult";
 import { createSelector } from "reselect";
 
-const filter_pm_projects=createSelector(
-  (state)=>state.projects.pm_projects,
+const filter_pm_projects = createSelector(
+  (state) => state.projects.pm_projects,
   (_, tdos) => tdos,
-  (pm_projects,tdos)=>{
-    let temp=[]
-    console.log('projects',pm_projects,tdos)
-    if(tdos){
-      Array.from(tdos).forEach((item,idx)=>{
-        for(let index=0;index<pm_projects.length;index++){
-          console.log('project tdo'+index,pm_projects[index].project.task_delivery_order.id,item.value)
-          if(item.value == pm_projects[index].project.task_delivery_order.id){
-            temp.push(pm_projects[index])
+  (pm_projects, tdos) => {
+    let temp = [];
+    console.log("projects from my projects", pm_projects, tdos);
+    if (tdos) {
+      Array.from(tdos).forEach((item, idx) => {
+        for (let index = 0; index < pm_projects.length; index++) {
+          // console.log(
+          //   "project tdo" + index,
+          //   pm_projects[index].project.task_delivery_order.id,
+          //   item.value
+          // );
+          if (item.value == pm_projects[index].project.task_delivery_order.id) {
+            temp.push(pm_projects[index]);
           }
         }
-      })
+      });
+    } else {
+      temp = pm_projects;
     }
-    else{
-      temp=pm_projects
-    }
-    return uniq(temp)
+    return uniq(temp);
   }
-)
+);
 
 const MyProjects = () => {
+  const pmprojects = useSelector((state) => {
+    let e = [];
+    Array.from(state.projects.pm_projects).forEach((item, idx) => {
+      e.push(item);
+    });
+    console.log("all pm Projects", e);
+    return e;
+  });
+
   let history = useHistory();
   const dispatch = useDispatch();
   const [status, setStatus] = useState({});
   const [managers, setManagers] = useState([]);
   const [currentPM, setPM] = useState();
   const [selectedTdo, setSelectedTdo] = useState();
+  const [fetchproject, setfetchproject] = useState([]);
+  const [alltdos, setalltdos]=useState([])
+  const [projectDetails, setProjectDetails] = useState([])
+  const [filteredprojects, setfilteredProjects] = useState([pmprojects])
+  
+  let details = [];
+  const optionlist = (projects) => {
+    
+    let optionarray = [];
+    for (let i = 0; i < projects.length; i++) {
+      optionarray.push({
+        data: projects[i],
+        label: projects[i].project.task_delivery_order.title,
+        value: projects[i].project.task_delivery_order.id,
+      });
+    }
+    optionarray.unshift({
+      label: "Select All",
+      value: "all",
+      data: {},
+    });
+    console.log("options", optionarray);
+    setalltdos(optionarray)
+    details=[...optionarray]
+    setProjectDetails(details.shift())
+
+  }
 
   const handlePMChange = (option, actionMeta) => {
     setPM(option);
@@ -92,7 +131,7 @@ const MyProjects = () => {
         setStatus({ project: null });
         setPM(null);
         dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)));
-        swal("Updated!", "Project manager changed successfully", "success");
+        swal("Project manager changed successfully!", "", "success");
       }
     });
   };
@@ -106,41 +145,74 @@ const MyProjects = () => {
     });
     return temp;
   });
-  const filtered_pm_projects=useSelector((state)=>filter_pm_projects(state,selectedTdo))
-  const tdolist = useSelector((state) => {
+  // const filtered_pm_projects = useSelector((state) =>
+  //   filter_pm_projects(state, selectedTdo)
+  // );
+  // const tdolist = useSelector((state) => {
+  //   let temp = [];
+  //   state.projects.pm_projects.forEach((item, idx) => {
+  //     if (item.project.status == 0) {
+  //       temp.push({
+  //         label: item.project.task_delivery_order.title,
+  //         value: item.project.task_delivery_order.id,
+  //       });
+  //     }
+  //   });
+  //   temp.unshift({ label: "Select All", value: "all" });
+  //   return temp;
+  // });
+
+
+  const setSelectedTdofunc = (options) => {
     let temp = [];
-    state.projects.pm_projects.forEach((item, idx) => {
-      if (item.project.status == 0) {
-        temp.push({
-          label: item.project.task_delivery_order.title,
-          value: item.project.task_delivery_order.id,
-        });
+    console.log("filter", options);
+    if (options.find((item) => item.value == "all")) {
+      temp.push(projectDetails);
+      console.log("temp all", temp);
+    } else {
+      for (let index = 0; index < options.length; index++) {
+        console.log("options len", options[index].value);
+        for (let index1 = 0; index1 < projects.length; index1++) {
+          console.log("projects len", projects[index1]);
+          if (
+            options[index].value ==
+            projects[index1].project.task_delivery_order.id
+          ) {
+            
+            temp.push(projects[index1]);
+            console.log("temp array", temp);
+          }
+        }
       }
-    });
-    temp.unshift({ label: "Select All", value: "all" });
-    return temp;
-  });
+      console.log("filtered array", temp);
+    }
+    setfilteredProjects(temp);
+    setProjectDetails(temp)
+  };
 
   const handleTDOChange = (value, actionMeta) => {
     if (actionMeta.action == "select-option") {
       if (value.find((item) => item.value == "all")) {
-        setSelectedTdo(tdolist.filter((item) => item.value != "all"));
+        setSelectedTdofunc(alltdos.filter((item) => item.value != "all"));
+        setSelectedTdo(alltdos.filter((item) => item.value != "all"));
       } else {
         setSelectedTdo(value);
+        setSelectedTdofunc(value)
       }
     } else if (actionMeta.action == "clear") {
-      setSelectedTdo(tdolist.filter((item) => item.value != "all"));
+      setSelectedTdo([])
+      setSelectedTdofunc(alltdos.filter((item) => item.value != "all"));
     } else if (actionMeta.action == "remove-value") {
       setSelectedTdo(value);
-      if(value.length==0){
-        setSelectedTdo(tdolist.filter((item) => item.value != "all"));
-      }
-      else{
-        setSelectedTdo(value);
+      if (value.length == 0) {
+        setSelectedTdofunc(alltdos.filter((item) => item.value != "all"));
+      } else {
+        setSelectedTdofunc(value);
       }
     }
   };
 
+  
   const [show_sub_task_details, setShowSubTaskDetails] = useState(false);
   const [selectedSubTask, setSelectedSubTask] = useState();
   useEffect(() => {
@@ -167,6 +239,14 @@ const MyProjects = () => {
       setManagers(temp);
     });
   }, []);
+  React.useEffect(() => {
+    
+    if (projects.length > 0 && fetchproject.length == 0) {
+      setfetchproject(projects);
+      optionlist(projects);
+      setProjectDetails(projects)
+    }
+  }, [projects]);
   const mark_project_completed = (id) => {
     swal({
       title: "Are you sure?",
@@ -274,7 +354,7 @@ const MyProjects = () => {
     let worked_hours = parseFloat(total_hours) - parseFloat(remaining_hours);
     return (100 * worked_hours) / parseFloat(total_hours);
   }
-  
+
   const fileType =
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
   const fileExtension = ".xlsx";
@@ -580,12 +660,13 @@ const MyProjects = () => {
                     <CButton
                       type="button"
                       className="create-wbs-from-modal"
-                      onClick={() =>
+                      onClick={() =>{
                         history.push({
                           pathname: "/dashboard/WBS/create-wbs",
                           state: { task: selectedSubTask },
                         })
-                      }
+                        //console.log("taskkkkkkkkk", selectedSubTask)
+                      }}
                     >
                       Create WBS
                     </CButton>
@@ -603,15 +684,16 @@ const MyProjects = () => {
         <div className="row">
           <div className="col-md-10 col-lg-10 col-sm-12 col-xs-12 mt-1 offset-md-1 offset-lg-1">
             <CRow className="dash-header justfy-content-between">
-              <CCol lg="7">My Projects({Array.from(projects).length})</CCol>
+              <CCol lg="7">My Projects({Array.from(projectDetails).length})</CCol>
               {/* <CCol lg="2">
                 <CustomSearch search={search} />
               </CCol> */}
+              {console.log('filtered', projectDetails)}
               <CCol lg="3" className="mb-3 pl-4">
                 <Select
                   className="custom-forminput-6"
                   placeholder="Filter by TDO"
-                  options={tdolist}
+                  options={alltdos}
                   isMulti
                   onChange={handleTDOChange}
                   value={selectedTdo}
@@ -627,13 +709,13 @@ const MyProjects = () => {
                 </CButton>
               </CCol>
             </CRow>
-            {filtered_pm_projects !=undefined && (
+            {/* {filtered_pm_projects != undefined && ( */}
               <Accordion
                 allowMultipleExpanded={false}
                 className="remove-acc-bg  mb-3"
                 allowZeroExpanded
               >
-                {Array.from(filtered_pm_projects).map((project, idx) => (
+                {Array.from(projectDetails).map((project, idx) => (
                   <AccordionItem key={idx} className="card-ongoing-project">
                     <AccordionItemHeading className="ongoing-accordion-header">
                       <AccordionItemButton>
@@ -656,14 +738,15 @@ const MyProjects = () => {
                         <span className="fix-action-btn-alignment">
                           <CButton
                             className="view-ongoing-details"
-                            onClick={() =>
+                            onClick={() =>{
+                              console.log("pro", project)
                               history.push({
                                 pathname:
                                   "/dashboard/Projects/my-projects/details/" +
                                   project.project.work_package_number,
                                 state: { project: project },
                               })
-                            }
+                            }}
                           >
                             <CIcon name="cil-list-rich" className="mr-1" />
                             View Details
@@ -795,7 +878,7 @@ const MyProjects = () => {
                                     classNamePrefix="pm-edit"
                                     value={currentPM}
                                     options={managers}
-                                  // styles={colourStyles}
+                                    // styles={colourStyles}
                                   />
                                 </CForm>
                                 <div className="mt-1">
@@ -853,10 +936,10 @@ const MyProjects = () => {
                   </AccordionItem>
                 ))}
               </Accordion>
-            )}
+            {/* } */}
 
             {/**If no projects are there */}
-            {Array.from(projects).length < 1 ? (
+            {Array.from(filteredprojects).length < 1 ? (
               <CAlert className="no-value-show-alert" color="primary">
                 Currently there are no projects
               </CAlert>

@@ -11,9 +11,11 @@ const routes = [
     { path: '/dashboard/EVMS/view', exact: true, name: 'EVMS View', component: React.lazy(() => import('../pages/evms-view/evmsView')) },
 
     { path: '/dashboard/WBS/create-wbs', exact: true, name: 'WBS', component: React.lazy(() => import('../pages/WBS-create/createWBS')) },
+    { path: '/dashboard/WBS/not-started', exact: true, name: 'Not Created WBS', component: React.lazy(() => import('../pages/not-started/notStarted')) },
     { path: '/dashboard/WBS/board', exact: true, name: 'Board', component: React.lazy(() => import('../pages/wbs-board/Board')) },
 
     { path: '/dashboard/timecards', exact: true, name: 'Timecards', component: React.lazy(() => import('../pages/timecards/timeCard')) },
+
     { path: '/dashboard/profile', exact: true, name: 'Profile', component: React.lazy(() => import('../pages/profile/profileView')) },
     { path: '/dashboard/shared-documents', exact: true, name: 'Shared Documents', component: React.lazy(() => import('../pages/shared-docs/sharedDocs')) }
 ]

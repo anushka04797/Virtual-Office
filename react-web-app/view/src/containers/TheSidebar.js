@@ -106,6 +106,7 @@ const TheSidebar = () => {
         {/**WBS */}
         <CSidebarNavDropdown icon="cil-spreadsheet"  name="WBS" className="vo-navItem">
           <CSidebarNavItem to="/dashboard/WBS/create-wbs" name="Create WBS" className="vo-navItem"></CSidebarNavItem>
+          {has_permission('projects.add_projects') &&<CSidebarNavItem to="/dashboard/WBS/not-started" name="Not Created WBS" className="vo-navItem" ></CSidebarNavItem>}
           <CSidebarNavItem to="/dashboard/WBS/board" name="Board" className="vo-navItem" ></CSidebarNavItem>
 
         </CSidebarNavDropdown>
@@ -133,10 +134,14 @@ const TheSidebar = () => {
           {/* {has_permission('projects.add_projects') && <CSidebarNavItem to="/dashboard/timecard/weekly-timecards" name="Weekly Timecard" className="vo-navItem"></CSidebarNavItem>} */}
           {/* {has_permission('projects.add_projects') && <CSidebarNavItem to="/dashboard/timecard/weekly-timecards" name="Report" className="vo-navItem"></CSidebarNavItem>} */}
         </CSidebarNavDropdown>}
+        
+        
         {/**Meetings */}
         <CSidebarNavItem to="/dashboard/meetings" icon="cil-group" name="Meetings" className="vo-navItem"></CSidebarNavItem>
         {/**Shared Docs */}
         <CSidebarNavItem to="/dashboard/shared-documents" name="Shared Documents" icon="cil-folder-open" className="vo-navItem"></CSidebarNavItem>
+        
+        {/* <CSidebarNavItem to="/dashboard/holidays" icon="cil-calendar" name="Holidays" className="vo-navItem"></CSidebarNavItem> */}
         <hr />
         {/**Profile */}
         <CSidebarNavItem to={"/dashboard/profile/"+sessionStorage.getItem(USER_ID)} name="Profile" icon="cil-user" className="vo-navItem"></CSidebarNavItem>
