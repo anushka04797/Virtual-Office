@@ -61,7 +61,7 @@ const MyProjectsDetailsView = () => {
   const [total_ep, setTotalEp] = useState(0);
   const [total_planned_hours, setTotalPlannedHours] = useState(0);
   const [total_ph, setTotalPH] = useState(0);
-  const [length, setlength]= useState()
+  const [length, setlength] = useState();
 
   const radioHandler = (status, titleStatus) => {
     setStatus(status);
@@ -69,7 +69,7 @@ const MyProjectsDetailsView = () => {
   };
   const [editModal, setEditModal] = useState(false);
   const validateEditForm = (values) => {
-    setlength(values.description.length)
+    setlength(values.description.length);
     console.log("values ****", values);
     const errors = {};
     if (!values.sub_task || String(values.sub_task).length < 1)
@@ -238,8 +238,8 @@ const MyProjectsDetailsView = () => {
         editForm.setValues({
           sub_task: project?.project.sub_task,
           description: project?.project.description,
-          length : (project?.project.description).length,
-         
+          length: (project?.project.description).length,
+
           work_package_number: project?.project.work_package_number,
           work_package_index: subtask?.work_package_index,
           task_title: subtask?.task_title,
@@ -321,7 +321,7 @@ const MyProjectsDetailsView = () => {
       //   tdo_details: editForm.values.tdo_details,
       sub_task: editForm.values.sub_task,
       description: editForm.values.description,
-      length : (editForm.values.description).length,
+      length: editForm.values.description.length,
       work_package_number: editForm.values.work_package_number,
       work_package_index: editForm.values.work_package_index,
       task_title: editForm.values.task_title,
@@ -361,11 +361,7 @@ const MyProjectsDetailsView = () => {
             setTitleStatus(0);
             dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)));
             initialize();
-            swal(
-              "Task Delivery Order name has been Updated!",
-              "",
-              "success"
-            );
+            swal("Task Delivery Order name has been Updated!", "", "success");
           }
         })
         .catch((err) => {
@@ -409,7 +405,8 @@ const MyProjectsDetailsView = () => {
                     ...assignees,
                     {
                       value: assignee.id.toString(),
-                      label: assignee.first_name + " " + item.assignee.last_name,
+                      label:
+                        assignee.first_name + " " + item.assignee.last_name,
                       data: assignee,
                     },
                   ],
@@ -429,7 +426,7 @@ const MyProjectsDetailsView = () => {
     });
   };
   function removeAssignee(item) {
-    console.log("assignee item", item)
+    console.log("assignee item", item);
     setAssignees(
       sortBy(
         [
@@ -449,8 +446,29 @@ const MyProjectsDetailsView = () => {
       (parseFloat(remaining_EP) + parseFloat(item.estimated_person)).toFixed(2)
     );
   }
+
+  function handleDeliveryDateExtend(event) {
+    editForm.handleChange(event);
+    API.get("auth/assignee/list/")
+      .then((res) => {
+        let temp_asses = [];
+        Array.from(res.data.data).forEach((item, idx) => {
+          temp_asses.push({
+            value: item.id.toString(),
+            label: item.first_name + " " + item.last_name,
+            data: item,
+          });
+        });
+        console.log("temp assignee ", temp_asses);
+        setAssignees(temp_asses);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
   function handlePlannedDeliveryDateChange(event) {
     //removing each selected assignee
+
     setInputList([]);
     setTotalEp(0.0);
     editForm.handleChange(event);
@@ -467,7 +485,7 @@ const MyProjectsDetailsView = () => {
         setAssignees(temp_asses);
       })
       .then(() => {
-        // dateRange(editForm.values.start_date, event.target.value)
+        dateRange(editForm.values.start_date, event.target.value);
         API.get(
           "project/date-to-date/" +
             editForm.values.start_date +
@@ -476,12 +494,12 @@ const MyProjectsDetailsView = () => {
             "/"
         )
           .then((res) => {
-            setTotalPlannedHours(parseFloat(res.data.total_hours));
+            //setTotalPlannedHours(parseFloat(res.data.total_hours));
             console.log("api", res.data.total_hours);
             editForm.setValues({
               sub_task: editForm.values.sub_task,
               description: editForm.values.description,
-             // length : (editForm.values.description).length,
+              // length : (editForm.values.description).length,
               work_package_number: editForm.values.work_package_number,
               work_package_index: editForm.values.work_package_index,
               task_title: editForm.values.task_title,
@@ -634,13 +652,12 @@ const MyProjectsDetailsView = () => {
     }
     return true;
   };
-const editformHandleChange = (event)=> {
-  
-   console.log("updated length", editForm.values.length)
-  // setlength(editForm.values.length)
-  //editForm.handleChange
-  editForm.setFieldValue("description", editForm.values.description);
-}
+  const editformHandleChange = (event) => {
+    console.log("updated length", editForm.values.length);
+    // setlength(editForm.values.length)
+    //editForm.handleChange
+    editForm.setFieldValue("description", editForm.values.description);
+  };
   return (
     <>
       {project != undefined && (
@@ -764,7 +781,6 @@ const editformHandleChange = (event)=> {
                     <CCol lg="12" className="mb-2">
                       <CLabel htmlFor="sub_task" className="custom-label-5">
                         Task Details
-                        
                       </CLabel>
                       <CTextarea
                         // maxlength="500"
@@ -774,10 +790,9 @@ const editformHandleChange = (event)=> {
                         value={editForm.values.description}
                         onChange={editForm.handleChange}
                         className="custom-forminput-6"
-                       
                       ></CTextarea>
-                      
-                     {/* { <div className="float-right">{length}/500</div>} */}
+
+                      {/* { <div className="float-right">{length}/500</div>} */}
                     </CCol>
                     {/**start date */}
                     <div className="col-lg-6 mb-3">
@@ -809,9 +824,7 @@ const editformHandleChange = (event)=> {
                         id="planned_delivery_date"
                         name="planned_delivery_date"
                         value={editForm.values.planned_delivery_date}
-                        onChange={(event) =>
-                          handlePlannedDeliveryDateChange(event)
-                        }
+                        onChange={(event) => handleDeliveryDateExtend(event)}
                         className="custom-forminput-6"
                         type="date"
                       />
@@ -842,11 +855,15 @@ const editformHandleChange = (event)=> {
                                   }
                                   text2={
                                     "  → " +
-                                    item.estimated_person +
+                                    Number(total_ep).toFixed(2) +
                                     " EP → " +
-                                    item.planned_value +
+                                    parseFloat(
+                                      editForm.values.planned_value
+                                    ).toFixed(2) +
                                     " PV → " +
-                                    item.planned_hours +
+                                    parseFloat(
+                                      editForm.values.planned_hours
+                                    ).toFixed(2) +
                                     " Hr(s)"
                                   }
                                 />
@@ -981,7 +998,7 @@ const editformHandleChange = (event)=> {
                         max="1"
                         step="0.1"
                         value={Number(total_ep).toFixed(2)}
-                        onChange={(e) => {}}
+                        //onChange={(e) => {}}
                         className="custom-forminput-6"
                       ></CInput>
                     </div>
@@ -1254,13 +1271,9 @@ const editformHandleChange = (event)=> {
                               <div className="file-attached-ongoing rounded-pill">
                                 <CButton
                                   type="button"
-                                  onClick={() =>{
-
-                                    console.log("item here", item)
-                                    delete_assignee(
-                                      subtask.id,
-                                      item.assignee
-                                    )
+                                  onClick={() => {
+                                    console.log("item here", item);
+                                    delete_assignee(subtask.id, item.assignee);
                                   }}
                                   className="remove-file-ongoing"
                                 >
@@ -1313,7 +1326,6 @@ const editformHandleChange = (event)=> {
                             pathname: "/dashboard/WBS/create-wbs",
                             state: { task: subtask },
                           })
-                        
                         }
                       >
                         Create WBS

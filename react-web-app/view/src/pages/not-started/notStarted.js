@@ -33,83 +33,83 @@ const NoWbs = () => {
   const [fetchproject, setfetchproject] = useState([]);
   const [tdos, setTdos] = useState([]);
   
-  // const populateOption=(a)=>{
-  //   let list =[]
-  //   for(let i=0;i<a.length;i++)
-  //   {  console.log("aaaaaaaaaaaaaa",a[i])
-  //   list.push({
-  //       data: a[i],
-  //       label: a[i].project.task_delivery_order.title,
-  //       value: a[i].project.task_delivery_order.id,})
-  //   }
-  //   list.unshift({
-  //     label: "Select All",
-  //     value: "all",
-  //     data: {},
-  //   })
-  //   console.log("tdo list", list)
-  //   settdooptions(list)
-  //   // for(let i=0;i<a.length;i++)
-  //   // {}
-  //   let info=[]
-  //   for (let i = 0; i < a.length; i++) {
+  const populateOption=(a)=>{
+    let list =[]
+    for(let i=0;i<a.length;i++)
+    {  console.log("aaaaaaaaaaaaaa",a[i])
+    list.push({
+        data: a[i],
+        label: a[i].project.task_delivery_order.title,
+        value: a[i].project.task_delivery_order.id,})
+    }
+    list.unshift({
+      label: "Select All",
+      value: "all",
+      data: {},
+    })
+    console.log("tdo list", list)
+    settdooptions(list)
+    // for(let i=0;i<a.length;i++)
+    // {}
+    let info=[]
+    for (let i = 0; i < a.length; i++) {
       
-  //     //setwbsinfo(a[i].project)
-  //     info.push({
-  //       data: a[i],
-  //       name: a[i].project.sub_task,
-  //       tdo : a[i].project.task_delivery_order.title,
-  //       id: a[i].project.task_delivery_order.id,
-  //       startDate: a[i].project.date_created,
-  //       endDate: a[i].project.planned_delivery_date,
-  //       allassignees: a[i].allassignees,
-  //       totalAssignee: a[i].assignees.length,
-  //       noWbsPeople: a[i].assignees,
+      //setwbsinfo(a[i].project)
+      info.push({
+        data: a[i],
+        name: a[i].project.sub_task,
+        tdo : a[i].project.task_delivery_order.title,
+        id: a[i].project.task_delivery_order.id,
+        startDate: a[i].project.date_created,
+        endDate: a[i].project.planned_delivery_date,
+        allassignees: a[i].allassignees,
+        totalAssignee: a[i].assignees.length,
+        noWbsPeople: a[i].assignees,
         
-  //     });
-  //   }
+      });
+    }
 
-  //   setnotstaredDetails(info)
+    setnotstaredDetails(info)
    
-  //   let initialWBSInfo=[]
-  //   for (let i = 0; i < a.length; i++) {
-  //     let assignees= a[i].allassignees
-  //     console.log("ssssssssss", assignees)
-  //     initialWBSInfo.push({
-  //       assignees:  a[i].allassignees,
-  //       date_created: a[i].project.date_created,
-  //       date_updated: a[i].project.date_updated,
-  //       description : a[i].project.description,
-  //       estimated_person : a[i].project.estimated_person,
-  //       id : a[i].project.id,
-  //       planned_delivery_date : a[i].project.planned_delivery_date,
-  //       planned_hours : a[i].project.planned_hours,
-  //       planned_value : a[i].project.planned_value,
-  //       pm : a[i].project.pm,
-  //       remaining_hours : a[i].project.remaining_hours,
-  //       start_date : a[i].project.start_date,
-  //       status: a[i].project.status,
-  //       sub_task : a[i].project.sub_task,
-  //       task_delivery_order: a[i].project.task_delivery_order,
-  //       task_title : a[i].project.task_title,
-  //       work_package_index : a[i].project.work_package_index,
-  //       work_package_number : a[i].project.work_package_number
-  //     })
-  //      //for(let i=0; i<assignees.length;i++){
-  //      //  let assignee = {assignee:assignees[i]}
-  //     //   //console.log(typeof assignee)
-  //     //   initialWBSInfo.assignees.push(assignee)
-  //     // }
-  //     //wbsinfo1.push(temp1)
-  //   }
-  //   setinitialwbs(initialWBSInfo)
-  //   console.log("wbsinfoarray", initialWBSInfo)
+    let initialWBSInfo=[]
+    for (let i = 0; i < a.length; i++) {
+      let assignees= a[i].allassignees
+      console.log("ssssssssss", assignees)
+      initialWBSInfo.push({
+        assignees:  a[i].allassignees,
+        date_created: a[i].project.date_created,
+        date_updated: a[i].project.date_updated,
+        description : a[i].project.description,
+        estimated_person : a[i].project.estimated_person,
+        id : a[i].project.id,
+        planned_delivery_date : a[i].project.planned_delivery_date,
+        planned_hours : a[i].project.planned_hours,
+        planned_value : a[i].project.planned_value,
+        pm : a[i].project.pm,
+        remaining_hours : a[i].project.remaining_hours,
+        start_date : a[i].project.start_date,
+        status: a[i].project.status,
+        sub_task : a[i].project.sub_task,
+        task_delivery_order: a[i].project.task_delivery_order,
+        task_title : a[i].project.task_title,
+        work_package_index : a[i].project.work_package_index,
+        work_package_number : a[i].project.work_package_number
+      })
+       //for(let i=0; i<assignees.length;i++){
+       //  let assignee = {assignee:assignees[i]}
+      //   //console.log(typeof assignee)
+      //   initialWBSInfo.assignees.push(assignee)
+      // }
+      //wbsinfo1.push(temp1)
+    }
+    setinitialwbs(initialWBSInfo)
+    console.log("wbsinfoarray", initialWBSInfo)
   
-  // }
+  }
 
-  // const data_population=(filtered)=>{
+  const data_population=(filtered)=>{
 
-  // }
+  }
 
 
   const projects = useSelector((state) => {
@@ -360,21 +360,21 @@ const NoWbs = () => {
       if (value.find((item) => item.value == "all")) {
        
         filter_notStarted_by_projects(
-          tdos.filter((item) => item.value != "all")
+          tdooptions.filter((item) => item.value != "all")
         );
-        setSelectedProject(tdos.filter((item) => item.value != "all"));
+        setSelectedProject(tdooptions.filter((item) => item.value != "all"));
       } else {
         setSelectedProject(value);
         filter_notStarted_by_projects(value);
       }
     } else if (actionMeta.action == "clear") {
       setSelectedProject([]);
-      filter_notStarted_by_projects(tdos.filter((item) => item.value != "all"));
+      filter_notStarted_by_projects(tdooptions.filter((item) => item.value != "all"));
     } else if (actionMeta.action == "remove-value") {
       setSelectedProject(value);
       if (value.length == 0) {
         filter_notStarted_by_projects(
-          tdos.filter((item) => item.value != "all")
+          tdooptions.filter((item) => item.value != "all")
         );
       } else {
         filter_notStarted_by_projects(value);
@@ -383,19 +383,19 @@ const NoWbs = () => {
   };
   
   React.useEffect(() => {
-    // API.get('project/assignees-with-no-wbs/')
-    // .then((res) => {
-    //   console.log("api response", res.data.data)
-    //   setNotStartedWBS(res.data.data)
-    //   populateOption(res.data.data)
-    // })
+    API.get('project/assignees-with-no-wbs/')
+    .then((res) => {
+      console.log("api response", res.data.data)
+      setNotStartedWBS(res.data.data)
+      populateOption(res.data.data)
+    })
     
 
     if (projects.length > 0 && fetchproject.length == 0) {
       setfetchproject(projects);
       optionlist(projects);
     }
-  }, [projects]);
+  }, []);
   return (
     <>
       <CRow>
@@ -405,7 +405,7 @@ const NoWbs = () => {
             className="custom-forminput-6"
             placeholder="Filter by TDOs"
             searchable={true}
-            options={tdos}
+            options={tdooptions}
             isMulti
             onChange={handleProjectChange}
             value={selectedProject}
