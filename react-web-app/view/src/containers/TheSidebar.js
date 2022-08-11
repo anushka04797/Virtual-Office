@@ -141,7 +141,7 @@ const TheSidebar = () => {
         {/**Shared Docs */}
         <CSidebarNavItem to="/dashboard/shared-documents" name="Shared Documents" icon="cil-folder-open" className="vo-navItem"></CSidebarNavItem>
         
-        {/* <CSidebarNavItem to="/dashboard/holidays" icon="cil-calendar" name="Holidays" className="vo-navItem"></CSidebarNavItem> */}
+        <CSidebarNavItem to="/dashboard/holidays" icon="cil-calendar" name="Holidays" className="vo-navItem"></CSidebarNavItem>
         <hr />
         {/**Profile */}
         <CSidebarNavItem to={"/dashboard/profile/"+sessionStorage.getItem(USER_ID)} name="Profile" icon="cil-user" className="vo-navItem"></CSidebarNavItem>
