@@ -226,7 +226,7 @@ const SubmittedTimecards = () => {
     let days = weekday[day.getDay()];
     let todayDate = moment(day).format("DD-MM-YYYY");
      
-      pdfTitle + "_" + days + "_" + todayDate + "_" + fileExtension;
+    const fileName=pdfTitle + "_" + days + "_" + todayDate + "_" + fileExtension;
     saveAs(blob, fileName);
   }
   const [startDate, setStartDate] = useState("");
