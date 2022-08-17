@@ -88,10 +88,8 @@ const Holidaylist = () => {
     sheet.getCell("E5").font={
       bold: true,
     }
-
     sheet.mergeCells("F6:G6");
     
-
     sheet.mergeCells("A6:D6");
 
     sheet.getRow(8).values = [
@@ -128,19 +126,6 @@ const Holidaylist = () => {
       });
     }
 
-
-    let cell_num = excelData.length + 12;
-    sheet.getRow(cell_num).values = [
-      "",
-      "",
-      "",
-      "",
-      "Total Holidays = " + excelData.length,
-    ];
-    sheet.getRow(cell_num).font={
-         bold: true
-    }
-    
     const buffer = await workbook.xlsx.writeBuffer(excelData);
     const fileType = "application/octet-stream";
     const fileExtension = ".xlsx";
@@ -148,10 +133,6 @@ const Holidaylist = () => {
     
     const fileName = "List-of-Holidays"+fileExtension;
     saveAs(blob, fileName);
-    
-
-
-
   };
 
 

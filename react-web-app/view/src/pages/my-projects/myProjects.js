@@ -550,7 +550,7 @@ const MyProjects = () => {
                               <div className="tasks-done-2 col-lg-4">
                                 <h6 className="tiny-header2">Planned Value</h6>
                                 <h6 className="project-point-details">
-                                  {selectedSubTask.planned_value}{" "}
+                                  {Number(parseFloat(selectedSubTask.planned_value)).toFixed(2)}{" "}
                                 </h6>
                               </div>
                             )}
