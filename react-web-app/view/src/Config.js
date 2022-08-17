@@ -1,6 +1,6 @@
 import axios from 'axios';
 const status = 'prod'
-export const API_URL = status === 'prod' ? 'https://virtualoffice.com.bd/vo-admin/' : 'http://192.168.0.225:8003/vo-admin/'
+export const API_URL = status === 'prod' ? 'https://virtualoffice.com.bd/vo-admin/' : 'http://localhost:8000/vo-admin/'
 export const TOKEN = "access_token"
 export const USER_ID = "user_id"
 export const PERMISSIONS = "user_permissions"

@@ -439,7 +439,7 @@ const NoWbs = () => {
                     
                     <h5 className="card-details1">
                       <span className="p-header-3">
-                        TDO: {item.tdo}
+                        <b>TDO: {item.tdo}</b>
                       </span>{" "}
                     </h5>
                     <h5 className="card-details1">
