@@ -186,9 +186,9 @@ const CreateNewProject = () => {
         planned_delivery_date: formCreateProject.values.planned_delivery_date,
         assignee: formCreateProject.values.assignees,
         pm: sessionStorage.getItem(USER_ID),
-        planned_hours: formCreateProject.values.planned_hours,
-        planned_value: formCreateProject.values.planned_value,
-        remaining_hours: formCreateProject.values.planned_hours,
+        planned_hours: (formCreateProject.values.planned_hours).toFixed(2),
+        planned_value: (formCreateProject.values.planned_value).toFixed(2),
+        remaining_hours: (formCreateProject.values.planned_hours).toFixed(2),
       });
       // setWorkPackageNumber(newValue.work_package_number)
       setWorkPackageNumber(
@@ -225,9 +225,9 @@ const CreateNewProject = () => {
         planned_delivery_date: formCreateProject.values.planned_delivery_date,
         assignee: formCreateProject.values.assignees,
         pm: sessionStorage.getItem(USER_ID),
-        planned_hours: formCreateProject.values.planned_hours,
-        planned_value: formCreateProject.values.planned_value,
-        remaining_hours: formCreateProject.values.planned_hours,
+        planned_hours: (formCreateProject.values.planned_hours),
+        planned_value: (formCreateProject.values.planned_value),
+        remaining_hours: (formCreateProject.values.planned_hours),
       });
     } else if (actionMeta.action == "clear") {
       setSelectedTaskTitle(null);
@@ -256,9 +256,9 @@ const CreateNewProject = () => {
       planned_delivery_date: formCreateProject.values.planned_delivery_date,
       assignee: formCreateProject.values.assignees,
       pm: sessionStorage.getItem(USER_ID),
-      planned_hours: formCreateProject.values.planned_hours,
-      planned_value: formCreateProject.values.planned_value,
-      remaining_hours: formCreateProject.values.planned_hours,
+      planned_hours: (formCreateProject.values.planned_hours).toFixed(2),
+      planned_value:( formCreateProject.values.planned_value).toFixed(2),
+      remaining_hours:( formCreateProject.values.planned_hours).toFixed(2),
     });
   };
 
@@ -415,7 +415,7 @@ const CreateNewProject = () => {
   });
 
   function handlePlannedDeliveryDateChange(event) {
-    inputList.forEach((item) => removeAssignee(item));
+    // inputList.forEach((item) => removeAssignee(item));
     formCreateProject.handleChange(event);
     // dateRange(formCreateProject.values.start_date, event.target.value)
     API.get(
@@ -428,6 +428,7 @@ const CreateNewProject = () => {
       .then((res) => {
         setdeslength(formCreateProject.values.description.length)
         console.log("total_hrs", res.data);
+        console.log("assignees", inputList);
         setTotalPlannedHours(parseFloat(res.data.total_hours));
 
         formCreateProject.setValues({
@@ -437,16 +438,14 @@ const CreateNewProject = () => {
           description: formCreateProject.values.description,
           work_package_number: formCreateProject.values.work_package_number,
           task_title: formCreateProject.values.task_title,
-          estimated_person: (
-            parseFloat(res.data.total_hours) / total_working_days
-          ),
+          estimated_person: formCreateProject.values.estimated_person,
           start_date: formCreateProject.values.start_date,
           planned_delivery_date: event.target.value,
           assignee: formCreateProject.values.assignee,
           pm: sessionStorage.getItem(USER_ID),
-          planned_hours: parseFloat(res.data.total_hours),
-          planned_value: formCreateProject.values.planned_value,
-          remaining_hours: formCreateProject.values.planned_hours,
+          planned_hours: parseFloat(res.data.total_hours).toFixed(2),
+          planned_value: (formCreateProject.values.planned_value).toFixed(2),
+          remaining_hours: (formCreateProject.values.planned_hours).toFixed(2),
         });
       })
       .catch((err) => {
@@ -545,9 +544,9 @@ const CreateNewProject = () => {
           planned_delivery_date: endDate,
           assignee: formCreateProject.values.assignee,
           pm: sessionStorage.getItem(USER_ID),
-          planned_hours: 8 * calc(startDate, endDate),
-          planned_value: formCreateProject.values.planned_value,
-          remaining_hours: formCreateProject.values.planned_hours,
+          planned_hours: (8 * calc(startDate, endDate)).toFixed(2),
+          planned_value: (formCreateProject.values.planned_value).toFixed(2),
+          remaining_hours: (formCreateProject.values.planned_hours.toFixed(2)),
         });
         console.log(formCreateProject.values.estimated_person);
       });
@@ -615,11 +614,11 @@ const CreateNewProject = () => {
         planned_delivery_date: formCreateProject.values.planned_delivery_date,
         assignee: selectedAssignees,
         pm: sessionStorage.getItem(USER_ID),
-        planned_hours: formCreateProject.values.planned_hours,
+        planned_hours: (formCreateProject.values.planned_hours).toFixed(2),
         planned_value:
-          parseFloat(formCreateProject.values.planned_value) +
-          parseFloat(single_planned_value),
-        remaining_hours: formCreateProject.values.planned_hours,
+          (parseFloat(formCreateProject.values.planned_value) +
+          parseFloat(single_planned_value)).toFixed(2),
+        remaining_hours:( formCreateProject.values.planned_hours).toFixed(2),
       });
       const { name, value } = e.target;
       const list = [...inputList];
@@ -942,7 +941,7 @@ const CreateNewProject = () => {
                           value={formCreateProject.values.start_date}
                           onChange={(event) => {
                             formCreateProject.handleChange(event);
-                            setInputList([]);
+                            //setInputList([]);
                           }}
                           className="custom-forminput-6"
                           type="date"
@@ -1102,7 +1101,7 @@ const CreateNewProject = () => {
                                 color="primary"
                                 className="ar-btn"
                                 onClick={handleAddClick}
-                                disabled={selectedAssigneesEP == 0}
+                                disabled={selectedAssigneesEP == 0 || formCreateProject.values.start_date=="" || formCreateProject.values.planned_delivery_date=="" }
                               >
                                 + Add
                               </CButton>

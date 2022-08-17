@@ -465,6 +465,11 @@ const MyProjectsDetailsView = () => {
         console.log(err);
       });
   }
+  function handleStartDateChange(event){
+    editForm.handleChange(event);
+    //setInputList([]);
+
+  }
   function handlePlannedDeliveryDateChange(event) {
     //removing each selected assignee
 
@@ -801,8 +806,7 @@ const MyProjectsDetailsView = () => {
                         name="start_date"
                         value={editForm.values.start_date}
                         onChange={(event) => {
-                          editForm.handleChange(event);
-                          setInputList([]);
+                          handleStartDateChange(event)
                         }}
                         className="custom-forminput-6"
                         type="date"

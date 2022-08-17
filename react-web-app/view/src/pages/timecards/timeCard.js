@@ -190,7 +190,9 @@ const TimeCards = () => {
           total_not_submitted++;
         }
         const element = filteredData[index];
+        
         hours_total += parseFloat(element.data.hours_today);
+        console.log("ele", element.data)
         tableData.push({
           WP: element.data.project
             ? element.data.project.work_package_number

@@ -82,7 +82,7 @@ const AddTimecardItms = (props) => {
   const validateAddItemForm=(values)=>{
     const errors = {};
     if (!values.hours_type) errors.hours_type = "Hour Type is required!"
-    if (!values.hours) errors.hours = "Hour is required!"
+    //if (!values.hours) errors.hours = "Hour is required!"
     if (!values.project) errors.project = "Project is required!"
     if (!values.wbs) errors.wbs = "Wbs is required!"
     if (!values.actual_work_done) errors.actual_work_done = "Details is required!"
@@ -241,7 +241,7 @@ const AddTimecardItms = (props) => {
                   className="custom-forminput-5"
                   placeholder="0.00"
                   //onChange={formAddTimecard.handleChange}
-                  disabled={selectedType.value == 'HOL' ||selectedType.value == 'SIC' || selectedType.value == 'VAC'}
+                 
                   min="0.00"
                   onChange={(e) => {
                     formAddTimecard.setFieldValue(
