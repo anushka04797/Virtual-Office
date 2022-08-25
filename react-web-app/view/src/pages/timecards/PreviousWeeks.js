@@ -31,7 +31,7 @@ import { saveAs } from "file-saver";
 import * as XLSX from "xlsx";
 import * as fs from "fs";
 import ExcelJS from "exceljs/dist/es5/exceljs.browser";
-
+import sortBy from "lodash/sortBy";
 import CIcon from "@coreui/icons-react";
 import moment from "moment";
 import ReactDOM from "react-dom"; // you used 'react-dom' as 'ReactDOM'
@@ -46,30 +46,27 @@ const PreviousWeeks = () => {
   const profile_details = useSelector((state) => state.profile.data);
   const history = useHistory();
   const location = useLocation();
-  // console.log(profile_details)
   const [usersData, setUsersData] = useState([]);
   const [pdfData, setPdfData] = useState([]);
-  // console.log('userdata', usersData)
   const [assignee, setAssigneeValue] = useState();
   const [selectedAssignee, setSelectedAssignee] = useState();
   const [pdfTitle, setPdfTitle] = useState();
   const [assigneeList, setAssigneeList] = useState([]);
-  // const [selectedEmployee, setSelectedEmployee] = useState(initialState)
-  {
-    /**fetch all assignees for PM */
-  }
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [totalHrs, setTotalHrs] = useState(0);
   const [modalData, setModalData] = useState("");
-
   const [modal, setModal] = useState();
   const [actualWorkDone, setActualWorkDone] = useState();
   const [hour, sethour] = useState();
   const [row, setRow] = useState();
+  const [lastweekStart, setlastWeekStart]= useState()
+  const [lastweekEnd, setlastWeekEnd] = useState()
 
   const getTimeCards = (values) => {
-    console.log("working");
+    console.log("working", values);
+    // setStartDate(lastweekStart)
+    // setEndDate(lastweekEnd)
     setStartDate(values.startDate);
     setEndDate(values.todate);
     var temp_hrs = 0;
@@ -80,10 +77,10 @@ const PreviousWeeks = () => {
       has_permission("wbs.change_timecard") &&
       has_permission("wbs.add_timecard")
     ) {
-      // console.log('values from timecards', values)
+      console.log("values from timecards (if pm)", values);
       API.get("wbs/user/time-card/list/" + values.assigneeSelectPM + "/").then(
         (res) => {
-          console.log(res.data.data);
+          console.log("user tc list", res.data.data);
           let temp = [];
           Array.from(res.data.data).forEach((item, idx) => {
             temp.push({ data: item });
@@ -101,7 +98,7 @@ const PreviousWeeks = () => {
           for (let index = 0; index < filteredData.length; index++) {
             const element = filteredData[index];
             temp_hrs += parseFloat(element.data.hours_today);
-            console.log("hours", temp_hrs);
+            //console.log("hours", temp_hrs);
             tableData.push({
               WP: element.data.project?.work_package_number
                 ? element.data.project.work_package_number
@@ -127,8 +124,8 @@ const PreviousWeeks = () => {
         }
       );
     } else {
-      // console.log('values from timecards', values)
-      API.get("wbs/user/time-card/list/" + values.assigneeSelect + "/").then(
+      console.log("values from timecards", values);
+      API.get("wbs/user/time-card/list/" + values.assigneeSelectPM + "/").then(
         (res) => {
           let temp = [];
           console.log("zzzzzzzz", res.data.data);
@@ -193,14 +190,12 @@ const PreviousWeeks = () => {
     }
     return "";
   }
-  {
-    /**fetch all assignees for PM */
-  }
-  const [modaladdItem, setmodalAddItem] = useState(false);
-  const [show_edit_modal, setShowEditModal] = useState(false);
+ 
   React.useEffect(() => {
     window.scrollTo(0, 0);
-    const { start, end } = dateRange();
+    //const { start, end } = dateRange();
+    const { start, end } = previous_Week();
+    
     setTotalHrs(0);
     if (
       has_permission("projects.change_projectassignee") ||
@@ -219,6 +214,7 @@ const PreviousWeeks = () => {
                 capitalize(item.first_name) + " " + capitalize(item.last_name),
             });
           });
+          console.log("all assignee ", temp)
         } else {
           temp.push({
             data: profile_details,
@@ -228,9 +224,12 @@ const PreviousWeeks = () => {
               " " +
               capitalize(profile_details.last_name),
           });
+          console.log("assignee", temp)
         }
-        setAssigneeList(temp);
+       
         setSelectedAssignee(temp[0]);
+        temp=sortBy(temp, 'label')
+        setAssigneeList(temp);
       });
     }
     API.get(
@@ -238,14 +237,17 @@ const PreviousWeeks = () => {
     ).then((res) => {
       setPdfTitle(profile_details.first_name + " " + profile_details.last_name);
       let temp = [];
-      Array.from(res.data.data).forEach((item, idx) => {
+      Array.from(res.data.data).forEach((item, idx) => {   //all timecard list of logged in user
         temp.push({ data: item });
       });
+     
       let filteredData = temp;
-      console.log("start", start);
+      console.log("start, end", start, end);
       filteredData = temp.filter(
         (p) => p.data.date_updated >= start && p.data.date_updated <= end
       );
+
+      console.log("filtered by start end", filteredData)
       setPdfData(filteredData);
       var tableData = [];
       for (let index = 0; index < filteredData.length; index++) {
@@ -283,7 +285,6 @@ const PreviousWeeks = () => {
   };
   const validateEditForm = (values) => {
     const errors = {};
-
     if (!values.startDate)
       errors.startDate = "Start Date selection is required";
     if (!values.todate) errors.todate = "To date selection is required";
@@ -294,8 +295,8 @@ const PreviousWeeks = () => {
     initialValues: {
       assigneeSelect: sessionStorage.getItem(USER_ID),
       assigneeSelectPM: sessionStorage.getItem(USER_ID),
-      startDate: "",
-      todate: "",
+      startDate: lastweekStart,
+      todate: lastweekEnd,
     },
     validateOnBlur: true,
     validateOnChange: true,
@@ -307,68 +308,32 @@ const PreviousWeeks = () => {
     // control: (styles, state) => ({ ...styles,height:"35px", fontSize: '14px !important', lineHeight: '1.42857', borderRadius: "8px",borderRadius:".25rem",color:"rgb(133,133,133)",border:state.isFocused ? '2px solid #0065ff' :'inherit'}),
     option: (provided, state) => ({ ...provided, fontSize: "14px !important" }),
   };
-  {
-    /**export fetched tabledata to excel */
-  }
-
-  // const fileType =
-  //   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
-  // const fileExtension = ".xlsx";
-  // const exportToCSV = (pdfData, pdfTitle) => {
-  //   console.log("llllllll", usersData);
-
-  //   console.log("1111111111111111111111111111111111111111", pdfData);
-  //   const ws = XLSX.utils.json_to_sheet(pdfData);
-  //   var wb = XLSX.utils.book_new();
-  //   XLSX.utils.book_append_sheet(wb, ws, "");
-  //   var wbout = XLSX.write(wb, { bookType: "xlsx", type: "array" });
-  //   FileSaver.saveAs(
-  //     new Blob([wbout], { type: "application/octet-stream" }),
-  //     pdfTitle + ".xlsx"
-  //   );
-
-  // };
-
-  
-
-  {
-    /**export data as pdf */
-  }
 
 
-  const toggleModal = () => {
-    setmodalAddItem(!modaladdItem);
-  };
+  const previous_Week = () => {
+    var sdate = new Date();
+    var edate = new Date();
+    for (let i = 0; i < 7; i++) {
+      if (edate.getDay() === 6) {
+        console.log("end date ", moment(edate).format("YYYY-MM-DD"));
+        break;
+      } else {
+        edate = moment(edate).subtract(1, "day").toDate();
+      }
+    }
+    sdate = moment(edate).subtract(6, "day").toDate();
+    console.log("start date", moment(sdate).format("YYYY-MM-DD"));
+    setStartDate(moment(sdate).format("YYYY-MM-DD"))
+    setEndDate(moment(edate).format("YYYY-MM-DD"))
+    
+    setlastWeekStart(moment(sdate).format("YYYY-MM-DD"))
+    setlastWeekEnd(moment(edate).format("YYYY-MM-DD"))
+    
+    return {
+      start: moment(sdate).format("YYYY-MM-DD"),
+      end:  moment(edate).format("YYYY-MM-DD")
+    }
 
-  const showModal = (tableItem) => {
-    setRow(tableItem.data);
-    setShowEditModal(true);
-  };
-  const hideModal = (tableItem) => {
-    setModal(!row);
-    setRow(null);
-    setActualWorkDone(null);
-    sethour(null);
-  };
-
-  const [selectedType, setSelectedType] = useState();
-
-  const handleSelectChange = (option) => {
-    setSelectedType(option);
-    console.log(selectedType);
-  };
-
-  // const handleAssigneeChange = (option) => {
-  //     setAssigneeValue(option)
-  //     editForm.setValues({
-  //         assigneeSelectPM: option.value,
-  //         startDate:'',
-  //         todate:''
-  //     })
-  //     setPdfTitle(option.label)
-  // }
-  const onAddItem = () => {
-    setmodalAddItem(false);
   };
 
   const dateRange = () => {
@@ -415,27 +380,32 @@ const PreviousWeeks = () => {
   React.useEffect(() => {
     dateRange();
     nextSatDay();
+    previous_Week();
   }, []);
-
-  const show_submit = () => {
-    if (editForm.values.startDate && editForm.values.todate) {
-      return true;
-    } else return false;
-  };
-
-  const show_add_item_btn = () => {
-    if (editForm.values.assigneeSelectPM == sessionStorage.getItem(USER_ID)) {
-      return true;
+  React.useEffect(()=>{
+    if(lastweekStart!=undefined && lastweekStart){
+      editForm.setFieldValue('startDate',lastweekStart)
     }
-    return false;
-  };
+  },[lastweekStart])
+
+  React.useEffect(()=>{
+    if(lastweekEnd!=undefined && lastweekEnd){
+      console.log('todate',lastweekEnd)
+      editForm.setFieldValue('todate',lastweekEnd)
+    }
+  },[lastweekEnd])
 
   const onToDateChange = (event) => {
     editForm.handleChange(event);
     let values = editForm.values;
-    values["todate"] = event.target.value;
+    console.log("values for get tc", values)
+    values["todate"]=lastweekEnd
+    //values["todate"] = event.target.value;
+    console.log("to date format", event.target.value)
+    console.log("date format", lastweekEnd)
     getTimeCards(values);
   };
+
   return (
     <>
       <CContainer>
@@ -448,14 +418,17 @@ const PreviousWeeks = () => {
             <div className="format-buttons mt-3 mb-3 ">
               <CButton
                 className="file-format-download"
-                onClick={() => exportPdf(pdfData, pdfTitle, endDate, totalHrs, startDate)}
+                onClick={() =>
+                  exportPdf(pdfData, pdfTitle, endDate, totalHrs, startDate)
+                }
               >
                 <CIcon name="cil-description" className="mr-2" /> PDF
               </CButton>
               <CButton
                 className="file-format-download"
                 onClick={
-                  () => exportxl(pdfData, pdfTitle, endDate, totalHrs, startDate)
+                  () =>
+                    exportxl(pdfData, pdfTitle, endDate, totalHrs, startDate)
                   //exportToCSV(usersData, "Timecard of" + " " + pdfTitle)
                 }
               >
@@ -491,30 +464,28 @@ const PreviousWeeks = () => {
                 )} */}
                 {/**IF PM */}
 
-                
-                  <CLabel className="custom-label-5" htmlFor="assigneeSelectPM">
-                    Select Employee
-                  </CLabel>
-                  <Select
-                    closeMenuOnSelect={true}
-                    aria-labelledby="assigneeSelectPM"
-                    id="assigneeSelectPM"
-                    minHeight="35px"
-                    placeholder={
-                      capitalize(profile_details.first_name) +
-                      " " +
-                      capitalize(profile_details.last_name)
-                    }
-                    isClearable={false}
-                    isMulti={false}
-                    value={selectedAssignee}
-                    onChange={handleAssigneeChange}
-                    classNamePrefix="custom-forminput-6"
-                    options={assigneeList}
-                    styles={colourStyles}
-                  />
-                  {/* {editForm.errors.assigneeSelectPM && <p className="error mt-1">{editForm.errors.assigneeSelectPM}</p>} */}
-                
+                <CLabel className="custom-label-5" htmlFor="assigneeSelectPM">
+                  Select Employee
+                </CLabel>
+                <Select
+                  closeMenuOnSelect={true}
+                  aria-labelledby="assigneeSelectPM"
+                  id="assigneeSelectPM"
+                  minHeight="35px"
+                  placeholder={
+                    capitalize(profile_details.first_name) +
+                    " " +
+                    capitalize(profile_details.last_name)
+                  }
+                  isClearable={false}
+                  isMulti={false}
+                  value={selectedAssignee}
+                  onChange={handleAssigneeChange}
+                  classNamePrefix="custom-forminput-6"
+                  options={assigneeList}
+                  styles={colourStyles}
+                />
+                {/* {editForm.errors.assigneeSelectPM && <p className="error mt-1">{editForm.errors.assigneeSelectPM}</p>} */}
               </CCol>
             )}
 
@@ -529,8 +500,11 @@ const PreviousWeeks = () => {
                 type="date"
                 name="startDate"
                 id="startDate"
+                //value ={lastweekStart} 
                 value={editForm.values.startDate}
                 onChange={editForm.handleChange}
+                //onChange={handleFromDateChange}
+
               />
 
               {editForm.errors.startDate && (
@@ -549,6 +523,7 @@ const PreviousWeeks = () => {
                 type="date"
                 name="todate"
                 id="todate"
+                //value ={lastweekEnd}
                 value={editForm.values.todate}
                 onChange={onToDateChange}
               />
@@ -573,13 +548,13 @@ const PreviousWeeks = () => {
             {/**buttons for format of timecard */}
             <CRow className="mt-4">
               <CCol>
-                <CLabel className="custom-label-5" htmlFor="assigneeSelect">
+                {/* <CLabel className="custom-label-5" htmlFor="assigneeSelect">
                   Company :{" "}
                   {profile_details.slc_details?.slc?.department?.company?.name}
-                </CLabel>
+                </CLabel> */}
               </CCol>
             </CRow>
-            <CRow>
+            {/* <CRow>
               <CCol md="4">
                 <CLabel className="custom-label-5" htmlFor="assigneeSelect">
                   Employee Name :{" "}
@@ -588,7 +563,7 @@ const PreviousWeeks = () => {
                     capitalize(selectedAssignee?.data?.last_name)}
                 </CLabel>
               </CCol>
-            </CRow>
+            </CRow> */}
 
             {/* {usersData.length > 0 && (
                 <div className="alert alert-info" role="alert">

@@ -400,8 +400,10 @@ const WbsBoard = () => {
   const [showClearBtn, setShowClearBtn] = useState(false);
   const [resetAssigneeSelectValue, setResetAssigneeSelectValue] = useState();
   function clearFilter() {
+    setSelectedProjects([]);
+    filter_wbs_project_wise(projects.filter((item) => item.value != "all"));
     setShowClearBtn(false);
-    populate_data(wbsList);
+    //  populate_data(wbsList);
     // getAssigneeList(wbsList);
     setResetAssigneeSelectValue(null);
   }

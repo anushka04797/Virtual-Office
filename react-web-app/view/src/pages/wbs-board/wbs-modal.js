@@ -253,6 +253,10 @@ const WbsModal = (props) => {
     return false;
   }
 
+  function handleUpdate(){
+    formWbsUpdate.handleSubmit
+  }
+
   return (
     <>
       <CModal
@@ -287,7 +291,9 @@ const WbsModal = (props) => {
                       className="custom-forminput-5"
                       onChange={formWbsUpdate.handleChange}
                       value={formWbsUpdate.values.title}
+                      
                     />
+                    
                     {formWbsUpdate.errors.title && (
                       <p
                         className="error"
@@ -454,6 +460,7 @@ const WbsModal = (props) => {
                         {props.data.status != 3 && props.data.status != 4 && (
                           <CButton
                             type="button"
+                             //onClick= {handleUpdate()}
                             onClick={formWbsUpdate.handleSubmit}
                             color="primary"
                           >
@@ -533,6 +540,7 @@ const WbsModal = (props) => {
                                 " ➤ " +
                                 Number(item.hours_today).toFixed(2) +
                                 " hr(s)"}
+                                <p>@ {item.date_updated} </p>
                             </li>
                           ))
                         : "No task has been done so far."}

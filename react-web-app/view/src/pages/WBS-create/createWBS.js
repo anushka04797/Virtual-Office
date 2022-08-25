@@ -133,7 +133,7 @@ const CreateNewWBS = () => {
   const selectProjectRef = useRef();
   const selectAssigneRef = useRef();
   const selectTaskTitleRef = useRef();
-
+  
   const [selectedTask, setSelectedTask] = useState(null);
   const [selectedSubTask, setSelectedSubTask] = useState({});
   const [selectedProjectEndDate, setSelectedProjectEndDate] = useState("");
@@ -183,7 +183,7 @@ const CreateNewWBS = () => {
       });
     });
 
-    sortBy(temp_array, "label");
+    temp_array=sortBy(temp_array, "label");
     temp_array.unshift({
       value: "All",
       label: "Select All",
@@ -322,6 +322,9 @@ const CreateNewWBS = () => {
     selectProjectRef.current.select.clearValue();
     selectAssigneRef.current.select.clearValue();
     selectTaskTitleRef.current.select.clearValue();
+    setSelectedProjectEndDate()
+    setSelectedProjectStartDate()
+    setSelectedTask(null)
     setAssigneeList([]);
   };
 
@@ -532,10 +535,14 @@ const CreateNewWBS = () => {
                         <CInput
                           id="title"
                           name="title"
+                          maxlength="20"
                           value={formCreateWbs.values.title}
                           onChange={formCreateWbs.handleChange}
                           className="custom-forminput-6"
                         ></CInput>
+                        <div className="float-right">
+                      {formCreateWbs.values.title.length}/20
+                    </div>
                         {formCreateWbs.touched.title &&
                           formCreateWbs.errors.title && (
                             <small style={{ color: "red" }}>
@@ -550,14 +557,14 @@ const CreateNewWBS = () => {
                         </CLabel>
                         {/* onChange={setWbsDetails} */}
                         <CTextarea
-                          maxlength="250"
+                          maxlength="120"
                           id="description"
                           name="description"
                           value={formCreateWbs.values.description}
                           onChange={formCreateWbs.handleChange}
                           className="custom-forminput-6"
                         ></CTextarea>
-                        { <div className="float-right">{(formCreateWbs.values.description).length}/250</div>}
+                        { <div className="float-right">{(formCreateWbs.values.description).length}/120</div>}
                       </div>
 
                       {/**Start date */}
@@ -575,6 +582,7 @@ const CreateNewWBS = () => {
                           value={formCreateWbs.values.start_date}
                           onChange={formCreateWbs.handleChange}
                           className="custom-forminput-6"
+                          
                         ></CInput>
                         {formCreateWbs.touched.start_date &&
                           formCreateWbs.errors.start_date && (

@@ -12,6 +12,7 @@ import {
   CSelect,
   CPopover,
 } from "@coreui/react";
+import { Tooltip } from "@mui/material";
 import { React, useState, useEffect } from "react";
 import "./createProject.css";
 import CreatableSelect from "react-select/creatable";
@@ -59,10 +60,11 @@ const CreateNewProject = () => {
   const [work_package_numbers, setWorkPackageNumbers] = useState([]);
   const [existing_sub_tasks, setExistingSubTasks] = useState([]);
   const [isWpInputdisabled, setIsWpInputdisabled] = useState(false);
-  const [selectedAssigneeExistingEP, setSelectedAssigneeExistingEP] = useState(0);
+  const [selectedAssigneeExistingEP, setSelectedAssigneeExistingEP] =
+    useState(0);
   const [total_working_days, setTotalWorkingDays] = useState(0);
   const [total_planned_hours, setTotalPlannedHours] = useState(0);
-  const [deslength, setdeslength]= useState()
+  const [deslength, setdeslength] = useState();
   //tdo list states and functions
 
   const new_tdo_list = useSelector((state) => sortBy(state.tdo.data, "label"));
@@ -145,6 +147,15 @@ const CreateNewProject = () => {
   //sub task list states and functions
   const [sub_task_list, setSubTaskList] = useState([]);
   const [task_title_list, setTaskTitleList] = useState(task_title_array);
+  const [isHovering, setIsHovering] = useState(false);
+
+  const handleMouseOver = () => {
+    setIsHovering(true);
+  };
+
+  const handleMouseOut = () => {
+    setIsHovering(false);
+  };
 
   function get_sub_tasks(tdo) {
     let temp = [];
@@ -186,9 +197,9 @@ const CreateNewProject = () => {
         planned_delivery_date: formCreateProject.values.planned_delivery_date,
         assignee: formCreateProject.values.assignees,
         pm: sessionStorage.getItem(USER_ID),
-        planned_hours: (formCreateProject.values.planned_hours).toFixed(2),
-        planned_value: (formCreateProject.values.planned_value).toFixed(2),
-        remaining_hours: (formCreateProject.values.planned_hours).toFixed(2),
+        planned_hours: formCreateProject.values.planned_hours.toFixed(2),
+        planned_value: formCreateProject.values.planned_value.toFixed(2),
+        remaining_hours: formCreateProject.values.planned_hours.toFixed(2),
       });
       // setWorkPackageNumber(newValue.work_package_number)
       setWorkPackageNumber(
@@ -225,9 +236,9 @@ const CreateNewProject = () => {
         planned_delivery_date: formCreateProject.values.planned_delivery_date,
         assignee: formCreateProject.values.assignees,
         pm: sessionStorage.getItem(USER_ID),
-        planned_hours: (formCreateProject.values.planned_hours),
-        planned_value: (formCreateProject.values.planned_value),
-        remaining_hours: (formCreateProject.values.planned_hours),
+        planned_hours: formCreateProject.values.planned_hours,
+        planned_value: formCreateProject.values.planned_value,
+        remaining_hours: formCreateProject.values.planned_hours,
       });
     } else if (actionMeta.action == "clear") {
       setSelectedTaskTitle(null);
@@ -256,9 +267,9 @@ const CreateNewProject = () => {
       planned_delivery_date: formCreateProject.values.planned_delivery_date,
       assignee: formCreateProject.values.assignees,
       pm: sessionStorage.getItem(USER_ID),
-      planned_hours: (formCreateProject.values.planned_hours).toFixed(2),
-      planned_value:( formCreateProject.values.planned_value).toFixed(2),
-      remaining_hours:( formCreateProject.values.planned_hours).toFixed(2),
+      planned_hours: formCreateProject.values.planned_hours.toFixed(2),
+      planned_value: formCreateProject.values.planned_value.toFixed(2),
+      remaining_hours: formCreateProject.values.planned_hours.toFixed(2),
     });
   };
 
@@ -325,18 +336,22 @@ const CreateNewProject = () => {
   };
 
   const validate_create_project_form = (values) => {
-    const errors = {}
+    const errors = {};
     //setdeslength(values.description.length)
     //console.log("length", (values.description).length)
-    if (!values.task_delivery_order) errors.task_delivery_order = "Task Delivery Order is required"
-    if (!values.sub_task) errors.sub_task = "Sub Task is required"
-    if (!values.work_package_number) errors.work_package_number = "Work Package Number is required"
-    if (!values.task_title) errors.task_title = "Task title is required"
-    if (!values.planned_delivery_date) errors.planned_delivery_date = "Invalid planned delivery date"
-    if (isDateBeforeToday(values.planned_delivery_date)) errors.planned_delivery_date = "Invalid planned delivery date"
+    if (!values.task_delivery_order)
+      errors.task_delivery_order = "Task Delivery Order is required";
+    if (!values.sub_task) errors.sub_task = "Sub Task is required";
+    if (!values.work_package_number)
+      errors.work_package_number = "Work Package Number is required";
+    if (!values.task_title) errors.task_title = "Task title is required";
+    if (!values.planned_delivery_date)
+      errors.planned_delivery_date = "Invalid planned delivery date";
+    if (isDateBeforeToday(values.planned_delivery_date))
+      errors.planned_delivery_date = "Invalid planned delivery date";
     // window.scrollTo(0, 0);
-    return errors
-  }
+    return errors;
+  };
 
   const reset_form = () => {
     formCreateProject.resetForm();
@@ -348,46 +363,48 @@ const CreateNewProject = () => {
     setSelectedAssignees(null);
   };
 
-  const create_project = (values,{ setSubmitting }) => {
-    setdeslength(values.description.length)
-    setSubmitting(true)
-    const formValues={
-        "task_delivery_order": values.task_delivery_order,
-        "tdo_details": values.tdo_details,
-        "sub_task": values.sub_task,
-        "description": values.description,
-        "work_package_number": values.work_package_number,
-        "task_title": values.task_title,
-        "estimated_person": values.estimated_person,
-        "start_date": values.start_date,
-        "planned_delivery_date": values.planned_delivery_date,
-        "assignee": values.assignee,
-        "pm": values.pm,
-        "planned_hours": values.planned_hours,
-        "planned_value": values.planned_value,
-        "remaining_hours": values.remaining_hours
-    }
+  const create_project = (values, { setSubmitting }) => {
+    setdeslength(values.description.length);
+    setSubmitting(true);
+    const formValues = {
+      task_delivery_order: values.task_delivery_order,
+      tdo_details: values.tdo_details,
+      sub_task: values.sub_task,
+      description: values.description,
+      work_package_number: values.work_package_number,
+      task_title: values.task_title,
+      estimated_person: values.estimated_person,
+      start_date: values.start_date,
+      planned_delivery_date: values.planned_delivery_date,
+      assignee: values.assignee,
+      pm: values.pm,
+      planned_hours: values.planned_hours,
+      planned_value: values.planned_value,
+      remaining_hours: values.remaining_hours,
+    };
     console.log("values", JSON.stringify(formValues));
-    API.post("project/create/", formValues).then((res) => {
-      // console.log(res)
-      setSubmitting(false)
-      if (res.status == 200 && res.data.success == "True") {
-        reset_form();
-        dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)));
-        dispatch(fetchProjectsThunk(sessionStorage.getItem(USER_ID)));
-        setSelectedAssignees([]);
-        swal("Project Created Successfully !", "", "success").then((e) => {
-          // if (e) {
-          //   window.location.reload()
-          // }
-        });
-      } else {
-        swal("Failed!", "Project Creation failed", "failed");
-      }
-    }).catch(err=>{
-      console.log(err)
-      setSubmitting(false)
-    });
+    API.post("project/create/", formValues)
+      .then((res) => {
+        // console.log(res)
+        setSubmitting(false);
+        if (res.status == 200 && res.data.success == "True") {
+          reset_form();
+          dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)));
+          dispatch(fetchProjectsThunk(sessionStorage.getItem(USER_ID)));
+          setSelectedAssignees([]);
+          swal("Project Created Successfully !", "", "success").then((e) => {
+            // if (e) {
+            //   window.location.reload()
+            // }
+          });
+        } else {
+          swal("Failed!", "Project Creation failed", "failed");
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setSubmitting(false);
+      });
   };
 
   const formCreateProject = useFormik({
@@ -426,7 +443,7 @@ const CreateNewProject = () => {
         "/"
     )
       .then((res) => {
-        setdeslength(formCreateProject.values.description.length)
+        setdeslength(formCreateProject.values.description.length);
         console.log("total_hrs", res.data);
         console.log("assignees", inputList);
         setTotalPlannedHours(parseFloat(res.data.total_hours));
@@ -444,8 +461,8 @@ const CreateNewProject = () => {
           assignee: formCreateProject.values.assignee,
           pm: sessionStorage.getItem(USER_ID),
           planned_hours: parseFloat(res.data.total_hours).toFixed(2),
-          planned_value: (formCreateProject.values.planned_value).toFixed(2),
-          remaining_hours: (formCreateProject.values.planned_hours).toFixed(2),
+          planned_value: formCreateProject.values.planned_value.toFixed(2),
+          remaining_hours: formCreateProject.values.planned_hours.toFixed(2),
         });
       })
       .catch((err) => {
@@ -529,7 +546,7 @@ const CreateNewProject = () => {
         console.log("total_working_days after loop: ", total_working_days);
       })
       .then(() => {
-        setdeslength(formCreateProject.values.description.length)
+        setdeslength(formCreateProject.values.description.length);
         formCreateProject.setValues({
           task_delivery_order: formCreateProject.values.task_delivery_order,
           tdo_details: formCreateProject.values.tdo_details,
@@ -537,16 +554,14 @@ const CreateNewProject = () => {
           description: formCreateProject.values.description,
           work_package_number: formCreateProject.values.work_package_number,
           task_title: formCreateProject.values.task_title,
-          estimated_person: (
-            calc(startDate, endDate) / total_working_days
-          ),
+          estimated_person: calc(startDate, endDate) / total_working_days,
           start_date: formCreateProject.values.start_date,
           planned_delivery_date: endDate,
           assignee: formCreateProject.values.assignee,
           pm: sessionStorage.getItem(USER_ID),
           planned_hours: (8 * calc(startDate, endDate)).toFixed(2),
-          planned_value: (formCreateProject.values.planned_value).toFixed(2),
-          remaining_hours: (formCreateProject.values.planned_hours.toFixed(2)),
+          planned_value: formCreateProject.values.planned_value.toFixed(2),
+          remaining_hours: formCreateProject.values.planned_hours.toFixed(2),
         });
         console.log(formCreateProject.values.estimated_person);
       });
@@ -614,11 +629,12 @@ const CreateNewProject = () => {
         planned_delivery_date: formCreateProject.values.planned_delivery_date,
         assignee: selectedAssignees,
         pm: sessionStorage.getItem(USER_ID),
-        planned_hours: (formCreateProject.values.planned_hours).toFixed(2),
-        planned_value:
-          (parseFloat(formCreateProject.values.planned_value) +
-          parseFloat(single_planned_value)).toFixed(2),
-        remaining_hours:( formCreateProject.values.planned_hours).toFixed(2),
+        planned_hours: formCreateProject.values.planned_hours.toFixed(2),
+        planned_value: (
+          parseFloat(formCreateProject.values.planned_value) +
+          parseFloat(single_planned_value)
+        ).toFixed(2),
+        remaining_hours: formCreateProject.values.planned_hours.toFixed(2),
       });
       const { name, value } = e.target;
       const list = [...inputList];
@@ -674,9 +690,8 @@ const CreateNewProject = () => {
       temp_total_planned_hours +=
         parseFloat(item.estimated_person) * total_planned_hours;
     });
-    setdeslength(formCreateProject.values.description.length)
+    setdeslength(formCreateProject.values.description.length);
     formCreateProject.setValues({
-     
       task_delivery_order: formCreateProject.values.task_delivery_order,
       tdo_details: formCreateProject.values.tdo_details,
       sub_task: formCreateProject.values.sub_task,
@@ -698,7 +713,7 @@ const CreateNewProject = () => {
 
   const handleAddClick = () => {
     console.log({ selectedAssigneesEP });
-    console.log({})
+    console.log({});
     if (
       selectedAssignees.data.slc_details?.hourly_rate != null &&
       selectedAssignees.data.slc_details?.hourly_rate != undefined
@@ -717,9 +732,7 @@ const CreateNewProject = () => {
             parseFloat(selectedAssignees.data.slc_details.hourly_rate) *
             total_planned_hours *
             selectedAssigneesEP,
-          planned_hours: parseFloat(
-            (total_planned_hours * selectedAssigneesEP)
-          ),
+          planned_hours: parseFloat(total_planned_hours * selectedAssigneesEP),
         },
       ]);
       // setRemaining_EP((remaining_EP - selectedAssigneesEP).toFixed(1))
@@ -918,7 +931,7 @@ const CreateNewProject = () => {
                           htmlFor="tdo"
                           aria-labelledby="tdo"
                         >
-                          Task Details 
+                          Task Details
                         </CLabel>
                         <CTextarea
                           //maxlength="500"
@@ -927,7 +940,7 @@ const CreateNewProject = () => {
                           value={formCreateProject.values.description}
                           onChange={handleSubtaskDetailsChange}
                           rows="6"
-                          placeholder="Enter details..."  
+                          placeholder="Enter details..."
                         ></CTextarea>
 
                         {/* <div className="float-right">{formCreateProject.values.description.length}/500</div> */}
@@ -975,7 +988,7 @@ const CreateNewProject = () => {
                           id="planned_delivery_date"
                           name="planned_delivery_date"
                           value={formCreateProject.values.planned_delivery_date}
-                          min ={formCreateProject.values.start_date}
+                          min={formCreateProject.values.start_date}
                           onChange={(event) =>
                             handlePlannedDeliveryDateChange(event)
                           }
@@ -1010,11 +1023,11 @@ const CreateNewProject = () => {
                                     }
                                     text2={
                                       "  → " +
-                                     item.estimated_person +
+                                      item.estimated_person +
                                       " EP → " +
-                                      (item.planned_value).toFixed(2) +
+                                      item.planned_value.toFixed(2) +
                                       " PV → " +
-                                      (item.planned_hours).toFixed(2) +
+                                      item.planned_hours.toFixed(2) +
                                       " Hr(s)"
                                     }
                                   />
@@ -1097,14 +1110,24 @@ const CreateNewProject = () => {
                               />
                             </div>
                             <div className="col-lg-3 mb-3">
-                              <CButton
-                                color="primary"
-                                className="ar-btn"
-                                onClick={handleAddClick}
-                                disabled={selectedAssigneesEP == 0 || formCreateProject.values.start_date=="" || formCreateProject.values.planned_delivery_date=="" }
-                              >
-                                + Add
-                              </CButton>
+                            
+                                <CButton  
+                                  color="primary"
+                                  //style={disabled ? { pointerEvents: "none" } : {}}
+                                  className="ar-btn"
+                                  onClick={handleAddClick}
+                                  disabled={
+                                    selectedAssigneesEP == 0 ||
+                                    formCreateProject.values.start_date == "" ||
+                                    formCreateProject.values
+                                      .planned_delivery_date == ""
+                                  } 
+                                 
+                                >
+                                  + Add
+                                </CButton>
+                              
+                              
                             </div>
                           </div>
                         </div>

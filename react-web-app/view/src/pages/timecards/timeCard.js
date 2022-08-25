@@ -174,6 +174,7 @@ const TimeCards = () => {
       // );
       let temp = [];
       Array.from(res.data.data).forEach((item, idx) => {
+        console.log("res", res.data.data)
         temp.push({ data: item });
       });
       let filteredData = temp;
@@ -568,6 +569,7 @@ const TimeCards = () => {
       }
     }
     satday = moment(satday).format("YYYY-MM-DD");
+    console.log("satday", satday)
     return satday;
   };
 
@@ -639,13 +641,13 @@ const TimeCards = () => {
             </CCol>
             <CRow className="mt-4">
               <CCol>
-                <CLabel className="custom-label-5" htmlFor="assigneeSelect">
+                {/* <CLabel className="custom-label-5" htmlFor="assigneeSelect">
                   Company :{" "}
                   {
                     selectedAssignee?.data?.slc_details?.slc?.department
                       ?.company?.name
                   }
-                </CLabel>
+                </CLabel> */}
               </CCol>
             </CRow>
             <CRow>

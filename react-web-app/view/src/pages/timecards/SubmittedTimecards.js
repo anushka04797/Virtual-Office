@@ -5,10 +5,13 @@ import {
   CDataTable,
   CLabel,
   CButton,
+  CInput,
 } from "@coreui/react";
+import uniqBy from "lodash/uniqBy";
 import CIcon from "@coreui/icons-react";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
+import sortBy from "lodash/sortBy";
 import { capitalize, exportPdfview } from "../../helper";
 import moment from "moment";
 import "./timeCards.css";
@@ -21,21 +24,25 @@ import * as FileSaver from "file-saver";
 import { saveAs } from "file-saver";
 import { useHistory } from "react-router-dom";
 import { API } from "../../Config";
-
-
+import Select from "react-select";
 
 const SubmittedTimecards = () => {
   const dispatch = useDispatch();
+  const [assignees, setAssignees] = useState([]);
+  const [selectedWeekend, setselectedWeekend] = useState();
+  const [totalSubmitted, settotalSubmitted] = useState();
+  const [pdfData, setPdfData]= useState([])
+
   let submitted = [];
   const profile_details = useSelector((state) => state.profile.data);
   const submitted_timecards = useSelector((state) => {
     let temp = [];
+
     Array.from(state.timecardList.user_weekly_submitted_timecards).forEach(
-      
       (item, idx) => {
         //console.log("weekly submitted", item)
         temp.push({
-          id: item.employee.id, 
+          id: item.employee.id,
           data: item.employee,
           Weekending: moment(item.week_end).format("ddd, MMMM DD, YYYY"),
           Name: item.employee.first_name + " " + item.employee.last_name,
@@ -55,13 +62,114 @@ const SubmittedTimecards = () => {
     );
 
     submitted = [...temp];
+    // console.log("submitted", temp);
     return temp;
   });
 
+  const [submittedTimecards, setsubmittedTimecards] = useState([]);
+
+  const weekendingList = useSelector((state) => {
+    let optionlist = [];
+    Array.from(state.timecardList.user_weekly_submitted_timecards).forEach(
+      (item, idx) => {
+        optionlist.push({
+          data: item,
+          label: moment(item.week_end).format("ddd, MMMM DD, YYYY"),
+          value: moment(item.week_end).format("ddd, MMMM DD, YYYY"),
+        });
+      }
+    );
+    let options = uniqBy(optionlist, "label");
+    return options;
+  });
+
+  const handleWeekendChange = (option, actionMeta) => {
+    setselectedWeekend(option);
+    let filteredtimecards = [];
+    if (actionMeta.action == "select-option") {
+      filteredtimecards = [];
+      console.log("select");
+      for (let i = 0; i < submitted_timecards.length; i++) {
+        if (option.value == submitted_timecards[i].Weekending) {
+          filteredtimecards.push(submitted_timecards[i]);
+        }
+      }
+    } else if (actionMeta.action == "clear") {
+      console.log("clear");
+      for (let i = 0; i < submitted_timecards.length; i++) {
+        filteredtimecards.push(submitted_timecards[i]);
+      }
+    }
+    console.log("filtered", filteredtimecards);
+    setsubmittedTimecards(filteredtimecards);
+    setPdfData(filteredtimecards)
+  };
+
+  const submittedAssignees = () => {
+    let temp = [];
+    for (let i = 0; i < submittedTimecards.length; i++) {
+      temp.push({
+        name: submittedTimecards[i].Name,
+      });
+    }
+    temp = uniqBy(temp, "name");
+    console.log("len", temp.length);
+    return temp.length;
+  };
+  let len = 0
+  const populate_data = () => {
+   
+    if (selectedWeekend == "undefined" || selectedWeekend == null) {
+      //console.log("len",(submitted_timecards).length)
+      //len = (submitted_timecards).length
+      //settotalSubmitted(submitted_timecards.length)
+      len = uniqBy(submitted_timecards, 'Name')
+      //console.log("uniqed ", len.length)
+      return submitted_timecards;
+    } else {
+      //console.log("len",(submittedTimecards).length)
+      //len = (submittedTimecards).length
+      //settotalSubmitted(submittedTimecards.length)
+      len = uniqBy(submittedTimecards, 'Name')
+      //console.log("uniqed ", len.length)
+      return submittedTimecards;
+    }
+    
+  };
+  // React.useEffect(() => {
+  //     //setsubmittedTimecards(submitted_timecards)
+  //     let temp=[]
+  //     if(submitted_timecards.length>0)
+  //     {
+  //       for(let i=0;i<submitted_timecards.length;i++)
+  //       {
+  //          temp.push(submitted_timecards[i])
+  //       }
+  //     }
+  //     setsubmittedTimecards(temp)
+  // }, [submitted_timecards])
+
   React.useEffect(() => {
     dispatch(fetchUserSubmittedTimecards());
+    API.get("auth/assignee/list/").then((res) => {
+      console.log("assignees", res.data.data);
+      let temp = [];
+      Array.from(res.data.data).forEach((item, idx) => {
+        if (item.first_name != "") {
+          temp.push({
+            value: item.id,
+            label: item.first_name + " " + item.last_name,
+            data: item,
+          });
+        }
+      });
+      console.log("all assignees", temp.length);
+      setAssignees(temp.length);
+    });
   }, []);
+
   const exportPDF = () => {
+    
     const pdfTitle =
       profile_details.first_name + "_" + profile_details.last_name;
     const unit = "pt";
@@ -84,7 +192,25 @@ const SubmittedTimecards = () => {
         "Submitted",
       ],
     ];
-    const uData = submitted.map((elt, idx) => [
+    let uData = []
+    if (selectedWeekend == "undefined" || selectedWeekend == null) {
+      setPdfData(submitted_timecards)
+      console.log("submitted tcs", submitted_timecards)
+     uData = submitted_timecards.map((elt, idx) => [
+        elt.Weekending,
+        elt.Name,
+        elt.Total,
+        elt.RHR,
+        elt.SIC,
+        elt.HOL,
+        elt.PB1,
+        elt.WFH,
+        elt.OTO,
+        elt.Submitted,
+        console.log("data", elt),
+      ]);
+    }else{
+   uData = pdfData.map((elt, idx) => [
       elt.Weekending,
       elt.Name,
       elt.Total,
@@ -97,6 +223,7 @@ const SubmittedTimecards = () => {
       elt.Submitted,
       console.log("data", elt),
     ]);
+  }
     let content = {
       startY: 145,
       head: headers,
@@ -119,10 +246,10 @@ const SubmittedTimecards = () => {
     doc.setFontSize(13);
     doc.text(245, 75, "Gulshan Branch");
     doc.setFontSize(11);
-    doc.text(42, 105, "Submitted Time Card");
+    doc.text(42, 105, "Submitted Time Cards");
     if (!has_permission("projects.add_projects")) {
       doc.text(42, 125, "Employee Name: " + pdfTitle);
-    } 
+    }
     doc.text(440, 360, "Total " + submitted.length + " Submitted");
     doc.autoTable(content);
     doc.save(pdfTitle + "_" + days + "_" + todayDate + "_" + ".pdf");
@@ -172,7 +299,7 @@ const SubmittedTimecards = () => {
       name: "Arial Black",
       family: 3,
 
-      size: 10,
+      size: 9,
     };
     sheet.getRow(8).height = 20;
     sheet.columns = [
@@ -188,25 +315,49 @@ const SubmittedTimecards = () => {
       { key: "Submitted", width: 20 },
     ];
     console.log("submitted", submitted);
-    for (let i = 0; i < submitted.length; i++) {
+    if (selectedWeekend == "undefined" || selectedWeekend == null) {
+      for (let i = 0; i < submitted_timecards.length; i++) {
+        sheet.addRow({
+          Weekending: submitted_timecards[i].Weekending,
+          Name: submitted_timecards[i].Name,
+          Total: submitted_timecards[i].Total,
+          RHR: submitted_timecards[i].RHR,
+          SIC: submitted_timecards[i].SIC,
+          HOL: submitted_timecards[i].HOL,
+          PB1: submitted_timecards[i].PB1,
+          WFH: submitted_timecards[i].WFH,
+          OTO: submitted_timecards[i].OTO,
+          Submitted: submitted_timecards[i].Submitted,
+        });
+      }
+      let row_num = submitted_timecards.length + 11;
+      let total = submitted_timecards.length;
+      if (total != 0) {
+        sheet.getRow(row_num).values = ["Total Submitted =  " + submitted_timecards.length];
+      }
+    }
+    else{
+
+    for (let i = 0; i < pdfData.length; i++) {
       sheet.addRow({
-        Weekending: submitted[i].Weekending,
-        Name: submitted[i].Name,
-        Total: submitted[i].Total,
-        RHR: submitted[i].RHR,
-        SIC: submitted[i].SIC,
-        HOL: submitted[i].HOL,
-        PB1: submitted[i].PB1,
-        WFH: submitted[i].WFH,
-        OTO: submitted[i].OTO,
-        Submitted: submitted[i].Submitted,
+        Weekending: pdfData[i].Weekending,
+        Name: pdfData[i].Name,
+        Total: pdfData[i].Total,
+        RHR: pdfData[i].RHR,
+        SIC: pdfData[i].SIC,
+        HOL: pdfData[i].HOL,
+        PB1: pdfData[i].PB1,
+        WFH: pdfData[i].WFH,
+        OTO: pdfData[i].OTO,
+        Submitted: pdfData[i].Submitted,
       });
     }
-    let row_num = submitted.length + 11;
-    let total = submitted_timecards.length;
+    let row_num = pdfData.length + 11;
+    let total = pdfData.length;
     if (total != 0) {
-      sheet.getRow(row_num).values = ["Total Submitted =  " + submitted.length];
+      sheet.getRow(row_num).values = ["Total Submitted =  " + pdfData.length];
     }
+  }
     const buffer = await workbook.xlsx.writeBuffer();
     const fileType = "application/octet-stream";
     const fileExtension = ".xlsx";
@@ -225,8 +376,9 @@ const SubmittedTimecards = () => {
     ];
     let days = weekday[day.getDay()];
     let todayDate = moment(day).format("DD-MM-YYYY");
-     
-    const fileName=pdfTitle + "_" + days + "_" + todayDate + "_" + fileExtension;
+
+    const fileName =
+      pdfTitle + "_" + days + "_" + todayDate + "_" + fileExtension;
     saveAs(blob, fileName);
   }
   const [startDate, setStartDate] = useState("");
@@ -262,23 +414,24 @@ const SubmittedTimecards = () => {
 
     setStartDate(moment(sdate).format("YYYY-MM-DD"));
     setEndDate(nextSatDay());
-    
+
     return {
       start: moment(sdate).format("YYYY-MM-DD"),
       end: nextSatDay(),
     };
   };
 
-  const assigneepdf = (empid, empName) =>{
-   console.log("id : ", empid, "Name ", empName)
-   const { start, end } = dateRange();
+  const assigneepdf = (empid, empName) => {
+    console.log("id : ", empid, "Name ", empName);
+    const { start, end } = dateRange();
 
-   API.get("wbs/user/time-card/list/" + empid + "/").then((res) => {
-    //console.log("assignee tc", res.data);
-    let temp = [];
+    API.get("wbs/user/time-card/list/" + empid + "/").then((res) => {
+      //console.log("assignee tc", res.data);
+      let temp = [];
       Array.from(res.data.data).forEach((item, idx) => {
         temp.push({ data: item });
       });
+      console.log("temp", temp)
       let filteredData = temp;
       filteredData = temp.filter(
         (p) => p.data.date_updated >= start && p.data.date_updated <= end
@@ -288,30 +441,23 @@ const SubmittedTimecards = () => {
 
       let hours_total = 0;
       let total_not_submitted = 0;
-      let submittedtc =[]
+      let submittedtc = [];
 
       for (let index = 0; index < filteredData.length; index++) {
         if (filteredData[index].data.submitted == false) {
           total_not_submitted++;
         }
-        if(filteredData[index].data.submitted == true)
-        {
+        if (filteredData[index].data.submitted == true) {
           //submittedtc[index] = filteredData[index]
-          submittedtc.push(filteredData[index])
-          hours_total += parseFloat(filteredData[index].data.hours_today)
+          submittedtc.push(filteredData[index]);
+          hours_total += parseFloat(filteredData[index].data.hours_today);
         }
-        // const element = notsubmitted[index];
-        //  hours_total += parseFloat(element.data.hours_today);
-
       }
-      console.log("submittedtcs", submittedtc)
-      console.log("total hours", hours_total)
-      exportPdfview(submittedtc, empName, end, hours_total, start )
-
-      
-      
-   })
-  }
+      console.log("submittedtcs", submittedtc);
+      console.log("total hours", hours_total);
+      exportPdfview(submittedtc, empName, end, hours_total, start);
+    });
+  };
   return (
     <>
       <CContainer>
@@ -339,34 +485,52 @@ const SubmittedTimecards = () => {
                 <CIcon name="cil-spreadsheet" className="mr-2" />
                 Excel
               </CButton>
-              {/* <CButton className="file-format-download">Print</CButton> */}
             </div>
           </CCol>
         </CRow>
-        <CRow className="mt-4">
-          <CCol>
-            <CLabel className="custom-label-5" htmlFor="assigneeSelect">
+        <CRow >
+          <CCol xl="3" lg="3" md="6">
+            {/* <CLabel className="custom-label-5" htmlFor="assigneeSelect">
               Company :{" "}
               {profile_details.slc_details?.slc?.department?.company?.name}
-            </CLabel>
+            </CLabel> */}
+            <div>
+              <CLabel className="custom-label-5" htmlFor="assigneeSelectPM">
+                Select Weekending
+              </CLabel>
+              <Select
+                closeMenuOnSelect={true}
+                placeholder={""}
+                id="assigneeSelectPM"
+                minHeight="35px"
+                isClearable={true}
+                isMulti={false}
+                onChange={handleWeekendChange}
+                classNamePrefix="custom-forminput-6"
+                options={weekendingList}
+                value={selectedWeekend}
+                //styles={colourStyles}
+              />
+            </div>
           </CCol>
         </CRow>
         <CRow>
           {!has_permission("projects.add_projects") && (
             <CCol>
-              <CLabel className="custom-label-5" htmlFor="assigneeSelect">
+              {/* <CLabel className="custom-label-5" htmlFor="assigneeSelect">
                 Employee Name :{" "}
                 {capitalize(profile_details.first_name) +
                   " " +
                   capitalize(profile_details.last_name)}
-              </CLabel>
+              </CLabel> */}
             </CCol>
           )}
         </CRow>
         <CRow className="mt-5">
           <CCol>
             <CDataTable
-              items={submitted_timecards}
+              //items={submittedTimecards.length==0? submitted_timecards:submittedTimecards}
+              items={populate_data()}
               fields={[
                 {
                   key: "Weekending",
@@ -413,7 +577,9 @@ const SubmittedTimecards = () => {
                 Name: (item) => (
                   <td>
                     <a
-                      onClick={() => {assigneepdf(item["id"], item["Name"])}}
+                      onClick={() => {
+                        assigneepdf(item["id"], item["Name"]);
+                      }}
                       size="sm"
                       type="button"
                       color="primary"
@@ -426,17 +592,37 @@ const SubmittedTimecards = () => {
             />
             <div class="alert alert-info" role="alert">
               <CRow>
-                <CCol md="5"></CCol>
-                <CCol md="3"></CCol>
-                <CCol md="4">
+                <CCol md="9"></CCol>
+                {has_permission("projects.add_projects") && (
+                <CCol md="3">
                   {
                     <small>
                       {"   "}
-                      Total <b>&nbsp;{submitted_timecards.length}&nbsp;</b>{" "}
-                      Submitted
+                      Total{" "}
+                      <b>
+                        &nbsp;{uniqBy(populate_data(), 'Name').length} / {assignees} &nbsp;
+                      </b>
+                      {/* Total <b>&nbsp;{submittedAssignees()}{" "} / {assignees} &nbsp;</b> */}
+                      Employees Submitted
                     </small>
                   }
                 </CCol>
+                )}
+                {!has_permission("projects.add_projects") && (
+                <CCol md="3">
+                  {
+                    <small>
+                      {"   "}
+                      Total{" "}
+                      <b>
+                      &nbsp;{populate_data().length}{" "} &nbsp;
+                      </b>
+                      {/* Total <b>&nbsp;{submittedAssignees()}{" "} / {assignees} &nbsp;</b> */}
+                    Submitted
+                    </small>
+                  }
+                </CCol>
+                )}
               </CRow>
             </div>
           </CCol>
