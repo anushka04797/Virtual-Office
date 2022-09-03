@@ -64,10 +64,11 @@ const PreviousWeeks = () => {
   const [lastweekEnd, setlastWeekEnd] = useState()
 
   const getTimeCards = (values) => {
-    console.log("working", values);
+
     // setStartDate(lastweekStart)
     // setEndDate(lastweekEnd)
     setStartDate(values.startDate);
+    console.log("start ", startDate)
     setEndDate(values.todate);
     var temp_hrs = 0;
     // const section = document.querySelector("#tableRef");
@@ -276,12 +277,17 @@ const PreviousWeeks = () => {
   }, []);
   const handleAssigneeChange = (option) => {
     setSelectedAssignee(option);
+   
     editForm.setValues({
       assigneeSelectPM: option.value,
-      startDate: "",
-      todate: "",
+      startDate: editForm.values.startDate,
+      todate: editForm.values.todate,
     });
+    
     setPdfTitle(option.label);
+    let values = editForm.values
+    
+    getTimeCards(values)
   };
   const validateEditForm = (values) => {
     const errors = {};
@@ -377,6 +383,10 @@ const PreviousWeeks = () => {
     satday = moment(satday).format("YYYY-MM-DD");
     return satday;
   };
+  React.useEffect(()=>{
+   getTimeCards(editForm.values)
+   console.log("edit", editForm.values)
+  }, [editForm.values])
   React.useEffect(() => {
     dateRange();
     nextSatDay();
@@ -396,13 +406,14 @@ const PreviousWeeks = () => {
   },[lastweekEnd])
 
   const onToDateChange = (event) => {
+    console.log("to date change")
     editForm.handleChange(event);
     let values = editForm.values;
     console.log("values for get tc", values)
-    values["todate"]=lastweekEnd
-    //values["todate"] = event.target.value;
+    //values["todate"]=lastweekEnd
+    values["todate"] = event.target.value;
+    //values["startDate"] = event.target.value;
     console.log("to date format", event.target.value)
-    console.log("date format", lastweekEnd)
     getTimeCards(values);
   };
 

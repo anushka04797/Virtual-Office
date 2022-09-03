@@ -265,9 +265,19 @@ const NoWbs = () => {
 
   React.useEffect(() => {
     API.get("project/assignees-with-no-wbs/").then((res) => {
+      let temp = [];
       console.log("api response", res.data.data);
-      setNotStartedWBS(res.data.data);
-      populateOption(res.data.data);
+      for(let i =0;i<res.data.data.length;i++)
+      {
+        if(res.data.data[i].assignees.length != 0 )
+        {
+          console.log("length", res.data.data[i].assignees.length)
+          temp.push(res.data.data[i])
+        }
+      }
+      console.log("temp", temp)
+      setNotStartedWBS(temp);
+      populateOption(temp);
     });
 
     if (projects.length > 0 && fetchproject.length == 0) {
@@ -346,11 +356,11 @@ const NoWbs = () => {
                           )} */}
                       </span>{" "}
                     </h5>
-                    <h5 className="card-details1">
+                    {/* <h5 className="card-details1">
                       <span className="p-header-3">
                         Total Created WBS : {item.wbs}
                       </span>{" "}
-                    </h5>
+                    </h5> */}
                     <h5 className="card-details1">
                       <span className="p-header-4">
                         Assignees with No WBS : {item.nowbspeople}

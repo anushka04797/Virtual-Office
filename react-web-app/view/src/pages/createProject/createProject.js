@@ -60,8 +60,7 @@ const CreateNewProject = () => {
   const [work_package_numbers, setWorkPackageNumbers] = useState([]);
   const [existing_sub_tasks, setExistingSubTasks] = useState([]);
   const [isWpInputdisabled, setIsWpInputdisabled] = useState(false);
-  const [selectedAssigneeExistingEP, setSelectedAssigneeExistingEP] =
-    useState(0);
+  const [selectedAssigneeExistingEP, setSelectedAssigneeExistingEP] = useState(0);
   const [total_working_days, setTotalWorkingDays] = useState(0);
   const [total_planned_hours, setTotalPlannedHours] = useState(0);
   const [deslength, setdeslength] = useState();

@@ -52,7 +52,10 @@ const SubmittedTimecards = () => {
           HOL: item.HOL == null ? "-" : item.HOL,
           WFH: item.WFH == null ? "-" : item.WFH,
           OTO: item.OTO == null ? "-" : item.OTO,
+          VAC: item.VAC == null? "-" : item.VAC,
+          COM: item.COM == null? "-" : item.COM,
           PB1: item["PB1"] == null ? "-" : item["PB1"],
+          PB2: item["PB2"] == null ? "-" : item["PB2"],
           Submitted:
             moment(item.submitted_at).format("ddd, MMMM DD, YYYY") +
             " at " +
@@ -187,8 +190,11 @@ const SubmittedTimecards = () => {
         "SIC",
         "HOL",
         "PB1",
+        "PB2",
         "WFH",
         "OTO",
+        "VAC",
+        "COM",
         "Submitted",
       ],
     ];
@@ -204,8 +210,11 @@ const SubmittedTimecards = () => {
         elt.SIC,
         elt.HOL,
         elt.PB1,
+        elt.PB2,
         elt.WFH,
         elt.OTO,
+        elt.VAC,
+        elt.COM,
         elt.Submitted,
         console.log("data", elt),
       ]);
@@ -218,8 +227,11 @@ const SubmittedTimecards = () => {
       elt.SIC,
       elt.HOL,
       elt.PB1,
+      elt.PB2,
       elt.WFH,
       elt.OTO,
+      elt.VAC,
+      elt.COM,
       elt.Submitted,
       console.log("data", elt),
     ]);
@@ -291,8 +303,11 @@ const SubmittedTimecards = () => {
       "SIC",
       "HOL",
       "PB1",
+      "PB2",
       "WFH",
       "OTO",
+      "VAC",
+      "COM",
       "Submitted",
     ];
     sheet.getRow(8).font = {
@@ -305,13 +320,17 @@ const SubmittedTimecards = () => {
     sheet.columns = [
       { key: "Weekending", width: 20 },
       { key: "Name", width: 25 },
-      { key: "Total", width: 10 },
+      { key: "Total",width: 10 },
       { key: "RHR", width: 10 },
       { key: "SIC", width: 10 },
       { key: "HOL", width: 10 },
       { key: "PB1", width: 10 },
+      { key: "PB2", width: 10 },
       { key: "WFH", width: 10 },
       { key: "OTO", width: 10 },
+      { key: "VAC", width: 10 },
+      { key: "COM", width: 10 },
+
       { key: "Submitted", width: 20 },
     ];
     console.log("submitted", submitted);
@@ -325,8 +344,11 @@ const SubmittedTimecards = () => {
           SIC: submitted_timecards[i].SIC,
           HOL: submitted_timecards[i].HOL,
           PB1: submitted_timecards[i].PB1,
+          PB1: submitted_timecards[i].PB2,
           WFH: submitted_timecards[i].WFH,
           OTO: submitted_timecards[i].OTO,
+          VAC: submitted_timecards[i].VAC,
+          COM: submitted_timecards[i].COM,
           Submitted: submitted_timecards[i].Submitted,
         });
       }
@@ -347,8 +369,11 @@ const SubmittedTimecards = () => {
         SIC: pdfData[i].SIC,
         HOL: pdfData[i].HOL,
         PB1: pdfData[i].PB1,
+        PB2: pdfData[i].PB2,
         WFH: pdfData[i].WFH,
         OTO: pdfData[i].OTO,
+        VAC: pdfData[i].VAC,
+        COM: pdfData[i].COM,
         Submitted: pdfData[i].Submitted,
       });
     }
@@ -421,9 +446,19 @@ const SubmittedTimecards = () => {
     };
   };
 
-  const assigneepdf = (empid, empName) => {
-    console.log("id : ", empid, "Name ", empName);
-    const { start, end } = dateRange();
+  const assigneepdf = (item) => {
+    //console.log("id : ", empid, "Name ", empName);
+    //console.log("item", item.Weekending )
+    let end= moment(item.Weekending).format("YYYY-MM-DD")
+    
+    let start = moment(item.Weekending).subtract(6, "day").toDate();
+    start=  moment(start).format("YYYY-MM-DD")
+    
+    
+    // const { start, end } = dateRange();
+    // console.log("start end ", start, end)
+    let empid = item.id
+    let empName=item.Name
 
     API.get("wbs/user/time-card/list/" + empid + "/").then((res) => {
       //console.log("assignee tc", res.data);
@@ -556,11 +591,23 @@ const SubmittedTimecards = () => {
                   sorter: false,
                 },
                 {
+                  key: "PB2",
+                  sorter: false,
+                },
+                {
                   key: "WFH",
                   sorter: false,
                 },
                 {
                   key: "OTO",
+                  sorter: false,
+                },
+                {
+                  key: "VAC",
+                  sorter: false,
+                },
+                {
+                  key: "COM",
                   sorter: false,
                 },
                 {
@@ -578,7 +625,8 @@ const SubmittedTimecards = () => {
                   <td>
                     <a
                       onClick={() => {
-                        assigneepdf(item["id"], item["Name"]);
+                        assigneepdf(item);
+                        //assigneepdf(item["id"], item["Name"]);
                       }}
                       size="sm"
                       type="button"

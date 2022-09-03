@@ -1,9 +1,6 @@
+
 import React, { useState, useEffect } from "react";
-import {
-  fetchProjectsForPMThunk,
-  fetchProjectsThunk,
-} from "../../store/slices/ProjectsSlice";
-import "../ongoing-project-details/ongoingProjectDetails.css";
+import LinearWithValueLabel from "../../components/linear-progress-bar/linear-progress-bar";
 import {
   CTooltip,
   CCol,
@@ -21,7 +18,6 @@ import {
   CInput,
   CModalTitle,
 } from "@coreui/react";
-import uniqBy from "lodash/uniqBy";
 import GradeIcon from "@material-ui/icons/Grade";
 import IconButton from "@material-ui/core/IconButton";
 import CIcon from "@coreui/icons-react";
@@ -41,13 +37,17 @@ import {
   AccordionItemPanel,
 } from "react-accessible-accordion";
 import "react-accessible-accordion/dist/fancy-example.css";
-import LinearWithValueLabel from "../../components/linear-progress-bar/linear-progress-bar";
-import "./myProjects.css";
+import {
+    fetchProjectsForPMThunk,
+    fetchProjectsThunk,
+  } from "../../store/slices/ProjectsSlice";
+  import "../ongoing-project-details/ongoingProjectDetails.css";
+
+import "./timeExtention.css";
 import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
 import capitalize from "@material-ui/utils/capitalize";
-import CustomSearch from "../../components/CustomSearch/CustomSearch";
-import SearchResult from "./inc/SearchResult";
+
 import { createSelector } from "reselect";
 
 const filter_pm_projects = createSelector(
@@ -114,7 +114,7 @@ const MyProjects = () => {
       data: {},
     });
     console.log("options", optionarray);
-    setalltdos(uniqBy(optionarray, 'label'))
+    setalltdos(optionarray)
     details=[...optionarray]
     setProjectDetails(details.shift())
 
@@ -469,12 +469,12 @@ const MyProjects = () => {
 
   return (
     <>
-      <SearchResult
+      {/* <SearchResult
         open={searchResultShow}
         handleClose={() => setSearchResultShow(false)}
         searchText={searchText}
         result={result}
-      />
+      /> */}
       {/* <DraggableSearchResultTab open={open} handleClose={()=>setOpen(false)} searchText={searchText} result={result}/> */}
       {/* <MatFullScreenSearchResult open={open} handleClose={()=>setOpen(false)}/> */}
       {/* <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" /> */}
@@ -686,7 +686,7 @@ const MyProjects = () => {
         <div className="row">
           <div className="col-md-10 col-lg-10 col-sm-12 col-xs-12 mt-1 offset-md-1 offset-lg-1">
             <CRow className="dash-header justfy-content-between">
-              <CCol lg="7">My Projects({Array.from(projectDetails).length})</CCol>
+              <CCol lg="7">Needs Date Extention({Array.from(projectDetails).length})</CCol>
               {/* <CCol lg="2">
                 <CustomSearch search={search} />
               </CCol> */}
@@ -731,11 +731,11 @@ const MyProjects = () => {
                             className="fav-button"
                           />
                         </IconButton>
-                        {String(
+                        {/* {String(
                           project.project.task_delivery_order.title
                         ).toUpperCase() +
-                          " / " +
-                          String(project.project.sub_task).toUpperCase()}
+                          " / " + */}
+                          {String(project.project.sub_task).toUpperCase()}
                         {/**action buttons */}
                         <span className="fix-action-btn-alignment">
                           <CButton
@@ -751,9 +751,9 @@ const MyProjects = () => {
                             }}
                           >
                             <CIcon name="cil-list-rich" className="mr-1" />
-                            View Details
+                            Extend Planned Delivery Date 
                           </CButton>
-                          <CButton
+                          {/* <CButton
                             type="button"
                             onClick={() => {
                               mark_project_completed(
@@ -764,7 +764,7 @@ const MyProjects = () => {
                           >
                             <CIcon name="cil-check-alt" className="mr-1" />
                             Mark as Completed
-                          </CButton>
+                          </CButton> */}
                         </span>
                       </AccordionItemButton>
                     </AccordionItemHeading>

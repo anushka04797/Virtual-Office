@@ -39,6 +39,7 @@ import LinearWithValueLabel from "../../components/linear-progress-bar/linear-pr
 import "./myProjectDetails.css";
 import AssignedProjectsPopover from "./inc/AssignedProjectsPopover";
 import axios from "axios";
+import CreatableSelect from "react-select/creatable";
 
 const MyProjectsDetailsView = () => {
   const { work_package_number } = useParams();
@@ -62,6 +63,45 @@ const MyProjectsDetailsView = () => {
   const [total_planned_hours, setTotalPlannedHours] = useState(0);
   const [total_ph, setTotalPH] = useState(0);
   const [length, setlength] = useState();
+  const [selectedTaskTitle,setSelectedTaskTitle] = useState()
+  
+
+  let task_title_array = [
+    {
+      value: "Deployment",
+      label: "Deployment",
+    },
+    {
+      value: "Hardware Design & Development",
+      label: "Hardware Design & Development",
+    },
+    {
+      value: "Information Management",
+      label: "Information Management",
+    },
+    {
+      value: "Integration",
+      label: "Integration",
+    },
+    {
+      value: "Logistics",
+      label: "Logistics",
+    },
+    {
+      value: "Program Management",
+      label: "Program Management",
+    },
+    {
+      value: "Software Design & Development",
+      label: "Software Design & Development",
+    },
+    {
+      value: "Test & Verification",
+      label: "Test & Verification",
+    },
+  ];
+
+  const [task_title_list, setTaskTitleList] = useState(task_title_array);
 
   const radioHandler = (status, titleStatus) => {
     setStatus(status);
@@ -662,6 +702,11 @@ const MyProjectsDetailsView = () => {
     //editForm.handleChange
     editForm.setFieldValue("description", editForm.values.description);
   };
+  const handleTaskTitleChange = (event) => {
+    editForm.handleChange
+    setSelectedTaskTitle(event)
+
+  }
   return (
     <>
       {project != undefined && (
@@ -770,11 +815,24 @@ const MyProjectsDetailsView = () => {
                       <CInput
                         id="task_title"
                         name="task_title"
+                        //options={task_title_list}
                         value={editForm.values.task_title}
                         onChange={editForm.handleChange}
                         type="text"
                         className="custom-forminput-6"
                       />
+                       {/* <CreatableSelect
+                        id="task_title"
+                        name="task_title"
+                        closeMenuOnSelect={true}
+                        isClearable={false}
+                        value={selectedTaskTitle}
+                        options={task_title_list}
+                        onChange={(event)=> handleTaskTitleChange(event)}
+                        type="text"
+                        className="custom-forminput-6"
+                        isMulti = {false}
+                      /> */}
                       {/**validation */}
                       {editForm.errors.task_title &&
                         editForm.touched.task_title && (

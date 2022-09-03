@@ -46,6 +46,7 @@ const AddTimecardItms = (props) => {
     Array.from(state.worktypes.data).forEach((item,idx)=>{
       temp.push({label:item.title,value:item.title,description:item.description,data:item})
     })
+    console.log("worktype", temp)
     return temp
   })
   const dispatch = useDispatch()

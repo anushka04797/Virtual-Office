@@ -13,7 +13,7 @@ export default function AssignedProjectsPopover(props) {
       
       let temp = []
       Array.from(res.data.data).forEach((item, idx) => {
-        console.log(idx, item)
+        //console.log(idx, item)
         temp.push(item.sub_task)
       })
       setProjects(temp)

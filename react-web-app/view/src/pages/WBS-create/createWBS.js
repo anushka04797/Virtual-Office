@@ -636,6 +636,7 @@ const CreateNewWBS = () => {
                         <WBSFileUpload files={files} setFiles={setDocFiles} />
                       </div> */}
                       {/**submit buttons */}
+                      <CCol>
                       <div className="col-md-12">
                         {is_form_submitting() == true ? (
                           <LinearProgress />
@@ -658,6 +659,7 @@ const CreateNewWBS = () => {
                           </div>
                         )}
                       </div>
+                      </CCol>
                     </CRow>
                   </CForm>
                 </CContainer>
