@@ -317,6 +317,11 @@ const MyProjectsDetailsView = () => {
         } else {
           console.log("project", res.data);
           if (res.data.data.subtasks.length > 0) {
+            console.log("res", res.data.data)
+            let temp= [];
+            temp = sortBy(res.data.data.subtasks, 'planned_delivery_date')
+            res.data.data.subtasks = temp
+            console.log("sorted", res.data.data)
             setProject(res.data.data);
             setTdo(res.data.data.project.task_delivery_order.title);
             // editForm.setFieldValue('assignee', res.data.assignee)
@@ -820,6 +825,7 @@ const MyProjectsDetailsView = () => {
                         onChange={editForm.handleChange}
                         type="text"
                         className="custom-forminput-6"
+                        readOnly
                       />
                        {/* <CreatableSelect
                         id="task_title"
@@ -1225,7 +1231,9 @@ const MyProjectsDetailsView = () => {
           {/**Details card */}
           <div className="row">
             <div className="col-md-11 col-sm-12 col-xs-12 mt-1 mb-2">
+             
               {Array.from(project.subtasks).map((subtask, idx) => (
+
                 <CCard key={idx} className="card-ongoing-project">
                   <CCardBody className="details-project-body">
                     {/*task percentage portion */}

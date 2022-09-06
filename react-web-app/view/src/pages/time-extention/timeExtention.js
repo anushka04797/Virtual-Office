@@ -18,6 +18,7 @@ import {
   CInput,
   CModalTitle,
 } from "@coreui/react";
+import uniqBy from "lodash/uniqBy";
 import GradeIcon from "@material-ui/icons/Grade";
 import IconButton from "@material-ui/core/IconButton";
 import CIcon from "@coreui/icons-react";
@@ -114,7 +115,7 @@ const MyProjects = () => {
       data: {},
     });
     console.log("options", optionarray);
-    setalltdos(optionarray)
+    setalltdos(uniqBy(optionarray, 'label'))
     details=[...optionarray]
     setProjectDetails(details.shift())
 
@@ -136,16 +137,45 @@ const MyProjects = () => {
       }
     });
   };
+  const dateOver = (endDate) => {
+    let today = new Date();
+    const moment = require("moment");
+    let daysleft = moment(endDate).diff(moment(today), "days");
+    console.log("end date", endDate);
+    console.log("days left ", daysleft + 1);
+    if (daysleft + 1 <= 0) {
+      return false;
+    }
+    return true;
+  };
   // const [filteredProjects, setfilteredProjects] = useState()
   const projects = useSelector((state) => {
     let temp = [];
+    let length = [];
+    let temp1= [];
+    let temp2=[];
     Array.from(state.projects.filtered_pm_projects).forEach((item, idx) => {
       if (item.project.status == 0) {
+        //console.log("length", item.subtasks.length)
+        let l = item.subtasks.length
+        for(let i=0;i<l;i++)
+        {
+          let itm = item.subtasks[i].planned_delivery_date
+          if(dateOver(itm)==false)
+          {
+            console.log("itm", itm)
+            temp1.push(item)
+            break
+          }
+         
+        }
         temp.push(item);
       }
     });
     console.log('pppp', temp)
-    return temp;
+    console.log("temp1", temp1)
+    console.log("temp2", temp2)
+    return temp1;
   });
   // const filtered_pm_projects = useSelector((state) =>
   //   filter_pm_projects(state, selectedTdo)
@@ -214,7 +244,7 @@ const MyProjects = () => {
     }
   };
 
-  
+ 
   const [show_sub_task_details, setShowSubTaskDetails] = useState(false);
   const [selectedSubTask, setSelectedSubTask] = useState();
   useEffect(() => {
@@ -360,7 +390,7 @@ const MyProjects = () => {
   const fileType =
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
   const fileExtension = ".xlsx";
-  const fileName = "PM's project List";
+  const fileName = "Needs Date Extention";
   const xlData = [];
   const exportToCSV = () => {
     for (let i = 0; i < projects.length; i++) {
@@ -751,7 +781,7 @@ const MyProjects = () => {
                             }}
                           >
                             <CIcon name="cil-list-rich" className="mr-1" />
-                            Extend Planned Delivery Date 
+                            View Details and Edit
                           </CButton>
                           {/* <CButton
                             type="button"
