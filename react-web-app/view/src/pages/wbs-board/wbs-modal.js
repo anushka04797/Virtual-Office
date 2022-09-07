@@ -254,7 +254,7 @@ const WbsModal = (props) => {
   }
 
   function handleUpdate(){
-    formWbsUpdate.handleSubmit
+    formWbsUpdate.handleSubmit()
   }
 
   return (

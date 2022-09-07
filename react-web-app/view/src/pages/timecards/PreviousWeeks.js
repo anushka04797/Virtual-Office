@@ -7,13 +7,6 @@ import {
   CInput,
   CButton,
   CDataTable,
-  CBadge,
-  CModal,
-  CModalBody,
-  CModalHeader,
-  CModalFooter,
-  CModalTitle,
-  CTextarea,
 } from "@coreui/react";
 
 import React, { useState, useEffect } from "react";
@@ -26,10 +19,7 @@ import { has_permission } from "../../helper";
 import { useFormik } from "formik";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
-import * as FileSaver from "file-saver";
-import { saveAs } from "file-saver";
-import * as XLSX from "xlsx";
-import * as fs from "fs";
+
 import ExcelJS from "exceljs/dist/es5/exceljs.browser";
 import sortBy from "lodash/sortBy";
 import CIcon from "@coreui/icons-react";
@@ -37,8 +27,7 @@ import moment from "moment";
 import ReactDOM from "react-dom"; // you used 'react-dom' as 'ReactDOM'
 import swal from "sweetalert";
 import { useHistory, useLocation } from "react-router-dom";
-import AddTimecardItms from "./addTimecardItem";
-import EditTimeCard from "./Edit";
+
 import { exportxl } from "../../helper";
 import { exportPdf } from "../../helper";
 
@@ -48,223 +37,64 @@ const PreviousWeeks = () => {
   const location = useLocation();
   const [usersData, setUsersData] = useState([]);
   const [pdfData, setPdfData] = useState([]);
-  const [assignee, setAssigneeValue] = useState();
+  
   const [selectedAssignee, setSelectedAssignee] = useState();
   const [pdfTitle, setPdfTitle] = useState();
   const [assigneeList, setAssigneeList] = useState([]);
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [startDate, setStartDate] = useState(""); // timecard list show start date
+  const [endDate, setEndDate] = useState(""); // timecard list show end date
   const [totalHrs, setTotalHrs] = useState(0);
   const [modalData, setModalData] = useState("");
-  const [modal, setModal] = useState();
-  const [actualWorkDone, setActualWorkDone] = useState();
-  const [hour, sethour] = useState();
-  const [row, setRow] = useState();
   const [lastweekStart, setlastWeekStart]= useState()
   const [lastweekEnd, setlastWeekEnd] = useState()
 
-  const getTimeCards = (values) => {
-
-    // setStartDate(lastweekStart)
-    // setEndDate(lastweekEnd)
-    setStartDate(values.startDate);
-    console.log("start ", startDate)
-    setEndDate(values.todate);
-    var temp_hrs = 0;
-    // const section = document.querySelector("#tableRef");
-    // section.scrollIntoView({ behavior: "smooth", block: "start" });
-    if (
-      has_permission("projects.add_projects") &&
-      has_permission("wbs.change_timecard") &&
-      has_permission("wbs.add_timecard")
-    ) {
-      console.log("values from timecards (if pm)", values);
-      API.get("wbs/user/time-card/list/" + values.assigneeSelectPM + "/").then(
-        (res) => {
-          console.log("user tc list", res.data.data);
-          let temp = [];
-          Array.from(res.data.data).forEach((item, idx) => {
-            temp.push({ data: item });
-          });
-
-          let filteredData = [];
-          filteredData = temp.filter(
-            (p) =>
-              p.data.date_updated >= values.startDate &&
-              p.data.date_updated <= values.todate
-          );
-          // console.log('timecard for id', filteredData)
-          setPdfData(filteredData);
-          var tableData = [];
-          for (let index = 0; index < filteredData.length; index++) {
-            const element = filteredData[index];
-            temp_hrs += parseFloat(element.data.hours_today);
-            //console.log("hours", temp_hrs);
-            tableData.push({
-              WP: element.data.project?.work_package_number
-                ? element.data.project.work_package_number
-                : "-",
-              "Project Name": element.data.project?.sub_task
-                ? element.data.project.sub_task
-                : "-",
-              "Task Title": element.data.project.task_title
-                ? element.data.project.task_title
-                : "-",
-              Description: element.data.actual_work_done
-                ? element.data.actual_work_done
-                : "-",
-              "Hour(s)": element.data.hours_today,
-              Type: element.data.time_type,
-              "Date Created": element.data.date_created,
-              data: element.data,
-            });
-          }
-          console.log("hours", temp_hrs);
-          setTotalHrs(temp_hrs);
-          setUsersData(tableData);
-        }
-      );
-    } else {
-      console.log("values from timecards", values);
-      API.get("wbs/user/time-card/list/" + values.assigneeSelectPM + "/").then(
-        (res) => {
-          let temp = [];
-          console.log("zzzzzzzz", res.data.data);
-          setPdfTitle(
-            profile_details.first_name + " " + profile_details.last_name
-          );
-          Array.from(res.data.data).forEach((item, idx) => {
-            // temp.push({data:item.date_updated >=values.startDate && item.date_updated <= values.todate})
-            temp.push({ data: item });
-          });
-
-          let filteredData = [];
-          filteredData = temp.filter(
-            (p) =>
-              p.data.date_updated >= values.startDate &&
-              p.data.date_updated <= values.todate
-          );
-          console.log("timecard for id", filteredData);
-
-          setPdfData(filteredData);
-          setModalData(filteredData);
-
-          var tableData = [];
-          for (let index = 0; index < filteredData.length; index++) {
-            const element = filteredData[index];
-            temp_hrs += parseFloat(element.data.hours_today);
-            console.log("hours", temp_hrs);
-            tableData.push({
-              WP: element.data.project
-                ? element.data.project.work_package_number
-                : "-",
-              "Project Name":
-                element.data.project != null
-                  ? element.data.project?.sub_task
-                  : "-",
-              "Task Title":
-                element.data.project != null
-                  ? element.data.project.task_title
-                  : "-",
-              Description: element.data.actual_work_done
-                ? element.data.actual_work_done
-                : "",
-              "Hour(s)": element.data.hours_today,
-              Type: element.data.time_type,
-              "Date Created": element.data.date_created,
-              data: element.data,
-            });
-            //console.log("table", tableData);
-          }
-          console.log("table", tableData);
-          setUsersData(tableData);
-          console.log("hours", temp_hrs);
-          setTotalHrs(temp_hrs);
-        }
-      );
-    }
+  const validateEditForm = (values) => {
+    const errors = {};
+    if (!values.startDate) errors.startDate = "Start Date selection is required";
+    if (!values.todate) errors.todate = "To date selection is required";
+    return errors;
   };
+  const editForm = useFormik({
+    initialValues: {
+      assigneeSelect: sessionStorage.getItem(USER_ID),
+      startDate: "",
+      todate: "",
+    },
+    validateOnBlur: true,
+    validateOnChange: true,
+    validate: validateEditForm,
+    onSubmit: ()=>{},
+  });
 
-  function capitalize(string) {
-    if (string != undefined) {
-      return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
-    }
-    return "";
-  }
- 
-  React.useEffect(() => {
-    window.scrollTo(0, 0);
-    //const { start, end } = dateRange();
-    const { start, end } = previous_Week();
-    
-    setTotalHrs(0);
-    if (
-      has_permission("projects.change_projectassignee") ||
-      has_permission("projects.add_projectassignee")
-    ) {
-      API.get(
-        "project/assignees/all/" + sessionStorage.getItem(USER_ID) + "/"
-      ).then((res) => {
-        let temp = [];
-        if (res.data.data.length > 0) {
-          Array.from(res.data.data).forEach((item, idx) => {
-            temp.push({
-              data: item,
-              value: item.id,
-              label:
-                capitalize(item.first_name) + " " + capitalize(item.last_name),
-            });
-          });
-          console.log("all assignee ", temp)
-        } else {
-          temp.push({
-            data: profile_details,
-            value: profile_details.id,
-            label:
-              capitalize(profile_details.first_name) +
-              " " +
-              capitalize(profile_details.last_name),
-          });
-          console.log("assignee", temp)
-        }
-       
-        setSelectedAssignee(temp[0]);
-        temp=sortBy(temp, 'label')
-        setAssigneeList(temp);
-      });
-    }
-    API.get(
-      "wbs/user/time-card/list/" + sessionStorage.getItem(USER_ID) + "/"
-    ).then((res) => {
-      setPdfTitle(profile_details.first_name + " " + profile_details.last_name);
+  const get_assignee_wise_timecards=(values)=>{
+    API.get("wbs/user/time-card/list/" + values.assigneeSelect + "/").then(res=>{
+      console.log("user tc list", res.data.data);
       let temp = [];
-      Array.from(res.data.data).forEach((item, idx) => {   //all timecard list of logged in user
+      Array.from(res.data.data).forEach((item, idx) => {
         temp.push({ data: item });
       });
-     
-      let filteredData = temp;
-      console.log("start, end", start, end);
-      filteredData = temp.filter(
-        (p) => p.data.date_updated >= start && p.data.date_updated <= end
-      );
 
-      console.log("filtered by start end", filteredData)
+      let filteredData = [];
+      filteredData = temp.filter((p) => p.data.date_updated >= values.startDate && p.data.date_updated <= values.todate);
       setPdfData(filteredData);
+      let temp_hrs=0
       var tableData = [];
       for (let index = 0; index < filteredData.length; index++) {
         const element = filteredData[index];
+        temp_hrs += parseFloat(element.data.hours_today);
+        //console.log("hours", temp_hrs);
         tableData.push({
-          WP: element.data.project
+          WP: element.data.project?.work_package_number
             ? element.data.project.work_package_number
             : "-",
-          "Project Name":
-            element.data.project != null ? element.data.project?.sub_task : "-",
-          "Task Title":
-            element.data.project != null
-              ? element.data.project?.task_title
-              : "-",
-          Description: element.data?.actual_work_done
-            ? element.data?.actual_work_done
+          "Project Name": element.data.project?.sub_task
+            ? element.data.project.sub_task
+            : "-",
+          "Task Title": element.data.project.task_title
+            ? element.data.project.task_title
+            : "-",
+          Description: element.data.actual_work_done
+            ? element.data.actual_work_done
             : "-",
           "Hour(s)": element.data.hours_today,
           Type: element.data.time_type,
@@ -272,50 +102,34 @@ const PreviousWeeks = () => {
           data: element.data,
         });
       }
+      console.log("hours", temp_hrs);
+      setTotalHrs(temp_hrs);
       setUsersData(tableData);
+    }).catch( err=>{
+
+    })
+  }
+  const get_and_set_all_assignees=async()=>{
+    let temp = [];
+    API.get("project/assignees/all/" + sessionStorage.getItem(USER_ID) + "/").then((res) => {
+      if (res.data.data.length > 0) {
+        Array.from(res.data.data).forEach((item, idx) => {
+          temp.push({
+            data: item,
+            value: item.id,
+            label: capitalize(item.first_name) + " " + capitalize(item.last_name),
+          });
+        });
+      }
+      temp=sortBy(temp, 'label')
+      console.log('ff',temp)
+      setSelectedAssignee(temp[0]);
+      setAssigneeList(temp);
+      return temp
+    }).catch(err=>{
+      console.log('assignee list api error',err)
     });
-  }, []);
-  const handleAssigneeChange = (option) => {
-    setSelectedAssignee(option);
-   
-    editForm.setValues({
-      assigneeSelectPM: option.value,
-      startDate: editForm.values.startDate,
-      todate: editForm.values.todate,
-    });
-    
-    setPdfTitle(option.label);
-    let values = editForm.values
-    
-    getTimeCards(values)
-  };
-  const validateEditForm = (values) => {
-    const errors = {};
-    if (!values.startDate)
-      errors.startDate = "Start Date selection is required";
-    if (!values.todate) errors.todate = "To date selection is required";
-    return errors;
-  };
-
-  const editForm = useFormik({
-    initialValues: {
-      assigneeSelect: sessionStorage.getItem(USER_ID),
-      assigneeSelectPM: sessionStorage.getItem(USER_ID),
-      startDate: lastweekStart,
-      todate: lastweekEnd,
-    },
-    validateOnBlur: true,
-    validateOnChange: true,
-    validate: validateEditForm,
-    onSubmit: getTimeCards,
-  });
-
-  const colourStyles = {
-    // control: (styles, state) => ({ ...styles,height:"35px", fontSize: '14px !important', lineHeight: '1.42857', borderRadius: "8px",borderRadius:".25rem",color:"rgb(133,133,133)",border:state.isFocused ? '2px solid #0065ff' :'inherit'}),
-    option: (provided, state) => ({ ...provided, fontSize: "14px !important" }),
-  };
-
-
+  }
   const previous_Week = () => {
     var sdate = new Date();
     var edate = new Date();
@@ -341,57 +155,58 @@ const PreviousWeeks = () => {
     }
 
   };
-
-  const dateRange = () => {
-    var sdate = new Date();
-    var edate = new Date();
-
-    for (let i = 0; i < 7; i++) {
-      if (sdate.getDay() === 0) {
-        console.log("start", sdate);
-        break;
-      } else {
-        sdate = moment(sdate).subtract(1, "day").toDate();
-      }
+  React.useEffect(async()=>{
+    const { start, end } = previous_Week(); //setting start , end , lastweekstart & lastweekend dates
+    get_and_set_all_assignees()
+  },[])
+  React.useEffect(()=>{   
+    if(assigneeList.length>0){
+      get_assignee_wise_timecards({assigneeSelect:assigneeList[0].value,startDate:startDate,todate:endDate})
     }
-    console.log("end date", edate);
-
-    setStartDate(moment(sdate).format("YYYY-MM-DD"));
-    setEndDate(nextSatDay());
-    // editForm.setValues({
-    //   assigneeSelect: sessionStorage.getItem(USER_ID),
-    //   assigneeSelectPM: sessionStorage.getItem(USER_ID),
-    //   startDate: moment(sdate).format('YYYY-MM-DD'),
-    //   todate:  moment(edate).format('YYYY-MM-DD'),
-    // })
-    return {
-      start: moment(sdate).format("YYYY-MM-DD"),
-      // end: moment(edate).format("YYYY-MM-DD"),
-      end: nextSatDay(),
-    };
-  };
-  const nextSatDay = () => {
-    var satday = new Date();
-    for (let i = 0; i < 7; i++) {
-      if (satday.getDay() === 6) {
-        console.log("sat", satday);
-        break;
-      } else {
-        satday = moment(satday).add(1, "day").toDate();
-      }
+    else{
+      get_assignee_wise_timecards({assigneeSelect:sessionStorage.getItem(USER_ID),startDate:startDate,todate:endDate})
     }
-    satday = moment(satday).format("YYYY-MM-DD");
-    return satday;
+  }, [assigneeList])
+  React.useEffect(()=>{   
+    get_assignee_wise_timecards(editForm.values)
+  }, [editForm.values])
+
+  function capitalize(string) {
+    if (string != undefined) {
+      return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+    }
+    return "";
+  }
+ 
+  
+  const handleAssigneeChange = (option) => {
+    setSelectedAssignee(option);
+   
+    editForm.setValues({
+      assigneeSelect: option.value,
+      startDate: editForm.values.startDate,
+      todate: editForm.values.todate,
+    });
+    
+    setPdfTitle(option.label);
   };
+  
+
+  
+
+  const colourStyles = {
+    // control: (styles, state) => ({ ...styles,height:"35px", fontSize: '14px !important', lineHeight: '1.42857', borderRadius: "8px",borderRadius:".25rem",color:"rgb(133,133,133)",border:state.isFocused ? '2px solid #0065ff' :'inherit'}),
+    option: (provided, state) => ({ ...provided, fontSize: "14px !important" }),
+  };
+
+
+  
+
   React.useEffect(()=>{
-   getTimeCards(editForm.values)
+   
    console.log("edit", editForm.values)
   }, [editForm.values])
-  React.useEffect(() => {
-    dateRange();
-    nextSatDay();
-    previous_Week();
-  }, []);
+  
   React.useEffect(()=>{
     if(lastweekStart!=undefined && lastweekStart){
       editForm.setFieldValue('startDate',lastweekStart)
@@ -406,15 +221,7 @@ const PreviousWeeks = () => {
   },[lastweekEnd])
 
   const onToDateChange = (event) => {
-    console.log("to date change")
     editForm.handleChange(event);
-    let values = editForm.values;
-    console.log("values for get tc", values)
-    //values["todate"]=lastweekEnd
-    values["todate"] = event.target.value;
-    //values["startDate"] = event.target.value;
-    console.log("to date format", event.target.value)
-    getTimeCards(values);
   };
 
   return (
@@ -475,13 +282,13 @@ const PreviousWeeks = () => {
                 )} */}
                 {/**IF PM */}
 
-                <CLabel className="custom-label-5" htmlFor="assigneeSelectPM">
+                <CLabel className="custom-label-5" htmlFor="assigneeSelect">
                   Select Employee
                 </CLabel>
                 <Select
                   closeMenuOnSelect={true}
-                  aria-labelledby="assigneeSelectPM"
-                  id="assigneeSelectPM"
+                  aria-labelledby="assigneeSelect"
+                  id="assigneeSelect"
                   minHeight="35px"
                   placeholder={
                     capitalize(profile_details.first_name) +
@@ -518,11 +325,7 @@ const PreviousWeeks = () => {
 
               />
 
-              {editForm.errors.startDate && (
-                <p className="error mt-0 mb-0">
-                  <small>{editForm.errors.startDate}</small>
-                </p>
-              )}
+              {editForm.errors.startDate && editForm.touched.startDate && (<p className="error mt-0 mb-0"><small>{editForm.errors.startDate}</small></p>)}
             </CCol>
             {/**END DATE */}
             <CCol xl="3" lg="3" md="6">
@@ -539,7 +342,7 @@ const PreviousWeeks = () => {
                 onChange={onToDateChange}
               />
               {/**Error show */}
-              {editForm.errors.todate && (
+              {editForm.errors.todate && editForm.touched.startDate && (
                 <p className="error mt-0 mb-0">
                   <small>{editForm.errors.todate}</small>
                 </p>

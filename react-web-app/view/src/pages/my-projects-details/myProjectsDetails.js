@@ -708,7 +708,7 @@ const MyProjectsDetailsView = () => {
     editForm.setFieldValue("description", editForm.values.description);
   };
   const handleTaskTitleChange = (event) => {
-    editForm.handleChange
+    editForm.handleChange()
     setSelectedTaskTitle(event)
 
   }
