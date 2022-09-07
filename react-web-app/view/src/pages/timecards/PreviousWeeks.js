@@ -44,7 +44,6 @@ const PreviousWeeks = () => {
   const [startDate, setStartDate] = useState(""); // timecard list show start date
   const [endDate, setEndDate] = useState(""); // timecard list show end date
   const [totalHrs, setTotalHrs] = useState(0);
-  const [modalData, setModalData] = useState("");
   const [lastweekStart, setlastWeekStart]= useState()
   const [lastweekEnd, setlastWeekEnd] = useState()
 
@@ -76,6 +75,7 @@ const PreviousWeeks = () => {
 
       let filteredData = [];
       filteredData = temp.filter((p) => p.data.date_updated >= values.startDate && p.data.date_updated <= values.todate);
+     
       setPdfData(filteredData);
       let temp_hrs=0
       var tableData = [];
@@ -122,7 +122,6 @@ const PreviousWeeks = () => {
         });
       }
       temp=sortBy(temp, 'label')
-      console.log('ff',temp)
       setSelectedAssignee(temp[0]);
       setAssigneeList(temp);
       return temp
@@ -177,9 +176,7 @@ const PreviousWeeks = () => {
     }
     return "";
   }
- 
-  
-  const handleAssigneeChange = (option) => {
+ const handleAssigneeChange = (option) => {
     setSelectedAssignee(option);
    
     editForm.setValues({
@@ -190,17 +187,10 @@ const PreviousWeeks = () => {
     
     setPdfTitle(option.label);
   };
-  
-
-  
 
   const colourStyles = {
-    // control: (styles, state) => ({ ...styles,height:"35px", fontSize: '14px !important', lineHeight: '1.42857', borderRadius: "8px",borderRadius:".25rem",color:"rgb(133,133,133)",border:state.isFocused ? '2px solid #0065ff' :'inherit'}),
     option: (provided, state) => ({ ...provided, fontSize: "14px !important" }),
   };
-
-
-  
 
   React.useEffect(()=>{
    
@@ -222,8 +212,12 @@ const PreviousWeeks = () => {
 
   const onToDateChange = (event) => {
     editForm.handleChange(event);
+    setEndDate(event.target.value)
   };
-
+  const handleFromDateChange = (event) => {
+    editForm.handleChange(event)
+    setStartDate(event.target.value)
+  }
   return (
     <>
       <CContainer>
@@ -232,8 +226,8 @@ const PreviousWeeks = () => {
             <h3 className="timecards-page-header mb-3">Actual Hours</h3>
           </CCol>
           <CCol md="8" id="tableRef" className="d-flex justify-content-end">
-            <h5 className="tiny-header--5 mt-3 mr-2">Export </h5>
-            <div className="format-buttons mt-3 mb-3 ">
+            {/* <h5 className="tiny-header--5 mt-3 mr-2">Export </h5> */}
+            {/* <div className="format-buttons mt-3 mb-3 ">
               <CButton
                 className="file-format-download"
                 onClick={() =>
@@ -254,38 +248,24 @@ const PreviousWeeks = () => {
                 Excel
               </CButton>
               {/* <CButton className="file-format-download">Print</CButton> */}
-            </div>
+            {/* </div> */} 
           </CCol>
         </CRow>
         <CForm>
           <CRow>
-            {/**assignees */}
-            {has_permission("projects.add_projects") && (
               <CCol xl="3" lg="3" md="6">
-                {/* {!has_permission("projects.add_projects") && (
-                  <div>
-                    <CLabel className="custom-label-5" htmlFor="assigneeSelect">
-                      Select Employee
-                    </CLabel>
-                    <CInput
-                      name="assigneeSelect"
-                      type="text"
-                      value={
-                        capitalize(profile_details.first_name) +
-                        " " +
-                        capitalize(profile_details.last_name)
-                      }
-                      onChange={editForm.handleChange}
-                      readOnly
-                    />
-                  </div>
-                )} */}
-                {/**IF PM */}
-
+              {has_permission("projects.add_projects") && (
                 <CLabel className="custom-label-5" htmlFor="assigneeSelect">
                   Select Employee
                 </CLabel>
-                <Select
+              )}
+               {!has_permission("projects.add_projects") && (
+                <CLabel className="custom-label-5" htmlFor="assigneeSelect">
+                  Select Employee
+                </CLabel>
+              )}
+                {has_permission("projects.add_projects") && (
+                <Select 
                   closeMenuOnSelect={true}
                   aria-labelledby="assigneeSelect"
                   id="assigneeSelect"
@@ -303,9 +283,30 @@ const PreviousWeeks = () => {
                   options={assigneeList}
                   styles={colourStyles}
                 />
+               )} 
+                {!has_permission("projects.add_projects") && (
+                <Select 
+                  closeMenuOnSelect={true}
+                  aria-labelledby="assigneeSelect"
+                  id="assigneeSelect"
+                  minHeight="35px"
+                  placeholder={
+                    capitalize(profile_details.first_name) +
+                    " " +
+                    capitalize(profile_details.last_name)
+                  }
+                  isClearable={false}
+                  isMulti={false}
+                  value={selectedAssignee}
+                  onChange={handleAssigneeChange}
+                  classNamePrefix="custom-forminput-6"
+                  options={assigneeList}
+                  styles={colourStyles}
+                  isDisabled={true}
+                />)}
                 {/* {editForm.errors.assigneeSelectPM && <p className="error mt-1">{editForm.errors.assigneeSelectPM}</p>} */}
               </CCol>
-            )}
+            {/* )} */}
 
             {/***********for archive***********/}
             {/**start date */}
@@ -320,8 +321,8 @@ const PreviousWeeks = () => {
                 id="startDate"
                 //value ={lastweekStart} 
                 value={editForm.values.startDate}
-                onChange={editForm.handleChange}
-                //onChange={handleFromDateChange}
+                //onChange={editForm.handleChange}
+                onChange={handleFromDateChange}
 
               />
 

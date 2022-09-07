@@ -232,7 +232,8 @@ export async function exportxl(pdfData, pdfTitle, endDate, totalHrs, startDate) 
     ];
     let days = weekday[today.getDay()];
     let todayDate = moment(today).format("DD-MM-YYYY");
-    let pdf = pdfTitle.replace(/\s/g, '_')
+    //let pdf = pdfTitle.replace(/\s/g, '_')
+    let pdf = pdfTitle
     const fileName = pdf +"_"+ days + "_" + todayDate +fileExtension;
     saveAs(blob, fileName);
     
@@ -318,7 +319,8 @@ export async function exportxl(pdfData, pdfTitle, endDate, totalHrs, startDate) 
     ];
     let days = weekday[today.getDay()];
     let todayDate = moment(today).format("DD-MM-YYYY");
-    let pdf = pdfTitle.replace(/\s/g, '_')
+    //let pdf = pdfTitle.replace(/\s/g, '_')
+    let pdf = pdfTitle
     doc.save(pdf +"_"+ days + "_" + todayDate +".pdf");
     console.log("data", pdfData);
   };
