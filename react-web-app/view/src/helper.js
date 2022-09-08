@@ -106,7 +106,7 @@ export const exportPDF = (profile_details,startDate,endDate,pdfData,tableData) =
 }
 
 export async function exportxl(pdfData, pdfTitle, endDate, totalHrs, startDate) {
-    //console.log("pdf", pdfData)
+    console.log("pdf", pdfData.length)
     console.log("pdftitle", pdfTitle);
     const ExcelJS = require("exceljs");
     const workbook = new ExcelJS.Workbook();
@@ -136,7 +136,7 @@ export async function exportxl(pdfData, pdfTitle, endDate, totalHrs, startDate) 
     };
 
     sheet.mergeCells("A5:B5");
-    sheet.getCell("A5").value = "Employee Timecard";
+    sheet.getCell("A5").value = "Actual Worked Hours";
 
     sheet.mergeCells("F6:G6");
     const endate = moment(endDate).format("DD/MM/YYYY");
@@ -192,7 +192,7 @@ export async function exportxl(pdfData, pdfTitle, endDate, totalHrs, startDate) 
     }
     let row_num = pdfData.length + 11;
     if (totalHrs != 0) {
-      let cell_num = pdfData.length + 8;
+      let cell_num = pdfData.length + 10;
       sheet.getRow(cell_num).values = [
         "",
         "",

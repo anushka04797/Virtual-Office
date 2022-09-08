@@ -72,11 +72,13 @@ const PreviousWeeks = () => {
       Array.from(res.data.data).forEach((item, idx) => {
         temp.push({ data: item });
       });
-
+       console.log("temp", temp)
       let filteredData = [];
       filteredData = temp.filter((p) => p.data.date_updated >= values.startDate && p.data.date_updated <= values.todate);
      
       setPdfData(filteredData);
+      setPdfTitle(temp[0].data.time_card_assignee.first_name)
+      console.log("filtered ", temp[0].data.time_card_assignee.first_name)
       let temp_hrs=0
       var tableData = [];
       for (let index = 0; index < filteredData.length; index++) {
@@ -226,8 +228,8 @@ const PreviousWeeks = () => {
             <h3 className="timecards-page-header mb-3">Actual Hours</h3>
           </CCol>
           <CCol md="8" id="tableRef" className="d-flex justify-content-end">
-            {/* <h5 className="tiny-header--5 mt-3 mr-2">Export </h5> */}
-            {/* <div className="format-buttons mt-3 mb-3 ">
+            <h5 className="tiny-header--5 mt-3 mr-2">Export </h5>
+            <div className="format-buttons mt-3 mb-3 ">
               <CButton
                 className="file-format-download"
                 onClick={() =>
@@ -241,14 +243,13 @@ const PreviousWeeks = () => {
                 onClick={
                   () =>
                     exportxl(pdfData, pdfTitle, endDate, totalHrs, startDate)
-                  //exportToCSV(usersData, "Timecard of" + " " + pdfTitle)
                 }
               >
                 <CIcon name="cil-spreadsheet" className="mr-2" />
                 Excel
               </CButton>
-              {/* <CButton className="file-format-download">Print</CButton> */}
-            {/* </div> */} 
+             
+            </div> 
           </CCol>
         </CRow>
         <CForm>
