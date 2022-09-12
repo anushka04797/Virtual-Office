@@ -61,21 +61,14 @@ export const projectsSlice = createSlice({
     },
     
     filter_pm_projects: (state,tdos) => {
-      // state.filtered_pm_projects = state.pm_projects.filter((item)=> {tdos.payload.find(tdo=>tdo.value==item.project.task_delivery_order.id)})
       let temp=[]
       let projects=[...state.pm_projects]
       for(let index1=0;index1<tdos.payload.length;index1++){
         
         for(let index2=0;index2<projects.length;index2++){
           console.log('temp',projects[index2])
-          // if(state.pm_projects[index2].project.task_delivery_order.id == tdos.payload[index1].value){
-          //   console.log(state.pm_projects[index2])
-          // }
-          // console.log(state.pm_projects[index2])
-          // temp.push(state.pm_projects[index2])
         } 
       }
-      // state.filtered_pm_projects=temp
     },
     reset_filter_pm_projects: (state) => {
       state.filtered_pm_projects=[]
