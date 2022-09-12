@@ -5,6 +5,7 @@ import sortBy from 'lodash/sortBy';
 const initialState = {
   data:[],
   pm_projects:[],
+  all_projects:[],
   filtered_pm_projects:[],
   tdo_list:[],
   assignee:[],
@@ -20,6 +21,12 @@ export const fetchProjectsThunk = createAsyncThunk('projects/fetchProjectsThunk'
 export const fetchProjectsForPMThunk = createAsyncThunk('projects/fetchProjectsForPMThunk', async (user_id) => {
   const response = await JsonClient.get('project/all/'+user_id+'/')
   console.log("pm projects", response.data)
+  return response.data
+})
+
+export const fetchAllProjectsThunk = createAsyncThunk('projects/fetchAllProjectsThunk', async () => {
+  const response = await JsonClient.get('project/all/')
+  console.log("all projects", response.data)
   return response.data
 })
 
@@ -99,6 +106,9 @@ export const projectsSlice = createSlice({
     [fetchProjectsForPMThunk.fulfilled]: (state, action) => {
       state.pm_projects = action.payload
       state.filtered_pm_projects = action.payload
+    },
+    [fetchAllProjectsThunk.fulfilled]: (state, action) => {
+      state.all_projects = action.payload
     },
   }
 })
