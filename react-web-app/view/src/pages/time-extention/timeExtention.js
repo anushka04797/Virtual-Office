@@ -41,6 +41,7 @@ import "react-accessible-accordion/dist/fancy-example.css";
 import {
     fetchProjectsForPMThunk,
     fetchProjectsThunk,
+    fetchAllProjectsThunk,
   } from "../../store/slices/ProjectsSlice";
   import "../ongoing-project-details/ongoingProjectDetails.css";
 
@@ -51,41 +52,24 @@ import capitalize from "@material-ui/utils/capitalize";
 
 import { createSelector } from "reselect";
 
-const filter_pm_projects = createSelector(
-  (state) => state.projects.pm_projects,
-  (_, tdos) => tdos,
-  (pm_projects, tdos) => {
-    let temp = [];
-    console.log("projects from my projects", pm_projects, tdos);
-    if (tdos) {
-      Array.from(tdos).forEach((item, idx) => {
-        for (let index = 0; index < pm_projects.length; index++) {
-          // console.log(
-          //   "project tdo" + index,
-          //   pm_projects[index].project.task_delivery_order.id,
-          //   item.value
-          // );
-          if (item.value == pm_projects[index].project.task_delivery_order.id) {
-            temp.push(pm_projects[index]);
-          }
-        }
-      });
-    } else {
-      temp = pm_projects;
-    }
-    return uniq(temp);
-  }
-);
-
 const MyProjects = () => {
-  const pmprojects = useSelector((state) => {
+  // const pmprojects = useSelector((state) => {
+  //   let e = [];
+  //   Array.from(state.projects.pm_projects).forEach((item, idx) => {
+  //     e.push(item);
+  //   });
+  //   console.log("all pm Projects", e);
+  //   return e;
+  // });
+  
+  const allprojects = useSelector((state)=>{
     let e = [];
-    Array.from(state.projects.pm_projects).forEach((item, idx) => {
+    Array.from(state.projects.all_projects).forEach((item, idx) => {
       e.push(item);
     });
-    console.log("all pm Projects", e);
+    console.log("every Projects", e);
     return e;
-  });
+  })
 
   let history = useHistory();
   const dispatch = useDispatch();
@@ -96,7 +80,7 @@ const MyProjects = () => {
   const [fetchproject, setfetchproject] = useState([]);
   const [alltdos, setalltdos]=useState([])
   const [projectDetails, setProjectDetails] = useState([])
-  const [filteredprojects, setfilteredProjects] = useState([pmprojects])
+  const [filteredprojects, setfilteredProjects] = useState([allprojects])
   
   let details = [];
   const optionlist = (projects) => {
@@ -148,15 +132,15 @@ const MyProjects = () => {
     }
     return true;
   };
-  // const [filteredProjects, setfilteredProjects] = useState()
+  
   const projects = useSelector((state) => {
     let temp = [];
     let length = [];
     let temp1= [];
     let temp2=[];
-    Array.from(state.projects.filtered_pm_projects).forEach((item, idx) => {
+    Array.from(state.projects.all_projects).forEach((item, idx) => {
       if (item.project.status == 0) {
-        //console.log("length", item.subtasks.length)
+        
         let l = item.subtasks.length
         for(let i=0;i<l;i++)
         {
@@ -177,24 +161,6 @@ const MyProjects = () => {
     console.log("temp2", temp2)
     return temp1;
   });
-  // const filtered_pm_projects = useSelector((state) =>
-  //   filter_pm_projects(state, selectedTdo)
-  // );
-  // const tdolist = useSelector((state) => {
-  //   let temp = [];
-  //   state.projects.pm_projects.forEach((item, idx) => {
-  //     if (item.project.status == 0) {
-  //       temp.push({
-  //         label: item.project.task_delivery_order.title,
-  //         value: item.project.task_delivery_order.id,
-  //       });
-  //     }
-  //   });
-  //   temp.unshift({ label: "Select All", value: "all" });
-  //   return temp;
-  // });
-
-
   const setSelectedTdofunc = (options) => {
     let temp = [];
     console.log("filter", options);
@@ -249,7 +215,7 @@ const MyProjects = () => {
   const [selectedSubTask, setSelectedSubTask] = useState();
   useEffect(() => {
     window.scrollTo(0, 0);
-
+    dispatch(fetchAllProjectsThunk())
     dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)));
     API.get("project/managers/").then((res) => {
       console.log("res", res.data.data);
@@ -279,37 +245,7 @@ const MyProjects = () => {
       setProjectDetails(projects)
     }
   }, [projects]);
-  const mark_project_completed = (id) => {
-    swal({
-      title: "Are you sure?",
-      text: "You can change project status later!",
-      icon: "warning",
-      buttons: true,
-      dangerMode: true,
-    }).then((willUpdate) => {
-      if (willUpdate) {
-        API.put("/project/change-status/" + id + "/", { status: 1 })
-          .then((response) => {
-            if (response.data.success == "True") {
-              dispatch(
-                fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID))
-              );
-              dispatch(fetchProjectsThunk(sessionStorage.getItem(USER_ID)));
-              swal("Poof! Project is marked as completed", {
-                icon: "success",
-              });
-            } else if (response.data.success == "False") {
-              swal("Poof!" + response.data.message, {
-                icon: "error",
-              });
-            }
-          })
-          .catch((error) => {
-            //swal("Failed!",error,"error");
-          });
-      }
-    });
-  };
+
   const changePMChangeInputFieldStatus = (idx, action) => {
     switch (action) {
       case "open":
@@ -783,18 +719,7 @@ const MyProjects = () => {
                             <CIcon name="cil-list-rich" className="mr-1" />
                             View Details and Edit
                           </CButton>
-                          {/* <CButton
-                            type="button"
-                            onClick={() => {
-                              mark_project_completed(
-                                project.project.work_package_number
-                              );
-                            }}
-                            className="mark-ongoing-completed"
-                          >
-                            <CIcon name="cil-check-alt" className="mr-1" />
-                            Mark as Completed
-                          </CButton> */}
+                          
                         </span>
                       </AccordionItemButton>
                     </AccordionItemHeading>
@@ -861,9 +786,7 @@ const MyProjects = () => {
                       </div>
                       {/*project info in text */}
                       <div className="information-show row">
-                        {/* <div className="info-show-now col-lg-6">
-                                                    <h5 className="project-details-points child"><h5 className="info-header-1">Assigned by :</h5>{project.project.pm.first_name + ' ' + project.project.pm.last_name}</h5>
-                                                </div> */}
+                        
                         <div className="info-show-now col-lg-6">
                           <h5 className="project-details-points">
                             <h5 className="info-header-1">
@@ -954,15 +877,7 @@ const MyProjects = () => {
                             )}
                           </h5>
                         </div>
-                        {/* <div className="info-show-now col-lg-6">
-                                                    <h5 className="project-details-points child"><h5 className="info-header-1">Planned delivery date :</h5>{project.project.planned_delivery_date}</h5>
-                                                </div> */}
-                        {/* <div className="info-show-now col-lg-6"> */}
-                        {/* <h5 className="project-details-points"><h5 className="info-header-1">Project Details :</h5>Design and develop the app for the seller and buyer module</h5> */}
-                        {/* <h5 className="project-details-points child"><h5 className="info-header-1">Start Date : </h5>{project.project.start_date}</h5>
-
-                                                    <h5 className="project-details-points"><h5 className="info-header-1">Planned Delivery Date : </h5>{project.project.planned_delivery_date}</h5>
-                                                </div> */}
+                        
                       </div>
                     </AccordionItemPanel>
                   </AccordionItem>
@@ -973,7 +888,7 @@ const MyProjects = () => {
             {/**If no projects are there */}
             {Array.from(filteredprojects).length < 1 ? (
               <CAlert className="no-value-show-alert" color="primary">
-                Currently there are no projects
+                Currently there are no projects to extend Date 
               </CAlert>
             ) : null}
           </div>

@@ -2,6 +2,7 @@ import {
   CContainer,
   CRow,
   CCard,
+  CCol,
   CCardHeader,
   CCardBody,
   CForm,
@@ -12,6 +13,7 @@ import {
   CSelect,
   CPopover,
 } from "@coreui/react";
+import uniqBy from "lodash/uniqBy";
 import { Tooltip } from "@mui/material";
 import { React, useState, useEffect } from "react";
 import "./createProject.css";
@@ -64,6 +66,9 @@ const CreateNewProject = () => {
   const [total_working_days, setTotalWorkingDays] = useState(0);
   const [total_planned_hours, setTotalPlannedHours] = useState(0);
   const [deslength, setdeslength] = useState();
+  const [projectLeadOption, setProjectLeadOption] = useState([]);
+  const [selectedProjectLead, setSelectedProjectLead] = useState ();
+
   //tdo list states and functions
 
   const new_tdo_list = useSelector((state) => sortBy(state.tdo.data, "label"));
@@ -88,6 +93,12 @@ const CreateNewProject = () => {
       formCreateProject.setFieldValue("work_package_number", "");
     }
   };
+
+  const handleProjectLeadChange = (newValue, actionMeta)=>{
+    console.log("lead", newValue)
+    setSelectedProjectLead(newValue)
+    formCreateProject.setFieldValue("pl", newValue.value.id)
+  }
 
   const handleTDOCreate = (inputValue) => {
     console.log("created TDO", inputValue);
@@ -146,15 +157,7 @@ const CreateNewProject = () => {
   //sub task list states and functions
   const [sub_task_list, setSubTaskList] = useState([]);
   const [task_title_list, setTaskTitleList] = useState(task_title_array);
-  const [isHovering, setIsHovering] = useState(false);
-
-  const handleMouseOver = () => {
-    setIsHovering(true);
-  };
-
-  const handleMouseOut = () => {
-    setIsHovering(false);
-  };
+  
 
   function get_sub_tasks(tdo) {
     let temp = [];
@@ -348,6 +351,7 @@ const CreateNewProject = () => {
       errors.planned_delivery_date = "Invalid planned delivery date";
     if (isDateBeforeToday(values.planned_delivery_date))
       errors.planned_delivery_date = "Invalid planned delivery date";
+    // if(!values.pl) errors.pl = "Project Lead is Required"
     // window.scrollTo(0, 0);
     return errors;
   };
@@ -357,9 +361,12 @@ const CreateNewProject = () => {
     setSelectedSubTask(null);
     setSelectedTDO(null);
     setWorkPackageNumber(null);
+    setWorkPackageNumbers(null)
     setInputList([]);
     setSelectedAssigneesEP(0);
     setSelectedAssignees(null);
+    setSelectedTaskTitle(null)
+    setSelectedProjectLead(null)
   };
 
   const create_project = (values, { setSubmitting }) => {
@@ -419,6 +426,7 @@ const CreateNewProject = () => {
       start_date: "",
       assignee: [],
       pm: sessionStorage.getItem(USER_ID),
+      pl:"",
       planned_hours: 0,
       planned_value: 0,
       remaining_hours: 0,
@@ -679,6 +687,14 @@ const CreateNewProject = () => {
     let assignees = [];
     let assignee_eps = [];
     console.log("inputs", inputList);
+    let temp =[] 
+    for(let i = 0;i<inputList.length;i++)
+    {
+      temp.push (inputList[i].assignee)
+    }
+    console.log("inp", temp)
+    setProjectLeadOption(uniqBy(temp,'value'))
+
     Array.from(inputList).forEach((item, idx) => {
       assignees.push(item.assignee.data.id);
       assignee_eps.push(item.estimated_person);
@@ -752,10 +768,7 @@ const CreateNewProject = () => {
     populate_planned_value_and_hours(arrayRemoveItem(inputList, item));
     setInputList(arrayRemoveItem(inputList, item));
   }
-  const valid_date = (current) => {
-    let yesterday = moment().subtract(1, "day");
-    return current.isAfter(yesterday);
-  };
+ 
 
   return (
     <>
@@ -862,7 +875,7 @@ const CreateNewProject = () => {
                           className="custom-label-5"
                           htmlFor="workPackageNo"
                         >
-                          Work Package Number *{" "}
+                          Work Package Number {" "}
                           <span className="input-alert-msg">
                             {isWpExist && "(Work Package exists)"}
                           </span>
@@ -1109,68 +1122,100 @@ const CreateNewProject = () => {
                               />
                             </div>
                             <div className="col-lg-3 mb-3">
-                            
-                                <CButton  
-                                  color="primary"
-                                  //style={disabled ? { pointerEvents: "none" } : {}}
-                                  className="ar-btn"
-                                  onClick={handleAddClick}
-                                  disabled={
-                                    selectedAssigneesEP == 0 ||
-                                    formCreateProject.values.start_date == "" ||
-                                    formCreateProject.values
-                                      .planned_delivery_date == ""
-                                  } 
-                                 
-                                >
-                                  + Add
-                                </CButton>
-                              
-                              
+                              <CButton
+                                color="primary"
+                                //style={disabled ? { pointerEvents: "none" } : {}}
+                                className="ar-btn"
+                                onClick={handleAddClick}
+                                disabled={
+                                  selectedAssigneesEP == 0 ||
+                                  formCreateProject.values.start_date == "" ||
+                                  formCreateProject.values
+                                    .planned_delivery_date == ""
+                                }
+                              >
+                                + Add
+                              </CButton>
                             </div>
                           </div>
                         </div>
                       </div>
-                      {/**Planned Value */}
-                      <div className="col-lg-6 mb-3">
-                        <CLabel className="custom-label-5">
-                          Total Planned Value
-                        </CLabel>
-                        <CInput
-                          id="planned_value"
-                          name="planned_value"
-                          readOnly
-                          value={Number(
-                            parseFloat(formCreateProject.values.planned_value)
-                          ).toFixed(2)}
-                          className="custom-forminput-6"
-                        ></CInput>
-                      </div>
-                      {/**planned hours */}
-                      <div className="col-lg-6 mb-3">
-                        <CLabel className="custom-label-5">
-                          Total Planned hr(s)
-                        </CLabel>
-                        <CInput
-                          id="planned_hours"
-                          name="planned_hours"
-                          readOnly
-                          value={Number(
-                            parseFloat(formCreateProject.values.planned_hours)
-                          ).toFixed(2)}
-                          onChange={(event) => {
-                            formCreateProject.setFieldValue(
-                              "planned_hours",
-                              event.target.value
-                            );
-                            formCreateProject.setFieldValue(
-                              "remaining_hours",
-                              event.target.value
-                            );
-                          }}
-                          className="custom-forminput-6"
-                        ></CInput>
-                      </div>
+                      {/* <CRow>
+                        <CCol>
+                          <CLabel
+                            className="custom-label-5"
+                            htmlFor="workerBees"
+                            aria-labelledby="workerBees"
+                          >
+                           Project Lead *
+                          </CLabel>
+                          <Select
+                          closeMenuOnSelect={true}
+                          aria-labelledby="lead"
+                          id="lead"
+                          placeholder="Select Project Lead"
+                          isClearable={false}
+                          onChange={handleProjectLeadChange}
+                          // onInputChange={handleTDOInputChange}
+                          //onCreateOption={handleTDOCreate}
+                          classNamePrefix="custom-forminput-6"
+                           value={selectedProjectLead}
+                           options={projectLeadOption}
+                         
+                          >
+
+                          </Select>
+
+                          {formCreateProject.touched.pl &&
+                                formCreateProject.errors.pl && (
+                                  <small style={{ color: "red" }}>
+                                    {formCreateProject.errors.pl}
+                                  </small>
+                                )}
+                        </CCol>
+                      </CRow> */}
+                      <CRow>
+                        {/**Planned Value */}
+                        <div className="col-lg-6 mb-3 mt-3">
+                          <CLabel className="custom-label-5">
+                            Total Planned Value
+                          </CLabel>
+                          <CInput
+                            id="planned_value"
+                            name="planned_value"
+                            readOnly
+                            value={Number(
+                              parseFloat(formCreateProject.values.planned_value)
+                            ).toFixed(2)}
+                            className="custom-forminput-6"
+                          ></CInput>
+                        </div>
+                        {/**planned hours */}
+                        <div className="col-lg-6 mb-3 mt-3">
+                          <CLabel className="custom-label-5">
+                            Total Planned hr(s)
+                          </CLabel>
+                          <CInput
+                            id="planned_hours"
+                            name="planned_hours"
+                            readOnly
+                            value={Number(
+                              parseFloat(formCreateProject.values.planned_hours)
+                            ).toFixed(2)}
+                            onChange={(event) => {
+                              formCreateProject.setFieldValue(
+                                "planned_hours",
+                                event.target.value
+                              );
+                              formCreateProject.setFieldValue(
+                                "remaining_hours",
+                                event.target.value
+                              );
+                            }}
+                            className="custom-forminput-6"
+                          ></CInput>
+                        </div>
+                      </CRow>
                       {/**remaining hours */}
                       {/* <div className="col-lg-4 mb-3">
                         <CLabel className="custom-label-5">

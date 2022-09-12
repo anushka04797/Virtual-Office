@@ -50,31 +50,27 @@ import CustomSearch from "../../components/CustomSearch/CustomSearch";
 import SearchResult from "./inc/SearchResult";
 import { createSelector } from "reselect";
 
-const filter_pm_projects = createSelector(
-  (state) => state.projects.pm_projects,
-  (_, tdos) => tdos,
-  (pm_projects, tdos) => {
-    let temp = [];
-    console.log("projects from my projects", pm_projects, tdos);
-    if (tdos) {
-      Array.from(tdos).forEach((item, idx) => {
-        for (let index = 0; index < pm_projects.length; index++) {
-          // console.log(
-          //   "project tdo" + index,
-          //   pm_projects[index].project.task_delivery_order.id,
-          //   item.value
-          // );
-          if (item.value == pm_projects[index].project.task_delivery_order.id) {
-            temp.push(pm_projects[index]);
-          }
-        }
-      });
-    } else {
-      temp = pm_projects;
-    }
-    return uniq(temp);
-  }
-);
+// const filter_pm_projects = createSelector(
+//   (state) => state.projects.pm_projects,
+//   (_, tdos) => tdos,
+//   (pm_projects, tdos) => {
+//     let temp = [];
+//     console.log("projects from my projects", pm_projects, tdos);
+//     if (tdos) {
+//       Array.from(tdos).forEach((item, idx) => {
+//         for (let index = 0; index < pm_projects.length; index++) {
+          
+//           if (item.value == pm_projects[index].project.task_delivery_order.id) {
+//             temp.push(pm_projects[index]);
+//           }
+//         }
+//       });
+//     } else {
+//       temp = pm_projects;
+//     }
+//     return uniq(temp);
+//   }
+// );
 
 const MyProjects = () => {
   const pmprojects = useSelector((state) => {

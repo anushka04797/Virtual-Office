@@ -262,7 +262,12 @@ const NoWbs = () => {
       }
     }
   };
-
+  React.useEffect(()=>{
+    if (projects.length > 0 && fetchproject.length == 0) {
+      setfetchproject(projects);
+      //optionlist(projects);
+    }
+  },[projects])
   React.useEffect(() => {
     API.get("project/assignees-with-no-wbs/").then((res) => {
       let temp = [];
@@ -280,10 +285,7 @@ const NoWbs = () => {
       populateOption(temp);
     });
 
-    if (projects.length > 0 && fetchproject.length == 0) {
-      setfetchproject(projects);
-      //optionlist(projects);
-    }
+    
   }, []);
   return (
     <>

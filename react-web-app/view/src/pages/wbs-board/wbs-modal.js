@@ -288,12 +288,15 @@ const WbsModal = (props) => {
                     <CInput
                       id="title"
                       name="title"
+                      maxlength="20"
                       className="custom-forminput-5"
                       onChange={formWbsUpdate.handleChange}
                       value={formWbsUpdate.values.title}
                       
                     />
-                    
+                    <div className="float-right">
+                      {formWbsUpdate.values.title.length}/20
+                    </div>
                     {formWbsUpdate.errors.title && (
                       <p
                         className="error"

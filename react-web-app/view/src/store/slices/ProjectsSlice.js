@@ -24,9 +24,10 @@ export const fetchProjectsForPMThunk = createAsyncThunk('projects/fetchProjectsF
   return response.data
 })
 
+
 export const fetchAllProjectsThunk = createAsyncThunk('projects/fetchAllProjectsThunk', async () => {
   const response = await JsonClient.get('project/all/')
-  console.log("all projects", response.data)
+  console.log("every projects", response.data)
   return response.data
 })
 
