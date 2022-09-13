@@ -1,10 +1,10 @@
 import axios from 'axios';
 const status = 'dev'
-export const API_URL = status === 'prod' ? 'https://virtualoffice.com.bd/vo-admin/' : 'http://localhost:8000/vo-admin/'
+export const API_URL = status === 'prod' ? 'https://virtualoffice.com.bd/vo-admin/' : 'http://127.168.0.225:8003/vo-admin/'
 export const TOKEN = "access_token"
 export const USER_ID = "user_id"
 export const PERMISSIONS = "user_permissions"
-export const BASE_URL = status === 'prod' ? 'https://virtualoffice.com.bd/vo-admin' : 'http://localhost:8000/vo-admin'
+export const BASE_URL = status === 'prod' ? 'https://virtualoffice.com.bd/vo-admin' : 'http://127.168.0.225:8003/vo-admin'
 export const credentials = {
   "GOOGLE_CLIENT_ID": "705019730299-kfb5arnuisah2135tka05uka6h7v901a.apps.googleusercontent.com",
   "FACEBOOK_APP_ID": "788095958681659"
