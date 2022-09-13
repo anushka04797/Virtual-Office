@@ -42,6 +42,7 @@ import {
     fetchProjectsForPMThunk,
     fetchProjectsThunk,
     fetchAllProjectsThunk,
+   
   } from "../../store/slices/ProjectsSlice";
   import "../ongoing-project-details/ongoingProjectDetails.css";
 
@@ -70,6 +71,9 @@ const MyProjects = () => {
     console.log("every Projects", e);
     return e;
   })
+
+  
+
 
   let history = useHistory();
   const dispatch = useDispatch();
@@ -216,7 +220,9 @@ const MyProjects = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
     dispatch(fetchAllProjectsThunk())
+
     dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)));
+   
     API.get("project/managers/").then((res) => {
       console.log("res", res.data.data);
       let temp = [];

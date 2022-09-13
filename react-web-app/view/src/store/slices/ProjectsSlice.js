@@ -7,6 +7,7 @@ const initialState = {
   pm_projects:[],
   all_projects:[],
   filtered_pm_projects:[],
+  grouped_by_tdo:[],
   tdo_list:[],
   assignee:[],
   wbs: [],
@@ -23,6 +24,13 @@ export const fetchProjectsForPMThunk = createAsyncThunk('projects/fetchProjectsF
   console.log("pm projects", response.data)
   return response.data
 })
+
+export const fetchProjectsbyTDOThunk = createAsyncThunk('projects/fetchProjectsbyTDOThunk', async (user_id) => {
+  const response = await JsonClient.get('project/rall/'+user_id+'/')
+  console.log("grouped by TDO projects", response.data)
+  return response.data
+})
+
 
 
 export const fetchAllProjectsThunk = createAsyncThunk('projects/fetchAllProjectsThunk', async () => {
@@ -103,6 +111,9 @@ export const projectsSlice = createSlice({
     },
     [fetchAllProjectsThunk.fulfilled]: (state, action) => {
       state.all_projects = action.payload
+    },
+    [fetchProjectsbyTDOThunk.fulfilled]: (state, action) => {
+      state.grouped_by_tdo = action.payload
     },
   }
 })

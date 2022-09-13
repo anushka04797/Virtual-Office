@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import {
   fetchProjectsForPMThunk,
   fetchProjectsThunk,
+  fetchProjectsbyTDOThunk,
 } from "../../store/slices/ProjectsSlice";
 import "../ongoing-project-details/ongoingProjectDetails.css";
 import {
@@ -81,6 +82,16 @@ const MyProjects = () => {
     console.log("all pm Projects", e);
     return e;
   });
+
+
+  const groupedbyTDO = useSelector((state)=>{
+    let e= [] ;
+    Array.from(state.projects.grouped_by_tdo).forEach((item, idx)=>{
+      e.push(item);
+    });
+    console.log('groupedbyTDO',e);
+    return e;
+  })
 
   let history = useHistory();
   const dispatch = useDispatch();
@@ -217,6 +228,8 @@ const MyProjects = () => {
     window.scrollTo(0, 0);
 
     dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)));
+    dispatch(fetchProjectsbyTDOThunk(sessionStorage.getItem(USER_ID)));
+
     API.get("project/managers/").then((res) => {
       console.log("res", res.data.data);
       let temp = [];
