@@ -284,13 +284,6 @@ const CreateNewProject = () => {
     ]);
   };
 
-  function is_form_submitting() {
-    if (formCreateProject.isSubmitting && !formCreateProject.isValidating) {
-      return true;
-    }
-    return false;
-  }
-
   const [isWpExist, setisWpExist] = useState(false);
 
   const handleWorkPackageInputChange = (inputValue) => {
@@ -384,9 +377,9 @@ const CreateNewProject = () => {
       planned_delivery_date: values.planned_delivery_date,
       assignee: values.assignee,
       pm: values.pm,
-      planned_hours: values.planned_hours,
-      planned_value: values.planned_value,
-      remaining_hours: values.remaining_hours,
+      planned_hours: Number(values.planned_hours).toFixed(2),
+      planned_value: Number(values.planned_value).toFixed(2),
+      remaining_hours: Number(values.remaining_hours).toFixed(2),
     };
     console.log("values", JSON.stringify(formValues));
     API.post("project/create/", formValues)
