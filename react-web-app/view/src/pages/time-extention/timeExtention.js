@@ -332,7 +332,7 @@ const MyProjects = () => {
   const fileType =
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
   const fileExtension = ".xlsx";
-  const fileName = "Needs Date Extention";
+  const fileName = "Needs Date Extension";
   const xlData = [];
   const exportToCSV = () => {
     for (let i = 0; i < projects.length; i++) {
@@ -658,7 +658,7 @@ const MyProjects = () => {
         <div className="row">
           <div className="col-md-10 col-lg-10 col-sm-12 col-xs-12 mt-1 offset-md-1 offset-lg-1">
             <CRow className="dash-header justfy-content-between">
-              <CCol lg="7">Needs Date Extention({Array.from(projectDetails).length})</CCol>
+              <CCol lg="7">Needs Date Extension({Array.from(projectDetails).length})</CCol>
               {/* <CCol lg="2">
                 <CustomSearch search={search} />
               </CCol> */}

@@ -21,8 +21,8 @@ export const fetchAllTimecardsPmThunk= createAsyncThunk('timecard/fetchAllTimeca
     return response.data[0]
 })
 
-export const fetchUserHoursUsedAndLeft= createAsyncThunk('timecard/fetchUserHoursUsedAndLeft',async() =>{
-    const response = await JsonClient.get('organizations/user/hours/used-left/')
+export const fetchUserHoursUsedAndLeft= createAsyncThunk('timecard/fetchUserHoursUsedAndLeft',async(user_id) =>{
+    const response = await JsonClient.get('organizations/user/hours/used-left/'+user_id+'/')
     console.log('hours used and left',response.data)
     return response.data
 })

@@ -11,7 +11,7 @@ const routes = [
     { path: '/dashboard/Meetings', exact: true, name: 'Meetings', component: React.lazy(() => import('../pages/meetings/Meetings')) },
     { path: '/dashboard/Projects/completed-projects', exact: true, name: 'Completed Projects', component: React.lazy(() => import('../pages/completed-project/completedProject')) },
 
-    { path: '/dashboard/Projects/time-extention', exact: true, name: 'Time Extention', component: React.lazy(() => import('../pages/time-extention/timeExtention')) },
+    { path: '/dashboard/Projects/time-extension', exact: true, name: 'Time Extension', component: React.lazy(() => import('../pages/time-extention/timeExtention')) },
     { path: '/dashboard/Projects/completed-projects/details/:work_package_number', exact: true, name: 'Completed Projects details', component: React.lazy(() => import('../pages/completed-project-details-view/CompletedProjectDetails')) },
     { path: '/dashboard/Projects/create-new-project', exact: true, name: 'Create New Project', component: React.lazy(() => import('../pages/createProject/createProject')) },
   // { path: '/dashboard/employees', exact: true, name: 'Employees', component: React.lazy(() => import('../pages/employees/Employees')) },

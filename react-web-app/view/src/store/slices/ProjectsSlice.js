@@ -8,6 +8,7 @@ const initialState = {
   all_projects:[],
   filtered_pm_projects:[],
   grouped_by_tdo:[],
+  filtered_group_by_tdo:[],
   tdo_list:[],
   assignee:[],
   wbs: [],
@@ -25,12 +26,17 @@ export const fetchProjectsForPMThunk = createAsyncThunk('projects/fetchProjectsF
   return response.data
 })
 
-export const fetchProjectsbyTDOThunk = createAsyncThunk('projects/fetchProjectsbyTDOThunk', async (user_id) => {
+export const fetchProjectsbyTDOThunk1 = createAsyncThunk('projects/fetchProjectsbyTDOThunk', async (user_id) => {
   const response = await JsonClient.get('project/rall/'+user_id+'/')
   console.log("grouped by TDO projects", response.data)
   return response.data
 })
 
+export const fetchProjectsbyTDOThunk = createAsyncThunk('projects/fetchProjectsbyTDOThunk', async (user_id) => {
+  const response = await JsonClient.get('project/fixronall/'+user_id+'/')
+  console.log("grouped by TDO projects", response.data)
+  return response.data
+})
 
 
 export const fetchAllProjectsThunk = createAsyncThunk('projects/fetchAllProjectsThunk', async () => {
@@ -81,6 +87,7 @@ export const projectsSlice = createSlice({
     reset_filter_pm_projects: (state) => {
       state.filtered_pm_projects=[]
     },
+    
   },
   extraReducers: {
     [fetchProjectsThunk.pending]: (state, action) => {
@@ -114,10 +121,11 @@ export const projectsSlice = createSlice({
     },
     [fetchProjectsbyTDOThunk.fulfilled]: (state, action) => {
       state.grouped_by_tdo = action.payload
+      
     },
   }
 })
 //const get_projects_by_tdos = (state,tdos) => state.pm_projects.filter(item=>item.project.task_delivery_order.id==4)
 // Action creators are generated for each case reducer function
-export const { push_item,filter_pm_projects,reset_filter_pm_projects} = projectsSlice.actions
+export const { push_item,filter_pm_projects,reset_filter_pm_projects,reset_group_by_tdo} = projectsSlice.actions
 export default projectsSlice.reducer

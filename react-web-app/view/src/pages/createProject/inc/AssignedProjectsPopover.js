@@ -21,6 +21,7 @@ export default function AssignedProjectsPopover(props) {
   }
   React.useEffect(() => {
     console.log('modal data',props.data)
+    
     assigned_project_names(props.data.assignee.data?props.data.assignee.data?.id:props.data.assignee.id)
   }, [props.data])
   return (

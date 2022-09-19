@@ -101,7 +101,7 @@ const TheSidebar = () => {
           {has_permission('projects.add_projects') && <CSidebarNavItem to="/dashboard/Projects/create-new-project" name="Create New Project" className="vo-navItem" ></CSidebarNavItem>}
           {has_permission('projects.add_projects') && <CSidebarNavItem to="/dashboard/Projects/my-projects" name="My Projects" className="vo-navItem"></CSidebarNavItem>}
           <CSidebarNavItem to="/dashboard/Projects/assigned-projects" name="Assigned Projects" className="vo-navItem"  ></CSidebarNavItem>
-          {has_permission('projects.add_projects') && <CSidebarNavItem to="/dashboard/Projects/time-extention" name="Time Extention" className="vo-navItem"></CSidebarNavItem>}
+          {has_permission('projects.add_projects') && <CSidebarNavItem to="/dashboard/Projects/time-extension" name="Time Extension" className="vo-navItem"></CSidebarNavItem>}
           <CSidebarNavItem to="/dashboard/Projects/completed-projects" name="Completed Projects" className="vo-navItem" ></CSidebarNavItem>
         </CSidebarNavDropdown>
         {/**WBS */}

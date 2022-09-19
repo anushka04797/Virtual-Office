@@ -22,7 +22,6 @@ import {
   CInput,
   CModalTitle,
 } from "@coreui/react";
-import uniqBy from "lodash/uniqBy";
 import GradeIcon from "@material-ui/icons/Grade";
 import IconButton from "@material-ui/core/IconButton";
 import CIcon from "@coreui/icons-react";
@@ -51,28 +50,6 @@ import CustomSearch from "../../components/CustomSearch/CustomSearch";
 import SearchResult from "./inc/SearchResult";
 import { createSelector } from "reselect";
 
-// const filter_pm_projects = createSelector(
-//   (state) => state.projects.pm_projects,
-//   (_, tdos) => tdos,
-//   (pm_projects, tdos) => {
-//     let temp = [];
-//     console.log("projects from my projects", pm_projects, tdos);
-//     if (tdos) {
-//       Array.from(tdos).forEach((item, idx) => {
-//         for (let index = 0; index < pm_projects.length; index++) {
-          
-//           if (item.value == pm_projects[index].project.task_delivery_order.id) {
-//             temp.push(pm_projects[index]);
-//           }
-//         }
-//       });
-//     } else {
-//       temp = pm_projects;
-//     }
-//     return uniq(temp);
-//   }
-// );
-
 const MyProjects = () => {
   const pmprojects = useSelector((state) => {
     let e = [];
@@ -84,15 +61,6 @@ const MyProjects = () => {
   });
 
 
-  const groupedbyTDO = useSelector((state)=>{
-    let e= [] ;
-    Array.from(state.projects.grouped_by_tdo).forEach((item, idx)=>{
-      e.push(item);
-    });
-    console.log('groupedbyTDO',e);
-    return e;
-  })
-
   let history = useHistory();
   const dispatch = useDispatch();
   const [status, setStatus] = useState({});
@@ -100,13 +68,12 @@ const MyProjects = () => {
   const [currentPM, setPM] = useState();
   const [selectedTdo, setSelectedTdo] = useState();
   const [fetchproject, setfetchproject] = useState([]);
-  const [alltdos, setalltdos]=useState([])
-  const [projectDetails, setProjectDetails] = useState([])
-  const [filteredprojects, setfilteredProjects] = useState([pmprojects])
-  
+  const [alltdos, setalltdos] = useState([]);
+  const [projectDetails, setProjectDetails] = useState([]);
+  const [filteredprojects, setfilteredProjects] = useState([pmprojects]);
+
   let details = [];
   const optionlist = (projects) => {
-    
     let optionarray = [];
     for (let i = 0; i < projects.length; i++) {
       optionarray.push({
@@ -121,11 +88,10 @@ const MyProjects = () => {
       data: {},
     });
     console.log("options", optionarray);
-    setalltdos(uniqBy(optionarray, 'label'))
-    details=[...optionarray]
-    setProjectDetails(details.shift())
-
-  }
+    setalltdos(optionarray);
+    details = [...optionarray];
+    setProjectDetails(details.shift());
+  };
 
   const handlePMChange = (option, actionMeta) => {
     setPM(option);
@@ -151,7 +117,6 @@ const MyProjects = () => {
         temp.push(item);
       }
     });
-    console.log('pppp', temp)
     return temp;
   });
   // const filtered_pm_projects = useSelector((state) =>
@@ -171,7 +136,6 @@ const MyProjects = () => {
   //   return temp;
   // });
 
-
   const setSelectedTdofunc = (options) => {
     let temp = [];
     console.log("filter", options);
@@ -187,7 +151,6 @@ const MyProjects = () => {
             options[index].value ==
             projects[index1].project.task_delivery_order.id
           ) {
-            
             temp.push(projects[index1]);
             console.log("temp array", temp);
           }
@@ -196,7 +159,7 @@ const MyProjects = () => {
       console.log("filtered array", temp);
     }
     setfilteredProjects(temp);
-    setProjectDetails(temp)
+    setProjectDetails(temp);
   };
 
   const handleTDOChange = (value, actionMeta) => {
@@ -206,10 +169,10 @@ const MyProjects = () => {
         setSelectedTdo(alltdos.filter((item) => item.value != "all"));
       } else {
         setSelectedTdo(value);
-        setSelectedTdofunc(value)
+        setSelectedTdofunc(value);
       }
     } else if (actionMeta.action == "clear") {
-      setSelectedTdo([])
+      setSelectedTdo([]);
       setSelectedTdofunc(alltdos.filter((item) => item.value != "all"));
     } else if (actionMeta.action == "remove-value") {
       setSelectedTdo(value);
@@ -221,7 +184,6 @@ const MyProjects = () => {
     }
   };
 
-  
   const [show_sub_task_details, setShowSubTaskDetails] = useState(false);
   const [selectedSubTask, setSelectedSubTask] = useState();
   useEffect(() => {
@@ -250,12 +212,20 @@ const MyProjects = () => {
       setManagers(temp);
     });
   }, []);
+
   React.useEffect(() => {
-    
+    API.get("project/fixronall/" + sessionStorage.getItem(USER_ID) + "/").then(
+      (res) => {
+        console.log("response", res.data.data);
+      }
+    );
+  }, []);
+
+  React.useEffect(() => {
     if (projects.length > 0 && fetchproject.length == 0) {
       setfetchproject(projects);
       optionlist(projects);
-      setProjectDetails(projects)
+      setProjectDetails(projects);
     }
   }, [projects]);
   const mark_project_completed = (id) => {
@@ -561,7 +531,9 @@ const MyProjects = () => {
                               <div className="tasks-done-2 col-lg-4">
                                 <h6 className="tiny-header2">Planned Value</h6>
                                 <h6 className="project-point-details">
-                                  {Number(parseFloat(selectedSubTask.planned_value)).toFixed(2)}{" "}
+                                  {Number(
+                                    parseFloat(selectedSubTask.planned_value)
+                                  ).toFixed(2)}{" "}
                                 </h6>
                               </div>
                             )}
@@ -671,11 +643,11 @@ const MyProjects = () => {
                     <CButton
                       type="button"
                       className="create-wbs-from-modal"
-                      onClick={() =>{
+                      onClick={() => {
                         history.push({
                           pathname: "/dashboard/WBS/create-wbs",
                           state: { task: selectedSubTask },
-                        })
+                        });
                         //console.log("taskkkkkkkkk", selectedSubTask)
                       }}
                     >
@@ -695,12 +667,14 @@ const MyProjects = () => {
         <div className="row">
           <div className="col-md-10 col-lg-10 col-sm-12 col-xs-12 mt-1 offset-md-1 offset-lg-1">
             <CRow className="dash-header justfy-content-between">
-              <CCol lg="7">My Projects({Array.from(projectDetails).length})</CCol>
+              <CCol lg="3">
+                My Projects({Array.from(projectDetails).length})
+              </CCol>
               {/* <CCol lg="2">
                 <CustomSearch search={search} />
               </CCol> */}
-              {console.log('filtered', projectDetails)}
-              <CCol lg="3" className="mb-3 pl-4">
+              {console.log("filtered", projectDetails)}
+              <CCol lg="7" className="mb-3 pl-4">
                 <Select
                   className="custom-forminput-6"
                   placeholder="Filter by TDO"
@@ -721,232 +695,242 @@ const MyProjects = () => {
               </CCol>
             </CRow>
             {/* {filtered_pm_projects != undefined && ( */}
-              <Accordion
-                allowMultipleExpanded={false}
-                className="remove-acc-bg  mb-3"
-                allowZeroExpanded
-              >
-                {Array.from(projectDetails).map((project, idx) => (
-                  <AccordionItem key={idx} className="card-ongoing-project">
-                    <AccordionItemHeading className="ongoing-accordion-header">
-                      <AccordionItemButton>
-                        <IconButton
-                          aria-label="favourite"
-                          disabled
-                          size="medium"
-                        >
-                          <GradeIcon
-                            fontSize="inherit"
-                            className="fav-button"
-                          />
-                        </IconButton>
-                        {String(
-                          project.project.task_delivery_order.title
-                        ).toUpperCase() +
-                          " / " +
-                          String(project.project.sub_task).toUpperCase()}
-                        {/**action buttons */}
-                        <span className="fix-action-btn-alignment">
-                          <CButton
-                            className="view-ongoing-details"
-                            onClick={() =>{
-                              console.log("pro", project)
-                              history.push({
-                                pathname:
-                                  "/dashboard/Projects/my-projects/details/" +
-                                  project.project.work_package_number,
-                                state: { project: project },
-                              })
-                            }}
+            <CRow>
+                <Accordion
+                  allowMultipleExpanded={false}
+                  className="remove-acc-bg  mb-3"
+                  allowZeroExpanded
+                >
+                  {Array.from(projectDetails).map((project, idx) => (
+                    <AccordionItem key={idx} className="card-ongoing-project">
+                      <AccordionItemHeading className="ongoing-accordion-header">
+                        <AccordionItemButton>
+                          <IconButton
+                            aria-label="favourite"
+                            disabled
+                            size="medium"
                           >
-                            <CIcon name="cil-list-rich" className="mr-1" />
-                            View Details
-                          </CButton>
-                          <CButton
-                            type="button"
-                            onClick={() => {
-                              mark_project_completed(
-                                project.project.work_package_number
-                              );
-                            }}
-                            className="mark-ongoing-completed"
-                          >
-                            <CIcon name="cil-check-alt" className="mr-1" />
-                            Mark as Completed
-                          </CButton>
-                        </span>
-                      </AccordionItemButton>
-                    </AccordionItemHeading>
-                    <AccordionItemPanel>
-                      {/* <hr className="header-underline1" /> */}
-                      {/*task percentage portion */}
-                      <div>
-                        <h6 className="show-amount">
-                          {remaining_hours(project.subtasks).toFixed(2)}/
-                          {totalProjectHrs(project.subtasks)} Hrs
-                        </h6>
-                        <LinearWithValueLabel
-                          progress={() =>
-                            calculate_progress_in_percentage(
-                              totalProjectHrs(project.subtasks),
-                              remaining_hours(project.subtasks)
-                            )
-                          }
-                        />
-                      </div>
-                      {/*Project category buttons */}
-                      <div className="all-da-buttons-1">
-                        {Array.from(project.subtasks).length > 0 &&
-                          Array.from(project.subtasks).map((task, idx) => (
+                            <GradeIcon
+                              fontSize="inherit"
+                              className="fav-button"
+                            />
+                          </IconButton>
+                          {String(
+                            project.project.task_delivery_order.title
+                          ).toUpperCase() +
+                            " / " +
+                            String(project.project.sub_task).toUpperCase()}
+                          {/**action buttons */}
+                          <span className="fix-action-btn-alignment">
                             <CButton
-                              key={idx}
-                              type="button"
-                              className="package-button rounded-pill"
+                              className="view-ongoing-details"
                               onClick={() => {
-                                setShowSubTaskDetails(true);
-                                setSelectedSubTask(task);
-                                console.log("task", task);
+                                console.log("pro", project);
+                                history.push({
+                                  pathname:
+                                    "/dashboard/Projects/my-projects/details/" +
+                                    project.project.work_package_number,
+                                  state: { project: project },
+                                });
                               }}
                             >
-                              {task.task_title}
-                              <span className="tooltiptext">
-                                {task.work_package_index}
-                              </span>
+                              <CIcon name="cil-list-rich" className="mr-1" />
+                              View Details
                             </CButton>
-                          ))}
-                      </div>
-                      {/*Project participants */}
-                      <div className="all-da-workers1">
-                        {project.assignees.length > 0 &&
-                          Array.from(project.assignees).map((assignee, idx) => (
-                            <CTooltip
-                              key={idx}
-                              content={capitalize(
-                                assignee.first_name + " " + assignee.last_name
-                              )}
-                              className="tooltiptext1"
+                            <CButton
+                              type="button"
+                              onClick={() => {
+                                mark_project_completed(
+                                  project.project.work_package_number
+                                );
+                              }}
+                              className="mark-ongoing-completed"
                             >
-                              <img
+                              <CIcon name="cil-check-alt" className="mr-1" />
+                              Mark as Completed
+                            </CButton>
+                          </span>
+                        </AccordionItemButton>
+                      </AccordionItemHeading>
+                      <AccordionItemPanel>
+                        {/* <hr className="header-underline1" /> */}
+                        {/*task percentage portion */}
+                        <div>
+                          <h6 className="show-amount">
+                            {remaining_hours(project.subtasks).toFixed(2)}/
+                            {totalProjectHrs(project.subtasks)} Hrs
+                          </h6>
+                          <LinearWithValueLabel
+                            progress={() =>
+                              calculate_progress_in_percentage(
+                                totalProjectHrs(project.subtasks),
+                                remaining_hours(project.subtasks)
+                              )
+                            }
+                          />
+                        </div>
+                        {/*Project category buttons */}
+                        <div className="all-da-buttons-1">
+                          {Array.from(project.subtasks).length > 0 &&
+                            Array.from(project.subtasks).map((task, idx) => (
+                              <CButton
                                 key={idx}
-                                className="img-fluid worker-image"
-                                src={
-                                  assignee.profile_pic != null
-                                    ? BASE_URL + assignee.profile_pic
-                                    : "avatars/user-avatar-default.png"
-                                }
-                              />
-                            </CTooltip>
-                          ))}
-                      </div>
-                      {/*project info in text */}
-                      <div className="information-show row">
-                        {/* <div className="info-show-now col-lg-6">
+                                type="button"
+                                className="package-button rounded-pill"
+                                onClick={() => {
+                                  setShowSubTaskDetails(true);
+                                  setSelectedSubTask(task);
+                                  console.log("task", task);
+                                }}
+                              >
+                                {task.task_title}
+                                <span className="tooltiptext">
+                                  {task.work_package_index}
+                                </span>
+                              </CButton>
+                            ))}
+                        </div>
+                        {/*Project participants */}
+                        <div className="all-da-workers1">
+                          {project.assignees.length > 0 &&
+                            Array.from(project.assignees).map(
+                              (assignee, idx) => (
+                                <CTooltip
+                                  key={idx}
+                                  content={capitalize(
+                                    assignee.first_name +
+                                      " " +
+                                      assignee.last_name
+                                  )}
+                                  className="tooltiptext1"
+                                >
+                                  <img
+                                    key={idx}
+                                    className="img-fluid worker-image"
+                                    src={
+                                      assignee.profile_pic != null
+                                        ? BASE_URL + assignee.profile_pic
+                                        : "avatars/user-avatar-default.png"
+                                    }
+                                  />
+                                </CTooltip>
+                              )
+                            )}
+                        </div>
+                        {/*project info in text */}
+                        <div className="information-show row">
+                          {/* <div className="info-show-now col-lg-6">
                                                     <h5 className="project-details-points child"><h5 className="info-header-1">Assigned by :</h5>{project.project.pm.first_name + ' ' + project.project.pm.last_name}</h5>
                                                 </div> */}
-                        <div className="info-show-now col-lg-6">
-                          <h5 className="project-details-points">
-                            <h5 className="info-header-1">
-                              Project Manager :{" "}
-                              {status.project != idx ? (
-                                <CButton
-                                  className="edit-pm-name"
-                                  variant="ghost"
-                                  onClick={(e) =>
-                                    changePMChangeInputFieldStatus(idx, "open")
-                                  }
-                                >
-                                  <CIcon
-                                    name="cil-pencil"
-                                    className="mr-1 pen-icon-pm"
-                                  />
-                                </CButton>
-                              ) : null}
-                            </h5>
-                            {status.project != idx ? (
-                              <span>
-                                {project.project.pm.first_name +
-                                  " " +
-                                  project.project.pm.last_name}
-                              </span>
-                            ) : (
-                              <></>
-                            )}
-                            {/**if clicked edit button */}
-                            {/**if clicked edit button */}
-                            {status.project == idx ? (
-                              <div className="pm-name-edit-part">
-                                <CForm className="desktop-width">
-                                  {/* <CInput className="custom-forminput-6 pm-edit" type="text" value={project.project.sub_task} /> */}
-                                  <Select
-                                    closeMenuOnSelect={true}
-                                    aria-labelledby="prjctSelect"
-                                    id="prjctSelect"
-                                    minHeight="35px"
-                                    placeholder="Select from list"
-                                    isClearable={true}
-                                    isMulti={false}
-                                    onChange={handlePMChange}
-                                    classNamePrefix="pm-edit"
-                                    value={currentPM}
-                                    options={managers}
-                                    // styles={colourStyles}
-                                  />
-                                </CForm>
-                                <div className="mt-1">
+                          <div className="info-show-now col-lg-6">
+                            <h5 className="project-details-points">
+                              <h5 className="info-header-1">
+                                Project Manager :{" "}
+                                {status.project != idx ? (
                                   <CButton
-                                    type="button"
+                                    className="edit-pm-name"
                                     variant="ghost"
-                                    className="confirm-name-pm"
-                                    onClick={(e) =>
-                                      changePM(
-                                        project.project.work_package_number
-                                      )
-                                    }
-                                  >
-                                    <CIcon
-                                      name="cil-check-circle"
-                                      className="mr-1 tick"
-                                      size="xl"
-                                    />
-                                  </CButton>
-                                  <CButton
-                                    type="button"
-                                    variant="ghost"
-                                    className="cancel-name-pm"
                                     onClick={(e) =>
                                       changePMChangeInputFieldStatus(
-                                        project.project.id,
-                                        "close"
+                                        idx,
+                                        "open"
                                       )
                                     }
                                   >
                                     <CIcon
-                                      name="cil-x-circle"
-                                      className="mr-1 cross"
-                                      size="xl"
+                                      name="cil-pencil"
+                                      className="mr-1 pen-icon-pm"
                                     />
                                   </CButton>
+                                ) : null}
+                              </h5>
+                              {status.project != idx ? (
+                                <span>
+                                  {project.project.pm.first_name +
+                                    " " +
+                                    project.project.pm.last_name}
+                                </span>
+                              ) : (
+                                <></>
+                              )}
+                              {/**if clicked edit button */}
+                              {/**if clicked edit button */}
+                              {status.project == idx ? (
+                                <div className="pm-name-edit-part">
+                                  <CForm className="desktop-width">
+                                    {/* <CInput className="custom-forminput-6 pm-edit" type="text" value={project.project.sub_task} /> */}
+                                    <Select
+                                      closeMenuOnSelect={true}
+                                      aria-labelledby="prjctSelect"
+                                      id="prjctSelect"
+                                      minHeight="35px"
+                                      placeholder="Select from list"
+                                      isClearable={true}
+                                      isMulti={false}
+                                      onChange={handlePMChange}
+                                      classNamePrefix="pm-edit"
+                                      value={currentPM}
+                                      options={managers}
+                                      // styles={colourStyles}
+                                    />
+                                  </CForm>
+                                  <div className="mt-1">
+                                    <CButton
+                                      type="button"
+                                      variant="ghost"
+                                      className="confirm-name-pm"
+                                      onClick={(e) =>
+                                        changePM(
+                                          project.project.work_package_number
+                                        )
+                                      }
+                                    >
+                                      <CIcon
+                                        name="cil-check-circle"
+                                        className="mr-1 tick"
+                                        size="xl"
+                                      />
+                                    </CButton>
+                                    <CButton
+                                      type="button"
+                                      variant="ghost"
+                                      className="cancel-name-pm"
+                                      onClick={(e) =>
+                                        changePMChangeInputFieldStatus(
+                                          project.project.id,
+                                          "close"
+                                        )
+                                      }
+                                    >
+                                      <CIcon
+                                        name="cil-x-circle"
+                                        className="mr-1 cross"
+                                        size="xl"
+                                      />
+                                    </CButton>
+                                  </div>
                                 </div>
-                              </div>
-                            ) : (
-                              <></>
-                            )}
-                          </h5>
-                        </div>
-                        {/* <div className="info-show-now col-lg-6">
+                              ) : (
+                                <></>
+                              )}
+                            </h5>
+                          </div>
+                          {/* <div className="info-show-now col-lg-6">
                                                     <h5 className="project-details-points child"><h5 className="info-header-1">Planned delivery date :</h5>{project.project.planned_delivery_date}</h5>
                                                 </div> */}
-                        {/* <div className="info-show-now col-lg-6"> */}
-                        {/* <h5 className="project-details-points"><h5 className="info-header-1">Project Details :</h5>Design and develop the app for the seller and buyer module</h5> */}
-                        {/* <h5 className="project-details-points child"><h5 className="info-header-1">Start Date : </h5>{project.project.start_date}</h5>
+                          {/* <div className="info-show-now col-lg-6"> */}
+                          {/* <h5 className="project-details-points"><h5 className="info-header-1">Project Details :</h5>Design and develop the app for the seller and buyer module</h5> */}
+                          {/* <h5 className="project-details-points child"><h5 className="info-header-1">Start Date : </h5>{project.project.start_date}</h5>
 
                                                     <h5 className="project-details-points"><h5 className="info-header-1">Planned Delivery Date : </h5>{project.project.planned_delivery_date}</h5>
                                                 </div> */}
-                      </div>
-                    </AccordionItemPanel>
-                  </AccordionItem>
-                ))}
-              </Accordion>
+                        </div>
+                      </AccordionItemPanel>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+             
+            </CRow>
             {/* } */}
 
             {/**If no projects are there */}

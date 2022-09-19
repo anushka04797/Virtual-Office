@@ -193,7 +193,8 @@ const AddTimecardItms = (props) => {
       <CModal
         closeOnBackdrop={false}
         show={props.show}
-        onClose={()=>{props.onClose();formAddTimecard.resetForm()}}
+        onClose={()=>{props.onClose();reset_form()}}
+        toggle={props.toggle}
         size="lg"
       >
         <CForm>
