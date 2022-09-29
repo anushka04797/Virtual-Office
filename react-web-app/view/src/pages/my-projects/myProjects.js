@@ -22,6 +22,7 @@ import {
   CInput,
   CModalTitle,
 } from "@coreui/react";
+import uniqBy from "lodash/uniqBy";
 import GradeIcon from "@material-ui/icons/Grade";
 import IconButton from "@material-ui/core/IconButton";
 import CIcon from "@coreui/icons-react";
@@ -53,13 +54,12 @@ import { createSelector } from "reselect";
 const MyProjects = () => {
   const pmprojects = useSelector((state) => {
     let e = [];
-    Array.from(state.projects.pm_projects).forEach((item, idx) => {
+    Array.from(state.projects.grouped_by_tdo).forEach((item, idx) => {
       e.push(item);
     });
     console.log("all pm Projects", e);
     return e;
   });
-
 
   let history = useHistory();
   const dispatch = useDispatch();
@@ -71,15 +71,16 @@ const MyProjects = () => {
   const [alltdos, setalltdos] = useState([]);
   const [projectDetails, setProjectDetails] = useState([]);
   const [filteredprojects, setfilteredProjects] = useState([pmprojects]);
+  const [TDOassignees, setTdoassignee] = useState([]);
 
   let details = [];
   const optionlist = (projects) => {
     let optionarray = [];
     for (let i = 0; i < projects.length; i++) {
       optionarray.push({
-        data: projects[i],
-        label: projects[i].project.task_delivery_order.title,
-        value: projects[i].project.task_delivery_order.id,
+        data: projects[i].projects,
+        label: projects[i].title,
+        value: projects[i].id,
       });
     }
     optionarray.unshift({
@@ -96,6 +97,7 @@ const MyProjects = () => {
   const handlePMChange = (option, actionMeta) => {
     setPM(option);
   };
+
   const changePM = (wp) => {
     API.put("project/change-project-manager/", {
       wp: wp,
@@ -112,10 +114,8 @@ const MyProjects = () => {
   // const [filteredProjects, setfilteredProjects] = useState()
   const projects = useSelector((state) => {
     let temp = [];
-    Array.from(state.projects.filtered_pm_projects).forEach((item, idx) => {
-      if (item.project.status == 0) {
-        temp.push(item);
-      }
+    Array.from(state.projects.grouped_by_tdo).forEach((item, idx) => {
+      temp.push(item);
     });
     return temp;
   });
@@ -144,15 +144,11 @@ const MyProjects = () => {
       console.log("temp all", temp);
     } else {
       for (let index = 0; index < options.length; index++) {
-        console.log("options len", options[index].value);
+        console.log("options len", options[index]);
         for (let index1 = 0; index1 < projects.length; index1++) {
           console.log("projects len", projects[index1]);
-          if (
-            options[index].value ==
-            projects[index1].project.task_delivery_order.id
-          ) {
+          if (options[index].value == projects[index1].id) {
             temp.push(projects[index1]);
-            console.log("temp array", temp);
           }
         }
       }
@@ -278,9 +274,10 @@ const MyProjects = () => {
   };
   const remaining_hours = (projects) => {
     let remaining_hours = 0;
-    projects.forEach((item) => {
-      remaining_hours += parseFloat(item.remaining_hours);
-    });
+    //console.log("hrs", projects)
+    for (let i = 0; i < projects.length; i++) {
+      remaining_hours += parseFloat(projects[i].remaining_hours);
+    }
     return remaining_hours;
   };
   const can_create_wbs = (assignees) => {
@@ -292,13 +289,14 @@ const MyProjects = () => {
     });
     return result;
   };
-  function totalProjectHrs(projects) {
+  const totalProjectHrs = (projects) => {
     let total_hours = 0;
-    projects.forEach((item) => {
-      total_hours += parseFloat(item.planned_hours);
-    });
+    for (let i = 0; i < projects.length; i++) {
+      total_hours += parseFloat(projects[i].total_hours);
+    }
+
     return total_hours;
-  }
+  };
   const delete_assignee = (project_id, assignee_id) => {
     swal({
       title: "Are you sure?",
@@ -331,50 +329,52 @@ const MyProjects = () => {
       }
     });
   };
-  function calculate_progress_in_percentage(total_hours, remaining_hours) {
-    let worked_hours = parseFloat(total_hours) - parseFloat(remaining_hours);
-    return (100 * worked_hours) / parseFloat(total_hours);
-  }
 
   const fileType =
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
   const fileExtension = ".xlsx";
   const fileName = "PM's project List";
   const xlData = [];
-  const exportToCSV = () => {
-    for (let i = 0; i < projects.length; i++) {
-      const item = projects[i];
-      let subTaskNames = [];
-      var subTaskName;
-      Array.from(item.subtasks).map((el) => {
-        subTaskNames.push(el.task_title);
-      });
-      subTaskName = subTaskNames.join(",");
-      let assigneNames = [];
-      var assigneName;
-      Array.from(item.assignees).map((el) => {
-        assigneNames.push(el.first_name + " " + el.last_name);
-      });
-      assigneName = assigneNames.join(",");
-      xlData.push({
-        "Sl. No": i + 1,
-        TDO: item.project.task_delivery_order.title,
-        "Work Package Number": item.project.work_package_number,
-        "Work Package Index": item.project.work_package_index,
-        "Project Name": item.project.sub_task,
-        Subtasks: subTaskName,
-        "Assignee(s)": assigneName,
-        "Planned Value": item.project.planned_value,
-        "Planned Hours": item.project.planned_hours,
-        "Planned Delivery Date": item.project.planned_delivery_date,
-      });
-    }
-    const ws = XLSX.utils.json_to_sheet(xlData);
-    const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
-    const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
-    const data = new Blob([excelBuffer], { type: fileType });
-    FileSaver.saveAs(data, fileName + fileExtension);
-  };
+   const exportToCSV = () => {
+     for (let i = 0; i < projects.length; i++) {
+      
+      let a=projects[i]
+      for(let j=0;j<a.length;j++)
+      {
+        console.log("xl", a[j])
+      }
+  //     const item = projects[i];
+  //     let subTaskNames = [];
+  //     var subTaskName;
+  //     Array.from(item.subtasks).map((el) => {
+  //       subTaskNames.push(el.task_title);
+  //     });
+  //     subTaskName = subTaskNames.join(",");
+  //     let assigneNames = [];
+  //     var assigneName;
+  //     Array.from(item.assignees).map((el) => {
+  //       assigneNames.push(el.first_name + " " + el.last_name);
+  //     });
+  //     assigneName = assigneNames.join(",");
+  //     xlData.push({
+  //       "Sl. No": i + 1,
+  //       TDO: item.project.task_delivery_order.title,
+  //       "Work Package Number": item.project.work_package_number,
+  //       "Work Package Index": item.project.work_package_index,
+  //       "Project Name": item.project.sub_task,
+  //       Subtasks: subTaskName,
+  //       "Assignee(s)": assigneName,
+  //       "Planned Value": item.project.planned_value,
+  //       "Planned Hours": item.project.planned_hours,
+  //       "Planned Delivery Date": item.project.planned_delivery_date,
+  //     });
+     }
+  //   const ws = XLSX.utils.json_to_sheet(xlData);
+  //   const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
+  //   const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+  //   const data = new Blob([excelBuffer], { type: fileType });
+  //   FileSaver.saveAs(data, fileName + fileExtension);
+   };
   const [searchText, setSearchText] = useState("");
   const [searchResultShow, setSearchResultShow] = useState(false);
   const [result, setResult] = useState([]);
@@ -445,6 +445,59 @@ const MyProjects = () => {
       setSearchResultShow(true);
     }
   };
+  const calculate_progress = (projects) => {
+    //console.log("1111", projects)
+    let progress = 0;
+    let plannedHrs = 0;
+    let remainingHrs = 0;
+    for (let i = 0; i < projects.length; i++) {
+      let a = projects[i].subtasks;
+
+      for (let j = 0; j < a.length; j++) {
+        //console.log('11', a[j].planned_hours)
+        plannedHrs += parseFloat(a[j].planned_hours);
+        remainingHrs += parseFloat(a[j].remaining_hours);
+      }
+    }
+    progress = (remainingHrs / plannedHrs).toFixed(2);
+    //console.log('111', progress)
+
+    return progress;
+  };
+
+  function calculate_progress_in_percentage(projects) {
+    let percentage = 0;
+    let plannedHrs = 0;
+    let remainingHrs = 0;
+    for (let i = 0; i < projects.length; i++) {
+      let a = projects[i].subtasks;
+
+      for (let j = 0; j < a.length; j++) {
+        //console.log('11', a[j].planned_hours)
+        plannedHrs += parseFloat(a[j].planned_hours);
+        remainingHrs += parseFloat(a[j].remaining_hours);
+      }
+    }
+    percentage = parseFloat(plannedHrs) - parseFloat(remainingHrs);
+    percentage = (100 * percentage) / plannedHrs;
+
+    return percentage;
+  }
+  const assignees_under_tdo = (projects) => {
+    let assignees = [];
+    let temp = [];
+    for (let i = 0; i < projects.length; i++) {
+      let a = projects[i].assignees;
+      for (let j = 0; j < a.length; j++) {
+        console.log("a[j]", a[j]);
+        temp.push(a[j]);
+      }
+    }
+    temp = uniqBy(temp, "id");
+    console.log("assignees", temp);
+    //setTdoassignee(temp)
+    return temp;
+  };
 
   return (
     <>
@@ -460,6 +513,7 @@ const MyProjects = () => {
       {/* <IconButton color="primary" sx={{ p: '10px' }} aria-label="directions">
                     <DirectionsIcon />
             </IconButton> */}
+
       {selectedSubTask && (
         <CModal
           closeOnBackdrop={false}
@@ -478,56 +532,53 @@ const MyProjects = () => {
               <span className="edit-profile-form-header">Subtask Details</span>
             </CModalTitle>
           </CModalHeader>
-          <CModalBody>
-            <CContainer>
-              <CForm>
-                <CRow>
-                  <div className="card-header-portion-ongoing">
-                    <h4 className="ongoing-card-header-1">
-                      {/* <IconButton aria-label="favourite" disabled size="medium" color="primary">
-                                            <GradeIcon fontSize="inherit" className="fav-button" />
-                                        </IconButton> */}
-                      {selectedSubTask != undefined
-                        ? selectedSubTask.sub_task
-                        : ""}
-                    </h4>
-                  </div>
-                  <div className="justify-content-center">
-                    <div className="mt-1 mb-2">
-                      <CCard className="card-ongoing-project">
-                        <CCardBody className="details-project-body">
-                          <div className="ongoing-initial-info row">
-                            <div className="tasks-done-2 col-lg-4">
-                              <h6 className="tiny-header2">
-                                Work Package Index
-                              </h6>
-                              <h6 className="project-point-details">
-                                {selectedSubTask.work_package_index}
-                              </h6>
-                            </div>
-                            <div className="tasks-done-2 col-lg-4">
-                              <h6 className="tiny-header2">Task Title</h6>
-                              <h6 className="project-point-details">
-                                {selectedSubTask.task_title}
-                              </h6>
-                            </div>
-                            <div className="tasks-done-2 col-lg-4">
-                              <h6 className="tiny-header2">PM Name</h6>
-                              <h6 className="project-point-details">
-                                {selectedSubTask.pm.first_name +
-                                  " " +
-                                  selectedSubTask.pm.last_name}
-                              </h6>
-                            </div>
-                            <div className="tasks-done-2 col-lg-4">
-                              <h6 className="tiny-header2">
-                                Estimated Person(s)
-                              </h6>
-                              <h6 className="project-point-details">
-                                {selectedSubTask.estimated_person}
-                              </h6>
-                            </div>
-                            {has_permission("projects.add_projects") && (
+            <CModalBody>
+              <CContainer>
+                <CForm>
+                  <CRow>
+                    <div className="card-header-portion-ongoing">
+                      <h4 className="ongoing-card-header-1">
+                        {selectedSubTask != undefined
+                          ? selectedSubTask.sub_task
+                          : ""}
+                      </h4>
+                    </div>
+                    <div className="justify-content-center">
+                      <div className="mt-1 mb-2">
+                        <CCard className="card-ongoing-project">
+                          <CCardBody className="details-project-body">
+                            <div className="ongoing-initial-info row">
+                              <div className="tasks-done-2 col-lg-4">
+                                <h6 className="tiny-header2">
+                                  Work Package Index
+                                </h6>
+                                <h6 className="project-point-details">
+                                  {selectedSubTask.work_package_index}
+                                </h6>
+                              </div>
+                              <div className="tasks-done-2 col-lg-4">
+                                <h6 className="tiny-header2">Task Title</h6>
+                                <h6 className="project-point-details">
+                                  {selectedSubTask.task_title}
+                                </h6>
+                              </div>
+                              <div className="tasks-done-2 col-lg-4">
+                                <h6 className="tiny-header2">PM Name</h6>
+                                <h6 className="project-point-details">
+                                  {selectedSubTask.pm.first_name +
+                                    " " +
+                                    selectedSubTask.pm.last_name}
+                                </h6>
+                              </div>
+                              <div className="tasks-done-2 col-lg-4">
+                                <h6 className="tiny-header2">
+                                  Estimated Person(s)
+                                </h6>
+                                <h6 className="project-point-details">
+                                  {selectedSubTask.estimated_person}
+                                </h6>
+                              </div>
+                              {has_permission("projects.add_projects") && (
                               <div className="tasks-done-2 col-lg-4">
                                 <h6 className="tiny-header2">Planned Value</h6>
                                 <h6 className="project-point-details">
@@ -537,7 +588,7 @@ const MyProjects = () => {
                                 </h6>
                               </div>
                             )}
-                            <div className="tasks-done-2 col-lg-4">
+                               <div className="tasks-done-2 col-lg-4">
                               <h6 className="tiny-header2">Planned Hours</h6>
                               <h6 className="project-point-details">
                                 {Number(
@@ -584,9 +635,9 @@ const MyProjects = () => {
                                   : selectedSubTask.description}
                               </h6>
                             </div>
-                          </div>
 
-                          <div className="mt-4 mb-2">
+                            </div>
+                            <div className="mt-4 mb-2">
                             <h5 className="projectName mb-3">
                               Asssignee(s)-(
                               {Array.from(selectedSubTask.assignees).length})
@@ -626,19 +677,12 @@ const MyProjects = () => {
                                 )}
                             </div>
                           </div>
-                          {/* <div className="col-md-12 mt-2 mb-2">
-                                                    <div className="project-actions">
-                                                        <CButton className="edit-project-ongoing-task" onClick={() => editInfoForm(subtask)} ><CIcon name="cil-pencil" className="mr-1" /> Edit </CButton>
-                                                        <CButton type="button" onClick={() => delete_subtask(subtask.work_package_index)} className="delete-project-2"><CIcon name="cil-trash" className="mr-1" /> Delete</CButton>
-                                                    </div>
-                                                </div> */}
-                        </CCardBody>
-                      </CCard>
+                          </CCardBody>
+                        </CCard>
+                      </div>
                     </div>
-                  </div>
-                </CRow>
-                {/**forward to wbs button  */}
-                {can_create_wbs(selectedSubTask.assignees) && (
+                  </CRow>
+               {can_create_wbs(selectedSubTask.assignees) && (
                   <CRow className="justify-content-center">
                     <CButton
                       type="button"
@@ -655,9 +699,10 @@ const MyProjects = () => {
                     </CButton>
                   </CRow>
                 )}
-              </CForm>
-            </CContainer>
-          </CModalBody>
+
+                </CForm>
+              </CContainer>
+            </CModalBody>
         </CModal>
       )}
 
@@ -666,6 +711,7 @@ const MyProjects = () => {
       <div className="container">
         <div className="row">
           <div className="col-md-10 col-lg-10 col-sm-12 col-xs-12 mt-1 offset-md-1 offset-lg-1">
+            
             <CRow className="dash-header justfy-content-between">
               <CCol lg="3">
                 My Projects({Array.from(projectDetails).length})
@@ -673,7 +719,7 @@ const MyProjects = () => {
               {/* <CCol lg="2">
                 <CustomSearch search={search} />
               </CCol> */}
-              {console.log("filtered", projectDetails)}
+
               <CCol lg="7" className="mb-3 pl-4">
                 <Select
                   className="custom-forminput-6"
@@ -696,115 +742,87 @@ const MyProjects = () => {
             </CRow>
             {/* {filtered_pm_projects != undefined && ( */}
             <CRow>
-                <Accordion
-                  allowMultipleExpanded={false}
-                  className="remove-acc-bg  mb-3"
-                  allowZeroExpanded
-                >
-                  {Array.from(projectDetails).map((project, idx) => (
-                    <AccordionItem key={idx} className="card-ongoing-project">
-                      <AccordionItemHeading className="ongoing-accordion-header">
-                        <AccordionItemButton>
-                          <IconButton
-                            aria-label="favourite"
-                            disabled
-                            size="medium"
-                          >
-                            <GradeIcon
-                              fontSize="inherit"
-                              className="fav-button"
-                            />
-                          </IconButton>
-                          {String(
-                            project.project.task_delivery_order.title
-                          ).toUpperCase() +
-                            " / " +
-                            String(project.project.sub_task).toUpperCase()}
-                          {/**action buttons */}
-                          <span className="fix-action-btn-alignment">
-                            <CButton
-                              className="view-ongoing-details"
-                              onClick={() => {
-                                console.log("pro", project);
-                                history.push({
-                                  pathname:
-                                    "/dashboard/Projects/my-projects/details/" +
-                                    project.project.work_package_number,
-                                  state: { project: project },
-                                });
-                              }}
-                            >
-                              <CIcon name="cil-list-rich" className="mr-1" />
-                              View Details
-                            </CButton>
-                            <CButton
-                              type="button"
-                              onClick={() => {
-                                mark_project_completed(
-                                  project.project.work_package_number
-                                );
-                              }}
-                              className="mark-ongoing-completed"
-                            >
-                              <CIcon name="cil-check-alt" className="mr-1" />
-                              Mark as Completed
-                            </CButton>
-                          </span>
-                        </AccordionItemButton>
-                      </AccordionItemHeading>
-                      <AccordionItemPanel>
-                        {/* <hr className="header-underline1" /> */}
-                        {/*task percentage portion */}
-                        <div>
-                          <h6 className="show-amount">
-                            {remaining_hours(project.subtasks).toFixed(2)}/
-                            {totalProjectHrs(project.subtasks)} Hrs
-                          </h6>
-                          <LinearWithValueLabel
-                            progress={() =>
-                              calculate_progress_in_percentage(
-                                totalProjectHrs(project.subtasks),
-                                remaining_hours(project.subtasks)
-                              )
-                            }
+              <Accordion
+                allowMultipleExpanded={false}
+                className="remove-acc-bg  mb-3"
+                allowZeroExpanded
+              >
+                {Array.from(projectDetails).map((project, idx) => (
+                  <AccordionItem key={idx} className="card-ongoing-project">
+                    <AccordionItemHeading className="ongoing-accordion-header">
+                      <AccordionItemButton>
+                        <IconButton
+                          aria-label="favourite"
+                          disabled
+                          size="medium"
+                        >
+                          <GradeIcon
+                            fontSize="inherit"
+                            className="fav-button"
                           />
-                        </div>
-                        {/*Project category buttons */}
-                        <div className="all-da-buttons-1">
-                          {Array.from(project.subtasks).length > 0 &&
-                            Array.from(project.subtasks).map((task, idx) => (
-                              <CButton
-                                key={idx}
-                                type="button"
-                                className="package-button rounded-pill"
-                                onClick={() => {
-                                  setShowSubTaskDetails(true);
-                                  setSelectedSubTask(task);
-                                  console.log("task", task);
-                                }}
-                              >
-                                {task.task_title}
-                                <span className="tooltiptext">
-                                  {task.work_package_index}
-                                </span>
-                              </CButton>
-                            ))}
-                        </div>
-                        {/*Project participants */}
-                        <div className="all-da-workers1">
-                          {project.assignees.length > 0 &&
-                            Array.from(project.assignees).map(
-                              (assignee, idx) => (
-                                <CTooltip
-                                  key={idx}
-                                  content={capitalize(
-                                    assignee.first_name +
-                                      " " +
-                                      assignee.last_name
-                                  )}
-                                  className="tooltiptext1"
-                                >
-                                  <img
+                        </IconButton>
+                        {console.log("details", project.projects)}
+
+                        {String(project.title).toUpperCase()}
+                        <span className="fix-action-btn-alignment">
+                          <CButton
+                            className="view-ongoing-details"
+                            onClick={() => {
+                              console.log("pro", project.projects[0]);
+                              history.push({
+                                pathname:
+                                  "/dashboard/Projects/my-projects/subtask-details/" + 
+                                  project.projects[0].project.task_delivery_order.id,
+                                 state: { project: project.projects },
+                              });
+                            }}
+                          >
+                            <CIcon name="cil-list-rich" className="mr-1" />
+                            View Details
+                          </CButton>
+                        </span>
+                      </AccordionItemButton>
+                    </AccordionItemHeading>
+                    <AccordionItemPanel>
+                      <div>
+                        <h6 className="show-amount">
+                          {calculate_progress(project.projects)} Hrs
+                        </h6>
+                        <LinearWithValueLabel
+                          progress={() =>
+                            calculate_progress_in_percentage(project.projects)
+                          }
+                        />
+                      </div>
+                      <div className="all-da-buttons-1">
+                        {Array.from(project.projects).map((task, idx) =>
+                          Array.from(task.subtasks).map((tsk, id) => (
+                            <CButton
+                              key={id}
+                              type="button"
+                              className="package-button rounded-pill"
+                              onClick={() => {
+                                setShowSubTaskDetails(true);
+                                setSelectedSubTask(tsk);
+                                console.log("data", tsk);
+                              }}
+                            >
+                              {tsk.task_title}
+                              <span className="tooltiptext">
+                                {tsk.work_package_index}
+                              </span>
+                            </CButton>
+                          ))
+                        )}
+                      </div>
+                      <div className="all-da-workers1">
+                        {/* { Array.from(TDOassignees).forEach((assignee,idx)=>{
+                        <CTooltip
+                        key={idx}
+                        contect = {capitalize(assignee)}
+                        className = "tooltiptext1"
+                        > */}
+                        {/* <img
                                     key={idx}
                                     className="img-fluid worker-image"
                                     src={
@@ -812,126 +830,47 @@ const MyProjects = () => {
                                         ? BASE_URL + assignee.profile_pic
                                         : "avatars/user-avatar-default.png"
                                     }
-                                  />
-                                </CTooltip>
-                              )
-                            )}
-                        </div>
-                        {/*project info in text */}
-                        <div className="information-show row">
-                          {/* <div className="info-show-now col-lg-6">
-                                                    <h5 className="project-details-points child"><h5 className="info-header-1">Assigned by :</h5>{project.project.pm.first_name + ' ' + project.project.pm.last_name}</h5>
-                                                </div> */}
-                          <div className="info-show-now col-lg-6">
-                            <h5 className="project-details-points">
-                              <h5 className="info-header-1">
-                                Project Manager :{" "}
-                                {status.project != idx ? (
-                                  <CButton
-                                    className="edit-pm-name"
-                                    variant="ghost"
-                                    onClick={(e) =>
-                                      changePMChangeInputFieldStatus(
-                                        idx,
-                                        "open"
-                                      )
-                                    }
-                                  >
-                                    <CIcon
-                                      name="cil-pencil"
-                                      className="mr-1 pen-icon-pm"
-                                    />
-                                  </CButton>
-                                ) : null}
-                              </h5>
-                              {status.project != idx ? (
-                                <span>
-                                  {project.project.pm.first_name +
-                                    " " +
-                                    project.project.pm.last_name}
-                                </span>
-                              ) : (
-                                <></>
+                                  /> */}
+                        {/* </CTooltip>
+                       })} */}
+                        {/* {assignees_under_tdo(project.projects)} */}
+                        {Array.from(assignees_under_tdo(project.projects)).map(
+                          (assignee, idx) => {
+                            <CTooltip
+                              key={idx}
+                              content={capitalize(
+                                assignee.first_name + " " + assignee.last_name
                               )}
-                              {/**if clicked edit button */}
-                              {/**if clicked edit button */}
-                              {status.project == idx ? (
-                                <div className="pm-name-edit-part">
-                                  <CForm className="desktop-width">
-                                    {/* <CInput className="custom-forminput-6 pm-edit" type="text" value={project.project.sub_task} /> */}
-                                    <Select
-                                      closeMenuOnSelect={true}
-                                      aria-labelledby="prjctSelect"
-                                      id="prjctSelect"
-                                      minHeight="35px"
-                                      placeholder="Select from list"
-                                      isClearable={true}
-                                      isMulti={false}
-                                      onChange={handlePMChange}
-                                      classNamePrefix="pm-edit"
-                                      value={currentPM}
-                                      options={managers}
-                                      // styles={colourStyles}
-                                    />
-                                  </CForm>
-                                  <div className="mt-1">
-                                    <CButton
-                                      type="button"
-                                      variant="ghost"
-                                      className="confirm-name-pm"
-                                      onClick={(e) =>
-                                        changePM(
-                                          project.project.work_package_number
-                                        )
-                                      }
-                                    >
-                                      <CIcon
-                                        name="cil-check-circle"
-                                        className="mr-1 tick"
-                                        size="xl"
-                                      />
-                                    </CButton>
-                                    <CButton
-                                      type="button"
-                                      variant="ghost"
-                                      className="cancel-name-pm"
-                                      onClick={(e) =>
-                                        changePMChangeInputFieldStatus(
-                                          project.project.id,
-                                          "close"
-                                        )
-                                      }
-                                    >
-                                      <CIcon
-                                        name="cil-x-circle"
-                                        className="mr-1 cross"
-                                        size="xl"
-                                      />
-                                    </CButton>
-                                  </div>
-                                </div>
-                              ) : (
-                                <></>
-                              )}
+                              className="tooltiptext1"
+                            >
+                              <img
+                                key={idx}
+                                className="img-fluid worker-image"
+                                src={
+                                  assignee.profile_pic != null
+                                    ? BASE_URL + assignee.profile_pic
+                                    : "avatars/user-avatar-default.png"
+                                }
+                              />
+                            </CTooltip>;
+                          }
+                        )}
+                      </div>
+                      {/*project info in text */}
+                      <div className="information-show row">
+                        <div className="info-show-now col-lg-6">
+                          <h5 className="project-details-points">
+                            <h5 className="info-header-1">
+                              {/* Project Manager :{" "} */}
                             </h5>
-                          </div>
-                          {/* <div className="info-show-now col-lg-6">
-                                                    <h5 className="project-details-points child"><h5 className="info-header-1">Planned delivery date :</h5>{project.project.planned_delivery_date}</h5>
-                                                </div> */}
-                          {/* <div className="info-show-now col-lg-6"> */}
-                          {/* <h5 className="project-details-points"><h5 className="info-header-1">Project Details :</h5>Design and develop the app for the seller and buyer module</h5> */}
-                          {/* <h5 className="project-details-points child"><h5 className="info-header-1">Start Date : </h5>{project.project.start_date}</h5>
-
-                                                    <h5 className="project-details-points"><h5 className="info-header-1">Planned Delivery Date : </h5>{project.project.planned_delivery_date}</h5>
-                                                </div> */}
+                          </h5>
                         </div>
-                      </AccordionItemPanel>
-                    </AccordionItem>
-                  ))}
-                </Accordion>
-             
+                      </div>
+                    </AccordionItemPanel>
+                  </AccordionItem>
+                ))}
+              </Accordion>
             </CRow>
-            {/* } */}
 
             {/**If no projects are there */}
             {Array.from(filteredprojects).length < 1 ? (

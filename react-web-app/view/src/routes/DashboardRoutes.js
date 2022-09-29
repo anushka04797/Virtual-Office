@@ -7,6 +7,9 @@ const routes = [
     { path: '/dashboard/Projects/assigned-projects/details/:work_package_number', exact: true, name: 'Assigned Project Details', component: React.lazy(() => import('../pages/ongoing-project-details-view/OngoingProjectDetailsView')) },
     { path: '/dashboard/Projects/my-projects', exact: true, name: 'My Projects', component: React.lazy(() => import('../pages/my-projects/myProjects')) },
     { path: '/dashboard/Projects/my-projects/details/:work_package_number', exact: true, name: 'My Project Details', component: React.lazy(() => import('../pages/my-projects-details/myProjectsDetails')) },
+     
+    {path: '/dashboard/Projects/my-projects/subtask-details/:tdo_id', exact: true, name: 'Subtasks Details', component: React.lazy(()=> import('../pages/my-projects-details/subtasks'))},
+    
     { path: '/dashboard/task/details/:work_package_index', exact: true, name: 'My Task Details', component: React.lazy(() => import('../pages/task-details/TaskDetails')) }, //task details
     { path: '/dashboard/Meetings', exact: true, name: 'Meetings', component: React.lazy(() => import('../pages/meetings/Meetings')) },
     { path: '/dashboard/Projects/completed-projects', exact: true, name: 'Completed Projects', component: React.lazy(() => import('../pages/completed-project/completedProject')) },

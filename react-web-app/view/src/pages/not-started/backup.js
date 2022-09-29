@@ -94,7 +94,7 @@ const NoWbs = () => {
     setnotstaredDetails(info);
     setfilteredProjects(info);
 
-
+    
     let initialWBSInfo = [];
     for (let i = 0; i < a.length; i++) {
       let assignees = a[i].allassignees;
@@ -124,31 +124,8 @@ const NoWbs = () => {
   };
 
   const data_populate = (a) => {
-    console.log("data passed", a);
+    console.log("data passed", a.length);
     //setmyProjectDetails(a)
-    // for(let j=0;j<a.length;j++)
-    // {
-    // let wbs=[]
-    // let temp = [];
-    // let temp1 = [];
-    // let allassignee = res.data.data[i].allassignees;
-    // let noWBS = res.data.data[i].assignees;
-    // for(let i=0;i<a.length;i++)
-    // {
-    //     wbs.push({
-    //       TDO: a[i].project.task_delivery_order.title,
-    //         "Sub Task": a[i].project.sub_task,
-    //         "Task Title": a[i].project.task_title,
-    //         "Planned Delivery Date":
-    //           a[i].project.planned_delivery_date,
-    //         Assignees: temp,
-    //         "Assignees with no WBS": temp1,
-    //         "id": a[i].project.id,
-    //     })
-    // }
-
-  //   console.log('wbs', wbs)
-  // }
     let info = [];
     for (let i = 0; i < a.length; i++) {
       let everyone = a[i].allassignees;
@@ -370,7 +347,7 @@ const NoWbs = () => {
             capitalize(noWBS[j].assignee.last_name);
           //  tableData[i].Assignees.push(a)
           temp1.push(a);
-        } 
+        }
 
         if (res.data.data[i].assignees.length != 0) {
           tableData.push({
