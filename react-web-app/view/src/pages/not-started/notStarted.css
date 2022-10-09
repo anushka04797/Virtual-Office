@@ -1,3 +1,15 @@
+
+.timecards-page-header{
+    font-size: 1.71429em;
+    font-style: inherit;
+    color: #5e6c84 !important;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    
+    line-height: 32px;
+    outline: none;
+}
+
 .projectsHeader{
     /* font-family: Poppins; */
     font-size: 1.14286em;

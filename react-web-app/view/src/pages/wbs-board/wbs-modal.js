@@ -450,9 +450,14 @@ const WbsModal = (props) => {
                   </div>
                 </CRow>
                 <CRow>
-                  <div className="col-lg-12">
+                  <CCol className="col-lg-9">
                     <WBSFileUpload files={files} setFiles={setDocFiles} />
-                  </div>
+                  </CCol>
+                  <CCol className="col-lg-3">
+                    <div>
+                    Uploaded Documents
+                    </div>
+                  </CCol>
                 </CRow>
                 {props.data.assignee.id == sessionStorage.getItem(USER_ID) && (
                   <div>
@@ -531,6 +536,7 @@ const WbsModal = (props) => {
                     )}
                   </p>
                 </CCol>
+
                 {/**actual work list show */}
                 <CCol md="12">
                   <div className="task-list">

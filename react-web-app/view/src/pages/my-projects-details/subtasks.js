@@ -257,6 +257,53 @@ const subtasks = () => {
       }
     });
   };
+
+
+
+  function populate_planned_value_and_hours(inputList) {
+    let total_temp_planned_value = 0;
+    let total_temp_planned_hours = 0;
+    let assignees = [];
+    let assignee_eps = [];
+    let total_temp_ep = 0;
+
+    Array.from(inputList).forEach((item, idx) => {
+      assignees.push(item.assignee.id?.toString());
+      assignee_eps.push(item.estimated_person);
+      total_temp_ep += parseFloat(item.estimated_person);
+      total_temp_planned_value += parseFloat(
+        Number(
+          item.assignee.slc_details.hourly_rate *
+            parseFloat(item.estimated_person) *
+            parseFloat(total_planned_hours)
+        ).toFixed(2)
+      );
+      total_temp_planned_hours += parseFloat(
+        Number(
+          parseFloat(item.estimated_person) * parseFloat(total_planned_hours)
+        ).toFixed(2)
+      );
+    });
+    setTotalEp(total_temp_ep);
+    editForm.setValues({
+      //   task_delivery_order: editForm.values.task_delivery_order,
+      //   tdo_details: editForm.values.tdo_details,
+      sub_task: editForm.values.sub_task,
+      description: editForm.values.description,
+      length: editForm.values.description.length,
+      work_package_number: editForm.values.work_package_number,
+      work_package_index: editForm.values.work_package_index,
+      task_title: editForm.values.task_title,
+      estimated_person: assignee_eps,
+      start_date: editForm.values.start_date,
+      planned_delivery_date: editForm.values.planned_delivery_date,
+      assignee: assignees,
+      pm: sessionStorage.getItem(USER_ID),
+      planned_hours: total_temp_planned_hours,
+      planned_value: total_temp_planned_value,
+      remaining_hours: total_temp_planned_hours,
+    });
+  }
   function removeAssignee(item) {
     console.log("assignee item", item);
     setAssignees(
@@ -304,6 +351,7 @@ const subtasks = () => {
       });
   }
   function handleStartDateChange(event){
+    console.log('event',event)
     editForm.handleChange(event);
     //setInputList([]);
 
@@ -485,7 +533,8 @@ const subtasks = () => {
             // editForm.setFieldValue('assignee', res.data.assignee)
             // initialize_total_working_days(res.data.data.project.start_date, res.data.data.project.planned_delivery_date)
             // dateRange(res.data.data.project.start_date,res.data.data.project.planned_delivery_date)
-          } else {
+         }
+          else {
             history.push("/dashboard/Projects/my-projects"); //redirecting to my project list page
           }
         }
@@ -557,7 +606,9 @@ const subtasks = () => {
   return (
     <>
       {project != undefined && (
+
         <CContainer>
+          <CRow>
           <CModal
             closeOnBackdrop={false}
             alignment="center"
@@ -980,26 +1031,23 @@ const subtasks = () => {
           {status === 0 ? (
             <div className="card-header-portion-ongoing">
               <h4 className="ongoing-card-header-1">
-                {/* <IconButton aria-label="favourite" disabled size="medium" color="primary">
-                                    <GradeIcon fontSize="inherit" className="fav-button" />
-                                </IconButton> */}
                 {project != undefined
                   ? project[0].project.task_delivery_order.title
                   : ""}
               </h4>
-              <CButton
+              {/* <CButton
                 className="edit-ongoing-project-title"
                 variant="ghost"
                 onClick={(e) => radioHandler(1, 0)}
               >
                 <CIcon name="cil-pencil" className="mr-1 pen-icon" />
-              </CButton>
+              </CButton> */}
             </div>
           ) : (
             <></>
           )}
 
-          
+          <CCol className='mt-3'>
             
             <CTabs
               //key={idx}
@@ -1191,6 +1239,8 @@ const subtasks = () => {
                 
               </CTabContent>
             </CTabs>
+            </CCol>
+            </CRow>
         </CContainer>
       )}
     </>
