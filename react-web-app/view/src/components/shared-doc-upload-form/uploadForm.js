@@ -25,6 +25,8 @@ const UploadDocuments = () => {
   const [selectedProjectError, setSelectedProjectError] = useState('')
   const [files, setFiles] = useState([])
   const [fileAvatars, setFileAvatars] = useState([])
+
+  
   const upload = () => {
     let formData = new FormData()
     formData.append('project', selectedProject.data.project.id)

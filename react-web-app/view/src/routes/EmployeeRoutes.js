@@ -8,6 +8,8 @@ const routes = [
     { path: '/dashboard/Meetings', exact: true, name: 'Meetings', component: React.lazy(() => import('../pages/meetings/Meetings')) },
     { path: '/dashboard/Projects/completed-projects', exact: true, name: 'Completed Projects', component: React.lazy(() => import('../pages/completed-project/completedProject')) },
 
+    {path:  '/dashboard/Projects/my-projects/details/:tdo_id', exact: true, name: 'My Project Details', component: React.lazy(()=> import('../pages/my-projects-details/subtasks'))},
+    
     { path: '/dashboard/Projects/time-extension', exact: true, name: 'Time Extension', component: React.lazy(() => import('../pages/time-extention/timeExtention')) },
     { path: '/dashboard/Projects/completed-projects/details/:work_package_number', exact: true, name: 'Completed Projects details', component: React.lazy(() => import('../pages/completed-project-details-view/CompletedProjectDetails')) },
     { path: '/dashboard/EVMS/view', exact: true, name: 'EVMS View', component: React.lazy(() => import('../pages/evms-view/evmsView')) },

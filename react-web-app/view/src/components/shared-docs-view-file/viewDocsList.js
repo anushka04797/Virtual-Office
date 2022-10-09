@@ -68,7 +68,10 @@ const ViewFiles = () => {
                 {sharedDocs.slice(0, itemToShow).map((file, i) =>
                     <CCol lg="3" md="6" sm="6" key={i}>
                         <CCard className="doc-cards">
-                            <CCardBody className="doc-file-body">
+                            <CCardBody 
+                           onClick = {()=>{console.log('ff', file)}}
+                            
+                            className="doc-file-body">
                                 <div className="icon-holder-shared-files">
                                     <CIcon name="cil-file" className="file-icon-show" size="2xl"></CIcon>
                                 </div>

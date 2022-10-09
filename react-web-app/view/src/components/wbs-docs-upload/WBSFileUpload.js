@@ -7,6 +7,7 @@ import {
     CCard,
     CButton,
     CContainer,
+    CCol,CRow,
 } from "@coreui/react";
 import "./uploadForm.css";
 import Select from "react-select";
@@ -33,12 +34,12 @@ const WBSFileUpload = (props) => {
         Array.from(files).forEach((file, idx) => {
             formData.append('file' + (idx + 1), file)
         })
-        // API.post('project/shared/document/create/', formData).then((res) => {
-        //     setSelectedProject(null)
-        //     setFileAvatars([])
-        //     setFiles([])
-        //     swal('Uploaded', 'Files are uploaded', 'success')
-        // })
+        API.post('project/shared/document/create/', formData).then((res) => {
+            setSelectedProject(null)
+            setFileAvatars([])
+            setFiles([])
+            swal('Uploaded', 'Files are uploaded', 'success')
+        })
     }
     const projects = useSelector(state => {
         let temp = []
@@ -67,13 +68,13 @@ const WBSFileUpload = (props) => {
     }
     return (
         <>
-            <CCard className="mt-4 upload-docs">
+            <CCard className="mt-2 upload-docs">
                 <CCardBody>
                     <CContainer>
                         {/**Project Name */}
                         
                         {/**upload files box */}
-                        <div className="mb-3">
+                        <CCol className="mb-1">
                             <CLabel htmlFor="attachments" className="custom-label-5">
                                 Upload Documents
                             </CLabel>
@@ -92,12 +93,21 @@ const WBSFileUpload = (props) => {
                                 // onClick={()=>{document.getElementById('file').click()}}
                                 />
                             </CLabel>
-                        </div>
+                        </CCol>
+                        <CCol>
+                        <CButton
+                            type="button" 
+                            onClick = {()=>{upload}}
+                            color="primary"
+                          >
+                            Upload
+                          </CButton>
+                        </CCol>
                         {/**display uploaded files */}
-                        <div className="mb-3">
+                        <div className="mb-2">
                             <div className="row">
                                 {fileAvatars.map((file, idx) => (
-                                    <div key={idx} className="col-md-6 col-sm-6 col-lg-4">
+                                    <div key={idx} className="col-md-6 col-sm-6 col-sm-4">
                                         <div className="file-attached-ongoing rounded-pill">
                                             <CButton className="remove-file-ongoing" type="button" onClick={() => { remove_file(idx) }}>
                                                 <img

@@ -26,7 +26,7 @@ const NoWbs = () => {
   const [notstaredDetails, setnotstaredDetails] = useState([]);
   const [initialwbs, setinitialwbs] = useState([]);
   const [table, setTable] = useState([]);
-  const [response, setresponse] = useState([]);
+  const [response, setresponse]= useState([])
 
   let history = useHistory();
   const [selectedProject, setSelectedProject] = useState([]);
@@ -94,6 +94,7 @@ const NoWbs = () => {
     setnotstaredDetails(info);
     setfilteredProjects(info);
 
+    
     let initialWBSInfo = [];
     for (let i = 0; i < a.length; i++) {
       let assignees = a[i].allassignees;
@@ -123,71 +124,8 @@ const NoWbs = () => {
   };
 
   const data_populate = (a) => {
-    console.log("data passed", a);
-
-    let tableData = [];
-    for (let i = 0; i < a.length; i++) {
-      let temp = [];
-      let temp1 = [];
-      let allassignee = a[i].allassignees;
-      let noWBS = a[i].assignees;
-
-      for (let j = 0; j < allassignee.length; j++) {
-        let a =
-          capitalize(allassignee[j].assignee.first_name) +
-          " " +
-          capitalize(allassignee[j].assignee.last_name);
-        //  tableData[i].Assignees.push(a)
-        temp.push(a);
-      }
-
-      for (let j = 0; j < noWBS.length; j++) {
-        let a =
-          capitalize(noWBS[j].assignee.first_name) +
-          " " +
-          capitalize(noWBS[j].assignee.last_name);
-        //  tableData[i].Assignees.push(a)
-        temp1.push(a);
-      }
-
-      if (a[i].assignees.length != 0) {
-        tableData.push({
-          TDO: a[i].project.task_delivery_order.title,
-          "Sub Task": a[i].project.sub_task,
-          "Task Title": a[i].project.task_title,
-          "Planned Delivery Date": a[i].project.planned_delivery_date,
-          Assignees: temp,
-          "Assignees with no WBS": temp1,
-          id: a[i].project.id,
-        });
-      }
-    }
-    console.log("aa", tableData);
-    setTable(tableData);
+    console.log("data passed", a.length);
     //setmyProjectDetails(a)
-    // for(let j=0;j<a.length;j++)
-    // {
-    // let wbs=[]
-    // let temp = [];
-    // let temp1 = [];
-    // let allassignee = res.data.data[i].allassignees;
-    // let noWBS = res.data.data[i].assignees;
-    // for(let i=0;i<a.length;i++)
-    // {
-    //     wbs.push({
-    //       TDO: a[i].project.task_delivery_order.title,
-    //         "Sub Task": a[i].project.sub_task,
-    //         "Task Title": a[i].project.task_title,
-    //         "Planned Delivery Date":
-    //           a[i].project.planned_delivery_date,
-    //         Assignees: temp,
-    //         "Assignees with no WBS": temp1,
-    //         "id": a[i].project.id,
-    //     })
-    // }
-
-    //   console.log('wbs', wbs)
-    // }
     let info = [];
     for (let i = 0; i < a.length; i++) {
       let everyone = a[i].allassignees;
@@ -334,71 +272,60 @@ const NoWbs = () => {
     return "";
   }
 
-  const createWBS = (item) => {
-    console.log("item", item);
-    let wbs = [];
-    for (let i = 0; i < response.length; i++) {
-      if (response[i].project.id == item.id) {
-        console.log("match", response[i]);
-        let a = response[i];
-        wbs.push({
-          assignees: a.assignees,
-          date_created: a.project.date_created,
-          date_updated: a.project.date_updated,
-          description: a.project.description,
-          estimated_person: a.project.estimated_person,
-          id: a.project.id,
-          planned_delivery_date: a.project.planned_delivery_date,
-          planned_hours: a.project.planned_hours,
-          planned_value: a.project.planned_value,
-          pm: a.project.pm,
-          remaining_hours: a.project.remaining_hours,
-          start_date: a.project.start_date,
-          status: a.project.status,
-          sub_task: a.project.sub_task,
-          task_delivery_order: a.project.task_delivery_order,
-          task_title: a.project.task_title,
-          work_package_index: a.project.work_package_index,
-          work_package_number: a.project.work_package_number,
-        });
-      }
+ const createWBS = (item) =>{
+  console.log('item',item)
+  let wbs = []
+  for(let i=0;i<response.length;i++)
+  {
+    if(response[i].project.id == item.id)
+    {
+      console.log('match', response[i])
+      let a= response[i]
+      wbs.push({
+            assignees: a.assignees,
+            date_created: a.project.date_created,
+            date_updated: a.project.date_updated,
+            description: a.project.description,
+            estimated_person: a.project.estimated_person,
+            id: a.project.id,
+            planned_delivery_date: a.project.planned_delivery_date,
+            planned_hours: a.project.planned_hours,
+            planned_value: a.project.planned_value,
+            pm: a.project.pm,
+            remaining_hours: a.project.remaining_hours,
+            start_date: a.project.start_date,
+            status : a.project.status,
+            sub_task: a.project.sub_task,
+            task_delivery_order: a.project.task_delivery_order,
+            task_title: a.project.task_title,
+            work_package_index: a.project.work_package_index,
+            work_package_number: a.project.work_package_number,
+      })
     }
+  }
 
-    history.push({
-      pathname: "/dashboard/WBS/create-wbs",
-      state: { task: wbs[0] },
-    });
-  };
+  history.push({
+    pathname: "/dashboard/WBS/create-wbs",
+    state: {task : wbs[0]}
+  })
+ }
 
-  const dateOver = (endDate) => {
-    let today = new Date();
-    const moment = require("moment");
-    let daysleft = moment(endDate).diff(moment(today), "days");
-    console.log("end date", endDate);
-    console.log("days left ", daysleft + 1);
-    if (daysleft + 1 <= 0) {
-      return false;
-    }
-    return true;
-  }; 
+
   React.useEffect(() => {
     API.get("project/assignees-with-no-wbs/").then((res) => {
       let temp = [];
       console.log("api response", res.data.data);
-
+      
       for (let i = 0; i < res.data.data.length; i++) {
-        if (res.data.data[i].assignees.length != 0  && dateOver(res.data.data[i].project.planned_delivery_date)) {
+        if (res.data.data[i].assignees.length != 0) {
           temp.push(res.data.data[i]);
         }
       }
-       console.log('response', temp)
-
-      setresponse(temp);
+     // console.log('response', temp)
+      setresponse(temp)
 
       let tableData = [];
-
       for (let i = 0; i < res.data.data.length; i++) {
-        if(dateOver(res.data.data[i].project.planned_delivery_date)){
         let temp = [];
         let temp1 = [];
         let allassignee = res.data.data[i].allassignees;
@@ -431,10 +358,9 @@ const NoWbs = () => {
               res.data.data[i].project.planned_delivery_date,
             Assignees: temp,
             "Assignees with no WBS": temp1,
-            id: res.data.data[i].project.id,
+            "id": res.data.data[i].project.id,
           });
         }
-      }
       }
 
       let wbsinfo = [];
@@ -454,7 +380,7 @@ const NoWbs = () => {
             pm: a.project.pm,
             remaining_hours: a.project.remaining_hours,
             start_date: a.project.start_date,
-            status: a.project.status,
+            status : a.project.status,
             sub_task: a.project.sub_task,
             task_delivery_order: a.project.task_delivery_order,
             task_title: a.project.task_title,
@@ -475,11 +401,7 @@ const NoWbs = () => {
   return (
     <>
       <CRow>
-        <CCol lg="9">
-          <h3 className="timecards-page-header mb-3">
-            Not Created WBS Details ({filteredProjects.length}){" "}
-          </h3>
-        </CCol>
+        <CCol lg="9"></CCol>
         <CCol lg="3" className="mb-3 pl-4">
           <Select
             className="custom-forminput-6"
@@ -491,62 +413,152 @@ const NoWbs = () => {
             value={selectedProject}
           />
         </CCol>
-        <CCol className="mt-5 mb-3">
-          <CDataTable
-            items={table}
-            primary
-            hover
-            sorter
-            striped
-            bordered
-            size="sm"
-            itemsPerPage={10}
-            pagination
-            fields={[
-              {
-                key: "TDO",
-                _style: { width: "10%" },
-                _classes: "font-weight-bold",
-              },
+      </CRow>
 
-              "Sub Task",
-              "Task Title",
-              "Planned Delivery Date",
+      <div className="main-holder-projects">
+        <h3 className="projectsHeader">
+          Project Wise WBS Details ({filteredProjects.length}){" "}
+        </h3>
 
-              {
-                key: "Assignees",
-                _style: { width: "20%" },
-              },
-              {
-                key: "Assignees with no WBS",
-                _style: { width: "20%" },
-              },
-              {
-                key: "Action",
-                _style: { width: "5%" },
-              },
-            ]}
-            scopedSlots={{
-              Action: (item) => (
-                <td>
-                  <CBadge>
-                    <CButton
+        <div className="card-holder1">
+          <CRow>
+            {Array.from(filteredProjects).map((item, idx) => (
+              <CCol lg="4" key={idx}>
+                <CCard className="project-card1">
+                  {" "}
+                  {/* on card click project details card will show */}
+                  <CCardBody
+                    onClick={() => {
+                      //   history.push({
+                      //     pathname:"/dashboard/Projects/my-projects/details/"+
+                      //     myprojectDetails[idx].project.work_package_number,
+                      //     state: { project: myprojectDetails[idx] },
+                      // })
+                    }}
+                  >
+                    {/* <h6 className="id-no1">Work Package Number: # {item.project.work_package_number}</h6> */}
+
+                    <h5 className="card-details1">
+                      <span className="p-header-3">
+                        <b>TDO: {item.tdo}</b>
+                      </span>{" "}
+                    </h5>
+                    <h5 className="card-details1">
+                      <span className="p-header-3">
+                        Project Name: {item.name}
+                      </span>{" "}
+                    </h5>
+                    <h5 className="card-details1">
+                      <span className="p-header-3">
+                        Task Title: {item.taskTitle}
+                      </span>{" "}
+                    </h5>
+
+                    <h5 className="card-details1">
+                      <span className="p-header-3">
+                        Planned Delivery Date: {item.endDate}
+                      </span>
+                    </h5>
+                    <h5 className="card-details1">
+                      <span className="p-header-3">
+                        Assignees :{" " + item.everyone}
+                        {/* {item.totalAssignee <= 1 &&
+                          Array.from(item.allAssignees).map(
+                            (i, index) =>
+                             
+                          )} */}
+                      </span>{" "}
+                    </h5>
+                    {/* <h5 className="card-details1">
+                      <span className="p-header-3">
+                        Total Created WBS : {item.wbs}
+                      </span>{" "}
+                    </h5> */}
+                    <h5 className="card-details1">
+                      <span className="p-header-4">
+                        Assignees with No WBS : {item.nowbspeople}
+                        {/* {Array.from(item.nowbsarray).forEach((i, idx)=> {
+                           
+                            i.assignee.first_name + " " + i.assignee.last_name
+                          })} */}
+                      </span>
+                    </h5>
+                  </CCardBody>
+                  <CCardFooter>
+                    <Button
                       type="button"
                       className="create-wbs-from-modal float-right"
                       size="sm"
                       onClick={() => {
-                        createWBS(item);
+                        // history.push({
+                        //   pathname: "/dashboard/WBS/create-wbs",
+                        //   state: { task: initialwbs[idx] },
+                        // });
+                        console.log("itms", initialwbs[idx]);
                       }}
                     >
                       Create WBS
-                    </CButton>
-                  </CBadge>
-                </td>
-              ),
-            }}
-          ></CDataTable>
-        </CCol>
-      </CRow>
+                    </Button>
+                  </CCardFooter>
+                </CCard>
+              </CCol>
+            ))}
+          </CRow>
+        </div>
+      </div>
+      <CDataTable
+        items={table}
+        primary
+        hover
+        sorter
+        striped
+        bordered
+        size="sm"
+        itemsPerPage={20}
+        pagination
+        fields={[
+          {
+            key: "TDO",
+            _style: { width: "10%" },
+            _classes: "font-weight-bold",
+          },
+
+          "Sub Task",
+          "Task Title",
+          "Planned Delivery Date",
+
+          {
+            key: "Assignees",
+            _style: { width: "20%" },
+          },
+          {
+            key: "Assignees with no WBS",
+            _style: { width: "20%" },
+          },
+          {
+            key: "Action",
+            _style: { width: "5%" },
+          },
+        ]}
+        scopedSlots={{
+          Action: (item) => (
+            <td>
+              <CBadge>
+                <CButton
+                  type="button"
+                  className="create-wbs-from-modal float-right"
+                  size="sm"
+                  onClick={() => {
+                   createWBS(item)
+                  }}
+                >
+                  Create WBS
+                </CButton>
+              </CBadge>
+            </td>
+          ),
+        }}
+      ></CDataTable>
     </>
   );
 };
