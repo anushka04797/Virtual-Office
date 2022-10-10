@@ -50,7 +50,7 @@ import AssignedProjectsPopover from "./inc/AssignedProjectsPopover";
 import axios from "axios";
 import CreatableSelect from "react-select/creatable";
 
-const subtasks = () => {
+const Subtasks = () => {
   const { work_package_number } = useParams();
   const { id } = useParams();
   const dispatch = useDispatch();
@@ -1247,4 +1247,4 @@ const subtasks = () => {
   );
 };
 
-export default subtasks;
+export default Subtasks;

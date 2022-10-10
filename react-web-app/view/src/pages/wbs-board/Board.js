@@ -59,6 +59,7 @@ const WbsBoard = () => {
   const [fetchData, setFetchedData] = useState([]);
   const [data_loaded, setDataLoaded] = useState(false);
   const [update, setUpdate] = useState(0);
+  const [selectedAssignee, setSelectedAssignee] = useState();
 
   const [boardData, setBoardData] = useState({
     lanes: [
@@ -132,12 +133,13 @@ const WbsBoard = () => {
     if (data != undefined) {
       data.forEach((element) => {
         //console.log("element", element);
+        let card_title = String(element.title).slice(0,19) + '...' 
         if (element.status === 1) {
           // console.log("1st cond", data.lanes[0])
           temp_data.lanes[0].cards.push({
             id: element.id.toString(),
             laneId: "lane1",
-            title: element.title,
+            title: card_title,
             description:
               element.description +
               "\n ➤ " +
@@ -152,7 +154,7 @@ const WbsBoard = () => {
           temp_data.lanes[1].cards.push({
             id: element.id.toString(),
             laneId: "lane2",
-            title: element.title,
+            title: card_title,
             description:
               element.description +
               "\n ➤ " +
@@ -167,7 +169,7 @@ const WbsBoard = () => {
           temp_data.lanes[2].cards.push({
             id: element.id.toString(),
             laneId: "lane3",
-            title: element.title,
+            title: card_title,
             description:
               element.description +
               "\n ➤ " +
@@ -182,7 +184,7 @@ const WbsBoard = () => {
           temp_data.lanes[3].cards.push({
             id: element.id.toString(),
             laneId: "lane4",
-            title: element.title,
+            title: card_title,
             description:
               element.description +
               "\n ➤ " +
@@ -196,35 +198,22 @@ const WbsBoard = () => {
       });
       // console.log('tempAssigneList', tempAssigneList)
       // setWbsAssigneeList(sortBy(tempAssigneList, 'first_name'))
-      // setResetAssigneeSelectValue({value:sessionStorage.getItem(USER_ID), label:profile.first_name+' '+profile.last_name})
+      // setSelectedAssignee({value:sessionStorage.getItem(USER_ID), label:profile.first_name+' '+profile.last_name})
     }
 
     console.log("temp data", temp_data);
     setBoardData(temp_data);
   };
 
-  function getAssigneeList(data) {
-    if (data != undefined) {
-      data.forEach((element) => {
-        if (
-          !tempAssigneList.find((item) => item.value === element.assignee.id)
-        ) {
-          var temp = {
-            value: element.assignee.id,
-            label:
-              element.assignee.first_name + " " + element.assignee.last_name,
-          };
-          tempAssigneList.push(temp);
-        }
-      });
-    }
-    // setWbsAssigneeList(sortBy(tempAssigneList, "label"));
-  }
   const populate_assignees = () => {
     API.get("project/assignees/all/" + sessionStorage.getItem(USER_ID) + "/")
       .then((res) => {
         console.log("assignees", res.data.data);
         let temp_array = [];
+        temp_array.push({
+          value: profile.id,
+          label: profile.first_name + " " + profile.last_name,
+        });
         Array.from(res.data.data).forEach((element) => {
           if (!temp_array.find((item) => item.value === element.id)) {
             temp_array.push({
@@ -234,10 +223,25 @@ const WbsBoard = () => {
           }
         });
         // temp.push({value:'1',label:'A'})
+        temp_array=uniqBy(temp_array,'value')
+        if(selectedAssignee == null || selectedAssignee == undefined){
+          setSelectedAssignee({
+            value: profile.id,
+            label: profile.first_name + " " + profile.last_name,
+          });
+        }
         setWbsAssigneeList(sortBy(temp_array, "label"));
       })
       .catch((err) => {});
   };
+  useEffect(()=>{
+    if(profile != null && profile!=undefined){
+      setSelectedAssignee({
+        value: profile.id,
+        label: profile.first_name + " " + profile.last_name,
+      })
+    }
+  },[profile])
 
   const boardStyle = {
     backgroundColor: "#fff",
@@ -245,8 +249,7 @@ const WbsBoard = () => {
     marginLeft: "40px",
   };
   const laneStyle = { backgroundColor: "rgb(243 243 243)" };
-  let currentLaneId,
-    currentCardId = "";
+  let currentLaneId, currentCardId = "";
 
   const [modal, setModal] = useState(false);
   const [modalData, setModalData] = useState(null);
@@ -330,23 +333,18 @@ const WbsBoard = () => {
     setUpdate(update + 1);
   };
 
-  const updateStatus = (
-    cardId,
-    sourceLaneId,
-    targetLaneId,
-    position,
-    cardDetails
-  ) => {
+  const updateStatus = (cardId, sourceLaneId, targetLaneId, position, cardDetails) => {
+    console.log('update',targetLaneId)
     let values;
-    if (cardDetails.laneId == "lane1") {
+    if (targetLaneId == "lane1") {
       values = {
         status: 1,
       };
-    } else if (cardDetails.laneId == "lane2") {
+    } else if (targetLaneId == "lane2") {
       values = {
         status: 2,
       };
-    } else if (cardDetails.laneId == "lane3") {
+    } else if (targetLaneId == "lane3") {
       values = {
         status: 3,
       };
@@ -368,20 +366,20 @@ const WbsBoard = () => {
     populate_data(temWbsList);
     // getAssigneeList(wbsList);
 
-    setResetAssigneeSelectValue(newValue);
+    setSelectedAssignee(newValue);
     setShowClearBtn(true);
     // setDataLoaded(false)
   };
 
   const [showClearBtn, setShowClearBtn] = useState(false);
-  const [resetAssigneeSelectValue, setResetAssigneeSelectValue] = useState();
+  
   function clearFilter() {
     setSelectedProjects([]);
     filter_wbs_project_wise(projects.filter((item) => item.value != "all"));
     setShowClearBtn(false);
     //  populate_data(wbsList);
     // getAssigneeList(wbsList);
-    setResetAssigneeSelectValue(null);
+    setSelectedAssignee(null);
   }
 
   const filter_wbs_project_wise = (options) => {
@@ -389,14 +387,14 @@ const WbsBoard = () => {
     console.log("filter", options);
     if (options.find((item) => item.value == "all")) {
       temp_wbs_list = wbsList.filter(
-        (item) => item.assignee.id == resetAssigneeSelectValue.value
+        (item) => item.assignee.id == selectedAssignee.value
       );
     } else {
       for (let index = 0; index < options.length; index++) {
         for (let index1 = 0; index1 < wbsList.length; index1++) {
           if (
             wbsList[index1].project.sub_task == options[index].value &&
-            wbsList[index1].assignee.id == resetAssigneeSelectValue.value
+            wbsList[index1].assignee.id == selectedAssignee.value
           ) {
             temp_wbs_list.push(wbsList[index1]);
           }
@@ -472,41 +470,40 @@ const WbsBoard = () => {
     if (has_permission("projects.add_projects")) {
       API.get("wbs/pm/all/" + sessionStorage.getItem(USER_ID) + "/")
         .then((res) => {
-          console.log("board data", res.data.data);
+          
           setWbsList(res.data.data);
           let pre_selected_items = [];
           let temp_projects = [];
-
+          console.log('assignee',selectedAssignee)
           Array.from(res.data.data).forEach((item, idx) => {
-            if (item.assignee.id === profile.id) {
+            if (item.assignee.id == selectedAssignee?.value) {
               pre_selected_items.push(item);
             }
+            // else if (item.assignee.id === profile.id){
+            //   pre_selected_items.push(item);
+            // }
             temp_projects.push({
               label: item.project.sub_task,
               value: item.project.sub_task,
               data: item.project,
             });
           });
+          console.log("board data",pre_selected_items);
           temp_projects.unshift({
             label: "Select All",
             value: "all",
             data: {},
           });
           setProjects(uniqBy(temp_projects, "value"));
-          console.log("projectsss", uniqBy(temp_projects, "value"));
           pre_selected_items = sortBy(pre_selected_items, [
             function (item) {
               return new Date(item.date_created);
             },
           ]).reverse();
-
           populate_data(uniq(pre_selected_items));
           // getAssigneeList(res.data.data);
           populate_assignees();
-          setResetAssigneeSelectValue({
-            value: sessionStorage.getItem(USER_ID),
-            label: profile.first_name + " " + profile.last_name,
-          });
+          
           setDataLoaded(true);
         })
         .catch((err) => {
@@ -548,7 +545,7 @@ const WbsBoard = () => {
           ]).reverse();
           populate_data(uniq(pre_selected_items));
           // getAssigneeList(res.data.data);
-          setResetAssigneeSelectValue({
+          setSelectedAssignee({
             value: sessionStorage.getItem(USER_ID),
             label: profile.first_name + " " + profile.last_name,
           });
@@ -565,7 +562,7 @@ const WbsBoard = () => {
       //   }
       // }
     }
-  }, [profile, update]);
+  }, [profile,update]);
   const custom_progress_style = {
     height: 5,
     borderRadius: 3,
@@ -580,7 +577,7 @@ const WbsBoard = () => {
           {has_permission("projects.add_projects") && (
             <CCol lg="3" className="mb-3 pl-4">
               <Select
-                value={resetAssigneeSelectValue}
+                value={selectedAssignee}
                 components={animatedComponents}
                 placeholder="Filter by assignee"
                 options={wbsAssigneeList}
@@ -591,7 +588,7 @@ const WbsBoard = () => {
           {!has_permission("projects.add_projects") && (
             <CCol lg="3" className="mb-3 pl-4">
               <Select
-                value={resetAssigneeSelectValue}
+                value={selectedAssignee}
                 components={animatedComponents}
                 placeholder="Filter by assignee"
                 options={wbsAssigneeList}
@@ -633,46 +630,6 @@ const WbsBoard = () => {
           </CCol>
         </CRow>
         {/* */}
-
-        {/* <Grid fluid direction="column" justifyContent="flex-start" alignItems="flex-start" sx={{
-                    height: '100px',
-                    width: '300px',
-                    overflowY: "auto",
-                    '& .MuiCheckbox-root': {
-                        paddingLeft: '9px',
-                        paddingTop: '0px',
-                        paddingRight: '0px',
-                        paddingBottom: '0px'
-                    },
-                    '& .MuiFormControlLabel-root': {
-                        marginLeft: '0px'
-                    }
-                }}>
-                    <Grid item xs={6} sm={2}>
-                        <FormControlLabel
-                            label={'All'}
-                            control={<Checkbox
-                                checked={checked['all']}
-                                onChange={(e) => { handleAllCheck(e) }}
-                                inputProps={{ 'aria-label': 'controlled' }}
-                                size="small"
-                            />}
-                        />
-                    </Grid>
-                    {Array.from(projects).map((item, idx) => (
-                        <Grid item xs={6} sm={2} key={idx}>
-                            <FormControlLabel
-                                label={item}
-                                control={<Checkbox
-                                    checked={checked[item]}
-                                    onChange={(e) => { handleCheckBoxChange(e, item, idx) }}
-                                    inputProps={{ 'aria-label': 'controlled' }}
-                                    size="small"
-                                />}
-                            />
-                        </Grid>
-                    ))}
-                </Grid> */}
         <CRow>
           {data_loaded === false ? (
             <CCol
@@ -685,15 +642,6 @@ const WbsBoard = () => {
             </CCol>
           ) : (
             <CRow>
-              {/* {Array.from(nowbsforProject).map((project, idx) => (
-                <CCol lg="2">
-                  <CCard>
-                    <CCardBody>
-                      Project name : {project.task_delivery_order.title}
-                    </CCardBody>
-                  </CCard>
-                </CCol>
-              ))} */}
               <CCol  className={""}>
                 <Board
                   data={boardData}

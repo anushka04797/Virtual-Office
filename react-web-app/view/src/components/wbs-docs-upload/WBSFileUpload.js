@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     CForm,
     CLabel,
@@ -16,14 +16,12 @@ import { useSelector } from "react-redux";
 import { API, USER_ID } from "../../Config";
 import { arrayRemoveItem } from "../../helper";
 import swal from "sweetalert";
-import { process_params } from "express/lib/router";
+import {useRef} from 'react';
 
 const WBSFileUpload = (props) => {
-    const colourStyles = {
-        // control: (styles, state) => ({ ...styles,height:"35px", fontSize: '14px !important', lineHeight: '1.42857', borderRadius: "8px",borderRadius:".25rem",color:"rgb(133,133,133)",border:state.isFocused ? '2px solid #0065ff' :'inherit'}),
-        option: (provided, state) => ({ ...provided, fontSize: "14px !important" }),
-    };
-    
+    const inputRef = useRef();
+    const [selectedFile,setSelectedFile] = useState()
+    const setSelectedProject = useState()
     const [files, setFiles] = useState(props.files)
     const [fileAvatars, setFileAvatars] = useState([])
     const upload = () => {
@@ -41,31 +39,21 @@ const WBSFileUpload = (props) => {
             swal('Uploaded', 'Files are uploaded', 'success')
         })
     }
-    const projects = useSelector(state => {
-        let temp = []
-        Array.from(state.projects.data).forEach((project, idx) => {
-            temp.push({ value: project.project.id, label: project.project.task_delivery_order.title + ' / ' + project.project.sub_task, data: project })
-        })
-        return temp
-    })
-    function onImageChange(selectedFile) {
-        setFiles([...files, selectedFile]);
-        setFileAvatars([...fileAvatars, URL.createObjectURL(selectedFile)]);
-        props.setFiles([...files, selectedFile])
+    function onFileChange(event) {
+        let file = event.target.files[0]
+        event.target.value=null
+        setFiles([...files, file]);
+        setFileAvatars([...fileAvatars, URL.createObjectURL(file)]);
+        props.setFiles([...files, file])
     }
-    const handleProjectChange = (value, actionMeta) => {
-        if (actionMeta.action == 'select-option' || actionMeta.action == 'remove-value') {
-            // setSelectedProject(value)
-        }
-        else if (actionMeta.action == 'clear') {
-            // setSelectedProject(null)
-        }
-    };
     function remove_file(index) {
-        console.log(fileAvatars)
+        console.log('on remove',arrayRemoveItem(files, files[index]))
         setFileAvatars(arrayRemoveItem(fileAvatars, fileAvatars[index]))
         setFiles(arrayRemoveItem(files, files[index]))
+        props.setFiles(arrayRemoveItem(files, files[index]))
+        // inputRef.current.value = null;
     }
+    
     return (
         <>
             <CCard className="mt-2 upload-docs">
@@ -82,8 +70,9 @@ const WBSFileUpload = (props) => {
                                 <CInput
                                     type="file"
                                     id="file"
+                                    ref={inputRef}
                                     className="form-control form-control-file"
-                                    onChange={(event) => onImageChange(event.target.files[0])}
+                                    onChange={(event) => onFileChange(event)}
                                     accept=".xlsx, .xls, .csv, .pdf, image/*, application/gzip, .zip, .tar, .txt, .doc, .docx, .pptx, .ppt"
                                 />
                                 <img
@@ -95,13 +84,13 @@ const WBSFileUpload = (props) => {
                             </CLabel>
                         </CCol>
                         <CCol>
-                        <CButton
+                        {/* <CButton
                             type="button" 
-                            onClick = {()=>{upload}}
+                            onClick = {upload}
                             color="primary"
                           >
                             Upload
-                          </CButton>
+                          </CButton> */}
                         </CCol>
                         {/**display uploaded files */}
                         <div className="mb-2">

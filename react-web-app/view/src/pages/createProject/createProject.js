@@ -718,10 +718,8 @@ const CreateNewProject = () => {
   }
 
   // handle click event of the Add button
-
   const handleAddClick = () => {
-    console.log({ selectedAssigneesEP });
-    console.log({});
+    console.log('selected assignee details',selectedAssignees.data);
     if (
       selectedAssignees.data.slc_details?.hourly_rate != null &&
       selectedAssignees.data.slc_details?.hourly_rate != undefined
@@ -736,10 +734,7 @@ const CreateNewProject = () => {
         {
           assignee: selectedAssignees,
           estimated_person: selectedAssigneesEP,
-          planned_value:
-            parseFloat(selectedAssignees.data.slc_details.hourly_rate) *
-            total_planned_hours *
-            selectedAssigneesEP,
+          planned_value: parseFloat(selectedAssignees.data.slc_details.hourly_rate) * total_planned_hours * selectedAssigneesEP,
           planned_hours: parseFloat(total_planned_hours * selectedAssigneesEP),
         },
       ]);
@@ -860,6 +855,7 @@ const CreateNewProject = () => {
                               {formCreateProject.errors.sub_task}
                             </small>
                           )}
+                        <p style={{fontSize:'10px'}}>Maximum limit 50 characters</p>
                         {/* <CInput className="custom-forminput-6" name="sTask"></CInput> */}
                       </div>
                       {/**work package number */}

@@ -265,6 +265,7 @@ const CreateNewWBS = () => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const [files, setFiles] = useState([])
   const setDocFiles = (files) => {
+    console.log('parent files',files)
     setFiles(files)
   }
   const removeUploadedFiles = () => {
@@ -283,21 +284,29 @@ const CreateNewWBS = () => {
 
     if (difference <= 0) {
       console.log("values", JSON.stringify(formCreateWbs.values));
-      API.post("wbs/create/", formCreateWbs.values).then((res) => {
-        // setSubmitting(false)
+      let data={"project":1,"work_package_number":"1001","assignee":[3,2],"reporter":"2","title":"efrefre","description":"referfref","start_date":"2022-10-10","end_date":"2022-10-31","hours_worked":"0","status":"1","progress":"0","comments":"","deliverable":""}
+      let form_data = new FormData()
+      console.log('total',files.length)
+      form_data.append('total_files',files.length)
+      for (const property in formCreateWbs.values) {
+        form_data.append(property,formCreateWbs.values[property])
+      }
+      for (let index=1;index<=files.length;index++){
+        form_data.append('file'+index,files[index-1])
+      }
+      for (var pair of form_data.entries()) {
+        console.log(pair[0]+ ', ' + pair[1]); 
+      }
+      API.post("wbs/create/", form_data).then((res) => {
         console.log(res);
         if (res.status === 200 && res.data.success === "True") {
-          // FILE_API.post('wbs/docs/upload/',{wbs_id}).then(res=>{
-          //   if(res.status === 200 && res.data.success === 'True'){
-              reset_form();
-              setTaskList([]);
-              removeUploadedFiles()
-              dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)));
-              dispatch(fetchProjectsThunk(sessionStorage.getItem(USER_ID)));
-              dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)));
-              swal("WBS Created Successfully !", "", "success");
-          //   }
-          // })
+          reset_form();
+          setTaskList([]);
+          removeUploadedFiles()
+          dispatch(fetchWbsThunk(sessionStorage.getItem(USER_ID)));
+          dispatch(fetchProjectsThunk(sessionStorage.getItem(USER_ID)));
+          dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)));
+          swal("WBS Created Successfully !", "", "success");
         }
         reset_form();
         setSelectedTask(null)
@@ -535,14 +544,14 @@ const CreateNewWBS = () => {
                         <CInput
                           id="title"
                           name="title"
-                          maxlength="20"
+                          maxlength="50"
                           value={formCreateWbs.values.title}
                           onChange={formCreateWbs.handleChange}
                           className="custom-forminput-6"
                         ></CInput>
                         <div className="float-right">
-                      {formCreateWbs.values.title.length}/20
-                    </div>
+                          {formCreateWbs.values.title.length}/50
+                        </div>
                         {formCreateWbs.touched.title &&
                           formCreateWbs.errors.title && (
                             <small style={{ color: "red" }}>
@@ -632,9 +641,9 @@ const CreateNewWBS = () => {
                             </small>
                           )}
                       </div>
-                      {/* <div className="col-lg-12">
+                      <div className="col-lg-12">
                         <WBSFileUpload files={files} setFiles={setDocFiles} />
-                      </div> */}
+                      </div>
                       {/**submit buttons */}
                       <CCol>
                       <div className="col-md-12">
