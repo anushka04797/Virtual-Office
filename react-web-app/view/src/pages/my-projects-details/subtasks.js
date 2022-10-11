@@ -40,7 +40,7 @@ import LinearProgress from "@mui/material/LinearProgress";
 import { useFormik } from "formik";
 import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
-import { fetchProjectsForPMThunk } from "../../store/slices/ProjectsSlice";
+import { fetchProjectsbyTDOThunk, fetchProjectsForPMThunk } from "../../store/slices/ProjectsSlice";
 import { arrayRemoveItem, capitalizeFirstLetter } from "../../helper";
 import sortBy from "lodash/sortBy";
 import { has_permission } from "../../helper";
@@ -250,9 +250,11 @@ const Subtasks = () => {
     ).then((res) => {
       console.log(res.data);
       if (res.status == 200 && res.data.success == "True") {
+        dispatch(fetchProjectsbyTDOThunk(sessionStorage.getItem(USER_ID)))
+        dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)))
         setEditModal(false);
         setSubmitting(false);
-        initialize();
+        reload_data(values.work_package_number);
         swal("Sub Task Details is updated!", " ", "success");
       }
     });
@@ -509,18 +511,40 @@ const Subtasks = () => {
         });
       });
 
-      // populate_planned_value_and_hours(inputList)
+      populate_planned_value_and_hours(inputList)
       // dateRange(project?.project.start_date,project?.project.planned_delivery_date)
     }
   };
+  const reload_data=(work_package_number)=>{
+    API.get("project/details/" + work_package_number + "/").then((res) => {
+      console.log("res", res.data.data);
+      if (res.data.data.subtasks.length > 0) {
+        let temp = [];
+        temp = sortBy(res.data.data.subtasks, "planned_delivery_date");
+        res.data.data.subtasks = temp;
+        console.log("sorted", res.data.data);
+        setProject([res.data.data]);
+        setTdo(res.data.data.project.task_delivery_order.title);
+        // editForm.setFieldValue('assignee', res.data.assignee)
+        // initialize_total_working_days(res.data.data.project.start_date, res.data.data.project.planned_delivery_date)
+        // dateRange(res.data.data.project.start_date,res.data.data.project.planned_delivery_date)
+      }
+      else {
+        history.push("/dashboard/Projects/my-projects"); //redirecting to my project list page
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  }
   const initialize = () => {
-    // /dashboard/Projects/my-projects/subtask-details/7
-    API.get("project/details/" + id + "/")
-      .then((res) => {
-        console.log(res);
+    console.log('param id',id)
+    API.get("project/details/" + id + "/").then((res) => {
+        console.log('reload result',res.data);
         if (res.statusText != "OK") {
           history.push("/dashboard/Projects/my-projects");
-        } else {
+        } 
+        else {
           console.log("project", res.data);
           if (res.data.data.subtasks.length > 0) {
             console.log("res", res.data.data);
@@ -533,7 +557,7 @@ const Subtasks = () => {
             // editForm.setFieldValue('assignee', res.data.assignee)
             // initialize_total_working_days(res.data.data.project.start_date, res.data.data.project.planned_delivery_date)
             // dateRange(res.data.data.project.start_date,res.data.data.project.planned_delivery_date)
-         }
+          }
           else {
             history.push("/dashboard/Projects/my-projects"); //redirecting to my project list page
           }
@@ -593,7 +617,7 @@ const Subtasks = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
     if (location.state != undefined) {
-      console.log("project", location.state.project[0]);
+      console.log("project", location.state.project);
       settabs(location.state.project.length);
       setProject(location.state.project);
       // setTdo(location.state.project.project.task_delivery_order.title);

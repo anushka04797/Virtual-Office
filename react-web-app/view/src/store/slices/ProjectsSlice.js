@@ -26,11 +26,11 @@ export const fetchProjectsForPMThunk = createAsyncThunk('projects/fetchProjectsF
   return response.data
 })
 
-export const fetchProjectsbyTDOThunk1 = createAsyncThunk('projects/fetchProjectsbyTDOThunk', async (user_id) => {
-  const response = await JsonClient.get('project/rall/'+user_id+'/')
-  console.log("grouped by TDO projects", response.data)
-  return response.data
-})
+// export const fetchProjectsbyTDOThunk1 = createAsyncThunk('projects/fetchProjectsbyTDOThunk', async (user_id) => {
+//   const response = await JsonClient.get('project/rall/'+user_id+'/')
+//   console.log("grouped by TDO projects", response.data)
+//   return response.data
+// })
 
 export const fetchProjectsbyTDOThunk = createAsyncThunk('projects/fetchProjectsbyTDOThunk', async (user_id) => {
   const response = await JsonClient.get('project/fixronall/'+user_id+'/')
