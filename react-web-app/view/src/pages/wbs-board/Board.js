@@ -303,9 +303,7 @@ const WbsBoard = () => {
 
     console.log(boardData.lanes.find((element) => element.id == currentLaneId));
     // console.log(data.lanes.find(element => element.id == currentLaneId).cards.find(element => element.id == currentCardId).title)
-    const wbsId = boardData.lanes
-      .find((element) => element.id == currentLaneId)
-      .cards.find((element) => element.id == currentCardId).id;
+    const wbsId = boardData.lanes.find((element) => element.id == currentLaneId).cards.find((element) => element.id == currentCardId).id;
 
     API.get("wbs/time-card/list/" + wbsId + "/").then((res) => {
       console.log("time-card list result", res);
@@ -318,6 +316,7 @@ const WbsBoard = () => {
       console.log("timeCardListData: ", timeCardListData);
     });
     setModalData(wbsList.find((element) => element.id == wbsId));
+    console.log('modal data',wbsList.find((element) => element.id == wbsId))
     setModal(true);
   };
 
@@ -409,6 +408,7 @@ const WbsBoard = () => {
   React.useEffect(() => {
     window.scrollTo(0, 0);
     populate_assignees();
+    setUpdate(update+1)
     if (location.state?.from == "login") {
       enqueueSnackbar("Welcome ", { variant: "success" });
     }
@@ -474,8 +474,10 @@ const WbsBoard = () => {
           setWbsList(res.data.data);
           let pre_selected_items = [];
           let temp_projects = [];
-          console.log('assignee',selectedAssignee)
+          //console.log('assignee',selectedAssignee)
+          
           Array.from(res.data.data).forEach((item, idx) => {
+            //console.log('')
             if (item.assignee.id == selectedAssignee?.value) {
               pre_selected_items.push(item);
             }

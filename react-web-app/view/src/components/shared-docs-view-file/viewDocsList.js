@@ -1,7 +1,7 @@
 import CIcon from '@coreui/icons-react'
 import { CButton, CCol, CRow, CCard, CCardBody } from '@coreui/react'
 import React, { useState } from 'react'
-import { API, USER_ID } from '../../Config'
+import { API, BASE_URL, USER_ID } from '../../Config'
 import Select, { defaultTheme } from "react-select";
 import { useSelector } from 'react-redux';
 import  store  from '../../store/Store';
@@ -17,6 +17,14 @@ const ViewFiles = () => {
         })
         return temp
     })
+    function download(dataurl, filename) {
+        const link = document.createElement("a");
+        document.body.appendChild(link);
+        link.href = dataurl;
+        link.target="_blank"
+        link.download = "";
+        link.click();
+      }
     const showMore = () => {
         if(itemToShow === 4){
             setExpanded(true)
@@ -30,9 +38,10 @@ const ViewFiles = () => {
         if(actionMeta.action == 'select-option'){
             let temp=[]
             let projects = store.getState().projects.data
-            console.log("projects", projects)
+            console.log("projects", sharedDocs)
             Array.from(sharedDocs).forEach((item,idx)=>{
-                if(item.project.work_package_number == option.value){
+                console.log('dd',item.project)
+                if(item.work_package_number == option.value){
                     temp.push(item)
                 }
             })
@@ -68,10 +77,7 @@ const ViewFiles = () => {
                 {sharedDocs.slice(0, itemToShow).map((file, i) =>
                     <CCol lg="3" md="6" sm="6" key={i}>
                         <CCard className="doc-cards">
-                            <CCardBody 
-                           onClick = {()=>{console.log('ff', file)}}
-                            
-                            className="doc-file-body">
+                            <CCardBody className="doc-file-body" onClick={()=>download(BASE_URL+file.file,'test.jpg')}>
                                 <div className="icon-holder-shared-files">
                                     <CIcon name="cil-file" className="file-icon-show" size="2xl"></CIcon>
                                 </div>

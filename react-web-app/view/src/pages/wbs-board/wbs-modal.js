@@ -18,7 +18,7 @@ import {
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { form, useFormik } from "formik";
-import { API, USER_ID } from "../../Config";
+import { API, BASE_URL, USER_ID } from "../../Config";
 import swal from "sweetalert";
 import {
   fetchProjectsAssigneeThunk,
@@ -135,8 +135,19 @@ const WbsModal = (props) => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const updateWbs = (data, { setSubmitting }) => {
+    let form_data = new FormData()
+    form_data.append('total_files',files.length)
+    for (const property in formWbsUpdate.values) {
+      form_data.append(property,formWbsUpdate.values[property])
+    }
+    for (let index=1;index<=files.length;index++){
+      form_data.append('file'+index,files[index-1])
+    }
+    for (var pair of form_data.entries()) {
+      console.log(pair[0]+ ', ' + pair[1]); 
+    }
     if (datecheck >= 0) {
-      API.put("wbs/update/" + props.data.id + "/", formWbsUpdate.values)
+      API.put("wbs/update/" + props.data.id + "/", form_data)
         .then((res) => {
           if (res.status == 200 && res.data.success == "True") {
             dispatch(fetchProjectsForPMThunk(sessionStorage.getItem(USER_ID)));
@@ -253,8 +264,13 @@ const WbsModal = (props) => {
     return false;
   }
 
-  function handleUpdate(){
-    formWbsUpdate.handleSubmit()
+  function download(dataurl, filename) {
+    const link = document.createElement("a");
+    document.body.appendChild(link);
+    link.href = dataurl;
+    link.target="_blank"
+    link.download = "";
+    link.click();
   }
 
   return (
@@ -450,13 +466,19 @@ const WbsModal = (props) => {
                   </div>
                 </CRow>
                 <CRow>
-                  <CCol className="col-lg-9">
+                  <CCol className="col-lg-6">
                     <WBSFileUpload files={files} setFiles={setDocFiles} />
                   </CCol>
-                  <CCol className="col-lg-3">
+                  <CCol className="col-lg-6">
                     <div>
-                    Uploaded Documents
+                      Uploaded Documents
                     </div>
+                    <ul>
+                    {props.data.files.length>0 && Array.from(props.data.files).map((item,idx)=>(
+                      <li><a key={idx} href="javascript:void(0);" style={{textDecoration:'underline'}} onClick={()=>download(BASE_URL+item.file,'test.jpg')}>{idx+1}. {String(item.file).split('/').pop().slice(0,30)}</a></li>
+                    ))}
+                    </ul>
+                    
                   </CCol>
                 </CRow>
                 {props.data.assignee.id == sessionStorage.getItem(USER_ID) && (
