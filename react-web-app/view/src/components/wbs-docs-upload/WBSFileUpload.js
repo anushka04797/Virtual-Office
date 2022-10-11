@@ -10,9 +10,6 @@ import {
     CCol,CRow,
 } from "@coreui/react";
 import "./uploadForm.css";
-import Select from "react-select";
-import makeAnimated from "react-select/animated";
-import { useSelector } from "react-redux";
 import { API, USER_ID } from "../../Config";
 import { arrayRemoveItem } from "../../helper";
 import swal from "sweetalert";
