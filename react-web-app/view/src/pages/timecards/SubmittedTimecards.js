@@ -194,7 +194,8 @@ const SubmittedTimecards = () => {
         "WFH",
         "OTO",
         "VAC",
-        "COM",
+        "+COM",
+        "-COM",
         "Submitted",
       ],
     ];
@@ -214,7 +215,8 @@ const SubmittedTimecards = () => {
         elt.WFH,
         elt.OTO,
         elt.VAC,
-        elt.COM,
+        elt.pCOM,
+        elt.nCOM,
         elt.Submitted,
         console.log("data", elt),
       ]);
@@ -231,7 +233,8 @@ const SubmittedTimecards = () => {
       elt.WFH,
       elt.OTO,
       elt.VAC,
-      elt.COM,
+      elt.pCOM,
+      elt.nCOM,
       elt.Submitted,
       console.log("data", elt),
     ]);
@@ -307,7 +310,8 @@ const SubmittedTimecards = () => {
       "WFH",
       "OTO",
       "VAC",
-      "COM",
+      "+COM",
+      "-COM",
       "Submitted",
     ];
     sheet.getRow(8).font = {
@@ -329,7 +333,8 @@ const SubmittedTimecards = () => {
       { key: "WFH", width: 10 },
       { key: "OTO", width: 10 },
       { key: "VAC", width: 10 },
-      { key: "COM", width: 10 },
+      { key: "+COM", width: 10 },
+      { key: "-COM", width: 10 },
 
       { key: "Submitted", width: 20 },
     ];
@@ -348,7 +353,8 @@ const SubmittedTimecards = () => {
           WFH: submitted_timecards[i].WFH,
           OTO: submitted_timecards[i].OTO,
           VAC: submitted_timecards[i].VAC,
-          COM: submitted_timecards[i].COM,
+          pCOM: submitted_timecards[i].pCOM,
+          nCOM: submitted_timecards[i].nCOM,
           Submitted: submitted_timecards[i].Submitted,
         });
       }
@@ -373,7 +379,8 @@ const SubmittedTimecards = () => {
         WFH: pdfData[i].WFH,
         OTO: pdfData[i].OTO,
         VAC: pdfData[i].VAC,
-        COM: pdfData[i].COM,
+        pCOM: pdfData[i].pCOM,
+        nCOM: pdfData[i].nCOM,
         Submitted: pdfData[i].Submitted,
       });
     }
@@ -607,7 +614,11 @@ const SubmittedTimecards = () => {
                   sorter: false,
                 },
                 {
-                  key: "COM",
+                  key: '-COM',
+                  sorter: false,
+                },
+                {
+                  key: "+COM",
                   sorter: false,
                 },
                 {

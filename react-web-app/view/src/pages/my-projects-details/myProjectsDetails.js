@@ -1234,7 +1234,7 @@ const MyProjectsDetailsView = () => {
             <div className="col-md-11 col-sm-12 col-xs-12 mt-1 mb-2">
              
               {Array.from(project.subtasks).map((subtask, idx) => (
-
+               // console.log('subtask',subtask)
                 <CCard key={idx} className="card-ongoing-project">
                   <CCardBody className="details-project-body">
                     {/*task percentage portion */}

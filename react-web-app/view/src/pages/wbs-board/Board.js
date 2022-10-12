@@ -133,7 +133,12 @@ const WbsBoard = () => {
     if (data != undefined) {
       data.forEach((element) => {
         //console.log("element", element);
-        let card_title = String(element.title).slice(0,19) + '...' 
+
+        let card_title = String(element.title)
+        if(card_title.length>19)
+        {
+          card_title = (card_title).slice(0,19)+ '...'
+        }
         if (element.status === 1) {
           // console.log("1st cond", data.lanes[0])
           temp_data.lanes[0].cards.push({

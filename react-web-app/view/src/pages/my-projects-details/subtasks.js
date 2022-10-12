@@ -1092,25 +1092,28 @@ const Subtasks = () => {
               {Array.from(project).map((pro,idx)=>(
                   <CTabPane data-tab={pro.project.sub_task}>
                     {console.log('pro1', pro)}
-                    <CCard key={idx} className="card-ongoing-project">
+                    {Array.from(pro.subtasks).map((subtask,b)=>(
+                     // console.log('subtasks', subtask)
+                    
+                    <CCard key={b} className="card-ongoing-project">
                       <CCardBody className="details-project-body">
                         <div className="ongoing-initial-info row">
                           <div className="tasks-done-2 col-lg-4">
                             <h6 className="tiny-header2">Work Package Index</h6>
                             <h6 className="project-point-details">
-                              {pro.project.work_package_index}
+                              {subtask.work_package_index}
                             </h6>
                           </div>
                           <div className="tasks-done-2 col-lg-4">
                             <h6 className="tiny-header2">Task Title</h6>
                             <h6 className="project-point-details">
-                              {pro.project.task_title}
+                              {subtask.task_title}
                             </h6>
                           </div>
                           <div className="tasks-done-2 col-lg-4">
                             <h6 className="tiny-header2">PM Name</h6>
                             <h6 className="project-point-details">
-                              {pro.project.pm.first_name + " " + pro.project.pm.last_name}
+                              {subtask.pm.first_name + " " + subtask.pm.last_name}
                             </h6>
                           </div>
                           <div className="tasks-done-2 col-lg-4">
@@ -1118,39 +1121,39 @@ const Subtasks = () => {
                               Estimated Person(s)
                             </h6>
                             <h6 className="project-point-details">
-                              {pro.project.estimated_person}
+                              {subtask.estimated_person}
                             </h6>
                           </div>
                           {has_permission("projects.add_projects") && (
                             <div className="tasks-done-2 col-lg-4">
                               <h6 className="tiny-header2">Planned Value</h6>
                               <h6 className="project-point-details">
-                                {Number(parseFloat(pro.project.planned_value)).toFixed(2)}{" "}
+                                {Number(parseFloat(subtask.planned_value)).toFixed(2)}{" "}
                               </h6>
                             </div>
                           )}
                           <div className="tasks-done-2 col-lg-4">
                             <h6 className="tiny-header2">Planned Hours</h6>
                             <h6 className="project-point-details">
-                              {Number(parseFloat(pro.project.planned_hours)).toFixed(2)}{" "}
+                              {Number(parseFloat(subtask.planned_hours)).toFixed(2)}{" "}
                             </h6>
                           </div>
                           <div className="tasks-done-2 col-lg-4">
                             <h6 className="tiny-header2">Actual Hours</h6>
                             <h6 className="project-point-details">
-                              {(pro.project.planned_hours - pro.project.remaining_hours).toFixed(2)}{" "}
+                              {(subtask.planned_hours - subtask.remaining_hours).toFixed(2)}{" "}
                             </h6>
                           </div>
                           <div className="tasks-done-2 col-lg-4">
                             <h6 className="tiny-header2">Remaining Hours</h6>
                             <h6 className="project-point-details">
-                              {Number(parseFloat(pro.project.remaining_hours)).toFixed(2)}{" "}
+                              {Number(parseFloat(subtask.remaining_hours)).toFixed(2)}{" "}
                             </h6>
                           </div>
                           <div className="tasks-done-2 col-lg-4">
                             <h6 className="tiny-header2">Start Date</h6>
                             <h6 className="project-point-details">
-                              {pro.project.start_date}{" "}
+                              {subtask.start_date}{" "}
                             </h6>
                           </div>
                           <div className="tasks-done-2 col-lg-4">
@@ -1158,15 +1161,15 @@ const Subtasks = () => {
                               Planned Delivery Date
                             </h6>
                             <h6 className="project-point-details">
-                              {pro.project.planned_delivery_date}{" "}
+                              {subtask.planned_delivery_date}{" "}
                             </h6>
                           </div>
                           <div className="tasks-done-2 col-lg-12">
                             <h6 className="tiny-header2">Task Details</h6>
                             <h6 className="project-point-details-2">
-                              {pro.project.description == ""
+                              {subtask.description == ""
                                 ? "Not available"
-                                : pro.project.description}
+                                : subtask.description}
                             </h6>
                           </div>
                         </div>
@@ -1174,8 +1177,8 @@ const Subtasks = () => {
                           <LinearWithValueLabel
                             progress={() =>
                               calculate_progress_in_percentage(
-                                pro.project.planned_hours,
-                                pro.project.remaining_hours
+                                subtask.planned_hours,
+                                subtask.remaining_hours
                               )
                             }
                           />
@@ -1256,7 +1259,7 @@ const Subtasks = () => {
                         </CCardFooter>
                       )}
                     </CCard> 
-                   
+                   ))}
                   </CTabPane>
 
               ))}
